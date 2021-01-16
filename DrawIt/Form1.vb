@@ -992,6 +992,15 @@ Public Class MainForm
                 Case MyShape.ShapeStyle.Arc, MyShape.ShapeStyle.Pie
                     Dim dlg As New AnglesDialog(shp, CurrentCanvas)
                     dlg.ShowDialog()
+                Case MyShape.ShapeStyle.Text
+                    Dim dlg As New TextEditor(shp)
+                    If dlg.ShowDialog = DialogResult.OK Then
+                        shp.MShape.FontName = dlg.TBox.Font.Name
+                        shp.MShape.FontSize = dlg.TBox.Font.Size
+                        shp.MShape.FontStyle = dlg.TBox.Font.Style
+                        shp.MShape.Text = dlg.TBox.Text
+                        shp.MShape.TextAlignment = [Enum].Parse(GetType(ContentAlignment), dlg.cb_Align.SelectedItem)
+                    End If
             End Select
             CurrentCanvas.Invalidate()
         End If
