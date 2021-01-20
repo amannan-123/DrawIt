@@ -98,6 +98,7 @@
     <Compile Include="ColorSelector.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Helpers.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -123,6 +124,12 @@
       <DependentUpon>MyTrackBar.vb</DependentUpon>
     </Compile>
     <Compile Include="MyTrackBar.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PointSelector.Designer.vb">
+      <DependentUpon>PointSelector.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PointSelector.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ShapePointsEditor.Designer.vb">
@@ -156,6 +163,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MyTrackBar.resx">
       <DependentUpon>MyTrackBar.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PointSelector.resx">
+      <DependentUpon>PointSelector.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ShapePointsEditor.resx">
       <DependentUpon>ShapePointsEditor.vb</DependentUpon>

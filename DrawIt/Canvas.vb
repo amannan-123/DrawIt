@@ -610,6 +610,36 @@ Public Class Canvas
         Next i
     End Sub
 
+    Private Sub CreateShadow(g As Graphics, shp As Shape)
+        Dim temp_s = shp.Clone
+        Dim temp_r As New RectangleF(shp.BaseRect.X + shp.Shadow.Offset.X, shp.BaseRect.Y + shp.Shadow.Offset.Y,
+                                     shp.BaseRect.Width, shp.BaseRect.Height)
+        temp_s.BaseRect = temp_r
+        Dim pth As GraphicsPath = temp_s.TotalPath(False)
+        If IsNothing(pth) Then Return
+
+        If shp.Shadow.RegionClipping Then
+            Dim rg As New Region(ClientRectangle)
+            rg.Exclude(shp.TotalPath(False))
+            g.Clip = rg
+        End If
+
+        Dim x As Integer = 6
+        For i As Integer = 1 To x
+            Using pen As Pen = New Pen(Color.FromArgb(
+                                       shp.Shadow.Feather - ((shp.Shadow.Feather / x) * i), shp.Shadow.ShadowColor),
+                                       i * (shp.Shadow.Blur)) With
+                 {.LineJoin = LineJoin.Round, .StartCap = shp.DPen.PStartCap, .EndCap = shp.DPen.PEndCap}
+                g.DrawPath(pen, pth)
+            End Using
+        Next i
+
+        If shp.Shadow.Fill Then g.FillPath(New SolidBrush(shp.Shadow.ShadowColor), pth)
+
+        If shp.Shadow.RegionClipping Then g.ResetClip()
+
+    End Sub
+
     Private Sub Canvas_Paint(sender As Object, e As PaintEventArgs) Handles MyBase.Paint
         Dim g As Graphics = e.Graphics
         g.SmoothingMode = SmoothingMode.AntiAlias
@@ -636,7 +666,9 @@ Public Class Canvas
                 Dim br As New SolidBrush(Color.White)
                 Dim pn As New Pen(Color.Black, 1)
 
-                If shp.Glow.BeforeFill Then CreateGlow(ig, shp)
+                If shp.Shadow.Enabled Then CreateShadow(ig, shp)
+
+                If shp.Glow.Enabled AndAlso shp.Glow.BeforeFill Then CreateGlow(ig, shp)
 
                 'Draw Shape
                 Dim pth As GraphicsPath = shp.TotalPath(False)
@@ -659,7 +691,7 @@ Public Class Canvas
                 If Not IsNothing(dpn) Then dpn.Dispose()
                 If Not IsNothing(pth) Then pth.Dispose()
 
-                If Not shp.Glow.BeforeFill Then CreateGlow(ig, shp)
+                If shp.Glow.Enabled AndAlso Not shp.Glow.BeforeFill Then CreateGlow(ig, shp)
 
                 If shp.Selected Then
                     If shp.Primary Then

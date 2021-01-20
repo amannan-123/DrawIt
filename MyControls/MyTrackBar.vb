@@ -116,15 +116,9 @@ Public Class MyTrackBar
         Set(ByVal val As Single)
             If AllowDecimal = False Then val = CInt(val)
             If _value <> val Then
-                If val < _minimum Then
-                    _value = _minimum
-                Else
-                    If val > _maximum Then
-                        _value = _maximum
-                    Else
-                        _value = val
-                    End If
-                End If
+                If val < _minimum Then val = _minimum
+                If val > _maximum Then val = _maximum
+                _value = val
                 SetSliderFromValues()
                 Invalidate()
                 RaiseEvent ValueChanged(Me, New EventArgs)
@@ -272,15 +266,6 @@ Public Class MyTrackBar
 #End Region
 
 #Region "Slider Position"
-
-    Private Function ToPercentage(p1 As Single, p2 As Single, pt As Single) As Single
-        Return 100 - ((p2 - pt) * 100) / (p2 - p1)
-    End Function
-
-    Private Function FromPercentage(p1 As Single, p2 As Single, pt As Single) As Single
-        Return pt * (p2 - p1) / 100 + p1
-    End Function
-
     Private Sub UpdateSlider(ByVal xPos As Single)
         Dim rect As Rectangle = rectSlider
         sngSliderPos = xPos

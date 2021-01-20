@@ -35,13 +35,6 @@ Partial Class ColorSelector
         Me.r_hsl = New System.Windows.Forms.RadioButton()
         Me.r_rgb = New System.Windows.Forms.RadioButton()
         Me.Label11 = New System.Windows.Forms.Label()
-        Me.p_hsb = New MyControls.MyPanel()
-        Me.t_bri = New MyControls.MyTrackBar()
-        Me.t_sat2 = New MyControls.MyTrackBar()
-        Me.t_hue2 = New MyControls.MyTrackBar()
-        Me.Label8 = New System.Windows.Forms.Label()
-        Me.Label9 = New System.Windows.Forms.Label()
-        Me.Label10 = New System.Windows.Forms.Label()
         Me.p_rgb = New MyControls.MyPanel()
         Me.t_blue = New MyControls.MyTrackBar()
         Me.t_green = New MyControls.MyTrackBar()
@@ -56,12 +49,19 @@ Partial Class ColorSelector
         Me.t_hue1 = New MyControls.MyTrackBar()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.Label7 = New System.Windows.Forms.Label()
+        Me.p_hsb = New MyControls.MyPanel()
+        Me.t_bri = New MyControls.MyTrackBar()
+        Me.t_sat2 = New MyControls.MyTrackBar()
+        Me.t_hue2 = New MyControls.MyTrackBar()
+        Me.Label8 = New System.Windows.Forms.Label()
+        Me.Label9 = New System.Windows.Forms.Label()
+        Me.Label10 = New System.Windows.Forms.Label()
         Me.MyPanel1 = New MyControls.MyPanel()
         Me.MyPanel2.SuspendLayout()
         Me.MyPanel3.SuspendLayout()
-        Me.p_hsb.SuspendLayout()
         Me.p_rgb.SuspendLayout()
         Me.p_hsl.SuspendLayout()
+        Me.p_hsb.SuspendLayout()
         Me.SuspendLayout()
         '
         'TextBox1
@@ -147,13 +147,14 @@ Partial Class ColorSelector
         '
         Me.t_alpha.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.t_alpha.Colors = New System.Drawing.Color() {System.Drawing.Color.White, System.Drawing.Color.Black}
+        Me.t_alpha.Factors = New Single() {0!, 1.0!}
         Me.t_alpha.Location = New System.Drawing.Point(62, 12)
         Me.t_alpha.Maximum = 255.0!
         Me.t_alpha.Name = "t_alpha"
         Me.t_alpha.Positions = New Single() {0!, 1.0!}
         Me.t_alpha.Size = New System.Drawing.Size(194, 20)
         Me.t_alpha.TabIndex = 0
-        Me.t_alpha.Value = 254.987!
+        Me.t_alpha.Value = 255.0!
         '
         'Label1
         '
@@ -219,77 +220,6 @@ Partial Class ColorSelector
         Me.Label11.TabIndex = 5
         Me.Label11.Text = "Hex:  #"
         '
-        'p_hsb
-        '
-        Me.p_hsb.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.p_hsb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.p_hsb.Controls.Add(Me.t_bri)
-        Me.p_hsb.Controls.Add(Me.t_sat2)
-        Me.p_hsb.Controls.Add(Me.t_hue2)
-        Me.p_hsb.Controls.Add(Me.Label8)
-        Me.p_hsb.Controls.Add(Me.Label9)
-        Me.p_hsb.Controls.Add(Me.Label10)
-        Me.p_hsb.Location = New System.Drawing.Point(10, 65)
-        Me.p_hsb.Name = "p_hsb"
-        Me.p_hsb.Size = New System.Drawing.Size(252, 96)
-        Me.p_hsb.TabIndex = 2
-        '
-        't_bri
-        '
-        Me.t_bri.Colors = New System.Drawing.Color() {System.Drawing.Color.White, System.Drawing.Color.Black}
-        Me.t_bri.Location = New System.Drawing.Point(74, 64)
-        Me.t_bri.Name = "t_bri"
-        Me.t_bri.Positions = New Single() {0!, 1.0!}
-        Me.t_bri.Size = New System.Drawing.Size(172, 20)
-        Me.t_bri.TabIndex = 2
-        '
-        't_sat2
-        '
-        Me.t_sat2.Colors = New System.Drawing.Color() {System.Drawing.Color.White, System.Drawing.Color.Black}
-        Me.t_sat2.Location = New System.Drawing.Point(74, 38)
-        Me.t_sat2.Name = "t_sat2"
-        Me.t_sat2.Positions = New Single() {0!, 1.0!}
-        Me.t_sat2.Size = New System.Drawing.Size(172, 20)
-        Me.t_sat2.TabIndex = 1
-        '
-        't_hue2
-        '
-        Me.t_hue2.AllowDecimal = False
-        Me.t_hue2.Colors = New System.Drawing.Color() {System.Drawing.Color.White, System.Drawing.Color.Black}
-        Me.t_hue2.Location = New System.Drawing.Point(74, 12)
-        Me.t_hue2.Maximum = 359.0!
-        Me.t_hue2.Name = "t_hue2"
-        Me.t_hue2.Positions = New Single() {0!, 1.0!}
-        Me.t_hue2.Size = New System.Drawing.Size(172, 20)
-        Me.t_hue2.TabIndex = 0
-        '
-        'Label8
-        '
-        Me.Label8.AutoSize = True
-        Me.Label8.Location = New System.Drawing.Point(4, 16)
-        Me.Label8.Name = "Label8"
-        Me.Label8.Size = New System.Drawing.Size(30, 13)
-        Me.Label8.TabIndex = 3
-        Me.Label8.Text = "Hue:"
-        '
-        'Label9
-        '
-        Me.Label9.AutoSize = True
-        Me.Label9.Location = New System.Drawing.Point(4, 42)
-        Me.Label9.Name = "Label9"
-        Me.Label9.Size = New System.Drawing.Size(58, 13)
-        Me.Label9.TabIndex = 3
-        Me.Label9.Text = "Saturation:"
-        '
-        'Label10
-        '
-        Me.Label10.AutoSize = True
-        Me.Label10.Location = New System.Drawing.Point(4, 68)
-        Me.Label10.Name = "Label10"
-        Me.Label10.Size = New System.Drawing.Size(59, 13)
-        Me.Label10.TabIndex = 3
-        Me.Label10.Text = "Brightness:"
-        '
         'p_rgb
         '
         Me.p_rgb.Anchor = System.Windows.Forms.AnchorStyles.None
@@ -309,6 +239,7 @@ Partial Class ColorSelector
         '
         Me.t_blue.AllowDecimal = False
         Me.t_blue.Colors = New System.Drawing.Color() {System.Drawing.Color.White, System.Drawing.Color.Black}
+        Me.t_blue.Factors = New Single() {0!, 1.0!}
         Me.t_blue.Location = New System.Drawing.Point(74, 64)
         Me.t_blue.Maximum = 255.0!
         Me.t_blue.Name = "t_blue"
@@ -320,6 +251,7 @@ Partial Class ColorSelector
         '
         Me.t_green.AllowDecimal = False
         Me.t_green.Colors = New System.Drawing.Color() {System.Drawing.Color.White, System.Drawing.Color.Black}
+        Me.t_green.Factors = New Single() {0!, 1.0!}
         Me.t_green.Location = New System.Drawing.Point(74, 38)
         Me.t_green.Maximum = 255.0!
         Me.t_green.Name = "t_green"
@@ -331,6 +263,7 @@ Partial Class ColorSelector
         '
         Me.t_red.AllowDecimal = False
         Me.t_red.Colors = New System.Drawing.Color() {System.Drawing.Color.White, System.Drawing.Color.Black}
+        Me.t_red.Factors = New Single() {0!, 1.0!}
         Me.t_red.Location = New System.Drawing.Point(74, 12)
         Me.t_red.Maximum = 255.0!
         Me.t_red.Name = "t_red"
@@ -392,6 +325,7 @@ Partial Class ColorSelector
         't_lum
         '
         Me.t_lum.Colors = New System.Drawing.Color() {System.Drawing.Color.White, System.Drawing.Color.Black}
+        Me.t_lum.Factors = New Single() {0!, 1.0!}
         Me.t_lum.Location = New System.Drawing.Point(74, 64)
         Me.t_lum.Name = "t_lum"
         Me.t_lum.Positions = New Single() {0!, 1.0!}
@@ -401,6 +335,7 @@ Partial Class ColorSelector
         't_sat1
         '
         Me.t_sat1.Colors = New System.Drawing.Color() {System.Drawing.Color.White, System.Drawing.Color.Black}
+        Me.t_sat1.Factors = New Single() {0!, 1.0!}
         Me.t_sat1.Location = New System.Drawing.Point(74, 38)
         Me.t_sat1.Name = "t_sat1"
         Me.t_sat1.Positions = New Single() {0!, 1.0!}
@@ -411,6 +346,7 @@ Partial Class ColorSelector
         '
         Me.t_hue1.AllowDecimal = False
         Me.t_hue1.Colors = New System.Drawing.Color() {System.Drawing.Color.White, System.Drawing.Color.Black}
+        Me.t_hue1.Factors = New Single() {0!, 1.0!}
         Me.t_hue1.Location = New System.Drawing.Point(74, 12)
         Me.t_hue1.Maximum = 359.0!
         Me.t_hue1.Name = "t_hue1"
@@ -436,6 +372,80 @@ Partial Class ColorSelector
         Me.Label7.TabIndex = 3
         Me.Label7.Text = "Lumination:"
         '
+        'p_hsb
+        '
+        Me.p_hsb.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.p_hsb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.p_hsb.Controls.Add(Me.t_bri)
+        Me.p_hsb.Controls.Add(Me.t_sat2)
+        Me.p_hsb.Controls.Add(Me.t_hue2)
+        Me.p_hsb.Controls.Add(Me.Label8)
+        Me.p_hsb.Controls.Add(Me.Label9)
+        Me.p_hsb.Controls.Add(Me.Label10)
+        Me.p_hsb.Location = New System.Drawing.Point(10, 65)
+        Me.p_hsb.Name = "p_hsb"
+        Me.p_hsb.Size = New System.Drawing.Size(252, 96)
+        Me.p_hsb.TabIndex = 2
+        '
+        't_bri
+        '
+        Me.t_bri.Colors = New System.Drawing.Color() {System.Drawing.Color.White, System.Drawing.Color.Black}
+        Me.t_bri.Factors = New Single() {0!, 1.0!}
+        Me.t_bri.Location = New System.Drawing.Point(74, 64)
+        Me.t_bri.Name = "t_bri"
+        Me.t_bri.Positions = New Single() {0!, 1.0!}
+        Me.t_bri.Size = New System.Drawing.Size(172, 20)
+        Me.t_bri.TabIndex = 2
+        '
+        't_sat2
+        '
+        Me.t_sat2.Colors = New System.Drawing.Color() {System.Drawing.Color.White, System.Drawing.Color.Black}
+        Me.t_sat2.Factors = New Single() {0!, 1.0!}
+        Me.t_sat2.Location = New System.Drawing.Point(74, 38)
+        Me.t_sat2.Name = "t_sat2"
+        Me.t_sat2.Positions = New Single() {0!, 1.0!}
+        Me.t_sat2.Size = New System.Drawing.Size(172, 20)
+        Me.t_sat2.TabIndex = 1
+        '
+        't_hue2
+        '
+        Me.t_hue2.AllowDecimal = False
+        Me.t_hue2.Colors = New System.Drawing.Color() {System.Drawing.Color.White, System.Drawing.Color.Black}
+        Me.t_hue2.Factors = New Single() {0!, 1.0!}
+        Me.t_hue2.Location = New System.Drawing.Point(74, 12)
+        Me.t_hue2.Maximum = 359.0!
+        Me.t_hue2.Name = "t_hue2"
+        Me.t_hue2.Positions = New Single() {0!, 1.0!}
+        Me.t_hue2.Size = New System.Drawing.Size(172, 20)
+        Me.t_hue2.TabIndex = 0
+        '
+        'Label8
+        '
+        Me.Label8.AutoSize = True
+        Me.Label8.Location = New System.Drawing.Point(4, 16)
+        Me.Label8.Name = "Label8"
+        Me.Label8.Size = New System.Drawing.Size(30, 13)
+        Me.Label8.TabIndex = 3
+        Me.Label8.Text = "Hue:"
+        '
+        'Label9
+        '
+        Me.Label9.AutoSize = True
+        Me.Label9.Location = New System.Drawing.Point(4, 42)
+        Me.Label9.Name = "Label9"
+        Me.Label9.Size = New System.Drawing.Size(58, 13)
+        Me.Label9.TabIndex = 3
+        Me.Label9.Text = "Saturation:"
+        '
+        'Label10
+        '
+        Me.Label10.AutoSize = True
+        Me.Label10.Location = New System.Drawing.Point(4, 68)
+        Me.Label10.Name = "Label10"
+        Me.Label10.Size = New System.Drawing.Size(59, 13)
+        Me.Label10.TabIndex = 3
+        Me.Label10.Text = "Brightness:"
+        '
         'MyPanel1
         '
         Me.MyPanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
@@ -458,12 +468,12 @@ Partial Class ColorSelector
         Me.MyPanel2.PerformLayout()
         Me.MyPanel3.ResumeLayout(False)
         Me.MyPanel3.PerformLayout()
-        Me.p_hsb.ResumeLayout(False)
-        Me.p_hsb.PerformLayout()
         Me.p_rgb.ResumeLayout(False)
         Me.p_rgb.PerformLayout()
         Me.p_hsl.ResumeLayout(False)
         Me.p_hsl.PerformLayout()
+        Me.p_hsb.ResumeLayout(False)
+        Me.p_hsb.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 

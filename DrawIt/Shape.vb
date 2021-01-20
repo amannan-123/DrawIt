@@ -613,6 +613,8 @@ Public Class Shape
         _new.MShape = MShape.Clone
         _new.FBrush = FBrush.Clone
         _new.DPen = DPen.Clone
+        _new.Glow = Glow.Clone
+        _new.Shadow = Shadow.Clone
         Return _new
     End Function
 #End Region

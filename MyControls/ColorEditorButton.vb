@@ -10,7 +10,6 @@ Public Class ColorEditorButton
 
     Private TSDropDown As New ToolStripDropDown
     Private _selector As New ColorSelector
-    Private _button As New Button
     Private IsOpen As Boolean = False
     Private rect1, rect2, rect3 As RectangleF
 
@@ -18,19 +17,14 @@ Public Class ColorEditorButton
         InitializeComponent()
         SetStyle(ControlStyles.AllPaintingInWmPaint, True)
         SetStyle(ControlStyles.OptimizedDoubleBuffer, True)
+        _selector = New ColorSelector(Me)
         _selector.Width -= 1
         Dim _host As New ToolStripControlHost(_selector)
         _host.Margin = Padding.Empty
         _host.Padding = Padding.Empty
         _host.AutoSize = False
         _host.Size = New Size(_selector.Width, _selector.Height)
-        _button.Width = _selector.Width
-        _button.Text = "Close"
-        _button.FlatStyle = FlatStyle.Flat
-        AddHandler _button.Click, AddressOf _button_Click
-        Dim _host2 As New ToolStripControlHost(_button)
         TSDropDown.Items.Add(_host)
-        TSDropDown.Items.Add(_host2)
         TSDropDown.Size = _selector.Size
         TSDropDown.BackColor = Color.Black
         TSDropDown.ForeColor = Color.White
@@ -38,10 +32,6 @@ Public Class ColorEditorButton
         AddHandler _selector.ColorChanged, AddressOf _selector_ColorChanged
         _selector.SelectedColor = BackColor
         SetRects()
-    End Sub
-
-    Private Sub _button_Click(sender As Object, e As EventArgs)
-        CloseEditor()
     End Sub
 
     Private Sub TSDropDown_Closing(sender As Object, e As ToolStripDropDownClosingEventArgs)

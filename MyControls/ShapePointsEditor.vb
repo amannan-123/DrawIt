@@ -81,16 +81,6 @@ Public Class ShapePointsEditor
         Return -1
     End Function
 
-    Private Function ToPercentage(rect As RectangleF, pt As PointF) As PointF
-        Return New PointF(100 - ((rect.Right - pt.X) * 100) / (rect.Right - rect.X),
-                          100 - ((rect.Bottom - pt.Y) * 100) / (rect.Bottom - rect.Y))
-    End Function
-
-    Private Function FromPercentage(rect As RectangleF, pt As PointF) As PointF
-        Return New PointF(pt.X * (rect.Right - rect.X) / 100 + rect.X,
-                          pt.Y * (rect.Bottom - rect.Y) / 100 + rect.Y)
-    End Function
-
     Private Function SelectedItem() As Integer
         Dim ind As Integer = -1
         For Each bl As MyPoint In _lst

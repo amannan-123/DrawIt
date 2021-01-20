@@ -12,17 +12,19 @@ Imports System.Windows.Forms.Design
 <Designer(GetType(ColorSelectorDesigner))>
 Public Class ColorSelector
 
-    Private m_EditorService As IWindowsFormsEditorService
+    Private m_EditorService As IWindowsFormsEditorService = Nothing
+    Private m_button As ColorEditorButton = Nothing
 
     Sub New()
         InitializeComponent()
         PutColors()
     End Sub
 
-    Sub New(_clr As Color)
+    Sub New(_button As ColorEditorButton)
         InitializeComponent()
         PutColors()
-        SelectedColor = _clr
+        m_button = _button
+        Button2.Visible = True
     End Sub
 
     Sub New(_clr As Color, editor_service As IWindowsFormsEditorService)
@@ -317,7 +319,8 @@ Public Class ColorSelector
     End Sub
 
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-        m_EditorService.CloseDropDown()
+        If Not IsNothing(m_EditorService) Then m_EditorService.CloseDropDown()
+        If Not IsNothing(m_button) Then m_button.CloseEditor()
     End Sub
 End Class
 #End Region 'ColorSelector Control Class

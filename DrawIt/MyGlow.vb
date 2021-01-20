@@ -1,9 +1,24 @@
-﻿Public Class MyGlow
+﻿Imports System.ComponentModel
 
+Public Class MyGlow
+
+#Region "Enum"
     Public Enum GlowStyle
         OnShape
         OnBorder
     End Enum
+#End Region
+
+#Region "Properties"
+    Private _enabled As Boolean = False
+    Public Property Enabled() As Boolean
+        Get
+            Return _enabled
+        End Get
+        Set(ByVal value As Boolean)
+            _enabled = value
+        End Set
+    End Property
 
     Private _style As GlowStyle = GlowStyle.OnShape
     Public Property GStyle() As GlowStyle
@@ -54,6 +69,16 @@
             _clr = value
         End Set
     End Property
+#End Region
 
+#Region "Clone"
+    Public Function Clone() As MyGlow
+        Dim _new As New MyGlow
+        For Each pd As PropertyDescriptor In TypeDescriptor.GetProperties(GetType(MyGlow))
+            pd.SetValue(_new, pd.GetValue(Me))
+        Next
+        Return _new
+    End Function
+#End Region
 
 End Class

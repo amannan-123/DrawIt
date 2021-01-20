@@ -2,7 +2,7 @@
 
 Public Class TestForm
 
-    Private Sub TestForm_Paint(sender As Object, e As PaintEventArgs) Handles MyBase.Paint
+    Private Sub TestForm_Paint(sender As Object, e As PaintEventArgs)
         e.Graphics.TranslateTransform(100, 100)
         Dim myPath = New GraphicsPath()
         Dim srcRect = New RectangleF(0, 0, 100, 100)
@@ -25,5 +25,9 @@ Public Class TestForm
         'Draw the warped path (rectangle) to the screen.
         e.Graphics.DrawPath(New Pen(Color.Red), myPath)
 
+    End Sub
+
+    Private Sub PointSelector1_ValueChanged(sender As Object, e As EventArgs) Handles PointSelector1.ValueChanged
+        Text = PointSelector1.Value.ToString
     End Sub
 End Class

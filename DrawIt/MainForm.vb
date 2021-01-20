@@ -103,6 +103,15 @@ Public Class MainForm
             TB_Feather.Value = shp.Glow.Feather
             cb_GStyle.SelectedItem = shp.Glow.GStyle.ToString
             cb_gfill.Checked = shp.Glow.BeforeFill
+            cb_EGlow.Checked = shp.Glow.Enabled
+            'shadow
+            CE_Shadow.SelectedColor = shp.Shadow.ShadowColor
+            TB_SBlur.Value = shp.Shadow.Blur
+            TB_SFeather.Value = shp.Shadow.Feather
+            cb_clip.Checked = shp.Shadow.RegionClipping
+            cb_fill.Checked = shp.Shadow.Fill
+            PS_Shadow.Value = shp.Shadow.Offset
+            cb_EShadow.Checked = shp.Shadow.Enabled
         End If
     End Sub
 
@@ -1054,6 +1063,72 @@ Public Class MainForm
         If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
             Dim shp As Shape = CurrentCanvas.MainSelected
             shp.Glow.BeforeFill = cb_gfill.Checked
+            CurrentCanvas.Invalidate()
+        End If
+    End Sub
+
+    Private Sub cb_EGlow_CheckedChanged(sender As Object, e As EventArgs) Handles cb_EGlow.CheckedChanged
+        If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
+            Dim shp As Shape = CurrentCanvas.MainSelected
+            shp.Glow.Enabled = cb_EGlow.Checked
+            CurrentCanvas.Invalidate()
+        End If
+    End Sub
+#End Region
+
+#Region "Shadow"
+    Private Sub CE_Shadow_ColorChanged(sender As Object, e As EventArgs) Handles CE_Shadow.ColorChanged
+        If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
+            Dim shp As Shape = CurrentCanvas.MainSelected
+            shp.Shadow.ShadowColor = CE_Shadow.SelectedColor
+            CurrentCanvas.Invalidate()
+        End If
+    End Sub
+
+    Private Sub TB_SBlur_ValueChanged(sender As Object, e As EventArgs) Handles TB_SBlur.ValueChanged
+        If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
+            Dim shp As Shape = CurrentCanvas.MainSelected
+            shp.Shadow.Blur = TB_SBlur.Value
+            CurrentCanvas.Invalidate()
+        End If
+    End Sub
+
+    Private Sub TB_SFeather_ValueChanged(sender As Object, e As EventArgs) Handles TB_SFeather.ValueChanged
+        If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
+            Dim shp As Shape = CurrentCanvas.MainSelected
+            shp.Shadow.Feather = TB_SFeather.Value
+            CurrentCanvas.Invalidate()
+        End If
+    End Sub
+
+    Private Sub cb_clip_CheckedChanged(sender As Object, e As EventArgs) Handles cb_clip.CheckedChanged
+        If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
+            Dim shp As Shape = CurrentCanvas.MainSelected
+            shp.Shadow.RegionClipping = cb_clip.Checked
+            CurrentCanvas.Invalidate()
+        End If
+    End Sub
+
+    Private Sub cb_fill_CheckedChanged(sender As Object, e As EventArgs) Handles cb_fill.CheckedChanged
+        If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
+            Dim shp As Shape = CurrentCanvas.MainSelected
+            shp.Shadow.Fill = cb_fill.Checked
+            CurrentCanvas.Invalidate()
+        End If
+    End Sub
+
+    Private Sub PS_Shadow_ValueChanged(sender As Object, e As EventArgs) Handles PS_Shadow.ValueChanged
+        If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
+            Dim shp As Shape = CurrentCanvas.MainSelected
+            shp.Shadow.Offset = PS_Shadow.Value
+            CurrentCanvas.Invalidate()
+        End If
+    End Sub
+
+    Private Sub cb_EShadow_CheckedChanged(sender As Object, e As EventArgs) Handles cb_EShadow.CheckedChanged
+        If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
+            Dim shp As Shape = CurrentCanvas.MainSelected
+            shp.Shadow.Enabled = cb_EShadow.Checked
             CurrentCanvas.Invalidate()
         End If
     End Sub
