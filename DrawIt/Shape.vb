@@ -135,6 +135,26 @@ Public Class Shape
             _shape = value
         End Set
     End Property
+
+    Private _glow As MyGlow = New MyGlow()
+    Public Property Glow() As MyGlow
+        Get
+            Return _glow
+        End Get
+        Set(ByVal value As MyGlow)
+            _glow = value
+        End Set
+    End Property
+
+    Private _shadow As MyShadow = New MyShadow()
+    Public Property Shadow() As MyShadow
+        Get
+            Return _shadow
+        End Get
+        Set(ByVal value As MyShadow)
+            _shadow = value
+        End Set
+    End Property
 #End Region
 
 #Region "Private Subs"
@@ -182,13 +202,11 @@ Public Class Shape
             Case MyBrush.BrushType.Solid
                 Return New SolidBrush(DPen.PBrush.SolidColor)
             Case MyBrush.BrushType.LinearGradient
-                Dim pth As GraphicsPath = TotalPath(False, True, True)
-                If IsNothing(pth) Then
-                    Return Nothing
-                End If
+                Dim pth As GraphicsPath = TotalPath(False)
+                If IsNothing(pth) Then Return Nothing
                 pth.Widen(SelectionPen)
                 Dim r2 As RectangleF = pth.GetBounds
-                r2.Inflate(1, 1)
+                If r2.Width < 1 Or r2.Height < 1 Then Return Nothing
                 Dim lgb As New LinearGradientBrush(r2, DPen.PBrush.LColor1,
                                                     DPen.PBrush.LColor2,
                                                     DPen.PBrush.LinearAngle)
@@ -224,6 +242,8 @@ Public Class Shape
 
     Public Function CreatePen() As Pen
         Dim pn As Pen = SelectionPen(False)
+        If IsNothing(pn) Then Return Nothing
+        If IsNothing(PenBrush) Then Return Nothing
         pn.Brush = PenBrush()
         Return pn
     End Function
@@ -234,8 +254,8 @@ Public Class Shape
             Case MyBrush.BrushType.Solid
                 Return New SolidBrush(FBrush.SolidColor)
             Case MyBrush.BrushType.LinearGradient
-                Dim r2 As RectangleF = TotalPath(False, True, True).GetBounds
-                r2.Inflate(1, 1)
+                Dim r2 As RectangleF = TotalPath(False).GetBounds
+                If r2.Width < 1 Or r2.Height < 1 Then Return Nothing
                 Dim lgb As New LinearGradientBrush(r2, FBrush.LColor1,
                                                     FBrush.LColor2,
                                                     FBrush.LinearAngle)
@@ -247,12 +267,10 @@ Public Class Shape
                     lgb.SetSigmaBellShape(FBrush.LBellFocus, FBrush.LBellScale)
                 End If
                 If FBrush.LInterpolate Then
-                    If FBrush.LInterColors.Count > 1 AndAlso FBrush.LInterPositions.Count = FBrush.LInterColors.Count Then
-                        Dim ip As New ColorBlend
-                        ip.Colors = FBrush.LInterColors
-                        ip.Positions = FBrush.LInterPositions
-                        lgb.InterpolationColors = ip
-                    End If
+                    Dim ip As New ColorBlend
+                    ip.Colors = FBrush.LInterColors
+                    ip.Positions = FBrush.LInterPositions
+                    lgb.InterpolationColors = ip
                 End If
                 If FBrush.LBlend Then
                     Dim bl As New Blend
@@ -263,11 +281,11 @@ Public Class Shape
                 Return lgb
             Case MyBrush.BrushType.PathGradient
                 Try
-                    Dim ptb As New PathGradientBrush(TotalPath(False, False, False))
+                    Dim ptb As New PathGradientBrush(TotalPath(False))
                     ptb.CenterColor = FBrush.PCenter
                     ptb.SurroundColors = FBrush.PSurround
                     ptb.FocusScales = New PointF(FBrush.PFocusX, FBrush.PFocusY)
-                    ptb.CenterPoint = FromPercentage(rt, FBrush.PCenterPoint)
+                    ptb.CenterPoint = FromPercentage(_rect, FBrush.PCenterPoint)
                     If FBrush.PTriangular Then
                         ptb.SetBlendTriangularShape(FBrush.PTriFocus, FBrush.PTriScale)
                     End If
@@ -286,10 +304,6 @@ Public Class Shape
                         bl.Positions = FBrush.PBlendPositions
                         ptb.Blend = bl
                     End If
-                    Dim mm As New Matrix
-                    mm.Translate(_rect.X, _rect.Y)
-                    mm.Shear(ShearX, ShearY)
-                    ptb.Transform = mm
                     Return ptb
                 Catch ex As Exception
                     Return Nothing
@@ -298,7 +312,7 @@ Public Class Shape
                 Return New HatchBrush(FBrush.HStyle, FBrush.HFore, FBrush.HBack)
             Case MyBrush.BrushType.Texture
                 If IsNothing(FBrush.TImage) Then Return Nothing
-                If rt.Width = 0 Or rt.Height = 0 Then Return Nothing
+                If rt.Width < 1 Or rt.Height < 1 Then Return Nothing
                 Try
                     Dim img As Image = FBrush.TImage.Clone
                     img.RotateFlip(FBrush.TRotateFlip)
@@ -448,6 +462,24 @@ Public Class Shape
                     gp.AddString(MShape.Text, fl, MShape.FontStyle,
                              MShape.FontSize * 1.34, rt, sf)
             End Select
+            If MShape.IsClosed Then gp.CloseFigure()
+
+            'flip
+            'Dim flipXMatrix = New Matrix(-1, 0, 0, 1, BaseRect.Width, 0)
+            'Dim flipYMatrix = New Matrix(1, 0, 0, -1, 0, BaseRect.Height)
+            'Dim transformMatrix = New Matrix()
+            'transformMatrix.Multiply(flipXMatrix)
+            'transformMatrix.Multiply(flipYMatrix)
+            'gp.Transform(transformMatrix)
+
+            'warp
+            'Dim points = New PointF() {
+            '    New PointF(rt.X + (rt.Width / 4), rt.Y),
+            '    New PointF(rt.Right - (rt.Width / 4), rt.Y),
+            '    New PointF(rt.X, rt.Bottom),
+            '    New PointF(rt.Right, rt.Bottom)}
+            'gp.Warp(points, rt)
+
             Dim mm As New Matrix
             If translated Then mm.Translate(_rect.X, _rect.Y)
             If sheared Then mm.Shear(ShearX, ShearY)
@@ -456,9 +488,6 @@ Public Class Shape
         Catch ex As Exception
             Return Nothing
         End Try
-        If MShape.IsClosed Then
-            gp.CloseFigure()
-        End If
         Return gp
     End Function
 

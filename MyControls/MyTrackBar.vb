@@ -308,10 +308,12 @@ Public Class MyTrackBar
 #Region "Mouse Events"
 
     Private Sub MyTrackBar_MouseDown(ByVal sender As Object, ByVal e As MouseEventArgs) Handles Me.MouseDown
-        If IsMouseDown = False Then
-            IsMouseDown = True
-            SetSliderValue(e.Location)
-            Invalidate()
+        If rectSlider.Contains(e.Location) Or rectSliderBar.Contains(e.Location) Then
+            If IsMouseDown = False Then
+                IsMouseDown = True
+                SetSliderValue(e.Location)
+                Invalidate()
+            End If
         End If
     End Sub
 
@@ -349,6 +351,12 @@ Public Class MyTrackBar
                 Invalidate()
             Case Keys.Right, Keys.Up
                 Value += Increment
+                Invalidate()
+            Case Keys.Control Or Keys.Left, Keys.Control Or Keys.Down
+                Value = CInt(Value - Increment)
+                Invalidate()
+            Case Keys.Control Or Keys.Right, Keys.Control Or Keys.Up
+                Value = CInt(Value + Increment)
                 Invalidate()
         End Select
     End Sub

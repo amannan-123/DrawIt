@@ -44,7 +44,7 @@ Partial Class CornersDialog
         Me.T_TL.Name = "T_TL"
         Me.T_TL.Positions = New Single() {0!, 0.5!, 1.0!}
         Me.T_TL.Size = New System.Drawing.Size(184, 20)
-        Me.T_TL.TabIndex = 4
+        Me.T_TL.TabIndex = 0
         '
         'Label1
         '
@@ -62,7 +62,7 @@ Partial Class CornersDialog
         Me.C_TL.Location = New System.Drawing.Point(202, 24)
         Me.C_TL.Name = "C_TL"
         Me.C_TL.Size = New System.Drawing.Size(101, 21)
-        Me.C_TL.TabIndex = 6
+        Me.C_TL.TabIndex = 1
         '
         'T_TR
         '
@@ -72,7 +72,7 @@ Partial Class CornersDialog
         Me.T_TR.Name = "T_TR"
         Me.T_TR.Positions = New Single() {0!, 0.5!, 1.0!}
         Me.T_TR.Size = New System.Drawing.Size(184, 20)
-        Me.T_TR.TabIndex = 4
+        Me.T_TR.TabIndex = 2
         '
         'Label2
         '
@@ -90,7 +90,7 @@ Partial Class CornersDialog
         Me.C_TR.Location = New System.Drawing.Point(202, 63)
         Me.C_TR.Name = "C_TR"
         Me.C_TR.Size = New System.Drawing.Size(101, 21)
-        Me.C_TR.TabIndex = 6
+        Me.C_TR.TabIndex = 3
         '
         'T_BL
         '
@@ -118,7 +118,7 @@ Partial Class CornersDialog
         Me.C_BL.Location = New System.Drawing.Point(202, 102)
         Me.C_BL.Name = "C_BL"
         Me.C_BL.Size = New System.Drawing.Size(101, 21)
-        Me.C_BL.TabIndex = 6
+        Me.C_BL.TabIndex = 5
         '
         'T_BR
         '
@@ -128,7 +128,7 @@ Partial Class CornersDialog
         Me.T_BR.Name = "T_BR"
         Me.T_BR.Positions = New Single() {0!, 0.5!, 1.0!}
         Me.T_BR.Size = New System.Drawing.Size(184, 20)
-        Me.T_BR.TabIndex = 4
+        Me.T_BR.TabIndex = 6
         '
         'Label4
         '
@@ -146,7 +146,7 @@ Partial Class CornersDialog
         Me.C_BR.Location = New System.Drawing.Point(202, 141)
         Me.C_BR.Name = "C_BR"
         Me.C_BR.Size = New System.Drawing.Size(101, 21)
-        Me.C_BR.TabIndex = 6
+        Me.C_BR.TabIndex = 7
         '
         'CornersDialog
         '

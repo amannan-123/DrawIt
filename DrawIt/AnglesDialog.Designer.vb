@@ -55,7 +55,7 @@ Partial Class AnglesDialog
         Me.T_Sweep.Name = "T_Sweep"
         Me.T_Sweep.Positions = New Single() {0!, 0.5!, 1.0!}
         Me.T_Sweep.Size = New System.Drawing.Size(207, 20)
-        Me.T_Sweep.TabIndex = 6
+        Me.T_Sweep.TabIndex = 1
         Me.T_Sweep.Value = 270.0!
         '
         'T_Start
@@ -67,7 +67,7 @@ Partial Class AnglesDialog
         Me.T_Start.Name = "T_Start"
         Me.T_Start.Positions = New Single() {0!, 0.5!, 1.0!}
         Me.T_Start.Size = New System.Drawing.Size(207, 20)
-        Me.T_Start.TabIndex = 7
+        Me.T_Start.TabIndex = 0
         '
         'AnglesDialog
         '

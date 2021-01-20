@@ -97,6 +97,12 @@ Public Class MainForm
             CB_LJoin.SelectedItem = shp.DPen.PLineJoin.ToString
             TB_PSX.Value = shp.DPen.ScaleX
             TB_PSY.Value = shp.DPen.ScaleY
+            'glow
+            CE_Glow.SelectedColor = shp.Glow.GlowColor
+            TB_Glow.Value = shp.Glow.Glow
+            TB_Feather.Value = shp.Glow.Feather
+            cb_GStyle.SelectedItem = shp.Glow.GStyle.ToString
+            cb_gfill.Checked = shp.Glow.BeforeFill
         End If
     End Sub
 
@@ -165,6 +171,10 @@ Public Class MainForm
             CB_LJoin.Items.Add(str)
         Next
         CB_LJoin.SelectedIndex = 0
+        For Each str As String In [Enum].GetNames(GetType(MyGlow.GlowStyle))
+            cb_GStyle.Items.Add(str)
+        Next
+        cb_GStyle.SelectedIndex = 0
     End Sub
 #End Region
 
@@ -1005,9 +1015,47 @@ Public Class MainForm
             CurrentCanvas.Invalidate()
         End If
     End Sub
+#End Region
 
-    Private Sub Canvas1_Load(sender As Object, e As EventArgs)
+#Region "Glow"
+    Private Sub TB_Feather_ValueChanged(sender As Object, e As EventArgs) Handles TB_Feather.ValueChanged
+        If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
+            Dim shp As Shape = CurrentCanvas.MainSelected
+            shp.Glow.Feather = TB_Feather.Value
+            CurrentCanvas.Invalidate()
+        End If
+    End Sub
 
+    Private Sub TB_Glow_ValueChanged(sender As Object, e As EventArgs) Handles TB_Glow.ValueChanged
+        If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
+            Dim shp As Shape = CurrentCanvas.MainSelected
+            shp.Glow.Glow = TB_Glow.Value
+            CurrentCanvas.Invalidate()
+        End If
+    End Sub
+
+    Private Sub CE_Glow_ColorChanged(sender As Object, e As EventArgs) Handles CE_Glow.ColorChanged
+        If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
+            Dim shp As Shape = CurrentCanvas.MainSelected
+            shp.Glow.GlowColor = CE_Glow.SelectedColor
+            CurrentCanvas.Invalidate()
+        End If
+    End Sub
+
+    Private Sub cb_GStyle_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cb_GStyle.SelectedIndexChanged
+        If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
+            Dim shp As Shape = CurrentCanvas.MainSelected
+            shp.Glow.GStyle = [Enum].Parse(GetType(MyGlow.GlowStyle), cb_GStyle.SelectedItem)
+            CurrentCanvas.Invalidate()
+        End If
+    End Sub
+
+    Private Sub cb_gfill_CheckedChanged(sender As Object, e As EventArgs) Handles cb_gfill.CheckedChanged
+        If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
+            Dim shp As Shape = CurrentCanvas.MainSelected
+            shp.Glow.BeforeFill = cb_gfill.Checked
+            CurrentCanvas.Invalidate()
+        End If
     End Sub
 #End Region
 

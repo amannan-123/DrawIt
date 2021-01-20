@@ -53,7 +53,7 @@ Partial Class TextEditor
         Me.cb_Font.MaxDropDownItems = 14
         Me.cb_Font.Name = "cb_Font"
         Me.cb_Font.Size = New System.Drawing.Size(354, 31)
-        Me.cb_Font.TabIndex = 4
+        Me.cb_Font.TabIndex = 0
         '
         'Label29
         '
@@ -80,7 +80,7 @@ Partial Class TextEditor
         Me.bBold.Location = New System.Drawing.Point(47, 49)
         Me.bBold.Name = "bBold"
         Me.bBold.Size = New System.Drawing.Size(25, 25)
-        Me.bBold.TabIndex = 6
+        Me.bBold.TabIndex = 1
         Me.bBold.Text = "B"
         Me.bBold.UseVisualStyleBackColor = False
         '
@@ -99,7 +99,7 @@ Partial Class TextEditor
         Me.bItalic.Location = New System.Drawing.Point(79, 49)
         Me.bItalic.Name = "bItalic"
         Me.bItalic.Size = New System.Drawing.Size(25, 25)
-        Me.bItalic.TabIndex = 6
+        Me.bItalic.TabIndex = 2
         Me.bItalic.Text = "I"
         Me.bItalic.UseVisualStyleBackColor = False
         '
@@ -118,7 +118,7 @@ Partial Class TextEditor
         Me.bUnder.Location = New System.Drawing.Point(111, 49)
         Me.bUnder.Name = "bUnder"
         Me.bUnder.Size = New System.Drawing.Size(25, 25)
-        Me.bUnder.TabIndex = 6
+        Me.bUnder.TabIndex = 3
         Me.bUnder.Text = "U"
         Me.bUnder.UseVisualStyleBackColor = False
         '
@@ -150,11 +150,12 @@ Partial Class TextEditor
         Me.TB_Size.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
         Me.TB_Size.Factors = New Single() {0!, 1.0!}
         Me.TB_Size.Location = New System.Drawing.Point(44, 77)
+        Me.TB_Size.Maximum = 200.0!
         Me.TB_Size.Minimum = 10.0!
         Me.TB_Size.Name = "TB_Size"
         Me.TB_Size.Positions = New Single() {0!, 0.5!, 1.0!}
         Me.TB_Size.Size = New System.Drawing.Size(392, 20)
-        Me.TB_Size.TabIndex = 13
+        Me.TB_Size.TabIndex = 6
         Me.TB_Size.Value = 30.0!
         '
         'bCancel
@@ -193,7 +194,7 @@ Partial Class TextEditor
         Me.bStrike.Location = New System.Drawing.Point(143, 49)
         Me.bStrike.Name = "bStrike"
         Me.bStrike.Size = New System.Drawing.Size(25, 25)
-        Me.bStrike.TabIndex = 6
+        Me.bStrike.TabIndex = 4
         Me.bStrike.Text = "S"
         Me.bStrike.UseVisualStyleBackColor = False
         '
@@ -219,12 +220,13 @@ Partial Class TextEditor
         '
         'cb_Align
         '
+        Me.cb_Align.Anchor = System.Windows.Forms.AnchorStyles.Top
         Me.cb_Align.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cb_Align.FormattingEnabled = True
         Me.cb_Align.Location = New System.Drawing.Point(252, 50)
         Me.cb_Align.Name = "cb_Align"
         Me.cb_Align.Size = New System.Drawing.Size(179, 23)
-        Me.cb_Align.TabIndex = 15
+        Me.cb_Align.TabIndex = 5
         '
         'TextEditor
         '

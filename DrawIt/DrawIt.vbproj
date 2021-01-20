@@ -114,7 +114,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="MyBrush.vb" />
+    <Compile Include="MyGlow.vb" />
     <Compile Include="MyPen.vb" />
+    <Compile Include="MyShadow.vb" />
     <Compile Include="MyShape.vb" />
     <Compile Include="PointsEditor.Designer.vb">
       <DependentUpon>PointsEditor.vb</DependentUpon>

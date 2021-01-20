@@ -130,6 +130,8 @@ Partial Class MainForm
         Me.Label37 = New System.Windows.Forms.Label()
         Me.CE_PSolid = New MyControls.ColorEditorButton()
         Me.Label38 = New System.Windows.Forms.Label()
+        Me.tpGlow = New System.Windows.Forms.TabPage()
+        Me.tpShadow = New System.Windows.Forms.TabPage()
         Me.tCanvas = New System.Windows.Forms.TabControl()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
         Me.TabPage2 = New System.Windows.Forms.TabPage()
@@ -152,6 +154,17 @@ Partial Class MainForm
         Me.rSelect = New System.Windows.Forms.RadioButton()
         Me.Label29 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
+        Me.MyPanel1 = New MyControls.MyPanel()
+        Me.Label50 = New System.Windows.Forms.Label()
+        Me.Label51 = New System.Windows.Forms.Label()
+        Me.CE_Glow = New MyControls.ColorEditorButton()
+        Me.cb_GStyle = New System.Windows.Forms.ComboBox()
+        Me.Label52 = New System.Windows.Forms.Label()
+        Me.TB_Glow = New MyControls.MyTrackBar()
+        Me.Label53 = New System.Windows.Forms.Label()
+        Me.cb_gfill = New System.Windows.Forms.CheckBox()
+        Me.Label54 = New System.Windows.Forms.Label()
+        Me.TB_Feather = New MyControls.MyTrackBar()
         Me.Canvas1 = New DrawIt.Canvas()
         Me.Canvas2 = New DrawIt.Canvas()
         Me.tControls.SuspendLayout()
@@ -164,6 +177,7 @@ Partial Class MainForm
         Me.pPath.SuspendLayout()
         Me.tpStroke.SuspendLayout()
         Me.pPen.SuspendLayout()
+        Me.tpGlow.SuspendLayout()
         Me.tCanvas.SuspendLayout()
         Me.TabPage1.SuspendLayout()
         Me.TabPage2.SuspendLayout()
@@ -174,6 +188,7 @@ Partial Class MainForm
         CType(Me.ud_Y, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.ud_X, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tTop.SuspendLayout()
+        Me.MyPanel1.SuspendLayout()
         Me.SuspendLayout()
         '
         'imgDialog
@@ -186,6 +201,8 @@ Partial Class MainForm
         '
         Me.tControls.Controls.Add(Me.tpFill)
         Me.tControls.Controls.Add(Me.tpStroke)
+        Me.tControls.Controls.Add(Me.tpGlow)
+        Me.tControls.Controls.Add(Me.tpShadow)
         Me.tControls.Dock = System.Windows.Forms.DockStyle.Right
         Me.tControls.Location = New System.Drawing.Point(1080, 0)
         Me.tControls.Name = "tControls"
@@ -197,11 +214,11 @@ Partial Class MainForm
         '
         Me.tpFill.AutoScroll = True
         Me.tpFill.BackColor = System.Drawing.Color.White
+        Me.tpFill.Controls.Add(Me.pHatch)
+        Me.tpFill.Controls.Add(Me.pPath)
         Me.tpFill.Controls.Add(Me.pLinear)
         Me.tpFill.Controls.Add(Me.pSolid)
         Me.tpFill.Controls.Add(Me.pTexture)
-        Me.tpFill.Controls.Add(Me.pHatch)
-        Me.tpFill.Controls.Add(Me.pPath)
         Me.tpFill.Location = New System.Drawing.Point(4, 22)
         Me.tpFill.Name = "tpFill"
         Me.tpFill.Size = New System.Drawing.Size(278, 679)
@@ -1271,7 +1288,7 @@ Partial Class MainForm
         Me.PWidth.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
         Me.PWidth.Factors = New Single() {0!, 1.0!}
         Me.PWidth.Location = New System.Drawing.Point(47, 458)
-        Me.PWidth.Maximum = 20.0!
+        Me.PWidth.Maximum = 50.0!
         Me.PWidth.Minimum = 1.0!
         Me.PWidth.Name = "PWidth"
         Me.PWidth.Positions = New Single() {0!, 0.5!, 1.0!}
@@ -1425,6 +1442,28 @@ Partial Class MainForm
         Me.Label38.TabIndex = 0
         Me.Label38.Text = "Fill"
         Me.Label38.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'tpGlow
+        '
+        Me.tpGlow.AutoScroll = True
+        Me.tpGlow.BackColor = System.Drawing.Color.White
+        Me.tpGlow.Controls.Add(Me.MyPanel1)
+        Me.tpGlow.Location = New System.Drawing.Point(4, 22)
+        Me.tpGlow.Name = "tpGlow"
+        Me.tpGlow.Padding = New System.Windows.Forms.Padding(3)
+        Me.tpGlow.Size = New System.Drawing.Size(278, 679)
+        Me.tpGlow.TabIndex = 2
+        Me.tpGlow.Text = "Glow"
+        '
+        'tpShadow
+        '
+        Me.tpShadow.BackColor = System.Drawing.Color.White
+        Me.tpShadow.Location = New System.Drawing.Point(4, 22)
+        Me.tpShadow.Name = "tpShadow"
+        Me.tpShadow.Padding = New System.Windows.Forms.Padding(3)
+        Me.tpShadow.Size = New System.Drawing.Size(278, 679)
+        Me.tpShadow.TabIndex = 3
+        Me.tpShadow.Text = "Shadow"
         '
         'tCanvas
         '
@@ -1674,6 +1713,136 @@ Partial Class MainForm
         Me.Label1.TabIndex = 3
         Me.Label1.Text = "Brush:"
         '
+        'MyPanel1
+        '
+        Me.MyPanel1.Controls.Add(Me.TB_Feather)
+        Me.MyPanel1.Controls.Add(Me.Label54)
+        Me.MyPanel1.Controls.Add(Me.TB_Glow)
+        Me.MyPanel1.Controls.Add(Me.Label53)
+        Me.MyPanel1.Controls.Add(Me.cb_gfill)
+        Me.MyPanel1.Controls.Add(Me.cb_GStyle)
+        Me.MyPanel1.Controls.Add(Me.Label52)
+        Me.MyPanel1.Controls.Add(Me.Label50)
+        Me.MyPanel1.Controls.Add(Me.Label51)
+        Me.MyPanel1.Controls.Add(Me.CE_Glow)
+        Me.MyPanel1.Location = New System.Drawing.Point(0, 0)
+        Me.MyPanel1.Name = "MyPanel1"
+        Me.MyPanel1.Size = New System.Drawing.Size(255, 183)
+        Me.MyPanel1.TabIndex = 11
+        '
+        'Label50
+        '
+        Me.Label50.AutoSize = True
+        Me.Label50.Location = New System.Drawing.Point(1, 53)
+        Me.Label50.Name = "Label50"
+        Me.Label50.Size = New System.Drawing.Size(61, 13)
+        Me.Label50.TabIndex = 8
+        Me.Label50.Text = "Glow Color:"
+        '
+        'Label51
+        '
+        Me.Label51.BackColor = System.Drawing.Color.Transparent
+        Me.Label51.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.Label51.Dock = System.Windows.Forms.DockStyle.Top
+        Me.Label51.Font = New System.Drawing.Font("Segoe UI", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label51.ForeColor = System.Drawing.Color.Black
+        Me.Label51.Location = New System.Drawing.Point(0, 0)
+        Me.Label51.Name = "Label51"
+        Me.Label51.Size = New System.Drawing.Size(255, 29)
+        Me.Label51.TabIndex = 0
+        Me.Label51.Text = "Glow"
+        Me.Label51.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'CE_Glow
+        '
+        Me.CE_Glow.BackColor = System.Drawing.SystemColors.Control
+        Me.CE_Glow.Location = New System.Drawing.Point(67, 47)
+        Me.CE_Glow.MyText = "ChooseColor"
+        Me.CE_Glow.Name = "CE_Glow"
+        Me.CE_Glow.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
+        Me.CE_Glow.Size = New System.Drawing.Size(186, 25)
+        Me.CE_Glow.TabIndex = 7
+        '
+        'cb_GStyle
+        '
+        Me.cb_GStyle.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
+        Me.cb_GStyle.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+        Me.cb_GStyle.DropDownHeight = 250
+        Me.cb_GStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cb_GStyle.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cb_GStyle.IntegralHeight = False
+        Me.cb_GStyle.ItemHeight = 17
+        Me.cb_GStyle.Location = New System.Drawing.Point(67, 78)
+        Me.cb_GStyle.MaxDropDownItems = 14
+        Me.cb_GStyle.Name = "cb_GStyle"
+        Me.cb_GStyle.Size = New System.Drawing.Size(186, 25)
+        Me.cb_GStyle.TabIndex = 13
+        '
+        'Label52
+        '
+        Me.Label52.AutoSize = True
+        Me.Label52.Location = New System.Drawing.Point(1, 84)
+        Me.Label52.Name = "Label52"
+        Me.Label52.Size = New System.Drawing.Size(60, 13)
+        Me.Label52.TabIndex = 12
+        Me.Label52.Text = "Glow Style:"
+        '
+        'TB_Glow
+        '
+        Me.TB_Glow.AllowDecimal = False
+        Me.TB_Glow.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
+        Me.TB_Glow.Factors = New Single() {0!, 1.0!}
+        Me.TB_Glow.Location = New System.Drawing.Point(53, 110)
+        Me.TB_Glow.Minimum = 10.0!
+        Me.TB_Glow.Name = "TB_Glow"
+        Me.TB_Glow.Positions = New Single() {0!, 0.5!, 1.0!}
+        Me.TB_Glow.Size = New System.Drawing.Size(200, 20)
+        Me.TB_Glow.TabIndex = 16
+        Me.TB_Glow.Value = 35.0!
+        '
+        'Label53
+        '
+        Me.Label53.AutoSize = True
+        Me.Label53.Location = New System.Drawing.Point(1, 114)
+        Me.Label53.Name = "Label53"
+        Me.Label53.Size = New System.Drawing.Size(34, 13)
+        Me.Label53.TabIndex = 14
+        Me.Label53.Text = "Glow:"
+        '
+        'cb_gfill
+        '
+        Me.cb_gfill.AutoSize = True
+        Me.cb_gfill.Checked = True
+        Me.cb_gfill.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.cb_gfill.Location = New System.Drawing.Point(4, 162)
+        Me.cb_gfill.Name = "cb_gfill"
+        Me.cb_gfill.Size = New System.Drawing.Size(72, 17)
+        Me.cb_gfill.TabIndex = 15
+        Me.cb_gfill.Text = "Before Fill"
+        Me.cb_gfill.UseVisualStyleBackColor = True
+        '
+        'Label54
+        '
+        Me.Label54.AutoSize = True
+        Me.Label54.Location = New System.Drawing.Point(1, 140)
+        Me.Label54.Name = "Label54"
+        Me.Label54.Size = New System.Drawing.Size(46, 13)
+        Me.Label54.TabIndex = 14
+        Me.Label54.Text = "Feather:"
+        '
+        'TB_Feather
+        '
+        Me.TB_Feather.AllowDecimal = False
+        Me.TB_Feather.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
+        Me.TB_Feather.Factors = New Single() {0!, 1.0!}
+        Me.TB_Feather.Location = New System.Drawing.Point(53, 136)
+        Me.TB_Feather.Minimum = 10.0!
+        Me.TB_Feather.Name = "TB_Feather"
+        Me.TB_Feather.Positions = New Single() {0!, 0.5!, 1.0!}
+        Me.TB_Feather.Size = New System.Drawing.Size(200, 20)
+        Me.TB_Feather.TabIndex = 16
+        Me.TB_Feather.Value = 35.0!
+        '
         'Canvas1
         '
         Me.Canvas1.BackColor = System.Drawing.Color.Transparent
@@ -1725,6 +1894,7 @@ Partial Class MainForm
         Me.tpStroke.ResumeLayout(False)
         Me.pPen.ResumeLayout(False)
         Me.pPen.PerformLayout()
+        Me.tpGlow.ResumeLayout(False)
         Me.tCanvas.ResumeLayout(False)
         Me.TabPage1.ResumeLayout(False)
         Me.TabPage2.ResumeLayout(False)
@@ -1737,6 +1907,8 @@ Partial Class MainForm
         CType(Me.ud_X, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tTop.ResumeLayout(False)
         Me.tTop.PerformLayout()
+        Me.MyPanel1.ResumeLayout(False)
+        Me.MyPanel1.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1872,4 +2044,17 @@ Partial Class MainForm
     Friend WithEvents Label49 As Label
     Friend WithEvents ud_A As NumericUpDown
     Friend WithEvents bShape As Button
+    Friend WithEvents tpGlow As TabPage
+    Friend WithEvents tpShadow As TabPage
+    Friend WithEvents MyPanel1 As MyControls.MyPanel
+    Friend WithEvents TB_Feather As MyControls.MyTrackBar
+    Friend WithEvents Label54 As Label
+    Friend WithEvents TB_Glow As MyControls.MyTrackBar
+    Friend WithEvents Label53 As Label
+    Friend WithEvents cb_gfill As CheckBox
+    Friend WithEvents cb_GStyle As ComboBox
+    Friend WithEvents Label52 As Label
+    Friend WithEvents Label50 As Label
+    Friend WithEvents Label51 As Label
+    Friend WithEvents CE_Glow As MyControls.ColorEditorButton
 End Class

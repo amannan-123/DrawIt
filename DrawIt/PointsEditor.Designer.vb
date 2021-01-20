@@ -88,7 +88,7 @@ Partial Class PointsEditor
         Me.PEditor.Name = "PEditor"
         Me.PEditor.Points = New System.Drawing.PointF(-1) {}
         Me.PEditor.Size = New System.Drawing.Size(230, 230)
-        Me.PEditor.TabIndex = 1
+        Me.PEditor.TabIndex = 0
         '
         'TB_Tension
         '
@@ -101,7 +101,7 @@ Partial Class PointsEditor
         Me.TB_Tension.Name = "TB_Tension"
         Me.TB_Tension.Positions = New Single() {0!, 0.5!, 1.0!}
         Me.TB_Tension.Size = New System.Drawing.Size(184, 20)
-        Me.TB_Tension.TabIndex = 3
+        Me.TB_Tension.TabIndex = 1
         Me.TB_Tension.Value = 0.5!
         '
         'Label1

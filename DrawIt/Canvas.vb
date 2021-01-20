@@ -594,6 +594,22 @@ Public Class Canvas
         img = New Bitmap(Width, Height)
     End Sub
 
+    Private Sub CreateGlow(g As Graphics, shp As Shape)
+        Dim pth As GraphicsPath = shp.TotalPath(False)
+        If IsNothing(pth) Then Return
+        pth = pth.Clone
+        If shp.Glow.GStyle = MyGlow.GlowStyle.OnBorder Then
+            If Not IsNothing(shp.SelectionPen) Then pth.Widen(shp.SelectionPen)
+        End If
+        For i As Integer = 1 To shp.Glow.Glow Step 2
+            Dim aGlow As Integer = shp.Glow.Feather - ((shp.Glow.Feather / shp.Glow.Glow) * i)
+            Using pen As Pen = New Pen(Color.FromArgb(aGlow, shp.Glow.GlowColor), i) With
+                {.LineJoin = LineJoin.Round, .StartCap = shp.DPen.PStartCap, .EndCap = shp.DPen.PEndCap}
+                g.DrawPath(pen, pth)
+            End Using
+        Next i
+    End Sub
+
     Private Sub Canvas_Paint(sender As Object, e As PaintEventArgs) Handles MyBase.Paint
         Dim g As Graphics = e.Graphics
         g.SmoothingMode = SmoothingMode.AntiAlias
@@ -620,25 +636,30 @@ Public Class Canvas
                 Dim br As New SolidBrush(Color.White)
                 Dim pn As New Pen(Color.Black, 1)
 
+                If shp.Glow.BeforeFill Then CreateGlow(ig, shp)
+
                 'Draw Shape
-                If Not IsNothing(shp.TotalPath(False)) Then
-                    Dim pth As GraphicsPath = shp.TotalPath(False)
-                    If Not IsNothing(shp.CreateBrush) Then
-                        ig.RenderingOrigin = Point.Ceiling(shp.TotalPath(False).GetBounds.Location)
-                        Dim fbr As Brush = shp.CreateBrush
+                Dim pth As GraphicsPath = shp.TotalPath(False)
+                Dim fbr As Brush = shp.CreateBrush
+                Dim dpn As Pen = shp.CreatePen
+                If Not IsNothing(pth) Then
+                    If Not IsNothing(fbr) Then
+                        ig.RenderingOrigin = Point.Ceiling(pth.GetBounds.Location)
                         ig.FillPath(fbr, pth)
-                        fbr.Dispose()
                     End If
-                    If Not IsNothing(shp.CreatePen) Then
-                        Dim ppth As GraphicsPath = shp.TotalPath(False)
+                    If Not IsNothing(dpn) Then
+                        Dim ppth As GraphicsPath = pth.Clone
                         If Not IsNothing(shp.SelectionPen) Then ppth.Widen(shp.SelectionPen)
                         ig.RenderingOrigin = Point.Ceiling(ppth.GetBounds.Location)
-                        Dim dpn As Pen = shp.CreatePen
+                        ppth.Dispose()
                         ig.DrawPath(dpn, pth)
-                        dpn.Dispose()
                     End If
-                    pth.Dispose()
                 End If
+                If Not IsNothing(fbr) Then fbr.Dispose()
+                If Not IsNothing(dpn) Then dpn.Dispose()
+                If Not IsNothing(pth) Then pth.Dispose()
+
+                If Not shp.Glow.BeforeFill Then CreateGlow(ig, shp)
 
                 If shp.Selected Then
                     If shp.Primary Then
