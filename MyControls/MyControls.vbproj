@@ -114,6 +114,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="MyButton.Designer.vb">
+      <DependentUpon>MyButton.vb</DependentUpon>
+    </Compile>
+    <Compile Include="MyButton.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="MyPanel.Designer.vb">
       <DependentUpon>MyPanel.vb</DependentUpon>
     </Compile>
@@ -160,6 +166,9 @@
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MyButton.resx">
+      <DependentUpon>MyButton.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MyTrackBar.resx">
       <DependentUpon>MyTrackBar.vb</DependentUpon>

@@ -22,50 +22,33 @@ Partial Class ColorListDialog
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
         Me.OK_Button = New System.Windows.Forms.Button()
         Me.Cancel_Button = New System.Windows.Forms.Button()
         Me.lstColors = New System.Windows.Forms.ListBox()
-        Me.bAdd = New System.Windows.Forms.Button()
-        Me.bDown = New System.Windows.Forms.Button()
-        Me.bRemove = New System.Windows.Forms.Button()
-        Me.bUp = New System.Windows.Forms.Button()
+        Me.b_Down = New MyControls.MyButton()
+        Me.b_Up = New MyControls.MyButton()
+        Me.b_Remove = New MyControls.MyButton()
+        Me.b_Add = New MyControls.MyButton()
         Me.CE_Button = New MyControls.ColorEditorButton()
-        Me.TableLayoutPanel1.SuspendLayout()
         Me.SuspendLayout()
-        '
-        'TableLayoutPanel1
-        '
-        Me.TableLayoutPanel1.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.TableLayoutPanel1.ColumnCount = 2
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 0, 0)
-        Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 1, 0)
-        Me.TableLayoutPanel1.Location = New System.Drawing.Point(96, 250)
-        Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
-        Me.TableLayoutPanel1.RowCount = 1
-        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel1.Size = New System.Drawing.Size(146, 29)
-        Me.TableLayoutPanel1.TabIndex = 0
         '
         'OK_Button
         '
-        Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.OK_Button.Location = New System.Drawing.Point(3, 3)
+        Me.OK_Button.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.OK_Button.Location = New System.Drawing.Point(102, 256)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(67, 23)
-        Me.OK_Button.TabIndex = 0
+        Me.OK_Button.TabIndex = 6
         Me.OK_Button.Text = "OK"
         '
         'Cancel_Button
         '
-        Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Cancel_Button.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Cancel_Button.Location = New System.Drawing.Point(76, 3)
+        Me.Cancel_Button.Location = New System.Drawing.Point(175, 256)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
-        Me.Cancel_Button.TabIndex = 1
+        Me.Cancel_Button.TabIndex = 7
         Me.Cancel_Button.Text = "Cancel"
         '
         'lstColors
@@ -79,51 +62,59 @@ Partial Class ColorListDialog
         Me.lstColors.Location = New System.Drawing.Point(12, 18)
         Me.lstColors.Name = "lstColors"
         Me.lstColors.Size = New System.Drawing.Size(230, 160)
-        Me.lstColors.TabIndex = 1
+        Me.lstColors.TabIndex = 0
         '
-        'bAdd
+        'b_Down
         '
-        Me.bAdd.Anchor = System.Windows.Forms.AnchorStyles.Top
-        Me.bAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.bAdd.Location = New System.Drawing.Point(12, 215)
-        Me.bAdd.Name = "bAdd"
-        Me.bAdd.Size = New System.Drawing.Size(53, 26)
-        Me.bAdd.TabIndex = 2
-        Me.bAdd.Text = "Add"
-        Me.bAdd.UseVisualStyleBackColor = True
+        Me.b_Down.Anchor = System.Windows.Forms.AnchorStyles.Bottom
+        Me.b_Down.BackColor = System.Drawing.Color.White
+        Me.b_Down.DrawBorder = True
+        Me.b_Down.DrawEffect = False
+        Me.b_Down.ForeColor = System.Drawing.Color.Black
+        Me.b_Down.Location = New System.Drawing.Point(185, 215)
+        Me.b_Down.MyText = "Down"
+        Me.b_Down.Name = "b_Down"
+        Me.b_Down.Size = New System.Drawing.Size(57, 26)
+        Me.b_Down.TabIndex = 5
         '
-        'bDown
+        'b_Up
         '
-        Me.bDown.Anchor = System.Windows.Forms.AnchorStyles.Top
-        Me.bDown.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.bDown.Location = New System.Drawing.Point(185, 215)
-        Me.bDown.Name = "bDown"
-        Me.bDown.Size = New System.Drawing.Size(57, 26)
-        Me.bDown.TabIndex = 2
-        Me.bDown.Text = "Down"
-        Me.bDown.UseVisualStyleBackColor = True
+        Me.b_Up.Anchor = System.Windows.Forms.AnchorStyles.Bottom
+        Me.b_Up.BackColor = System.Drawing.Color.White
+        Me.b_Up.DrawBorder = True
+        Me.b_Up.DrawEffect = False
+        Me.b_Up.ForeColor = System.Drawing.Color.Black
+        Me.b_Up.Location = New System.Drawing.Point(134, 215)
+        Me.b_Up.MyText = "Up"
+        Me.b_Up.Name = "b_Up"
+        Me.b_Up.Size = New System.Drawing.Size(45, 26)
+        Me.b_Up.TabIndex = 4
         '
-        'bRemove
+        'b_Remove
         '
-        Me.bRemove.Anchor = System.Windows.Forms.AnchorStyles.Top
-        Me.bRemove.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.bRemove.Location = New System.Drawing.Point(71, 215)
-        Me.bRemove.Name = "bRemove"
-        Me.bRemove.Size = New System.Drawing.Size(57, 26)
-        Me.bRemove.TabIndex = 2
-        Me.bRemove.Text = "Remove"
-        Me.bRemove.UseVisualStyleBackColor = True
+        Me.b_Remove.Anchor = System.Windows.Forms.AnchorStyles.Bottom
+        Me.b_Remove.BackColor = System.Drawing.Color.White
+        Me.b_Remove.DrawBorder = True
+        Me.b_Remove.DrawEffect = False
+        Me.b_Remove.ForeColor = System.Drawing.Color.Black
+        Me.b_Remove.Location = New System.Drawing.Point(71, 215)
+        Me.b_Remove.MyText = "Remove"
+        Me.b_Remove.Name = "b_Remove"
+        Me.b_Remove.Size = New System.Drawing.Size(57, 26)
+        Me.b_Remove.TabIndex = 3
         '
-        'bUp
+        'b_Add
         '
-        Me.bUp.Anchor = System.Windows.Forms.AnchorStyles.Top
-        Me.bUp.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.bUp.Location = New System.Drawing.Point(134, 215)
-        Me.bUp.Name = "bUp"
-        Me.bUp.Size = New System.Drawing.Size(45, 26)
-        Me.bUp.TabIndex = 2
-        Me.bUp.Text = "Up"
-        Me.bUp.UseVisualStyleBackColor = True
+        Me.b_Add.Anchor = System.Windows.Forms.AnchorStyles.Bottom
+        Me.b_Add.BackColor = System.Drawing.Color.White
+        Me.b_Add.DrawBorder = True
+        Me.b_Add.DrawEffect = False
+        Me.b_Add.ForeColor = System.Drawing.Color.Black
+        Me.b_Add.Location = New System.Drawing.Point(12, 215)
+        Me.b_Add.MyText = "Add"
+        Me.b_Add.Name = "b_Add"
+        Me.b_Add.Size = New System.Drawing.Size(53, 26)
+        Me.b_Add.TabIndex = 2
         '
         'CE_Button
         '
@@ -134,40 +125,38 @@ Partial Class ColorListDialog
         Me.CE_Button.Name = "CE_Button"
         Me.CE_Button.SelectedColor = System.Drawing.SystemColors.Control
         Me.CE_Button.Size = New System.Drawing.Size(230, 25)
-        Me.CE_Button.TabIndex = 3
+        Me.CE_Button.TabIndex = 1
         '
         'ColorListDialog
         '
-        Me.AcceptButton = Me.OK_Button
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.CancelButton = Me.Cancel_Button
         Me.ClientSize = New System.Drawing.Size(254, 291)
+        Me.Controls.Add(Me.OK_Button)
+        Me.Controls.Add(Me.b_Down)
+        Me.Controls.Add(Me.Cancel_Button)
+        Me.Controls.Add(Me.b_Up)
+        Me.Controls.Add(Me.b_Remove)
+        Me.Controls.Add(Me.b_Add)
         Me.Controls.Add(Me.CE_Button)
-        Me.Controls.Add(Me.bDown)
-        Me.Controls.Add(Me.bUp)
-        Me.Controls.Add(Me.bRemove)
-        Me.Controls.Add(Me.bAdd)
         Me.Controls.Add(Me.lstColors)
-        Me.Controls.Add(Me.TableLayoutPanel1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
+        Me.KeyPreview = True
         Me.MaximizeBox = False
         Me.MinimizeBox = False
         Me.Name = "ColorListDialog"
         Me.ShowInTaskbar = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "ColorListDialog"
-        Me.TableLayoutPanel1.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
-    Friend WithEvents TableLayoutPanel1 As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents OK_Button As System.Windows.Forms.Button
     Friend WithEvents Cancel_Button As System.Windows.Forms.Button
     Friend WithEvents lstColors As System.Windows.Forms.ListBox
-    Friend WithEvents bAdd As System.Windows.Forms.Button
-    Friend WithEvents bDown As System.Windows.Forms.Button
     Friend WithEvents CE_Button As ColorEditorButton
-    Friend WithEvents bRemove As System.Windows.Forms.Button
-    Friend WithEvents bUp As System.Windows.Forms.Button
+    Friend WithEvents b_Add As MyButton
+    Friend WithEvents b_Remove As MyButton
+    Friend WithEvents b_Up As MyButton
+    Friend WithEvents b_Down As MyButton
 End Class

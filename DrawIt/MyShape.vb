@@ -13,6 +13,7 @@ Public Class MyShape
         Polygon
         Curves
         ClosedCurve
+        Spiral
         Arc
         Pie
         Text
@@ -156,6 +157,18 @@ Public Class MyShape
         End Get
         Set(ByVal value As Single)
             cur_t = value
+        End Set
+    End Property
+#End Region
+
+#Region "Spiral"
+    Private _spirals As Integer = 5
+    Public Property Spirals() As Integer
+        Get
+            Return _spirals
+        End Get
+        Set(ByVal value As Integer)
+            _spirals = value
         End Set
     End Property
 #End Region

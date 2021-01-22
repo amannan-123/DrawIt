@@ -206,6 +206,7 @@ Public Class Shape
                 If IsNothing(pth) Then Return Nothing
                 pth.Widen(SelectionPen)
                 Dim r2 As RectangleF = pth.GetBounds
+                r2.Inflate(1, 1)
                 If r2.Width < 1 Or r2.Height < 1 Then Return Nothing
                 Dim lgb As New LinearGradientBrush(r2, DPen.PBrush.LColor1,
                                                     DPen.PBrush.LColor2,
@@ -255,6 +256,7 @@ Public Class Shape
                 Return New SolidBrush(FBrush.SolidColor)
             Case MyBrush.BrushType.LinearGradient
                 Dim r2 As RectangleF = TotalPath(False).GetBounds
+                r2.Inflate(1, 1)
                 If r2.Width < 1 Or r2.Height < 1 Then Return Nothing
                 Dim lgb As New LinearGradientBrush(r2, FBrush.LColor1,
                                                     FBrush.LColor2,
@@ -346,9 +348,7 @@ Public Class Shape
 
     Public Function SelectionPath(Optional ByVal _anc As Boolean = True) As Region
         Dim gp As GraphicsPath = TotalPath()
-        If IsNothing(gp) Then
-            Return Nothing
-        End If
+        If IsNothing(gp) Then Return Nothing
         'If MShape.IsClosed = False Then
         '    gp.Widen(SelectionPen)
         'End If
@@ -399,34 +399,42 @@ Public Class Shape
                     _lst.Add(FromPercentage(rt, New PointF(100, 100)))
                     gp.AddPolygon(_lst.ToArray)
                 Case MyShape.ShapeStyle.Lines
+                    If MShape.PolygonPoints.Length < 2 Then Return Nothing
                     Dim _lst As New List(Of PointF)
                     For Each pt As PointF In MShape.PolygonPoints
                         _lst.Add(FromPercentage(rt, pt))
                     Next
                     gp.AddLines(_lst.ToArray)
                 Case MyShape.ShapeStyle.Polygon
+                    If MShape.PolygonPoints.Length < 3 Then Return Nothing
                     Dim _lst As New List(Of PointF)
                     For Each pt As PointF In MShape.PolygonPoints
                         _lst.Add(FromPercentage(rt, pt))
                     Next
                     gp.AddPolygon(_lst.ToArray)
                 Case MyShape.ShapeStyle.Curves
+                    If MShape.CurvePoints.Length < 2 Then Return Nothing
                     Dim _lst As New List(Of PointF)
                     For Each pt As PointF In MShape.CurvePoints
                         _lst.Add(FromPercentage(rt, pt))
                     Next
                     gp.AddCurve(_lst.ToArray, MShape.Tension)
                 Case MyShape.ShapeStyle.ClosedCurve
+                    If MShape.CurvePoints.Length < 3 Then Return Nothing
                     Dim _lst As New List(Of PointF)
                     For Each pt As PointF In MShape.CurvePoints
                         _lst.Add(FromPercentage(rt, pt))
                     Next
                     gp.AddClosedCurve(_lst.ToArray, MShape.Tension)
+                Case MyShape.ShapeStyle.Spiral
+                    gp = SpiralPath(BaseRect, MShape.Spirals)
                 Case MyShape.ShapeStyle.Arc
                     gp.AddArc(rt, MShape.StartAngle, MShape.SweepAngle)
                 Case MyShape.ShapeStyle.Pie
                     gp.AddPie(New Rectangle(0, 0, rt.Width, rt.Height), MShape.StartAngle, MShape.SweepAngle)
                 Case MyShape.ShapeStyle.Text
+                    Dim stxt = MShape.Text.Trim()
+                    If stxt.Length = 0 Then Return Nothing
                     Dim sf As New StringFormat(StringFormatFlags.NoClip)
                     sf.Trimming = StringTrimming.EllipsisCharacter
                     Select Case MShape.TextAlignment

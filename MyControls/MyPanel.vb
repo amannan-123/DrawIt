@@ -14,12 +14,12 @@ Public Class MyPanel
         SetStyle(ControlStyles.OptimizedDoubleBuffer, True)
     End Sub
 
-    Protected Overrides Sub OnPaint(e As PaintEventArgs)
-        MyBase.OnPaint(e)
-        Dim g As Graphics = e.Graphics
-        Dim br = New HatchBrush(HatchStyle.LargeCheckerBoard, Color.White, Color.Silver)
-        g.FillRectangle(br, ClientRectangle)
-        g.FillRectangle(New SolidBrush(BackColor), ClientRectangle)
-    End Sub
+    'Protected Overrides Sub OnPaint(e As PaintEventArgs)
+    '    MyBase.OnPaint(e)
+    '    Dim g As Graphics = e.Graphics
+    '    Dim br = New HatchBrush(HatchStyle.LargeCheckerBoard, Color.White, Color.Silver)
+    '    g.FillRectangle(br, ClientRectangle)
+    '    g.FillRectangle(New SolidBrush(BackColor), ClientRectangle)
+    'End Sub
 
 End Class

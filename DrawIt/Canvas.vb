@@ -139,30 +139,19 @@ Public Class Canvas
 #Region "Functions"
     Public Function ShapeInCursor(_loc As Point) As Integer
         Dim ind As Integer = -1
-        If shps.Count = 0 Then
-            Return ind
-        Else
-            Select Case _ord
-                Case SelectOrder.AboveFirst
-                    For Each shp As Shape In shps
-                        If Not IsNothing(shp.SelectionPath) AndAlso Not IsNothing(shp.BorderPath) Then
-                            If shp.SelectionPath.IsVisible(_loc) Or
-                                shp.BorderPath.IsVisible(_loc) Then
-                                ind = shps.IndexOf(shp)
-                            End If
-                        End If
-                    Next
-                Case SelectOrder.BelowFirst
-                    For Each shp As Shape In shps
-                        If Not IsNothing(shp.SelectionPath) AndAlso Not IsNothing(shp.BorderPath) Then
-                            If shp.SelectionPath.IsVisible(_loc) Or
-                                shp.BorderPath.IsVisible(_loc) Then
-                                Return shps.IndexOf(shp)
-                            End If
-                        End If
-                    Next
-            End Select
-        End If
+        If shps.Count = 0 Then Return ind
+        For Each shp As Shape In shps
+            If Not IsNothing(shp.SelectionPath) AndAlso Not IsNothing(shp.BorderPath) Then
+                If shp.SelectionPath.IsVisible(_loc) Or
+                    shp.BorderPath.IsVisible(_loc) Then
+                    If _ord = SelectOrder.AboveFirst Then
+                        ind = shps.IndexOf(shp)
+                    Else
+                        Return ind
+                    End If
+                End If
+            End If
+        Next
         Return ind
     End Function
 
@@ -339,8 +328,6 @@ Public Class Canvas
             SetPrimary()
         End If
 
-        Dim shp As Shape = MainSelected()
-
         'highlight shape
         If HighlightShapes AndAlso op = MOperations.None AndAlso MainForm.rSelect.Checked AndAlso shps.Count > 0 Then
             Dim curr As Integer = ShapeInCursor(e.Location)
@@ -362,6 +349,8 @@ Public Class Canvas
             End If
             Invalidate()
         End If
+
+        Dim shp As Shape = MainSelected()
 
         'set cursors
         If MainForm.rDraw.Checked Then
@@ -651,10 +640,12 @@ Public Class Canvas
         'Draw background of canvas
         g.FillRectangle(New SolidBrush(BackColor), ClientRectangle)
 
+#Region "Drawing Shapes On Image"
         If Not DesignMode Then
             'Draw all shapes on image
             SetImageSize()
             Dim ig As Graphics = Graphics.FromImage(img)
+            ig.Clear(Color.Transparent)
             ig.SmoothingMode = SmoothingMode.AntiAlias
             For Each shp As Shape In shps
                 ig.RenderingOrigin = New Point(shp.BaseRect.Location.X,
@@ -804,6 +795,7 @@ Public Class Canvas
                 br.Dispose()
                 pn.Dispose()
             Next
+#End Region
 
             'Draw image containing shapes
             g.DrawImageUnscaled(img, 0, 0, Width, Height)
@@ -838,6 +830,7 @@ Public Class Canvas
 
     Private Sub Canvas_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
         SetImageSize()
+        Invalidate()
     End Sub
 
 #End Region
@@ -979,7 +972,7 @@ Public Class Canvas
                 For Each i As Integer In SelectedIndices()
                     Dim shp As Shape = shps(i)
                     Dim rect As RectangleF = shp.BaseRect
-                    If rect.Width > 1 Then
+                    If rect.Width > 2 Then
                         rect.Inflate(-1, 0)
                         shp.BaseRect = rect
                     End If
@@ -995,7 +988,7 @@ Public Class Canvas
                 For Each i As Integer In SelectedIndices()
                     Dim shp As Shape = shps(i)
                     Dim rect As RectangleF = shp.BaseRect
-                    If rect.Height > 1 Then
+                    If rect.Height > 2 Then
                         rect.Inflate(0, -1)
                         shp.BaseRect = rect
                     End If
@@ -1015,7 +1008,7 @@ Public Class Canvas
             Case Keys.Control Or Keys.C
                 Dim _lst As New List(Of Shape)
                 For Each i As Integer In SelectedIndices()
-                    _lst.Add(shps(i))
+                    _lst.Add(shps(i).Clone)
                 Next
                 My.Computer.Clipboard.SetData("DrawIt-Shapes", _lst)
             Case Keys.Control Or Keys.X
@@ -1027,7 +1020,8 @@ Public Class Canvas
                 My.Computer.Clipboard.SetData("DrawIt-Shapes", _lst)
             Case Keys.Control Or Keys.V
                 DeselectAll()
-                Dim _lst As List(Of Shape) = My.Computer.Clipboard.GetData("DrawIt-Shapes")
+                Dim _lst As New List(Of Shape)
+                _lst = My.Computer.Clipboard.GetData("DrawIt-Shapes")
                 If IsNothing(_lst) Then Return
                 For Each shp As Shape In _lst
                     shps.Add(shp)
@@ -1043,7 +1037,11 @@ Public Class Canvas
             Case Keys.Control Or Keys.Left, Keys.Control Or Keys.Right,
                  Keys.Control Or Keys.Up, Keys.Control Or Keys.Down,
                  Keys.Shift Or Keys.Left, Keys.Shift Or Keys.Right,
-                 Keys.Shift Or Keys.Up, Keys.Shift Or Keys.Down
+                 Keys.Shift Or Keys.Up, Keys.Shift Or Keys.Down,
+                 Keys.Shift Or Keys.Control Or Keys.Left,
+                 Keys.Shift Or Keys.Control Or Keys.Right,
+                 Keys.Shift Or Keys.Control Or Keys.Up,
+                 Keys.Shift Or Keys.Control Or Keys.Down
                 For Each i As Integer In SelectedIndices()
                     Dim shp As Shape = shps(i)
                     If shp.Angle <> 0.0 Then

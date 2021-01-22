@@ -107,7 +107,26 @@ Module Helpers
 		Return MyPath
 	End Function
 
-	Public Function ToPercentage(rect As RectangleF, pt As PointF) As PointF
+    Public Function SpiralPath(rect As RectangleF, spirals As Integer) As GraphicsPath
+        Dim cx = rect.Width
+        Dim cy = rect.Height
+        Dim iNumRevs = spirals
+        Dim iNumPoints As Integer = (rect.Width * rect.Height) / (spirals * spirals)
+        If iNumPoints < 30 Then iNumPoints = 30
+        Dim aptf As PointF() = New PointF(iNumPoints - 1) {}
+        Dim fAngle, fScale As Single
+        For i As Integer = 0 To iNumPoints - 1
+            fAngle = (i * 2 * Math.PI / (iNumPoints / iNumRevs))
+            fScale = 1 - i / iNumPoints
+            aptf(i).X = (cx / 2 * (1 + fScale * Math.Cos(fAngle)))
+            aptf(i).Y = (cy / 2 * (1 + fScale * Math.Sin(fAngle)))
+        Next
+        Dim gp As New GraphicsPath
+        gp.AddCurve(aptf)
+        Return gp
+    End Function
+
+    Public Function ToPercentage(rect As RectangleF, pt As PointF) As PointF
 		Return New PointF(100 - ((rect.Right - pt.X) * 100) / (rect.Right - rect.X),
 						  100 - ((rect.Bottom - pt.Y) * 100) / (rect.Bottom - rect.Y))
 	End Function
@@ -157,25 +176,25 @@ Module Helpers
 
 		' Keep within 0 ~ 359.9
 		If (snOut >= 360) Then snOut = snOut Mod 360
-		If (snOut < 0) Then snOut = 360 - (-snOut Mod 360)
+		If (snOut <0) Then snOut = 360 - (-snOut Mod 360)
 
-		' Quantize
-		If _quantized Then
-			Dim bQuantized As Boolean = False
-			For snTarget As Single = 0.0 To 360 Step 45
-				snOut = QuantizeRotation(snOut, snTarget, bQuantized)
-				If bQuantized Then Exit For
-			Next snTarget
-		Else
-			snRotation = snOut
-		End If
+        ' Quantize
+        If _quantized Then
+            Dim bQuantized As Boolean = False
+            For snTarget As Single = 0.0 To 360 Step 45
+                snOut = QuantizeRotation(snOut, snTarget, bQuantized)
+                If bQuantized Then Exit For
+            Next snTarget
+        Else
+            snRotation = snOut
+        End If
 
-		' Return
-		Return snOut
+        ' Return
+        Return snOut
 
-	End Function
+    End Function
 
-	Private Function QuantizeRotation(ByVal snRotation As Single,
+    Private Function QuantizeRotation(ByVal snRotation As Single,
 									  ByVal snTarget As Single,
 									  ByRef bQuantized As Boolean) As Single
 

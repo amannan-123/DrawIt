@@ -125,6 +125,12 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Shape.vb" />
+    <Compile Include="SpiralDialog.Designer.vb">
+      <DependentUpon>SpiralDialog.vb</DependentUpon>
+    </Compile>
+    <Compile Include="SpiralDialog.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="TestForm.Designer.vb">
       <DependentUpon>TestForm.vb</DependentUpon>
     </Compile>
@@ -160,6 +166,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PointsEditor.resx">
       <DependentUpon>PointsEditor.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SpiralDialog.resx">
+      <DependentUpon>SpiralDialog.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TestForm.resx">
       <DependentUpon>TestForm.vb</DependentUpon>

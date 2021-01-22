@@ -322,6 +322,14 @@ Public Class ColorSelector
         If Not IsNothing(m_EditorService) Then m_EditorService.CloseDropDown()
         If Not IsNothing(m_button) Then m_button.CloseEditor()
     End Sub
+
+    Private Sub MyPanel1_Paint(sender As Object, e As PaintEventArgs) Handles MyPanel1.Paint
+        Dim g As Graphics = e.Graphics
+        Dim br = New HatchBrush(HatchStyle.LargeCheckerBoard, Color.White, Color.Silver)
+        g.FillRectangle(br, ClientRectangle)
+        g.FillRectangle(New SolidBrush(BackColor), ClientRectangle)
+        br.Dispose()
+    End Sub
 End Class
 #End Region 'ColorSelector Control Class
 

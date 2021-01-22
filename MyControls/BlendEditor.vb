@@ -19,6 +19,19 @@ Public Class BlendEditor
     Private _end As New blenditem(1, 1)
     Private _lst As New List(Of blenditem)
 
+    Private _brd As Color = Color.Black
+    <Description("Borders Color")>
+    <DefaultValue(GetType(Color), "Black")>
+    Public Property BordersColor() As Color
+        Get
+            Return _brd
+        End Get
+        Set(ByVal value As Color)
+            _brd = value
+            Invalidate()
+        End Set
+    End Property
+
     Private _clr1 As Color = Color.White
     Public Property Color1() As Color
         Get
@@ -115,17 +128,9 @@ Public Class BlendEditor
         Return True
     End Function
 
-    Private Function ToPercentage(p1 As Single, p2 As Single, pt As Single) As Single
-        Return 100 - ((p2 - pt) * 100) / (p2 - p1)
-    End Function
-
-    Private Function FromPercentage(p1 As Single, p2 As Single, pt As Single) As Single
-        Return pt * (p2 - p1) / 100 + p1
-    End Function
-
     Private Function SelectedItem() As Integer
         Dim ind As Integer = -1
-        For Each bl As blenditem In _lst
+        For Each bl As BlendItem In _lst
             If bl.Selected Then ind = _lst.IndexOf(bl)
         Next
         Return ind
@@ -247,7 +252,7 @@ Public Class BlendEditor
 
     Private Sub Drawblenditem(g As Graphics, bl As blenditem)
         g.FillPath(New SolidBrush(Color.White), BlendRegion(bl))
-        g.DrawPath(Pens.Black, BlendRegion(bl))
+        g.DrawPath(New Pen(BordersColor), BlendRegion(bl))
         If bl.Selected Then
             Dim b_rect As RectangleF = BlendRegion(bl).GetBounds
             Dim s_rect As New RectangleF(b_rect.X, b_rect.Bottom, b_rect.Width, 5)
@@ -272,7 +277,7 @@ Public Class BlendEditor
             lgb.Blend = cb
 
             g.FillRectangle(lgb, r1)
-            g.DrawRectangle(Pens.Black, r1)
+            g.DrawRectangle(New Pen(BordersColor), r1)
         End If
 
         Drawblenditem(g, _start)
@@ -285,7 +290,7 @@ Public Class BlendEditor
 
         Dim r_brd As Rectangle = ClientRectangle
         r_brd.Width -= 1 : r_brd.Height -= 1
-        g.DrawRectangle(Pens.Black, r_brd)
+        g.DrawRectangle(New Pen(BordersColor), r_brd)
 
     End Sub
 

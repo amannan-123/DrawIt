@@ -37,12 +37,12 @@ Public Class ColorListDialog
         Close()
     End Sub
 
-    Private Sub bAdd_Click(sender As Object, e As EventArgs) Handles bAdd.Click
+    Private Sub bAdd_Click(sender As Object, e As EventArgs) Handles b_Add.Click
         _lst.Add(CE_Button.SelectedColor)
         UpdateItems(_lst.Count - 1)
     End Sub
 
-    Private Sub bRemove_Click(sender As Object, e As EventArgs) Handles bRemove.Click
+    Private Sub bRemove_Click(sender As Object, e As EventArgs) Handles b_Remove.Click
         Dim ind As Integer = lstColors.SelectedIndex
         If ind > -1 AndAlso _lst.Count > 1 Then
             _lst.RemoveAt(ind)
@@ -50,7 +50,7 @@ Public Class ColorListDialog
         End If
     End Sub
 
-    Private Sub bUp_Click(sender As Object, e As EventArgs) Handles bUp.Click
+    Private Sub bUp_Click(sender As Object, e As EventArgs) Handles b_Up.Click
         Dim ind As Integer = lstColors.SelectedIndex
         If ind > 0 Then
             Dim clr As Color = _lst(ind)
@@ -60,7 +60,7 @@ Public Class ColorListDialog
         End If
     End Sub
 
-    Private Sub bDown_Click(sender As Object, e As EventArgs) Handles bDown.Click
+    Private Sub bDown_Click(sender As Object, e As EventArgs) Handles b_Down.Click
         Dim ind As Integer = lstColors.SelectedIndex
         If ind > -1 And ind < _lst.Count - 1 Then
             Dim clr As Color = _lst(ind)

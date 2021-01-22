@@ -5,13 +5,9 @@ Public Class MainForm
 
 #Region "TabPageRelated"
     Private Function CurrentCanvas() As Canvas
-        Try
-            If tCanvas.TabPages.Count > 0 Then
-                Return DirectCast(tCanvas.SelectedTab.Controls()(0), Canvas)
-            End If
-        Catch ex As Exception
-            Return Canvas1
-        End Try
+        If tCanvas.TabPages.Count > 0 Then
+            Return DirectCast(tCanvas.SelectedTab.Controls()(0), Canvas)
+        End If
         Return Nothing
     End Function
 
@@ -116,8 +112,12 @@ Public Class MainForm
     End Sub
 
     Public Sub UpdateBoundControls()
-        If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
+        If Not IsNothing(CurrentCanvas) Then
             Dim shp As Shape = CurrentCanvas.MainSelected
+            If IsNothing(shp) Then
+                PB_Texture.Image = Nothing
+                Return
+            End If
             ud_X.Value = shp.BaseRect.X
             ud_Y.Value = shp.BaseRect.Y
             ud_W.Value = shp.BaseRect.Width
@@ -215,6 +215,7 @@ Public Class MainForm
         shp.FBrush.SolidColor = Color.Black
         shp.MShape.Text = "AZ"
         shp.MShape.FontSize = 9
+        shp.MShape.Spirals = 3
 
         Select Case shp.MShape.SType
             Case MyShape.ShapeStyle.Text
@@ -441,28 +442,22 @@ Public Class MainForm
         End If
     End Sub
 
-    Private Sub HideBrushPanels()
-        pSolid.Visible = False
-        pLinear.Visible = False
-        pPath.Visible = False
-        pHatch.Visible = False
-        pTexture.Visible = False
-    End Sub
-
     Private Sub cb_Brush_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cb_Brush.SelectedIndexChanged
-        HideBrushPanels()
-        Select Case cb_Brush.SelectedItem
-            Case "Solid"
-                pSolid.Visible = True
-            Case "LinearGradient"
-                pLinear.Visible = True
-            Case "PathGradient"
-                pPath.Visible = True
-            Case "Hatch"
-                pHatch.Visible = True
-            Case "Texture"
-                pTexture.Visible = True
-        End Select
+        If tbFill.BackColor = Color.FromArgb(50, 50, 50) Then
+            HideAllPanels()
+            Select Case cb_Brush.SelectedItem
+                Case "Solid"
+                    pSolid.Visible = True
+                Case "LinearGradient"
+                    pLinear.Visible = True
+                Case "PathGradient"
+                    pPath.Visible = True
+                Case "Hatch"
+                    pHatch.Visible = True
+                Case "Texture"
+                    pTexture.Visible = True
+            End Select
+        End If
         If rDraw.Checked Then Return
         If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
             CurrentCanvas.MainSelected.FBrush.BType = [Enum].Parse(GetType(MyBrush.BrushType), cb_Brush.SelectedItem)
@@ -1011,6 +1006,9 @@ Public Class MainForm
                 Case MyShape.ShapeStyle.Arc, MyShape.ShapeStyle.Pie
                     Dim dlg As New AnglesDialog(shp, CurrentCanvas)
                     dlg.ShowDialog()
+                Case MyShape.ShapeStyle.Spiral
+                    Dim dlg As New SpiralDialog(shp, CurrentCanvas)
+                    dlg.ShowDialog()
                 Case MyShape.ShapeStyle.Text
                     Dim dlg As New TextEditor(shp)
                     If dlg.ShowDialog = DialogResult.OK Then
@@ -1131,6 +1129,90 @@ Public Class MainForm
             shp.Shadow.Enabled = cb_EShadow.Checked
             CurrentCanvas.Invalidate()
         End If
+    End Sub
+#End Region
+
+#Region "Custom Tabs"
+    Private Sub HideAllPanels()
+        pSolid.Visible = False
+        pLinear.Visible = False
+        pPath.Visible = False
+        pHatch.Visible = False
+        pTexture.Visible = False
+        pStroke.Visible = False
+        pGlow.Visible = False
+        pShadow.Visible = False
+    End Sub
+
+    Private Sub tbGlow_Click(sender As Object, e As EventArgs) Handles tbGlow.Click
+        tbFill.BackColor = Color.Black
+        tbFill.DrawEffect = True
+        tbStroke.BackColor = Color.Black
+        tbStroke.DrawEffect = True
+        tbShadow.BackColor = Color.Black
+        tbShadow.DrawEffect = True
+        tbGlow.BackColor = Color.FromArgb(50, 50, 50)
+        tbGlow.DrawEffect = False
+        HideAllPanels()
+        pGlow.Visible = True
+        pGlow.Focus()
+    End Sub
+
+    Private Sub tbShadow_Click(sender As Object, e As EventArgs) Handles tbShadow.Click
+        tbFill.BackColor = Color.Black
+        tbFill.DrawEffect = True
+        tbStroke.BackColor = Color.Black
+        tbStroke.DrawEffect = True
+        tbGlow.BackColor = Color.Black
+        tbGlow.DrawEffect = True
+        tbShadow.BackColor = Color.FromArgb(50, 50, 50)
+        tbShadow.DrawEffect = False
+        HideAllPanels()
+        pShadow.Visible = True
+        pShadow.Focus()
+    End Sub
+
+    Private Sub tbStroke_Click(sender As Object, e As EventArgs) Handles tbStroke.Click
+        tbFill.BackColor = Color.Black
+        tbFill.DrawEffect = True
+        tbGlow.BackColor = Color.Black
+        tbGlow.DrawEffect = True
+        tbShadow.BackColor = Color.Black
+        tbShadow.DrawEffect = True
+        tbStroke.BackColor = Color.FromArgb(50, 50, 50)
+        tbStroke.DrawEffect = False
+        HideAllPanels()
+        pStroke.Visible = True
+        pStroke.Focus()
+    End Sub
+
+    Private Sub tbFill_Click(sender As Object, e As EventArgs) Handles tbFill.Click
+        tbGlow.BackColor = Color.Black
+        tbGlow.DrawEffect = True
+        tbStroke.BackColor = Color.Black
+        tbStroke.DrawEffect = True
+        tbShadow.BackColor = Color.Black
+        tbShadow.DrawEffect = True
+        tbFill.BackColor = Color.FromArgb(50, 50, 50)
+        tbFill.DrawEffect = False
+        HideAllPanels()
+        Select Case cb_Brush.SelectedItem
+            Case "Solid"
+                pSolid.Visible = True
+                pSolid.Focus()
+            Case "LinearGradient"
+                pLinear.Visible = True
+                pLinear.Focus()
+            Case "PathGradient"
+                pPath.Visible = True
+                pPath.Focus()
+            Case "Hatch"
+                pHatch.Visible = True
+                pHatch.Focus()
+            Case "Texture"
+                pTexture.Visible = True
+                pTexture.Focus()
+        End Select
     End Sub
 #End Region
 

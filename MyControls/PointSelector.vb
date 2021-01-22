@@ -110,6 +110,19 @@ Public Class PointSelector
         End Set
     End Property
 
+    Private back_clr As Color = Color.White
+    <Description("Back Rectangle Color")>
+    <DefaultValue(GetType(Color), "White")>
+    Public Property BackRectColor() As Color
+        Get
+            Return back_clr
+        End Get
+        Set(ByVal value As Color)
+            back_clr = value
+            Invalidate()
+        End Set
+    End Property
+
     Private _brd As Color = Color.Black
     <Description("Borders Color")>
     <DefaultValue(GetType(Color), "Black")>
@@ -241,7 +254,7 @@ Public Class PointSelector
 
         Dim pn As New Pen(BordersColor, 2)
 
-        g.FillRectangle(New SolidBrush(BackColor), rectSliderBar)
+        g.FillRectangle(New SolidBrush(BackRectColor), rectSliderBar)
         DrawRectF(g, pn, rectSliderBar)
 
         Dim pt1 = New PointF(rectSliderBar.X + (rectSliderBar.Width / 2),

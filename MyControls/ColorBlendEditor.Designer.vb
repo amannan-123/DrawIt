@@ -25,11 +25,11 @@ Partial Class ColorBlendEditor
         Me.Label1 = New System.Windows.Forms.Label()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.CB_Sort = New System.Windows.Forms.CheckBox()
-        Me.B_Clear = New System.Windows.Forms.Button()
-        Me.B_Balance = New System.Windows.Forms.Button()
+        Me.B_Reverse = New MyControls.MyButton()
+        Me.B_Balance = New MyControls.MyButton()
+        Me.B_Clear = New MyControls.MyButton()
         Me.BL_Pos = New MyControls.MyTrackBar()
         Me.CE_Button = New MyControls.ColorEditorButton()
-        Me.B_Reverse = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'Label1
@@ -38,7 +38,7 @@ Partial Class ColorBlendEditor
         Me.Label1.Location = New System.Drawing.Point(3, 85)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(51, 20)
-        Me.Label1.TabIndex = 2
+        Me.Label1.TabIndex = 6
         Me.Label1.Text = "Position:"
         Me.Label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
@@ -48,7 +48,7 @@ Partial Class ColorBlendEditor
         Me.Label2.Location = New System.Drawing.Point(3, 111)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(51, 20)
-        Me.Label2.TabIndex = 2
+        Me.Label2.TabIndex = 7
         Me.Label2.Text = "Color:"
         Me.Label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
@@ -61,41 +61,59 @@ Partial Class ColorBlendEditor
         Me.CB_Sort.Location = New System.Drawing.Point(6, 137)
         Me.CB_Sort.Name = "CB_Sort"
         Me.CB_Sort.Size = New System.Drawing.Size(73, 17)
-        Me.CB_Sort.TabIndex = 3
+        Me.CB_Sort.TabIndex = 2
         Me.CB_Sort.Text = "Sort Items"
         Me.CB_Sort.UseVisualStyleBackColor = True
         '
-        'B_Clear
+        'B_Reverse
         '
-        Me.B_Clear.Anchor = System.Windows.Forms.AnchorStyles.Top
-        Me.B_Clear.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.B_Clear.Location = New System.Drawing.Point(203, 133)
-        Me.B_Clear.Name = "B_Clear"
-        Me.B_Clear.Size = New System.Drawing.Size(41, 23)
-        Me.B_Clear.TabIndex = 4
-        Me.B_Clear.Text = "Clear"
-        Me.B_Clear.UseVisualStyleBackColor = True
+        Me.B_Reverse.Anchor = System.Windows.Forms.AnchorStyles.Top
+        Me.B_Reverse.BackColor = System.Drawing.Color.White
+        Me.B_Reverse.DrawBorder = True
+        Me.B_Reverse.DrawEffect = False
+        Me.B_Reverse.ForeColor = System.Drawing.Color.Black
+        Me.B_Reverse.Location = New System.Drawing.Point(83, 133)
+        Me.B_Reverse.MyText = "Reverse"
+        Me.B_Reverse.Name = "B_Reverse"
+        Me.B_Reverse.Size = New System.Drawing.Size(62, 23)
+        Me.B_Reverse.TabIndex = 3
         '
         'B_Balance
         '
         Me.B_Balance.Anchor = System.Windows.Forms.AnchorStyles.Top
-        Me.B_Balance.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.B_Balance.BackColor = System.Drawing.Color.White
+        Me.B_Balance.DrawBorder = True
+        Me.B_Balance.DrawEffect = False
+        Me.B_Balance.ForeColor = System.Drawing.Color.Black
         Me.B_Balance.Location = New System.Drawing.Point(146, 133)
+        Me.B_Balance.MyText = "Balance"
         Me.B_Balance.Name = "B_Balance"
         Me.B_Balance.Size = New System.Drawing.Size(56, 23)
         Me.B_Balance.TabIndex = 4
-        Me.B_Balance.Text = "Balance"
-        Me.B_Balance.UseVisualStyleBackColor = True
+        '
+        'B_Clear
+        '
+        Me.B_Clear.Anchor = System.Windows.Forms.AnchorStyles.Top
+        Me.B_Clear.BackColor = System.Drawing.Color.White
+        Me.B_Clear.DrawBorder = True
+        Me.B_Clear.DrawEffect = False
+        Me.B_Clear.ForeColor = System.Drawing.Color.Black
+        Me.B_Clear.Location = New System.Drawing.Point(203, 133)
+        Me.B_Clear.MyText = "Clear"
+        Me.B_Clear.Name = "B_Clear"
+        Me.B_Clear.Size = New System.Drawing.Size(41, 23)
+        Me.B_Clear.TabIndex = 5
         '
         'BL_Pos
         '
         Me.BL_Pos.Anchor = System.Windows.Forms.AnchorStyles.Top
         Me.BL_Pos.Colors = New System.Drawing.Color() {System.Drawing.Color.SkyBlue, System.Drawing.Color.DodgerBlue, System.Drawing.Color.SkyBlue}
+        Me.BL_Pos.Factors = New Single() {0!, 1.0!}
         Me.BL_Pos.Location = New System.Drawing.Point(60, 85)
         Me.BL_Pos.Name = "BL_Pos"
         Me.BL_Pos.Positions = New Single() {0!, 0.5!, 1.0!}
         Me.BL_Pos.Size = New System.Drawing.Size(184, 20)
-        Me.BL_Pos.TabIndex = 1
+        Me.BL_Pos.TabIndex = 0
         '
         'CE_Button
         '
@@ -105,18 +123,7 @@ Partial Class ColorBlendEditor
         Me.CE_Button.Name = "CE_Button"
         Me.CE_Button.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.CE_Button.Size = New System.Drawing.Size(184, 20)
-        Me.CE_Button.TabIndex = 0
-        '
-        'B_Reverse
-        '
-        Me.B_Reverse.Anchor = System.Windows.Forms.AnchorStyles.Top
-        Me.B_Reverse.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.B_Reverse.Location = New System.Drawing.Point(83, 133)
-        Me.B_Reverse.Name = "B_Reverse"
-        Me.B_Reverse.Size = New System.Drawing.Size(62, 23)
-        Me.B_Reverse.TabIndex = 4
-        Me.B_Reverse.Text = "Reverse"
-        Me.B_Reverse.UseVisualStyleBackColor = True
+        Me.CE_Button.TabIndex = 1
         '
         'ColorBlendEditor
         '
@@ -143,7 +150,7 @@ Partial Class ColorBlendEditor
     Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents Label2 As System.Windows.Forms.Label
     Friend WithEvents CB_Sort As System.Windows.Forms.CheckBox
-    Friend WithEvents B_Clear As System.Windows.Forms.Button
-    Friend WithEvents B_Balance As System.Windows.Forms.Button
-    Friend WithEvents B_Reverse As System.Windows.Forms.Button
+    Friend WithEvents B_Clear As MyButton
+    Friend WithEvents B_Balance As MyButton
+    Friend WithEvents B_Reverse As MyButton
 End Class

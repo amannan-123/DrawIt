@@ -19,6 +19,20 @@ Public Class ColorBlendEditor
     Private _end As New ColorBlendItem(Color.Black, 1)
     Private _lst As New List(Of ColorBlendItem)
 
+    Private _brd As Color = Color.Black
+    <Description("Borders Color")>
+    <DefaultValue(GetType(Color), "Black")>
+    Public Property BordersColor() As Color
+        Get
+            Return _brd
+        End Get
+        Set(ByVal value As Color)
+            _brd = value
+            Invalidate()
+        End Set
+    End Property
+
+
     Private _colors As Color() = New Color() {Color.White, Color.Black}
     Public Property Colors() As Color()
         Get
@@ -86,14 +100,6 @@ Public Class ColorBlendEditor
         Invalidate()
         UpdateControls()
         Return True
-    End Function
-
-    Private Function ToPercentage(p1 As Single, p2 As Single, pt As Single) As Single
-        Return 100 - ((p2 - pt) * 100) / (p2 - p1)
-    End Function
-
-    Private Function FromPercentage(p1 As Single, p2 As Single, pt As Single) As Single
-        Return pt * (p2 - p1) / 100 + p1
     End Function
 
     Private Function SelectedItem() As Integer
@@ -220,7 +226,7 @@ Public Class ColorBlendEditor
 
     Private Sub DrawColorBlendItem(g As Graphics, bl As ColorBlendItem)
         g.FillPath(New SolidBrush(bl.BColor), BlendRegion(bl))
-        g.DrawPath(Pens.Black, BlendRegion(bl))
+        g.DrawPath(New Pen(BordersColor), BlendRegion(bl))
         If bl.Selected Then
             Dim b_rect As RectangleF = BlendRegion(bl).GetBounds
             Dim s_rect As New RectangleF(b_rect.X, b_rect.Bottom, b_rect.Width, 5)
@@ -245,7 +251,7 @@ Public Class ColorBlendEditor
             lgb.InterpolationColors = cb
 
             g.FillRectangle(lgb, r1)
-            g.DrawRectangle(Pens.Black, r1)
+            g.DrawRectangle(New Pen(BordersColor), r1)
         End If
 
         DrawColorBlendItem(g, _start)
@@ -258,7 +264,7 @@ Public Class ColorBlendEditor
 
         Dim r_brd As Rectangle = ClientRectangle
         r_brd.Width -= 1 : r_brd.Height -= 1
-        g.DrawRectangle(Pens.Black, r_brd)
+        g.DrawRectangle(New Pen(BordersColor), r_brd)
 
     End Sub
 
@@ -340,6 +346,7 @@ Public Class ColorBlendEditor
         Invalidate()
         UpdateControls()
     End Sub
+
 End Class
 
 Public Class ColorBlendItem

@@ -1,5 +1,6 @@
 ﻿Imports System.ComponentModel
 
+<Serializable>
 Public Class MyShadow
 
 #Region "Properties"

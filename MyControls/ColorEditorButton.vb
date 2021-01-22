@@ -19,6 +19,12 @@ Public Class ColorEditorButton
         SetStyle(ControlStyles.OptimizedDoubleBuffer, True)
         _selector = New ColorSelector(Me)
         _selector.Width -= 1
+        _selector.Button1.BorderColor = Color.White
+        _selector.Button2.BorderColor = Color.White
+        _selector.Button1.ForeColor = Color.White
+        _selector.Button2.ForeColor = Color.White
+        _selector.Button1.BackColor = Color.Black
+        _selector.Button2.BackColor = Color.Black
         Dim _host As New ToolStripControlHost(_selector)
         _host.Margin = Padding.Empty
         _host.Padding = Padding.Empty
@@ -28,10 +34,17 @@ Public Class ColorEditorButton
         TSDropDown.Size = _selector.Size
         TSDropDown.BackColor = Color.Black
         TSDropDown.ForeColor = Color.White
+        AddHandler TSDropDown.KeyDown, AddressOf TSDropDown_KeyDown
         AddHandler TSDropDown.Closing, AddressOf TSDropDown_Closing
         AddHandler _selector.ColorChanged, AddressOf _selector_ColorChanged
         _selector.SelectedColor = BackColor
         SetRects()
+    End Sub
+
+    Private Sub TSDropDown_KeyDown(sender As Object, e As KeyEventArgs)
+        If e.KeyData = Keys.Enter Then
+            CloseEditor()
+        End If
     End Sub
 
     Private Sub TSDropDown_Closing(sender As Object, e As ToolStripDropDownClosingEventArgs)
@@ -146,8 +159,9 @@ Public Class ColorEditorButton
         g.DrawLines(Pens.White, New PointF() {p1, p2, p3})
         rect2.Inflate(vv - 1, vv)
 
-
-        Dim lgb3 As New LinearGradientBrush(rect3, Color.Black, Color.FromArgb(42, 79, 109), 0)
+        Dim cc1 As Color = Color.Black
+        If IsOpen Then cc1 = Color.FromArgb(30, 30, 30)
+        Dim lgb3 As New LinearGradientBrush(rect3, cc1, Color.FromArgb(42, 79, 109), 0)
         lgb3.SetBlendTriangularShape(0.5, 1)
         g.FillRectangle(lgb3, rect3)
         Dim sf As New StringFormat()
@@ -159,5 +173,23 @@ Public Class ColorEditorButton
         Dim brd_rect As Rectangle = ClientRectangle
         brd_rect.Width -= 1 : brd_rect.Height -= 1
         g.DrawRectangle(Pens.Black, brd_rect)
+
+        If Focused Then
+            Dim pn As New Pen(Color.Gray, 1)
+            pn.DashStyle = DashStyle.Dash
+            g.DrawRectangle(pn, brd_rect)
+        End If
+
     End Sub
+
+    Private Sub ColorEditorButton_Enter(sender As Object, e As EventArgs) Handles MyBase.Enter, MyBase.Leave
+        Invalidate()
+    End Sub
+
+    Private Sub ColorEditorButton_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
+        If e.KeyData = Keys.Enter Then
+            InvokeOnClick(Me, New EventArgs())
+        End If
+    End Sub
+
 End Class

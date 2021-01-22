@@ -22,28 +22,33 @@ Partial Class TestForm
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Me.PointSelector1 = New MyControls.PointSelector()
+        Me.CheckBox1 = New System.Windows.Forms.CheckBox()
         Me.SuspendLayout()
         '
-        'PointSelector1
+        'CheckBox1
         '
-        Me.PointSelector1.Location = New System.Drawing.Point(22, 21)
-        Me.PointSelector1.Name = "PointSelector1"
-        Me.PointSelector1.Size = New System.Drawing.Size(222, 225)
-        Me.PointSelector1.TabIndex = 0
-        Me.PointSelector1.Value = New System.Drawing.Point(100, 100)
+        Me.CheckBox1.AutoSize = True
+        Me.CheckBox1.ForeColor = System.Drawing.Color.Red
+        Me.CheckBox1.Location = New System.Drawing.Point(12, 12)
+        Me.CheckBox1.Name = "CheckBox1"
+        Me.CheckBox1.Size = New System.Drawing.Size(44, 17)
+        Me.CheckBox1.TabIndex = 0
+        Me.CheckBox1.Text = "Blur"
+        Me.CheckBox1.UseVisualStyleBackColor = True
         '
         'TestForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(722, 308)
-        Me.Controls.Add(Me.PointSelector1)
+        Me.BackColor = System.Drawing.Color.Black
+        Me.ClientSize = New System.Drawing.Size(300, 300)
+        Me.Controls.Add(Me.CheckBox1)
         Me.Name = "TestForm"
         Me.Text = "TestForm"
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
 
-    Friend WithEvents PointSelector1 As MyControls.PointSelector
+    Friend WithEvents CheckBox1 As CheckBox
 End Class

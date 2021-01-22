@@ -52,6 +52,7 @@ Partial Class AnglesDialog
         Me.T_Sweep.Factors = New Single() {0!, 1.0!}
         Me.T_Sweep.Location = New System.Drawing.Point(6, 64)
         Me.T_Sweep.Maximum = 360.0!
+        Me.T_Sweep.Minimum = 1.0!
         Me.T_Sweep.Name = "T_Sweep"
         Me.T_Sweep.Positions = New Single() {0!, 0.5!, 1.0!}
         Me.T_Sweep.Size = New System.Drawing.Size(207, 20)

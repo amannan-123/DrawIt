@@ -25,8 +25,8 @@ Partial Class ColorSelector
         Me.TextBox1 = New System.Windows.Forms.TextBox()
         Me.cb_Colors = New System.Windows.Forms.ComboBox()
         Me.MyPanel2 = New MyControls.MyPanel()
-        Me.Button2 = New System.Windows.Forms.Button()
-        Me.Button1 = New System.Windows.Forms.Button()
+        Me.Button2 = New MyControls.MyButton()
+        Me.Button1 = New MyControls.MyButton()
         Me.t_Hex = New System.Windows.Forms.TextBox()
         Me.t_alpha = New MyControls.MyTrackBar()
         Me.Label1 = New System.Windows.Forms.Label()
@@ -110,28 +110,27 @@ Partial Class ColorSelector
         '
         'Button2
         '
-        Me.Button2.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.Button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.Button2.Font = New System.Drawing.Font("Segoe UI", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Button2.Location = New System.Drawing.Point(225, 169)
+        Me.Button2.BackColor = System.Drawing.Color.White
+        Me.Button2.DrawBorder = True
+        Me.Button2.DrawEffect = False
+        Me.Button2.ForeColor = System.Drawing.Color.Black
+        Me.Button2.Location = New System.Drawing.Point(220, 169)
+        Me.Button2.MyText = "Close"
         Me.Button2.Name = "Button2"
-        Me.Button2.Size = New System.Drawing.Size(37, 22)
-        Me.Button2.TabIndex = 4
-        Me.Button2.Text = "OK"
-        Me.Button2.UseVisualStyleBackColor = True
-        Me.Button2.Visible = False
+        Me.Button2.Size = New System.Drawing.Size(42, 22)
+        Me.Button2.TabIndex = 5
         '
         'Button1
         '
-        Me.Button1.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.Button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.Button1.Font = New System.Drawing.Font("Segoe UI", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Button1.Location = New System.Drawing.Point(179, 169)
+        Me.Button1.BackColor = System.Drawing.Color.White
+        Me.Button1.DrawBorder = True
+        Me.Button1.DrawEffect = False
+        Me.Button1.ForeColor = System.Drawing.Color.Black
+        Me.Button1.Location = New System.Drawing.Point(177, 169)
+        Me.Button1.MyText = "Set"
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(37, 22)
         Me.Button1.TabIndex = 4
-        Me.Button1.Text = "Set"
-        Me.Button1.UseVisualStyleBackColor = True
         '
         't_Hex
         '
@@ -480,7 +479,6 @@ Partial Class ColorSelector
     End Sub
 
     Friend WithEvents MyPanel2 As MyPanel
-    Friend WithEvents Button1 As System.Windows.Forms.Button
     Friend WithEvents t_Hex As System.Windows.Forms.TextBox
     Friend WithEvents t_alpha As MyTrackBar
     Friend WithEvents Label1 As System.Windows.Forms.Label
@@ -513,5 +511,6 @@ Partial Class ColorSelector
     Friend WithEvents TextBox1 As System.Windows.Forms.TextBox
     Friend WithEvents MyPanel1 As MyPanel
     Friend WithEvents cb_Colors As System.Windows.Forms.ComboBox
-    Friend WithEvents Button2 As System.Windows.Forms.Button
+    Friend WithEvents Button2 As MyButton
+    Friend WithEvents Button1 As MyButton
 End Class
