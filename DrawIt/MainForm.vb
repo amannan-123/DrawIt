@@ -1,4 +1,5 @@
 ﻿Imports System.Drawing.Drawing2D
+Imports System.IO
 Imports MyControls
 
 Public Class MainForm
@@ -480,8 +481,11 @@ Public Class MainForm
     Private Sub B_TImage_Click(sender As Object, e As EventArgs) Handles B_TImage.Click
         If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
             Dim shp As Shape = CurrentCanvas.MainSelected
-            If imgDialog.ShowDialog = DialogResult.OK Then
-                shp.FBrush.TImage = Image.FromFile(imgDialog.FileName)
+            openDialog.Multiselect = False
+            openDialog.Title = "Choose Image"
+            openDialog.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.bmp, *.gif, *.png) | *.jpg; *.jpeg; *.jpe; *.bmp; *.gif; *.png"
+            If openDialog.ShowDialog = DialogResult.OK Then
+                shp.FBrush.TImage = Image.FromFile(openDialog.FileName)
                 PB_Texture.Image = shp.FBrush.TImage
             End If
             CurrentCanvas.Invalidate()
@@ -1213,6 +1217,140 @@ Public Class MainForm
                 pTexture.Visible = True
                 pTexture.Focus()
         End Select
+    End Sub
+#End Region
+
+#Region "Menu Buttons"
+    Private Sub btClone_Click(sender As Object, e As EventArgs) Handles btClone.Click
+        If Not IsNothing(CurrentCanvas) Then
+            CurrentCanvas.CloneSelected()
+        End If
+    End Sub
+
+    Private Sub btFront_Click(sender As Object, e As EventArgs) Handles btFront.Click
+        If Not IsNothing(CurrentCanvas) Then
+            CurrentCanvas.ToFront()
+        End If
+    End Sub
+
+    Private Sub btBack_Click(sender As Object, e As EventArgs) Handles btBack.Click
+        If Not IsNothing(CurrentCanvas) Then
+            CurrentCanvas.ToBack()
+        End If
+    End Sub
+
+    Private Sub btDelete_Click(sender As Object, e As EventArgs) Handles btDelete.Click
+        If Not IsNothing(CurrentCanvas) Then
+            CurrentCanvas.DeleteSelected()
+        End If
+    End Sub
+#End Region
+
+#Region "Side Bar"
+    Private Sub btMenu_Click(sender As Object, e As EventArgs) Handles btMenu.Click
+        If pSideBar.Width = 45 Then
+            pSideBar.Width = 180
+            btMenu.DrawText = True
+            btSave.DrawText = True
+            btOpen.DrawText = True
+            btSettings.DrawText = True
+            btExit.DrawText = True
+            btAddC.DrawText = True
+            btDelC.DrawText = True
+        Else
+            pSideBar.Width = 45
+            btMenu.DrawText = False
+            btSave.DrawText = False
+            btOpen.DrawText = False
+            btSettings.DrawText = False
+            btExit.DrawText = False
+            btAddC.DrawText = False
+            btDelC.DrawText = False
+        End If
+    End Sub
+
+    Private Sub pSideBar_Leave(sender As Object, e As EventArgs) Handles pSideBar.Leave
+        If Not pSideBar.Width = 45 Then
+            pSideBar.Width = 45
+            btMenu.DrawText = False
+            btSave.DrawText = False
+            btOpen.DrawText = False
+            btSettings.DrawText = False
+            btExit.DrawText = False
+            btAddC.DrawText = False
+            btDelC.DrawText = False
+        End If
+    End Sub
+
+    Private Sub btDelC_Click(sender As Object, e As EventArgs) Handles btDelC.Click
+        If tCanvas.TabCount > 1 Then
+            tCanvas.TabPages.RemoveAt(tCanvas.SelectedIndex)
+        End If
+    End Sub
+
+    Private Sub btAddC_Click(sender As Object, e As EventArgs) Handles btAddC.Click
+        Dim cn As New Canvas(Me)
+        cn.BackColor = Color.Transparent
+        cn.Dock = DockStyle.Fill
+        Dim tp As New TabPage("Canvas" & tCanvas.TabCount + 1)
+        tp.BorderStyle = BorderStyle.FixedSingle
+        tp.Controls.Add(cn)
+        tCanvas.TabPages.Add(tp)
+        tCanvas.SelectedTab = tp
+    End Sub
+
+    Private Sub btOpen_Click(sender As Object, e As EventArgs) Handles btOpen.Click
+        openDialog.Multiselect = True
+        openDialog.Title = "Choose Project File"
+        openDialog.Filter = "DrawIt Project File (*.dif) | *.dif"
+        If openDialog.ShowDialog = DialogResult.OK Then
+            For Each str As String In openDialog.FileNames
+                Dim cn As New Canvas(Me)
+                cn.BackColor = Color.Transparent
+                cn.Dock = DockStyle.Fill
+                If Not IsNothing(cn.LoadProject(str)) Then
+
+                    Continue For
+                End If
+                Dim tp As New TabPage(Path.GetFileNameWithoutExtension(str))
+                tp.BorderStyle = BorderStyle.FixedSingle
+                tp.Controls.Add(cn)
+                tCanvas.TabPages.Add(tp)
+                tCanvas.SelectedTab = tp
+            Next
+        End If
+    End Sub
+
+    Private Sub btSave_Click(sender As Object, e As EventArgs) Handles btSave.Click
+        Dim cn = CurrentCanvas()
+        If IsNothing(cn) Then Return
+        saveDialog.Title = "Save As"
+        saveDialog.Filter = "DrawIt Project File (*.dif)|*.dif|Image File (*.png)|*.png"
+        saveDialog.DefaultExt = "*.dif"
+        saveDialog.FileName = tCanvas.SelectedTab.Text
+        If saveDialog.ShowDialog = DialogResult.OK Then
+            Dim inf As New FileInfo(saveDialog.FileName)
+            Select Case inf.Extension.ToLower
+                Case ".dif"
+                    If Not IsNothing(cn.SaveProject(saveDialog.FileName)) Then
+
+                    End If
+                Case ".png"
+                    If Not IsNothing(cn.SaveImage(saveDialog.FileName)) Then
+
+                    End If
+                Case Else
+
+            End Select
+        End If
+    End Sub
+
+    Private Sub btSettings_Click(sender As Object, e As EventArgs) Handles btSettings.Click
+
+    End Sub
+
+    Private Sub btExit_Click(sender As Object, e As EventArgs) Handles btExit.Click
+        Close()
     End Sub
 #End Region
 

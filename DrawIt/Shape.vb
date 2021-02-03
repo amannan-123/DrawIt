@@ -168,6 +168,13 @@ Public Class Shape
 #End Region
 
 #Region "Drawing Related Functions"
+    Public Function Region() As Region
+        Dim rg As New Region(Rectangle.Empty)
+        If Not IsNothing(BorderPath) Then rg.Union(BorderPath)
+        If Not IsNothing(SelectionPath) Then rg.Union(SelectionPath)
+        Return rg
+    End Function
+
     Public Function BorderPath() As GraphicsPath
         Dim gp As GraphicsPath = TotalPath()
         If Not IsNothing(gp) Then

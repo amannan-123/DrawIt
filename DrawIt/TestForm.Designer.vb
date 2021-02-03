@@ -23,6 +23,10 @@ Partial Class TestForm
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.CheckBox1 = New System.Windows.Forms.CheckBox()
+        Me.MyTabControl1 = New MyControls.MyTabControl()
+        Me.TabPage1 = New System.Windows.Forms.TabPage()
+        Me.TabPage2 = New System.Windows.Forms.TabPage()
+        Me.MyTabControl1.SuspendLayout()
         Me.SuspendLayout()
         '
         'CheckBox1
@@ -36,19 +40,54 @@ Partial Class TestForm
         Me.CheckBox1.Text = "Blur"
         Me.CheckBox1.UseVisualStyleBackColor = True
         '
+        'MyTabControl1
+        '
+        Me.MyTabControl1.Controls.Add(Me.TabPage1)
+        Me.MyTabControl1.Controls.Add(Me.TabPage2)
+        Me.MyTabControl1.Location = New System.Drawing.Point(110, 80)
+        Me.MyTabControl1.Multiline = True
+        Me.MyTabControl1.Name = "MyTabControl1"
+        Me.MyTabControl1.SelectedIndex = 0
+        Me.MyTabControl1.Size = New System.Drawing.Size(417, 181)
+        Me.MyTabControl1.TabIndex = 1
+        '
+        'TabPage1
+        '
+        Me.TabPage1.Location = New System.Drawing.Point(4, 25)
+        Me.TabPage1.Name = "TabPage1"
+        Me.TabPage1.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage1.Size = New System.Drawing.Size(409, 152)
+        Me.TabPage1.TabIndex = 0
+        Me.TabPage1.Text = "TabPage1"
+        Me.TabPage1.UseVisualStyleBackColor = True
+        '
+        'TabPage2
+        '
+        Me.TabPage2.Location = New System.Drawing.Point(4, 25)
+        Me.TabPage2.Name = "TabPage2"
+        Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage2.Size = New System.Drawing.Size(409, 152)
+        Me.TabPage2.TabIndex = 1
+        Me.TabPage2.Text = "TabPage2"
+        Me.TabPage2.UseVisualStyleBackColor = True
+        '
         'TestForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.BackColor = System.Drawing.Color.Black
-        Me.ClientSize = New System.Drawing.Size(300, 300)
+        Me.ClientSize = New System.Drawing.Size(683, 307)
+        Me.Controls.Add(Me.MyTabControl1)
         Me.Controls.Add(Me.CheckBox1)
         Me.Name = "TestForm"
         Me.Text = "TestForm"
+        Me.MyTabControl1.ResumeLayout(False)
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
 
     Friend WithEvents CheckBox1 As CheckBox
+    Friend WithEvents MyTabControl1 As MyControls.MyTabControl
+    Friend WithEvents TabPage1 As TabPage
+    Friend WithEvents TabPage2 As TabPage
 End Class

@@ -22,9 +22,42 @@ Partial Class MainForm
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Me.imgDialog = New System.Windows.Forms.OpenFileDialog()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(MainForm))
+        Me.openDialog = New System.Windows.Forms.OpenFileDialog()
+        Me.saveDialog = New System.Windows.Forms.SaveFileDialog()
+        Me.pSideBar = New MyControls.MyPanel()
+        Me.btDelC = New MyControls.FlatButton()
+        Me.btAddC = New MyControls.FlatButton()
+        Me.btExit = New MyControls.FlatButton()
+        Me.btSettings = New MyControls.FlatButton()
+        Me.btSave = New MyControls.FlatButton()
+        Me.btOpen = New MyControls.FlatButton()
+        Me.btMenu = New MyControls.FlatButton()
+        Me.tTop = New MyControls.MyPanel()
+        Me.btDelete = New MyControls.FlatButton()
+        Me.btClone = New MyControls.FlatButton()
+        Me.btBack = New MyControls.FlatButton()
+        Me.btFront = New MyControls.FlatButton()
+        Me.cb_Brush = New System.Windows.Forms.ComboBox()
+        Me.cb_Shape = New System.Windows.Forms.ComboBox()
+        Me.rDraw = New System.Windows.Forms.RadioButton()
+        Me.rSelect = New System.Windows.Forms.RadioButton()
+        Me.Label29 = New System.Windows.Forms.Label()
+        Me.Label1 = New System.Windows.Forms.Label()
         Me.tbShadow = New MyControls.MyButton()
         Me.tbGlow = New MyControls.MyButton()
+        Me.tBottom = New MyControls.MyPanel()
+        Me.bShape = New MyControls.MyButton()
+        Me.Label49 = New System.Windows.Forms.Label()
+        Me.Label48 = New System.Windows.Forms.Label()
+        Me.Label47 = New System.Windows.Forms.Label()
+        Me.Label46 = New System.Windows.Forms.Label()
+        Me.Label45 = New System.Windows.Forms.Label()
+        Me.ud_A = New System.Windows.Forms.NumericUpDown()
+        Me.ud_H = New System.Windows.Forms.NumericUpDown()
+        Me.ud_W = New System.Windows.Forms.NumericUpDown()
+        Me.ud_Y = New System.Windows.Forms.NumericUpDown()
+        Me.ud_X = New System.Windows.Forms.NumericUpDown()
         Me.tbStroke = New MyControls.MyButton()
         Me.tbFill = New MyControls.MyButton()
         Me.pMain = New MyControls.MyPanel()
@@ -150,31 +183,20 @@ Partial Class MainForm
         Me.Label5 = New System.Windows.Forms.Label()
         Me.CE_L2 = New MyControls.ColorEditorButton()
         Me.CE_L1 = New MyControls.ColorEditorButton()
-        Me.tTop = New MyControls.MyPanel()
-        Me.cb_Brush = New System.Windows.Forms.ComboBox()
-        Me.cb_Shape = New System.Windows.Forms.ComboBox()
-        Me.rDraw = New System.Windows.Forms.RadioButton()
-        Me.rSelect = New System.Windows.Forms.RadioButton()
-        Me.Label29 = New System.Windows.Forms.Label()
-        Me.Label1 = New System.Windows.Forms.Label()
-        Me.tCanvas = New System.Windows.Forms.TabControl()
-        Me.TabPage1 = New System.Windows.Forms.TabPage()
-        Me.TabPage2 = New System.Windows.Forms.TabPage()
-        Me.tBottom = New MyControls.MyPanel()
-        Me.bShape = New MyControls.MyButton()
-        Me.Label49 = New System.Windows.Forms.Label()
-        Me.Label48 = New System.Windows.Forms.Label()
-        Me.Label47 = New System.Windows.Forms.Label()
-        Me.Label46 = New System.Windows.Forms.Label()
-        Me.Label45 = New System.Windows.Forms.Label()
-        Me.ud_A = New System.Windows.Forms.NumericUpDown()
-        Me.ud_H = New System.Windows.Forms.NumericUpDown()
-        Me.ud_W = New System.Windows.Forms.NumericUpDown()
-        Me.ud_Y = New System.Windows.Forms.NumericUpDown()
-        Me.ud_X = New System.Windows.Forms.NumericUpDown()
         Me.MyPanel1 = New MyControls.MyPanel()
+        Me.tCanvas = New MyControls.MyTabControl()
+        Me.TabPage1 = New System.Windows.Forms.TabPage()
         Me.Canvas1 = New DrawIt.Canvas()
+        Me.TabPage2 = New System.Windows.Forms.TabPage()
         Me.Canvas2 = New DrawIt.Canvas()
+        Me.pSideBar.SuspendLayout()
+        Me.tTop.SuspendLayout()
+        Me.tBottom.SuspendLayout()
+        CType(Me.ud_A, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.ud_H, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.ud_W, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.ud_Y, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.ud_X, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pMain.SuspendLayout()
         Me.pPath.SuspendLayout()
         Me.pSolid.SuspendLayout()
@@ -185,24 +207,288 @@ Partial Class MainForm
         CType(Me.PB_Texture, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pShadow.SuspendLayout()
         Me.pLinear.SuspendLayout()
-        Me.tTop.SuspendLayout()
+        Me.MyPanel1.SuspendLayout()
         Me.tCanvas.SuspendLayout()
         Me.TabPage1.SuspendLayout()
         Me.TabPage2.SuspendLayout()
-        Me.tBottom.SuspendLayout()
-        CType(Me.ud_A, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.ud_H, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.ud_W, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.ud_Y, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.ud_X, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.MyPanel1.SuspendLayout()
         Me.SuspendLayout()
         '
-        'imgDialog
+        'openDialog
         '
-        Me.imgDialog.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.bmp, *.gif, *.png) | *.jpg; *.jpeg; *.jpe; *" &
+        Me.openDialog.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.bmp, *.gif, *.png) | *.jpg; *.jpeg; *.jpe; *" &
     ".bmp; *.gif; *.png"""
-        Me.imgDialog.Title = "Choose Image"
+        Me.openDialog.Title = "Choose Image"
+        '
+        'pSideBar
+        '
+        Me.pSideBar.Controls.Add(Me.btDelC)
+        Me.pSideBar.Controls.Add(Me.btAddC)
+        Me.pSideBar.Controls.Add(Me.btExit)
+        Me.pSideBar.Controls.Add(Me.btSettings)
+        Me.pSideBar.Controls.Add(Me.btSave)
+        Me.pSideBar.Controls.Add(Me.btOpen)
+        Me.pSideBar.Controls.Add(Me.btMenu)
+        Me.pSideBar.Dock = System.Windows.Forms.DockStyle.Left
+        Me.pSideBar.Location = New System.Drawing.Point(0, 0)
+        Me.pSideBar.Name = "pSideBar"
+        Me.pSideBar.Size = New System.Drawing.Size(45, 705)
+        Me.pSideBar.TabIndex = 7
+        '
+        'btDelC
+        '
+        Me.btDelC.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btDelC.DrawText = False
+        Me.btDelC.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btDelC.FontSizeIncrement = 0.4!
+        Me.btDelC.Icon = CType(resources.GetObject("btDelC.Icon"), System.Drawing.Image)
+        Me.btDelC.Location = New System.Drawing.Point(0, 225)
+        Me.btDelC.Margin = New System.Windows.Forms.Padding(0)
+        Me.btDelC.MyText = "Remove Canvas"
+        Me.btDelC.Name = "btDelC"
+        Me.btDelC.Size = New System.Drawing.Size(45, 45)
+        Me.btDelC.TabIndex = 16
+        '
+        'btAddC
+        '
+        Me.btAddC.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btAddC.DrawText = False
+        Me.btAddC.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btAddC.FontSizeIncrement = 0.4!
+        Me.btAddC.Icon = CType(resources.GetObject("btAddC.Icon"), System.Drawing.Image)
+        Me.btAddC.Location = New System.Drawing.Point(0, 180)
+        Me.btAddC.Margin = New System.Windows.Forms.Padding(0)
+        Me.btAddC.MyText = "Add Canvas"
+        Me.btAddC.Name = "btAddC"
+        Me.btAddC.Size = New System.Drawing.Size(45, 45)
+        Me.btAddC.TabIndex = 17
+        '
+        'btExit
+        '
+        Me.btExit.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btExit.DrawText = False
+        Me.btExit.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btExit.FontSizeIncrement = 0.4!
+        Me.btExit.Icon = CType(resources.GetObject("btExit.Icon"), System.Drawing.Image)
+        Me.btExit.Location = New System.Drawing.Point(0, 660)
+        Me.btExit.Margin = New System.Windows.Forms.Padding(0)
+        Me.btExit.MyText = "Exit"
+        Me.btExit.Name = "btExit"
+        Me.btExit.Size = New System.Drawing.Size(45, 45)
+        Me.btExit.TabIndex = 15
+        '
+        'btSettings
+        '
+        Me.btSettings.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btSettings.DrawText = False
+        Me.btSettings.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btSettings.FontSizeIncrement = 0.4!
+        Me.btSettings.Icon = CType(resources.GetObject("btSettings.Icon"), System.Drawing.Image)
+        Me.btSettings.Location = New System.Drawing.Point(0, 135)
+        Me.btSettings.Margin = New System.Windows.Forms.Padding(0)
+        Me.btSettings.MyText = "Settings"
+        Me.btSettings.Name = "btSettings"
+        Me.btSettings.Size = New System.Drawing.Size(45, 45)
+        Me.btSettings.TabIndex = 11
+        '
+        'btSave
+        '
+        Me.btSave.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btSave.DrawText = False
+        Me.btSave.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btSave.FontSizeIncrement = 0.4!
+        Me.btSave.Icon = CType(resources.GetObject("btSave.Icon"), System.Drawing.Image)
+        Me.btSave.Location = New System.Drawing.Point(0, 90)
+        Me.btSave.Margin = New System.Windows.Forms.Padding(0)
+        Me.btSave.MyText = "Save"
+        Me.btSave.Name = "btSave"
+        Me.btSave.Size = New System.Drawing.Size(45, 45)
+        Me.btSave.TabIndex = 12
+        '
+        'btOpen
+        '
+        Me.btOpen.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btOpen.DrawText = False
+        Me.btOpen.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btOpen.FontSizeIncrement = 0.4!
+        Me.btOpen.Icon = CType(resources.GetObject("btOpen.Icon"), System.Drawing.Image)
+        Me.btOpen.Location = New System.Drawing.Point(0, 45)
+        Me.btOpen.Margin = New System.Windows.Forms.Padding(0)
+        Me.btOpen.MyText = "Open"
+        Me.btOpen.Name = "btOpen"
+        Me.btOpen.Size = New System.Drawing.Size(45, 45)
+        Me.btOpen.TabIndex = 13
+        '
+        'btMenu
+        '
+        Me.btMenu.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btMenu.DrawText = False
+        Me.btMenu.Font = New System.Drawing.Font("Segoe UI", 14.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btMenu.FontSizeIncrement = 0!
+        Me.btMenu.Icon = CType(resources.GetObject("btMenu.Icon"), System.Drawing.Image)
+        Me.btMenu.Location = New System.Drawing.Point(0, 0)
+        Me.btMenu.Margin = New System.Windows.Forms.Padding(0)
+        Me.btMenu.MyText = "Menu"
+        Me.btMenu.Name = "btMenu"
+        Me.btMenu.Size = New System.Drawing.Size(45, 45)
+        Me.btMenu.TabIndex = 14
+        '
+        'tTop
+        '
+        Me.tTop.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.tTop.BackColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer))
+        Me.tTop.Controls.Add(Me.btDelete)
+        Me.tTop.Controls.Add(Me.btClone)
+        Me.tTop.Controls.Add(Me.btBack)
+        Me.tTop.Controls.Add(Me.btFront)
+        Me.tTop.Controls.Add(Me.cb_Brush)
+        Me.tTop.Controls.Add(Me.cb_Shape)
+        Me.tTop.Controls.Add(Me.rDraw)
+        Me.tTop.Controls.Add(Me.rSelect)
+        Me.tTop.Controls.Add(Me.Label29)
+        Me.tTop.Controls.Add(Me.Label1)
+        Me.tTop.ForeColor = System.Drawing.Color.White
+        Me.tTop.Location = New System.Drawing.Point(45, 0)
+        Me.tTop.Name = "tTop"
+        Me.tTop.Size = New System.Drawing.Size(1042, 45)
+        Me.tTop.TabIndex = 0
+        '
+        'btDelete
+        '
+        Me.btDelete.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btDelete.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btDelete.Icon = CType(resources.GetObject("btDelete.Icon"), System.Drawing.Image)
+        Me.btDelete.Location = New System.Drawing.Point(997, 0)
+        Me.btDelete.Margin = New System.Windows.Forms.Padding(0)
+        Me.btDelete.MyText = ""
+        Me.btDelete.Name = "btDelete"
+        Me.btDelete.Size = New System.Drawing.Size(45, 45)
+        Me.btDelete.TabIndex = 5
+        '
+        'btClone
+        '
+        Me.btClone.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btClone.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btClone.Icon = CType(resources.GetObject("btClone.Icon"), System.Drawing.Image)
+        Me.btClone.Location = New System.Drawing.Point(952, 0)
+        Me.btClone.Margin = New System.Windows.Forms.Padding(0)
+        Me.btClone.MyText = ""
+        Me.btClone.Name = "btClone"
+        Me.btClone.Size = New System.Drawing.Size(45, 45)
+        Me.btClone.TabIndex = 6
+        '
+        'btBack
+        '
+        Me.btBack.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btBack.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btBack.Icon = CType(resources.GetObject("btBack.Icon"), System.Drawing.Image)
+        Me.btBack.Location = New System.Drawing.Point(907, 0)
+        Me.btBack.Margin = New System.Windows.Forms.Padding(0)
+        Me.btBack.MyText = ""
+        Me.btBack.Name = "btBack"
+        Me.btBack.Size = New System.Drawing.Size(45, 45)
+        Me.btBack.TabIndex = 7
+        '
+        'btFront
+        '
+        Me.btFront.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btFront.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btFront.Icon = CType(resources.GetObject("btFront.Icon"), System.Drawing.Image)
+        Me.btFront.Location = New System.Drawing.Point(862, 0)
+        Me.btFront.Margin = New System.Windows.Forms.Padding(0)
+        Me.btFront.MyText = ""
+        Me.btFront.Name = "btFront"
+        Me.btFront.Size = New System.Drawing.Size(45, 45)
+        Me.btFront.TabIndex = 8
+        '
+        'cb_Brush
+        '
+        Me.cb_Brush.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.cb_Brush.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
+        Me.cb_Brush.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+        Me.cb_Brush.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
+        Me.cb_Brush.DropDownHeight = 250
+        Me.cb_Brush.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cb_Brush.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cb_Brush.IntegralHeight = False
+        Me.cb_Brush.ItemHeight = 20
+        Me.cb_Brush.Location = New System.Drawing.Point(604, 9)
+        Me.cb_Brush.MaxDropDownItems = 14
+        Me.cb_Brush.Name = "cb_Brush"
+        Me.cb_Brush.Size = New System.Drawing.Size(171, 26)
+        Me.cb_Brush.TabIndex = 3
+        '
+        'cb_Shape
+        '
+        Me.cb_Shape.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.cb_Shape.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
+        Me.cb_Shape.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+        Me.cb_Shape.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
+        Me.cb_Shape.DropDownHeight = 250
+        Me.cb_Shape.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cb_Shape.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cb_Shape.IntegralHeight = False
+        Me.cb_Shape.ItemHeight = 20
+        Me.cb_Shape.Location = New System.Drawing.Point(384, 9)
+        Me.cb_Shape.MaxDropDownItems = 14
+        Me.cb_Shape.Name = "cb_Shape"
+        Me.cb_Shape.Size = New System.Drawing.Size(171, 26)
+        Me.cb_Shape.TabIndex = 2
+        '
+        'rDraw
+        '
+        Me.rDraw.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.rDraw.AutoSize = True
+        Me.rDraw.Checked = True
+        Me.rDraw.Location = New System.Drawing.Point(268, 4)
+        Me.rDraw.Name = "rDraw"
+        Me.rDraw.Size = New System.Drawing.Size(50, 17)
+        Me.rDraw.TabIndex = 0
+        Me.rDraw.TabStop = True
+        Me.rDraw.Text = "Draw"
+        Me.rDraw.UseVisualStyleBackColor = True
+        '
+        'rSelect
+        '
+        Me.rSelect.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.rSelect.AutoSize = True
+        Me.rSelect.Location = New System.Drawing.Point(268, 24)
+        Me.rSelect.Name = "rSelect"
+        Me.rSelect.Size = New System.Drawing.Size(55, 17)
+        Me.rSelect.TabIndex = 1
+        Me.rSelect.Text = "Select"
+        Me.rSelect.UseVisualStyleBackColor = True
+        '
+        'Label29
+        '
+        Me.Label29.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Label29.AutoSize = True
+        Me.Label29.Location = New System.Drawing.Point(337, 16)
+        Me.Label29.Name = "Label29"
+        Me.Label29.Size = New System.Drawing.Size(41, 13)
+        Me.Label29.TabIndex = 3
+        Me.Label29.Text = "Shape:"
+        '
+        'Label1
+        '
+        Me.Label1.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(561, 16)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(37, 13)
+        Me.Label1.TabIndex = 3
+        Me.Label1.Text = "Brush:"
         '
         'tbShadow
         '
@@ -229,6 +515,141 @@ Partial Class MainForm
         Me.tbGlow.Name = "tbGlow"
         Me.tbGlow.Size = New System.Drawing.Size(67, 30)
         Me.tbGlow.TabIndex = 3
+        '
+        'tBottom
+        '
+        Me.tBottom.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.tBottom.BackColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer))
+        Me.tBottom.Controls.Add(Me.bShape)
+        Me.tBottom.Controls.Add(Me.Label49)
+        Me.tBottom.Controls.Add(Me.Label48)
+        Me.tBottom.Controls.Add(Me.Label47)
+        Me.tBottom.Controls.Add(Me.Label46)
+        Me.tBottom.Controls.Add(Me.Label45)
+        Me.tBottom.Controls.Add(Me.ud_A)
+        Me.tBottom.Controls.Add(Me.ud_H)
+        Me.tBottom.Controls.Add(Me.ud_W)
+        Me.tBottom.Controls.Add(Me.ud_Y)
+        Me.tBottom.Controls.Add(Me.ud_X)
+        Me.tBottom.ForeColor = System.Drawing.Color.White
+        Me.tBottom.Location = New System.Drawing.Point(45, 660)
+        Me.tBottom.Name = "tBottom"
+        Me.tBottom.Size = New System.Drawing.Size(1042, 45)
+        Me.tBottom.TabIndex = 2
+        '
+        'bShape
+        '
+        Me.bShape.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.bShape.BackColor = System.Drawing.Color.Black
+        Me.bShape.ForeColor = System.Drawing.Color.White
+        Me.bShape.Location = New System.Drawing.Point(721, 7)
+        Me.bShape.MyText = "Edit Shape"
+        Me.bShape.Name = "bShape"
+        Me.bShape.Size = New System.Drawing.Size(75, 30)
+        Me.bShape.TabIndex = 5
+        '
+        'Label49
+        '
+        Me.Label49.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Label49.AutoSize = True
+        Me.Label49.Location = New System.Drawing.Point(611, 14)
+        Me.Label49.Name = "Label49"
+        Me.Label49.Size = New System.Drawing.Size(37, 13)
+        Me.Label49.TabIndex = 1
+        Me.Label49.Text = "Angle:"
+        '
+        'Label48
+        '
+        Me.Label48.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Label48.AutoSize = True
+        Me.Label48.Location = New System.Drawing.Point(520, 14)
+        Me.Label48.Name = "Label48"
+        Me.Label48.Size = New System.Drawing.Size(18, 13)
+        Me.Label48.TabIndex = 1
+        Me.Label48.Text = "H:"
+        '
+        'Label47
+        '
+        Me.Label47.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Label47.AutoSize = True
+        Me.Label47.Location = New System.Drawing.Point(426, 14)
+        Me.Label47.Name = "Label47"
+        Me.Label47.Size = New System.Drawing.Size(21, 13)
+        Me.Label47.TabIndex = 1
+        Me.Label47.Text = "W:"
+        '
+        'Label46
+        '
+        Me.Label46.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Label46.AutoSize = True
+        Me.Label46.Location = New System.Drawing.Point(336, 14)
+        Me.Label46.Name = "Label46"
+        Me.Label46.Size = New System.Drawing.Size(17, 13)
+        Me.Label46.TabIndex = 1
+        Me.Label46.Text = "Y:"
+        '
+        'Label45
+        '
+        Me.Label45.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.Label45.AutoSize = True
+        Me.Label45.Location = New System.Drawing.Point(246, 14)
+        Me.Label45.Name = "Label45"
+        Me.Label45.Size = New System.Drawing.Size(17, 13)
+        Me.Label45.TabIndex = 1
+        Me.Label45.Text = "X:"
+        '
+        'ud_A
+        '
+        Me.ud_A.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.ud_A.DecimalPlaces = 2
+        Me.ud_A.Location = New System.Drawing.Point(654, 12)
+        Me.ud_A.Maximum = New Decimal(New Integer() {360, 0, 0, 0})
+        Me.ud_A.Name = "ud_A"
+        Me.ud_A.Size = New System.Drawing.Size(61, 20)
+        Me.ud_A.TabIndex = 4
+        '
+        'ud_H
+        '
+        Me.ud_H.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.ud_H.DecimalPlaces = 2
+        Me.ud_H.Location = New System.Drawing.Point(544, 12)
+        Me.ud_H.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
+        Me.ud_H.Name = "ud_H"
+        Me.ud_H.Size = New System.Drawing.Size(61, 20)
+        Me.ud_H.TabIndex = 3
+        '
+        'ud_W
+        '
+        Me.ud_W.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.ud_W.DecimalPlaces = 2
+        Me.ud_W.Location = New System.Drawing.Point(453, 12)
+        Me.ud_W.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
+        Me.ud_W.Name = "ud_W"
+        Me.ud_W.Size = New System.Drawing.Size(61, 20)
+        Me.ud_W.TabIndex = 2
+        '
+        'ud_Y
+        '
+        Me.ud_Y.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.ud_Y.DecimalPlaces = 2
+        Me.ud_Y.Location = New System.Drawing.Point(359, 12)
+        Me.ud_Y.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
+        Me.ud_Y.Minimum = New Decimal(New Integer() {5000, 0, 0, -2147483648})
+        Me.ud_Y.Name = "ud_Y"
+        Me.ud_Y.Size = New System.Drawing.Size(61, 20)
+        Me.ud_Y.TabIndex = 1
+        '
+        'ud_X
+        '
+        Me.ud_X.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.ud_X.DecimalPlaces = 2
+        Me.ud_X.Location = New System.Drawing.Point(269, 12)
+        Me.ud_X.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
+        Me.ud_X.Minimum = New Decimal(New Integer() {5000, 0, 0, -2147483648})
+        Me.ud_X.Name = "ud_X"
+        Me.ud_X.Size = New System.Drawing.Size(61, 20)
+        Me.ud_X.TabIndex = 0
         '
         'tbStroke
         '
@@ -307,7 +728,7 @@ Partial Class MainForm
         '
         'B_Surround
         '
-        Me.B_Surround.BackColor = System.Drawing.Color.FromArgb(CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer))
+        Me.B_Surround.BackColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer))
         Me.B_Surround.ForeColor = System.Drawing.Color.White
         Me.B_Surround.Location = New System.Drawing.Point(69, 37)
         Me.B_Surround.MyText = "Edit Surround Colors"
@@ -1720,270 +2141,6 @@ Partial Class MainForm
         Me.CE_L1.Size = New System.Drawing.Size(186, 25)
         Me.CE_L1.TabIndex = 0
         '
-        'tTop
-        '
-        Me.tTop.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.tTop.BackColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer))
-        Me.tTop.Controls.Add(Me.cb_Brush)
-        Me.tTop.Controls.Add(Me.cb_Shape)
-        Me.tTop.Controls.Add(Me.rDraw)
-        Me.tTop.Controls.Add(Me.rSelect)
-        Me.tTop.Controls.Add(Me.Label29)
-        Me.tTop.Controls.Add(Me.Label1)
-        Me.tTop.ForeColor = System.Drawing.Color.White
-        Me.tTop.Location = New System.Drawing.Point(0, 0)
-        Me.tTop.Name = "tTop"
-        Me.tTop.Size = New System.Drawing.Size(1087, 45)
-        Me.tTop.TabIndex = 0
-        '
-        'cb_Brush
-        '
-        Me.cb_Brush.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.cb_Brush.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
-        Me.cb_Brush.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
-        Me.cb_Brush.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
-        Me.cb_Brush.DropDownHeight = 250
-        Me.cb_Brush.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cb_Brush.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cb_Brush.IntegralHeight = False
-        Me.cb_Brush.ItemHeight = 20
-        Me.cb_Brush.Location = New System.Drawing.Point(626, 9)
-        Me.cb_Brush.MaxDropDownItems = 14
-        Me.cb_Brush.Name = "cb_Brush"
-        Me.cb_Brush.Size = New System.Drawing.Size(171, 26)
-        Me.cb_Brush.TabIndex = 3
-        '
-        'cb_Shape
-        '
-        Me.cb_Shape.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.cb_Shape.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
-        Me.cb_Shape.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
-        Me.cb_Shape.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
-        Me.cb_Shape.DropDownHeight = 250
-        Me.cb_Shape.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cb_Shape.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cb_Shape.IntegralHeight = False
-        Me.cb_Shape.ItemHeight = 20
-        Me.cb_Shape.Location = New System.Drawing.Point(406, 9)
-        Me.cb_Shape.MaxDropDownItems = 14
-        Me.cb_Shape.Name = "cb_Shape"
-        Me.cb_Shape.Size = New System.Drawing.Size(171, 26)
-        Me.cb_Shape.TabIndex = 2
-        '
-        'rDraw
-        '
-        Me.rDraw.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.rDraw.AutoSize = True
-        Me.rDraw.Checked = True
-        Me.rDraw.Location = New System.Drawing.Point(290, 4)
-        Me.rDraw.Name = "rDraw"
-        Me.rDraw.Size = New System.Drawing.Size(50, 17)
-        Me.rDraw.TabIndex = 0
-        Me.rDraw.TabStop = True
-        Me.rDraw.Text = "Draw"
-        Me.rDraw.UseVisualStyleBackColor = True
-        '
-        'rSelect
-        '
-        Me.rSelect.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.rSelect.AutoSize = True
-        Me.rSelect.Location = New System.Drawing.Point(290, 24)
-        Me.rSelect.Name = "rSelect"
-        Me.rSelect.Size = New System.Drawing.Size(55, 17)
-        Me.rSelect.TabIndex = 1
-        Me.rSelect.Text = "Select"
-        Me.rSelect.UseVisualStyleBackColor = True
-        '
-        'Label29
-        '
-        Me.Label29.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.Label29.AutoSize = True
-        Me.Label29.Location = New System.Drawing.Point(359, 16)
-        Me.Label29.Name = "Label29"
-        Me.Label29.Size = New System.Drawing.Size(41, 13)
-        Me.Label29.TabIndex = 3
-        Me.Label29.Text = "Shape:"
-        '
-        'Label1
-        '
-        Me.Label1.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(583, 16)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(37, 13)
-        Me.Label1.TabIndex = 3
-        Me.Label1.Text = "Brush:"
-        '
-        'tCanvas
-        '
-        Me.tCanvas.Controls.Add(Me.TabPage1)
-        Me.tCanvas.Controls.Add(Me.TabPage2)
-        Me.tCanvas.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.tCanvas.Location = New System.Drawing.Point(0, 0)
-        Me.tCanvas.Name = "tCanvas"
-        Me.tCanvas.SelectedIndex = 0
-        Me.tCanvas.Size = New System.Drawing.Size(1087, 615)
-        Me.tCanvas.TabIndex = 1
-        '
-        'TabPage1
-        '
-        Me.TabPage1.AutoScroll = True
-        Me.TabPage1.BackColor = System.Drawing.Color.White
-        Me.TabPage1.Controls.Add(Me.Canvas1)
-        Me.TabPage1.Location = New System.Drawing.Point(4, 22)
-        Me.TabPage1.Name = "TabPage1"
-        Me.TabPage1.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage1.Size = New System.Drawing.Size(1079, 589)
-        Me.TabPage1.TabIndex = 0
-        Me.TabPage1.Text = "Canvas1"
-        '
-        'TabPage2
-        '
-        Me.TabPage2.Controls.Add(Me.Canvas2)
-        Me.TabPage2.Location = New System.Drawing.Point(4, 22)
-        Me.TabPage2.Name = "TabPage2"
-        Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage2.Size = New System.Drawing.Size(1077, 589)
-        Me.TabPage2.TabIndex = 1
-        Me.TabPage2.Text = "Canvas2"
-        Me.TabPage2.UseVisualStyleBackColor = True
-        '
-        'tBottom
-        '
-        Me.tBottom.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.tBottom.BackColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer))
-        Me.tBottom.Controls.Add(Me.bShape)
-        Me.tBottom.Controls.Add(Me.Label49)
-        Me.tBottom.Controls.Add(Me.Label48)
-        Me.tBottom.Controls.Add(Me.Label47)
-        Me.tBottom.Controls.Add(Me.Label46)
-        Me.tBottom.Controls.Add(Me.Label45)
-        Me.tBottom.Controls.Add(Me.ud_A)
-        Me.tBottom.Controls.Add(Me.ud_H)
-        Me.tBottom.Controls.Add(Me.ud_W)
-        Me.tBottom.Controls.Add(Me.ud_Y)
-        Me.tBottom.Controls.Add(Me.ud_X)
-        Me.tBottom.ForeColor = System.Drawing.Color.White
-        Me.tBottom.Location = New System.Drawing.Point(0, 660)
-        Me.tBottom.Name = "tBottom"
-        Me.tBottom.Size = New System.Drawing.Size(1087, 45)
-        Me.tBottom.TabIndex = 2
-        '
-        'bShape
-        '
-        Me.bShape.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.bShape.BackColor = System.Drawing.Color.Black
-        Me.bShape.ForeColor = System.Drawing.Color.White
-        Me.bShape.Location = New System.Drawing.Point(743, 7)
-        Me.bShape.MyText = "Edit Shape"
-        Me.bShape.Name = "bShape"
-        Me.bShape.Size = New System.Drawing.Size(75, 30)
-        Me.bShape.TabIndex = 5
-        '
-        'Label49
-        '
-        Me.Label49.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.Label49.AutoSize = True
-        Me.Label49.Location = New System.Drawing.Point(633, 14)
-        Me.Label49.Name = "Label49"
-        Me.Label49.Size = New System.Drawing.Size(37, 13)
-        Me.Label49.TabIndex = 1
-        Me.Label49.Text = "Angle:"
-        '
-        'Label48
-        '
-        Me.Label48.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.Label48.AutoSize = True
-        Me.Label48.Location = New System.Drawing.Point(542, 14)
-        Me.Label48.Name = "Label48"
-        Me.Label48.Size = New System.Drawing.Size(18, 13)
-        Me.Label48.TabIndex = 1
-        Me.Label48.Text = "H:"
-        '
-        'Label47
-        '
-        Me.Label47.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.Label47.AutoSize = True
-        Me.Label47.Location = New System.Drawing.Point(448, 14)
-        Me.Label47.Name = "Label47"
-        Me.Label47.Size = New System.Drawing.Size(21, 13)
-        Me.Label47.TabIndex = 1
-        Me.Label47.Text = "W:"
-        '
-        'Label46
-        '
-        Me.Label46.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.Label46.AutoSize = True
-        Me.Label46.Location = New System.Drawing.Point(358, 14)
-        Me.Label46.Name = "Label46"
-        Me.Label46.Size = New System.Drawing.Size(17, 13)
-        Me.Label46.TabIndex = 1
-        Me.Label46.Text = "Y:"
-        '
-        'Label45
-        '
-        Me.Label45.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.Label45.AutoSize = True
-        Me.Label45.Location = New System.Drawing.Point(268, 14)
-        Me.Label45.Name = "Label45"
-        Me.Label45.Size = New System.Drawing.Size(17, 13)
-        Me.Label45.TabIndex = 1
-        Me.Label45.Text = "X:"
-        '
-        'ud_A
-        '
-        Me.ud_A.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.ud_A.DecimalPlaces = 2
-        Me.ud_A.Location = New System.Drawing.Point(676, 12)
-        Me.ud_A.Maximum = New Decimal(New Integer() {360, 0, 0, 0})
-        Me.ud_A.Name = "ud_A"
-        Me.ud_A.Size = New System.Drawing.Size(61, 20)
-        Me.ud_A.TabIndex = 4
-        '
-        'ud_H
-        '
-        Me.ud_H.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.ud_H.DecimalPlaces = 2
-        Me.ud_H.Location = New System.Drawing.Point(566, 12)
-        Me.ud_H.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
-        Me.ud_H.Name = "ud_H"
-        Me.ud_H.Size = New System.Drawing.Size(61, 20)
-        Me.ud_H.TabIndex = 3
-        '
-        'ud_W
-        '
-        Me.ud_W.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.ud_W.DecimalPlaces = 2
-        Me.ud_W.Location = New System.Drawing.Point(475, 12)
-        Me.ud_W.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
-        Me.ud_W.Name = "ud_W"
-        Me.ud_W.Size = New System.Drawing.Size(61, 20)
-        Me.ud_W.TabIndex = 2
-        '
-        'ud_Y
-        '
-        Me.ud_Y.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.ud_Y.DecimalPlaces = 2
-        Me.ud_Y.Location = New System.Drawing.Point(381, 12)
-        Me.ud_Y.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
-        Me.ud_Y.Minimum = New Decimal(New Integer() {5000, 0, 0, -2147483648})
-        Me.ud_Y.Name = "ud_Y"
-        Me.ud_Y.Size = New System.Drawing.Size(61, 20)
-        Me.ud_Y.TabIndex = 1
-        '
-        'ud_X
-        '
-        Me.ud_X.Anchor = System.Windows.Forms.AnchorStyles.None
-        Me.ud_X.DecimalPlaces = 2
-        Me.ud_X.Location = New System.Drawing.Point(291, 12)
-        Me.ud_X.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
-        Me.ud_X.Minimum = New Decimal(New Integer() {5000, 0, 0, -2147483648})
-        Me.ud_X.Name = "ud_X"
-        Me.ud_X.Size = New System.Drawing.Size(61, 20)
-        Me.ud_X.TabIndex = 0
-        '
         'MyPanel1
         '
         Me.MyPanel1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
@@ -1992,28 +2149,65 @@ Partial Class MainForm
         Me.MyPanel1.BackColor = System.Drawing.Color.FromArgb(CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer))
         Me.MyPanel1.Controls.Add(Me.tCanvas)
         Me.MyPanel1.ForeColor = System.Drawing.Color.Black
-        Me.MyPanel1.Location = New System.Drawing.Point(0, 45)
+        Me.MyPanel1.Location = New System.Drawing.Point(45, 45)
         Me.MyPanel1.Name = "MyPanel1"
-        Me.MyPanel1.Size = New System.Drawing.Size(1087, 615)
+        Me.MyPanel1.Size = New System.Drawing.Size(1042, 615)
         Me.MyPanel1.TabIndex = 6
+        '
+        'tCanvas
+        '
+        Me.tCanvas.Controls.Add(Me.TabPage1)
+        Me.tCanvas.Controls.Add(Me.TabPage2)
+        Me.tCanvas.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.tCanvas.ItemSize = New System.Drawing.Size(69, 25)
+        Me.tCanvas.Location = New System.Drawing.Point(0, 0)
+        Me.tCanvas.Name = "tCanvas"
+        Me.tCanvas.SelectedIndex = 0
+        Me.tCanvas.SelectedTabColor = System.Drawing.Color.DimGray
+        Me.tCanvas.Size = New System.Drawing.Size(1042, 615)
+        Me.tCanvas.TabIndex = 1
+        '
+        'TabPage1
+        '
+        Me.TabPage1.AutoScroll = True
+        Me.TabPage1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.TabPage1.Controls.Add(Me.Canvas1)
+        Me.TabPage1.Location = New System.Drawing.Point(4, 29)
+        Me.TabPage1.Name = "TabPage1"
+        Me.TabPage1.Size = New System.Drawing.Size(1034, 582)
+        Me.TabPage1.TabIndex = 0
+        Me.TabPage1.Text = "Canvas1"
         '
         'Canvas1
         '
         Me.Canvas1.BackColor = System.Drawing.Color.Transparent
+        Me.Canvas1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Canvas1.Location = New System.Drawing.Point(0, 0)
         Me.Canvas1.MainForm = Nothing
+        Me.Canvas1.Margin = New System.Windows.Forms.Padding(0)
         Me.Canvas1.Name = "Canvas1"
-        Me.Canvas1.Size = New System.Drawing.Size(1071, 583)
+        Me.Canvas1.Size = New System.Drawing.Size(1032, 580)
         Me.Canvas1.TabIndex = 1
+        '
+        'TabPage2
+        '
+        Me.TabPage2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.TabPage2.Controls.Add(Me.Canvas2)
+        Me.TabPage2.Location = New System.Drawing.Point(4, 29)
+        Me.TabPage2.Name = "TabPage2"
+        Me.TabPage2.Size = New System.Drawing.Size(1034, 582)
+        Me.TabPage2.TabIndex = 1
+        Me.TabPage2.Text = "Canvas2"
         '
         'Canvas2
         '
         Me.Canvas2.BackColor = System.Drawing.Color.Transparent
         Me.Canvas2.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Canvas2.Location = New System.Drawing.Point(3, 3)
+        Me.Canvas2.Location = New System.Drawing.Point(0, 0)
         Me.Canvas2.MainForm = Nothing
         Me.Canvas2.Name = "Canvas2"
-        Me.Canvas2.Size = New System.Drawing.Size(1071, 583)
+        Me.Canvas2.SelectionOrder = DrawIt.Canvas.SelectOrder.BelowFirst
+        Me.Canvas2.Size = New System.Drawing.Size(1032, 580)
         Me.Canvas2.TabIndex = 2
         '
         'MainForm
@@ -2022,6 +2216,7 @@ Partial Class MainForm
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.Black
         Me.ClientSize = New System.Drawing.Size(1366, 705)
+        Me.Controls.Add(Me.pSideBar)
         Me.Controls.Add(Me.tTop)
         Me.Controls.Add(Me.tbShadow)
         Me.Controls.Add(Me.tbGlow)
@@ -2037,6 +2232,16 @@ Partial Class MainForm
         Me.ShowIcon = False
         Me.Text = "MainForm"
         Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
+        Me.pSideBar.ResumeLayout(False)
+        Me.tTop.ResumeLayout(False)
+        Me.tTop.PerformLayout()
+        Me.tBottom.ResumeLayout(False)
+        Me.tBottom.PerformLayout()
+        CType(Me.ud_A, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.ud_H, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.ud_W, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.ud_Y, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.ud_X, System.ComponentModel.ISupportInitialize).EndInit()
         Me.pMain.ResumeLayout(False)
         Me.pPath.ResumeLayout(False)
         Me.pPath.PerformLayout()
@@ -2055,19 +2260,10 @@ Partial Class MainForm
         Me.pShadow.PerformLayout()
         Me.pLinear.ResumeLayout(False)
         Me.pLinear.PerformLayout()
-        Me.tTop.ResumeLayout(False)
-        Me.tTop.PerformLayout()
+        Me.MyPanel1.ResumeLayout(False)
         Me.tCanvas.ResumeLayout(False)
         Me.TabPage1.ResumeLayout(False)
         Me.TabPage2.ResumeLayout(False)
-        Me.tBottom.ResumeLayout(False)
-        Me.tBottom.PerformLayout()
-        CType(Me.ud_A, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.ud_H, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.ud_W, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.ud_Y, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.ud_X, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.MyPanel1.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
@@ -2134,7 +2330,7 @@ Partial Class MainForm
     Friend WithEvents CE_Trans As MyControls.ColorEditorButton
     Friend WithEvents Label20 As Label
     Friend WithEvents PB_Texture As PictureBox
-    Friend WithEvents imgDialog As OpenFileDialog
+    Friend WithEvents openDialog As OpenFileDialog
     Friend WithEvents cb_RotateFlip As ComboBox
     Friend WithEvents Label26 As Label
     Friend WithEvents B_TImage As MyControls.MyButton
@@ -2146,7 +2342,7 @@ Partial Class MainForm
     Friend WithEvents Label29 As Label
     Friend WithEvents B_Surround As MyControls.MyButton
     Friend WithEvents tBottom As MyControls.MyPanel
-    Friend WithEvents tCanvas As TabControl
+    Friend WithEvents tCanvas As MyControls.MyTabControl
     Friend WithEvents TabPage1 As TabPage
     Friend WithEvents TabPage2 As TabPage
     Friend WithEvents Canvas2 As Canvas
@@ -2224,4 +2420,17 @@ Partial Class MainForm
     Friend WithEvents tbGlow As MyControls.MyButton
     Friend WithEvents tbShadow As MyControls.MyButton
     Friend WithEvents MyPanel1 As MyControls.MyPanel
+    Friend WithEvents btDelete As MyControls.FlatButton
+    Friend WithEvents btClone As MyControls.FlatButton
+    Friend WithEvents btBack As MyControls.FlatButton
+    Friend WithEvents btFront As MyControls.FlatButton
+    Friend WithEvents pSideBar As MyControls.MyPanel
+    Friend WithEvents btExit As MyControls.FlatButton
+    Friend WithEvents btSettings As MyControls.FlatButton
+    Friend WithEvents btSave As MyControls.FlatButton
+    Friend WithEvents btOpen As MyControls.FlatButton
+    Friend WithEvents btMenu As MyControls.FlatButton
+    Friend WithEvents btDelC As MyControls.FlatButton
+    Friend WithEvents btAddC As MyControls.FlatButton
+    Friend WithEvents saveDialog As SaveFileDialog
 End Class

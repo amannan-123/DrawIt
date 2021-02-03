@@ -98,6 +98,12 @@
     <Compile Include="ColorSelector.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="FlatButton.Designer.vb">
+      <DependentUpon>FlatButton.vb</DependentUpon>
+    </Compile>
+    <Compile Include="FlatButton.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Helpers.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
@@ -124,6 +130,12 @@
       <DependentUpon>MyPanel.vb</DependentUpon>
     </Compile>
     <Compile Include="MyPanel.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MyTabControl.Designer.vb">
+      <DependentUpon>MyTabControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="MyTabControl.vb">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="MyTrackBar.Designer.vb">
@@ -160,6 +172,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ColorSelector.resx">
       <DependentUpon>ColorSelector.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FlatButton.resx">
+      <DependentUpon>FlatButton.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>

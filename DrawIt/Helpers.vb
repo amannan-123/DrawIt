@@ -13,8 +13,8 @@ Module Helpers
 		BottomLeft
 		Bottom
 		BottomRight
-		Rotate
         Move
+        Rotate
         Draw
         Selection
 		Centering

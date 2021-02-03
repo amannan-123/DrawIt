@@ -1,6 +1,8 @@
 ﻿Imports System.ComponentModel
 Imports System.Drawing.Drawing2D
 Imports System.Drawing.Text
+Imports System.IO
+Imports System.Runtime.Serialization.Formatters.Binary
 
 Public Class Canvas
 
@@ -59,6 +61,7 @@ Public Class Canvas
         End Get
         Set(ByVal value As SelectOrder)
             _ord = value
+            SetPrimary()
             Invalidate()
         End Set
     End Property
@@ -136,19 +139,54 @@ Public Class Canvas
     Dim s_rect As New Rectangle
 #End Region
 
+#Region "File Operations"
+    Public Function SaveProject(_loc As String) As Exception
+        Try
+            If File.Exists(_loc) Then File.Delete(_loc)
+            Dim stream As FileStream = File.Create(_loc)
+            Dim formatter As New BinaryFormatter()
+            formatter.Serialize(stream, shps)
+            stream.Close()
+            Return Nothing
+        Catch ex As Exception
+            Return ex
+        End Try
+    End Function
+
+    Public Function LoadProject(_loc As String) As Exception
+        Try
+            Dim stream As FileStream = File.Open(_loc, FileMode.Open)
+            Dim formatter As New BinaryFormatter()
+            shps = formatter.Deserialize(stream)
+            stream.Close()
+            Invalidate()
+            Return Nothing
+        Catch ex As Exception
+            Return ex
+        End Try
+    End Function
+
+    Public Function SaveImage(_loc As String) As Exception
+        Try
+            If File.Exists(_loc) Then File.Delete(_loc)
+            img.Save(_loc)
+            Return Nothing
+        Catch ex As Exception
+            Return ex
+        End Try
+    End Function
+#End Region
+
 #Region "Functions"
     Public Function ShapeInCursor(_loc As Point) As Integer
         Dim ind As Integer = -1
         If shps.Count = 0 Then Return ind
         For Each shp As Shape In shps
-            If Not IsNothing(shp.SelectionPath) AndAlso Not IsNothing(shp.BorderPath) Then
-                If shp.SelectionPath.IsVisible(_loc) Or
-                    shp.BorderPath.IsVisible(_loc) Then
-                    If _ord = SelectOrder.AboveFirst Then
-                        ind = shps.IndexOf(shp)
-                    Else
-                        Return ind
-                    End If
+            If Not IsNothing(shp.Region) AndAlso shp.Region.IsVisible(_loc) Then
+                If _ord = SelectOrder.AboveFirst Then
+                    ind = shps.IndexOf(shp)
+                Else
+                    Return shps.IndexOf(shp)
                 End If
             End If
         Next
@@ -156,12 +194,13 @@ Public Class Canvas
     End Function
 
     Public Function MainSelected() As Shape
+        Dim inds = SelectedIndices()
         Dim shp As Shape = Nothing
-        If (SelectedIndices().Count > 0) Then
+        If (inds.Count > 0) Then
             If _ord = SelectOrder.AboveFirst Then
-                shp = shps(SelectedIndices().Last)
+                shp = shps(inds.Last)
             Else
-                shp = shps(SelectedIndices().First)
+                shp = shps(inds.First)
             End If
         End If
         Return shp
@@ -170,16 +209,13 @@ Public Class Canvas
     Public Function SelectedIndices() As List(Of Integer)
         Dim inds As New List(Of Integer)
         For i As Integer = 0 To shps.Count - 1
-            Dim shp As Shape = shps(i)
-            If shp.Selected Then inds.Add(shps.IndexOf(shp))
+            If shps(i).Selected Then inds.Add(i)
         Next
         Return inds
     End Function
 
     Public Sub SetPrimary()
-        For Each ss As Shape In shps
-            ss.Primary = False
-        Next
+        shps.ForEach(Sub(x) x.Primary = False)
         If SelectedIndices.Count > 0 Then
             If _ord = SelectOrder.AboveFirst Then
                 shps(SelectedIndices().Last).Primary = True
@@ -189,16 +225,8 @@ Public Class Canvas
         End If
     End Sub
 
-    Public Sub SetMoving()
-        For Each ss As Shape In shps
-            ss.Moving = False
-        Next
-    End Sub
-
     Public Sub DeselectAll()
-        For Each shp As Shape In shps
-            shp.Selected = False
-        Next
+        shps.ForEach(Sub(x) x.Selected = False)
     End Sub
 
     Public Sub CloneSelected()
@@ -210,12 +238,38 @@ Public Class Canvas
         For Each sh As Shape In lst_sl
             shps.Add(sh)
         Next
+        Invalidate()
     End Sub
 
     Public Sub DeleteSelected()
         For i As Integer = SelectedIndices.Count - 1 To 0 Step -1
             shps.RemoveAt(SelectedIndices()(i))
         Next
+        Invalidate()
+    End Sub
+
+    Public Sub ToBack()
+        Dim lst_sl As New List(Of Shape)
+        For Each i As Integer In SelectedIndices()
+            lst_sl.Add(shps(i).Clone)
+        Next
+        DeleteSelected()
+        If lst_sl.Count > 0 Then
+            shps.InsertRange(0, lst_sl)
+        End If
+        Invalidate()
+    End Sub
+
+    Public Sub ToFront()
+        Dim lst_sl As New List(Of Shape)
+        For Each i As Integer In SelectedIndices()
+            lst_sl.Add(shps(i).Clone)
+        Next
+        DeleteSelected()
+        If lst_sl.Count > 0 Then
+            shps.AddRange(lst_sl)
+        End If
+        Invalidate()
     End Sub
 #End Region
 
@@ -266,8 +320,7 @@ Public Class Canvas
 
             For Each ind As Integer In SelectedIndices()
                 Dim ss As Shape = shps(ind)
-                m_path.Union(ss.TotalPath)
-                m_path.Union(ss.BorderPath)
+                m_path.Union(ss.Region)
                 m_rect.Add(ss.BaseRect)
             Next
 
@@ -329,17 +382,19 @@ Public Class Canvas
         End If
 
         'highlight shape
-        If HighlightShapes AndAlso op = MOperations.None AndAlso MainForm.rSelect.Checked AndAlso shps.Count > 0 Then
+        If HighlightShapes AndAlso op = MOperations.None AndAlso
+           MainForm.rSelect.Checked AndAlso shps.Count > 0 Then
             Dim curr As Integer = ShapeInCursor(e.Location)
             If curr > -1 Then
-                If shps(curr).Selected = False AndAlso
-                    Not IsNothing(shps(curr).BorderPath) AndAlso
+                If shps(curr).Selected = False Then
+                    If Not IsNothing(shps(curr).BorderPath) AndAlso
                     Not IsNothing(shps(curr).SelectionPath) Then
-                    ht_shp = curr
-                    If shps(curr).BorderPath.IsVisible(e.Location) Then
-                        htype = 1
-                    ElseIf shps(curr).SelectionPath.IsVisible(e.Location) Then
-                        htype = 0
+                        ht_shp = curr
+                        If shps(curr).BorderPath.IsVisible(e.Location) Then
+                            htype = 1
+                        ElseIf shps(curr).SelectionPath.IsVisible(e.Location) Then
+                            htype = 0
+                        End If
                     End If
                 Else
                     ht_shp = -1
@@ -380,6 +435,8 @@ Public Class Canvas
                 Else
                     Cursor = Cursors.Arrow
                 End If
+            Else
+                If op = MOperations.None Then Cursor = Cursors.Arrow
             End If
         End If
 
@@ -457,10 +514,12 @@ Public Class Canvas
                             Dim ss As Shape = shps(_lst(i))
                             shps(old_sl(i)).BaseRect = ss.BaseRect
                             shps(old_sl(i)).Selected = False
+                            shps(old_sl(i)).Moving = False
                         Next
                         DeleteSelected()
                         For i As Integer = 0 To old_sl.Count - 1
                             shps(old_sl(i)).Selected = True
+                            shps(old_sl(i)).Moving = True
                         Next
                         cloned = False
                     End If
@@ -521,7 +580,7 @@ Public Class Canvas
             End If
         End If
         up_fix = True
-        SetMoving()
+        shps.ForEach(Sub(x) x.Moving = False)
         SetPrimary()
         cloned = False
         cloning = False
@@ -580,7 +639,9 @@ Public Class Canvas
     End Sub
 
     Private Sub SetImageSize()
-        img = New Bitmap(Width, Height)
+        If Not IsNothing(MainForm) AndAlso Not MainForm.WindowState = FormWindowState.Minimized Then
+            img = New Bitmap(Width, Height)
+        End If
     End Sub
 
     Private Sub CreateGlow(g As Graphics, shp As Shape)
@@ -657,9 +718,9 @@ Public Class Canvas
                 Dim br As New SolidBrush(Color.White)
                 Dim pn As New Pen(Color.Black, 1)
 
-                If shp.Shadow.Enabled Then CreateShadow(ig, shp)
+                If Not shp.Moving AndAlso shp.Shadow.Enabled Then CreateShadow(ig, shp)
 
-                If shp.Glow.Enabled AndAlso shp.Glow.BeforeFill Then CreateGlow(ig, shp)
+                If Not shp.Moving AndAlso shp.Glow.Enabled AndAlso shp.Glow.BeforeFill Then CreateGlow(ig, shp)
 
                 'Draw Shape
                 Dim pth As GraphicsPath = shp.TotalPath(False)
@@ -682,7 +743,7 @@ Public Class Canvas
                 If Not IsNothing(dpn) Then dpn.Dispose()
                 If Not IsNothing(pth) Then pth.Dispose()
 
-                If shp.Glow.Enabled AndAlso Not shp.Glow.BeforeFill Then CreateGlow(ig, shp)
+                If Not shp.Moving AndAlso shp.Glow.Enabled AndAlso Not shp.Glow.BeforeFill Then CreateGlow(ig, shp)
 
                 If shp.Selected Then
                     If shp.Primary Then
@@ -1041,7 +1102,8 @@ Public Class Canvas
                  Keys.Shift Or Keys.Control Or Keys.Left,
                  Keys.Shift Or Keys.Control Or Keys.Right,
                  Keys.Shift Or Keys.Control Or Keys.Up,
-                 Keys.Shift Or Keys.Control Or Keys.Down
+                 Keys.Shift Or Keys.Control Or Keys.Down,
+                 Keys.Left, Keys.Right, Keys.Up, Keys.Down
                 For Each i As Integer In SelectedIndices()
                     Dim shp As Shape = shps(i)
                     If shp.Angle <> 0.0 Then
