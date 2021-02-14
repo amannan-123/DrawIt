@@ -249,9 +249,10 @@ Public Class Shape
     End Function
 
     Public Function CreatePen() As Pen
-        Dim pn As Pen = SelectionPen(False)
-        If IsNothing(pn) Then Return Nothing
-        If IsNothing(PenBrush) Then Return Nothing
+		Dim pn As Pen = SelectionPen(False)
+		If pn.Width = 0 Then Return Nothing
+		If IsNothing(pn) Then Return Nothing
+		If IsNothing(PenBrush) Then Return Nothing
         pn.Brush = PenBrush()
         Return pn
     End Function

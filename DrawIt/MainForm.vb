@@ -7,8 +7,9 @@ Public Class MainForm
 #Region "TabPageRelated"
     Private Function CurrentCanvas() As Canvas
         If tCanvas.TabPages.Count > 0 Then
-            Return DirectCast(tCanvas.SelectedTab.Controls()(0), Canvas)
-        End If
+			Dim ctrl = DirectCast(tCanvas.SelectedTab.Controls()(0), CanvasControl)
+			Return ctrl.baseCanvas
+		End If
         Return Nothing
     End Function
 
@@ -100,9 +101,10 @@ Public Class MainForm
             TB_Feather.Value = shp.Glow.Feather
             cb_GStyle.SelectedItem = shp.Glow.GStyle.ToString
             cb_gfill.Checked = shp.Glow.BeforeFill
-            cb_EGlow.Checked = shp.Glow.Enabled
-            'shadow
-            CE_Shadow.SelectedColor = shp.Shadow.ShadowColor
+			cb_EGlow.Checked = shp.Glow.Enabled
+			cb_GClip.SelectedItem = shp.Glow.GClip.ToString
+			'shadow
+			CE_Shadow.SelectedColor = shp.Shadow.ShadowColor
             TB_SBlur.Value = shp.Shadow.Blur
             TB_SFeather.Value = shp.Shadow.Feather
             cb_clip.Checked = shp.Shadow.RegionClipping
@@ -136,12 +138,11 @@ Public Class MainForm
 
 #Region "Load"
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Canvas1.MainForm = Me
-        Canvas2.MainForm = Me
-        For Each str As String In [Enum].GetNames(GetType(MyShape.ShapeStyle))
-            cb_Shape.Items.Add(str)
-        Next
-        cb_Shape.SelectedIndex = 0
+		CanvasControl1.baseCanvas.MainForm = Me
+		For Each str As String In [Enum].GetNames(GetType(MyShape.ShapeStyle))
+			cb_Shape.Items.Add(str)
+		Next
+		cb_Shape.SelectedIndex = 0
         For Each str As String In [Enum].GetNames(GetType(MyBrush.BrushType))
             cb_Brush.Items.Add(str)
         Next
@@ -184,8 +185,12 @@ Public Class MainForm
         For Each str As String In [Enum].GetNames(GetType(MyGlow.GlowStyle))
             cb_GStyle.Items.Add(str)
         Next
-        cb_GStyle.SelectedIndex = 0
-    End Sub
+		cb_GStyle.SelectedIndex = 0
+		For Each str As String In [Enum].GetNames(GetType(MyGlow.Clip))
+			cb_GClip.Items.Add(str)
+		Next
+		cb_GClip.SelectedIndex = 0
+	End Sub
 #End Region
 
 #Region "ComboBox Drawing"
@@ -687,9 +692,9 @@ Public Class MainForm
         If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
             Dim shp As Shape = CurrentCanvas.MainSelected
             Dim dlg As New ColorListDialog
-            dlg.Colors = shp.FBrush.PSurround
+            dlg.LoadColors(shp.FBrush.PSurround)
             If dlg.ShowDialog = DialogResult.OK Then
-                shp.FBrush.PSurround = dlg.Colors
+                shp.FBrush.PSurround = dlg.GetColors
                 CurrentCanvas.Invalidate()
             End If
         End If
@@ -936,24 +941,32 @@ Public Class MainForm
 #End Region
 
 #Region "Size"
-    Private Sub ud_X_ValueChanged(sender As Object, e As EventArgs) Handles ud_X.ValueChanged
-        If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
-            Dim shp As Shape = CurrentCanvas.MainSelected
-            Dim rect = shp.BaseRect
-            rect.X = ud_X.Value
-            shp.BaseRect = rect
-            CurrentCanvas.Invalidate()
-        End If
-    End Sub
+	Private Sub ud_X_Leave(sender As Object, e As EventArgs) Handles ud_Y.Leave, ud_X.Leave, ud_W.Leave, ud_H.Leave
+		If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
+			Dim shp As Shape = CurrentCanvas.MainSelected
+			CurrentCanvas.FinalizeResize(shp)
+			CurrentCanvas.Invalidate()
+		End If
+	End Sub
 
-    Private Sub ud_Y_ValueChanged(sender As Object, e As EventArgs) Handles ud_Y.ValueChanged
+	Private Sub ud_X_ValueChanged(sender As Object, e As EventArgs) Handles ud_X.ValueChanged
+		If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
+			Dim shp As Shape = CurrentCanvas.MainSelected
+			Dim rect = shp.BaseRect
+			rect.X = ud_X.Value
+			shp.BaseRect = rect
+			CurrentCanvas.Invalidate()
+		End If
+	End Sub
+
+	Private Sub ud_Y_ValueChanged(sender As Object, e As EventArgs) Handles ud_Y.ValueChanged
         If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
             Dim shp As Shape = CurrentCanvas.MainSelected
             Dim rect = shp.BaseRect
             rect.Y = ud_Y.Value
             shp.BaseRect = rect
-            CurrentCanvas.Invalidate()
-        End If
+			CurrentCanvas.Invalidate()
+		End If
     End Sub
 
     Private Sub ud_W_ValueChanged(sender As Object, e As EventArgs) Handles ud_W.ValueChanged
@@ -962,8 +975,8 @@ Public Class MainForm
             Dim rect = shp.BaseRect
             rect.Width = ud_W.Value
             shp.BaseRect = rect
-            CurrentCanvas.Invalidate()
-        End If
+			CurrentCanvas.Invalidate()
+		End If
     End Sub
 
     Private Sub ud_H_ValueChanged(sender As Object, e As EventArgs) Handles ud_H.ValueChanged
@@ -971,9 +984,9 @@ Public Class MainForm
             Dim shp As Shape = CurrentCanvas.MainSelected
             Dim rect = shp.BaseRect
             rect.Height = ud_H.Value
-            shp.BaseRect = rect
-            CurrentCanvas.Invalidate()
-        End If
+			shp.BaseRect = rect
+			CurrentCanvas.Invalidate()
+		End If
     End Sub
 
     Private Sub ud_A_ValueChanged(sender As Object, e As EventArgs) Handles ud_A.ValueChanged
@@ -1053,15 +1066,15 @@ Public Class MainForm
         End If
     End Sub
 
-    Private Sub cb_GStyle_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cb_GStyle.SelectedIndexChanged
-        If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
-            Dim shp As Shape = CurrentCanvas.MainSelected
-            shp.Glow.GStyle = [Enum].Parse(GetType(MyGlow.GlowStyle), cb_GStyle.SelectedItem)
-            CurrentCanvas.Invalidate()
-        End If
-    End Sub
+	Private Sub cb_GStyle_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cb_GStyle.SelectedIndexChanged
+		If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
+			Dim shp As Shape = CurrentCanvas.MainSelected
+			shp.Glow.GStyle = [Enum].Parse(GetType(MyGlow.GlowStyle), cb_GStyle.SelectedItem)
+			CurrentCanvas.Invalidate()
+		End If
+	End Sub
 
-    Private Sub cb_gfill_CheckedChanged(sender As Object, e As EventArgs) Handles cb_gfill.CheckedChanged
+	Private Sub cb_gfill_CheckedChanged(sender As Object, e As EventArgs) Handles cb_gfill.CheckedChanged
         If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
             Dim shp As Shape = CurrentCanvas.MainSelected
             shp.Glow.BeforeFill = cb_gfill.Checked
@@ -1069,17 +1082,25 @@ Public Class MainForm
         End If
     End Sub
 
-    Private Sub cb_EGlow_CheckedChanged(sender As Object, e As EventArgs) Handles cb_EGlow.CheckedChanged
-        If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
-            Dim shp As Shape = CurrentCanvas.MainSelected
-            shp.Glow.Enabled = cb_EGlow.Checked
-            CurrentCanvas.Invalidate()
-        End If
-    End Sub
+	Private Sub cb_EGlow_CheckedChanged(sender As Object, e As EventArgs) Handles cb_EGlow.CheckedChanged
+		If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
+			Dim shp As Shape = CurrentCanvas.MainSelected
+			shp.Glow.Enabled = cb_EGlow.Checked
+			CurrentCanvas.Invalidate()
+		End If
+	End Sub
+
+	Private Sub cb_GClip_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cb_GClip.SelectedIndexChanged
+		If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
+			Dim shp As Shape = CurrentCanvas.MainSelected
+			shp.Glow.GClip = [Enum].Parse(GetType(MyGlow.Clip), cb_GClip.SelectedItem)
+			CurrentCanvas.Invalidate()
+		End If
+	End Sub
 #End Region
 
 #Region "Shadow"
-    Private Sub CE_Shadow_ColorChanged(sender As Object, e As EventArgs) Handles CE_Shadow.ColorChanged
+	Private Sub CE_Shadow_ColorChanged(sender As Object, e As EventArgs) Handles CE_Shadow.ColorChanged
         If Not IsNothing(CurrentCanvas) AndAlso Not IsNothing(CurrentCanvas.MainSelected) Then
             Dim shp As Shape = CurrentCanvas.MainSelected
             shp.Shadow.ShadowColor = CE_Shadow.SelectedColor
@@ -1248,71 +1269,64 @@ Public Class MainForm
 
 #Region "Side Bar"
     Private Sub btMenu_Click(sender As Object, e As EventArgs) Handles btMenu.Click
-        If pSideBar.Width = 45 Then
-            pSideBar.Width = 180
-            btMenu.DrawText = True
-            btSave.DrawText = True
-            btOpen.DrawText = True
-            btSettings.DrawText = True
-            btExit.DrawText = True
-            btAddC.DrawText = True
-            btDelC.DrawText = True
-        Else
-            pSideBar.Width = 45
-            btMenu.DrawText = False
-            btSave.DrawText = False
-            btOpen.DrawText = False
-            btSettings.DrawText = False
-            btExit.DrawText = False
-            btAddC.DrawText = False
-            btDelC.DrawText = False
-        End If
-    End Sub
+		If pSideBar.Width = 45 Then
+			pSideBar.Width = 180
+			btMenu.DrawText = True
+			btSave.DrawText = True
+			btOpen.DrawText = True
+			btSettings.DrawText = True
+			btExit.DrawText = True
+			btNewC.DrawText = True
+		Else
+			pSideBar.Width = 45
+			btMenu.DrawText = False
+			btSave.DrawText = False
+			btOpen.DrawText = False
+			btSettings.DrawText = False
+			btExit.DrawText = False
+			btNewC.DrawText = False
+		End If
+	End Sub
 
-    Private Sub pSideBar_Leave(sender As Object, e As EventArgs) Handles pSideBar.Leave
-        If Not pSideBar.Width = 45 Then
-            pSideBar.Width = 45
-            btMenu.DrawText = False
-            btSave.DrawText = False
-            btOpen.DrawText = False
-            btSettings.DrawText = False
-            btExit.DrawText = False
-            btAddC.DrawText = False
-            btDelC.DrawText = False
-        End If
-    End Sub
+	Private Sub pSideBar_Leave(sender As Object, e As EventArgs) Handles pSideBar.Leave
+		If Not pSideBar.Width = 45 Then
+			pSideBar.Width = 45
+			btMenu.DrawText = False
+			btSave.DrawText = False
+			btOpen.DrawText = False
+			btSettings.DrawText = False
+			btExit.DrawText = False
+			btNewC.DrawText = False
+		End If
+	End Sub
 
-    Private Sub btDelC_Click(sender As Object, e As EventArgs) Handles btDelC.Click
-        If tCanvas.TabCount > 1 Then
-            tCanvas.TabPages.RemoveAt(tCanvas.SelectedIndex)
-        End If
-    End Sub
+	Private Sub btNewC_Click(sender As Object, e As EventArgs) Handles btNewC.Click
+		Dim cn As New CanvasControl
+		cn.baseCanvas.BackColor = Color.Transparent
+		cn.baseCanvas.MainForm = Me
+		cn.Dock = DockStyle.Fill
+		Dim tp As New TabPage("Canvas" & tCanvas.TabCount + 1)
+		tp.BorderStyle = BorderStyle.FixedSingle
+		tp.Controls.Add(cn)
+		tCanvas.TabPages.Add(tp)
+		tCanvas.SelectedTab = tp
+	End Sub
 
-    Private Sub btAddC_Click(sender As Object, e As EventArgs) Handles btAddC.Click
-        Dim cn As New Canvas(Me)
-        cn.BackColor = Color.Transparent
-        cn.Dock = DockStyle.Fill
-        Dim tp As New TabPage("Canvas" & tCanvas.TabCount + 1)
-        tp.BorderStyle = BorderStyle.FixedSingle
-        tp.Controls.Add(cn)
-        tCanvas.TabPages.Add(tp)
-        tCanvas.SelectedTab = tp
-    End Sub
-
-    Private Sub btOpen_Click(sender As Object, e As EventArgs) Handles btOpen.Click
+	Private Sub btOpen_Click(sender As Object, e As EventArgs) Handles btOpen.Click
         openDialog.Multiselect = True
         openDialog.Title = "Choose Project File"
-        openDialog.Filter = "DrawIt Project File (*.dif) | *.dif"
-        If openDialog.ShowDialog = DialogResult.OK Then
+		openDialog.Filter = "Binary File (*.bin)|*.bin|SOAP File (*.soap)|*.soap"
+		If openDialog.ShowDialog = DialogResult.OK Then
             For Each str As String In openDialog.FileNames
-                Dim cn As New Canvas(Me)
-                cn.BackColor = Color.Transparent
-                cn.Dock = DockStyle.Fill
-                If Not IsNothing(cn.LoadProject(str)) Then
-
-                    Continue For
-                End If
-                Dim tp As New TabPage(Path.GetFileNameWithoutExtension(str))
+				Dim cn As New CanvasControl
+				cn.baseCanvas.BackColor = Color.Transparent
+				cn.baseCanvas.MainForm = Me
+				cn.Dock = DockStyle.Fill
+				If Not IsNothing(cn.baseCanvas.LoadProject(str)) Then
+					'Handle exception here
+					Continue For
+				End If
+				Dim tp As New TabPage(Path.GetFileNameWithoutExtension(str))
                 tp.BorderStyle = BorderStyle.FixedSingle
                 tp.Controls.Add(cn)
                 tCanvas.TabPages.Add(tp)
@@ -1325,20 +1339,20 @@ Public Class MainForm
         Dim cn = CurrentCanvas()
         If IsNothing(cn) Then Return
         saveDialog.Title = "Save As"
-        saveDialog.Filter = "DrawIt Project File (*.dif)|*.dif|Image File (*.png)|*.png"
-        saveDialog.DefaultExt = "*.dif"
+		saveDialog.Filter = "Binary File (*.bin)|*.bin|Image File (*.png)|*.png|SOAP File (*.soap)|*.soap"
+		saveDialog.DefaultExt = "*.dif"
         saveDialog.FileName = tCanvas.SelectedTab.Text
         If saveDialog.ShowDialog = DialogResult.OK Then
             Dim inf As New FileInfo(saveDialog.FileName)
             Select Case inf.Extension.ToLower
-                Case ".dif"
-                    If Not IsNothing(cn.SaveProject(saveDialog.FileName)) Then
-
-                    End If
+				Case ".bin", ".soap"
+					If Not IsNothing(cn.SaveProject(saveDialog.FileName)) Then
+						'Handle exception here
+					End If
                 Case ".png"
                     If Not IsNothing(cn.SaveImage(saveDialog.FileName)) Then
-
-                    End If
+						'Handle exception here
+					End If
                 Case Else
 
             End Select
@@ -1352,6 +1366,7 @@ Public Class MainForm
     Private Sub btExit_Click(sender As Object, e As EventArgs) Handles btExit.Click
         Close()
     End Sub
+
 #End Region
 
 End Class

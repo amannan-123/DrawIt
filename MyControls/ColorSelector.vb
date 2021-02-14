@@ -1,5 +1,4 @@
 ﻿Imports System.ComponentModel
-Imports System.ComponentModel.Design
 Imports System.Drawing
 Imports System.Drawing.Design
 Imports System.Drawing.Drawing2D
@@ -43,6 +42,7 @@ Public Class ColorSelector
         Set(ByVal value As Color)
             If SelectedColor <> value Then
                 MyPanel1.BackColor = value
+                MyPanel1.Refresh()
                 RaiseEvent ColorChanged(Me, New EventArgs)
                 UpdateTrackers()
                 UpdateControls()
@@ -326,8 +326,8 @@ Public Class ColorSelector
     Private Sub MyPanel1_Paint(sender As Object, e As PaintEventArgs) Handles MyPanel1.Paint
         Dim g As Graphics = e.Graphics
         Dim br = New HatchBrush(HatchStyle.LargeCheckerBoard, Color.White, Color.Silver)
-        g.FillRectangle(br, ClientRectangle)
-        g.FillRectangle(New SolidBrush(BackColor), ClientRectangle)
+        g.FillRectangle(br, sender.ClientRectangle)
+        g.FillRectangle(New SolidBrush(sender.BackColor), sender.ClientRectangle)
         br.Dispose()
     End Sub
 End Class

@@ -86,6 +86,12 @@
     <Compile Include="ColorEditorButton.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="ColorListBox.Designer.vb">
+      <DependentUpon>ColorListBox.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ColorListBox.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="ColorListDialog.Designer.vb">
       <DependentUpon>ColorListDialog.vb</DependentUpon>
     </Compile>
@@ -167,6 +173,9 @@
     <EmbeddedResource Include="ColorEditorButton.resx">
       <DependentUpon>ColorEditorButton.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ColorListBox.resx">
+      <DependentUpon>ColorListBox.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ColorListDialog.resx">
       <DependentUpon>ColorListDialog.vb</DependentUpon>
     </EmbeddedResource>
@@ -184,6 +193,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MyButton.resx">
       <DependentUpon>MyButton.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MyPanel.resx">
+      <DependentUpon>MyPanel.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MyTrackBar.resx">
       <DependentUpon>MyTrackBar.vb</DependentUpon>

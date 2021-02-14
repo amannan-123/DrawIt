@@ -11,8 +11,9 @@ Public Class ShapePointsEditor
         Lines
         Polygon
         Curves
-        ClosedCurve
-    End Enum
+		ClosedCurve
+		Beziers
+	End Enum
 
     Sub New()
         InitializeComponent()
@@ -182,17 +183,22 @@ Public Class ShapePointsEditor
             For Each pt As PointF In Points
                 p_pos.Add(FromPercentage(rect, pt))
             Next
-            Select Case ShapeType
-                Case DrawType.Lines
-                    g.DrawLines(Pens.Black, p_pos.ToArray)
-                Case DrawType.Polygon
-                    g.DrawPolygon(Pens.Black, p_pos.ToArray)
-                Case DrawType.Curves
-                    g.DrawCurve(Pens.Black, p_pos.ToArray, Tension)
-                Case DrawType.ClosedCurve
-                    g.DrawClosedCurve(Pens.Black, p_pos.ToArray, Tension, FillMode.Winding)
-            End Select
-        End If
+			Select Case ShapeType
+				Case DrawType.Lines
+					g.DrawLines(Pens.Black, p_pos.ToArray)
+				Case DrawType.Polygon
+					g.DrawPolygon(Pens.Black, p_pos.ToArray)
+				Case DrawType.Curves
+					g.DrawCurve(Pens.Black, p_pos.ToArray, Tension)
+				Case DrawType.ClosedCurve
+					g.DrawClosedCurve(Pens.Black, p_pos.ToArray, Tension, FillMode.Winding)
+				Case DrawType.Beziers
+					If p_pos.Count > 1 Then g.DrawLines(Pens.Black, p_pos.ToArray)
+					If (p_pos.Count - 1) Mod 3 = 0 Then
+						g.DrawBeziers(Pens.Black, p_pos.ToArray)
+					End If
+			End Select
+		End If
 
         For Each pt As MyPoint In _lst
             DrawPoint(g, pt)

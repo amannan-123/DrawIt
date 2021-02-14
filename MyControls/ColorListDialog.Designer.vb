@@ -24,7 +24,7 @@ Partial Class ColorListDialog
     Private Sub InitializeComponent()
         Me.OK_Button = New System.Windows.Forms.Button()
         Me.Cancel_Button = New System.Windows.Forms.Button()
-        Me.lstColors = New System.Windows.Forms.ListBox()
+        Me.lstColors = New MyControls.ColorListBox()
         Me.b_Down = New MyControls.MyButton()
         Me.b_Up = New MyControls.MyButton()
         Me.b_Remove = New MyControls.MyButton()
@@ -53,16 +53,13 @@ Partial Class ColorListDialog
         '
         'lstColors
         '
-        Me.lstColors.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.lstColors.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
-        Me.lstColors.FormattingEnabled = True
-        Me.lstColors.IntegralHeight = False
-        Me.lstColors.ItemHeight = 20
-        Me.lstColors.Location = New System.Drawing.Point(12, 18)
+        Me.lstColors.AutoScroll = True
+        Me.lstColors.ForeColor = System.Drawing.Color.White
+        Me.lstColors.Location = New System.Drawing.Point(12, 12)
         Me.lstColors.Name = "lstColors"
-        Me.lstColors.Size = New System.Drawing.Size(230, 160)
-        Me.lstColors.TabIndex = 0
+        Me.lstColors.SelectedIndex = -1
+        Me.lstColors.Size = New System.Drawing.Size(230, 166)
+        Me.lstColors.TabIndex = 8
         '
         'b_Down
         '
@@ -123,7 +120,7 @@ Partial Class ColorListDialog
         Me.CE_Button.Location = New System.Drawing.Point(12, 184)
         Me.CE_Button.MyText = "ChooseColor"
         Me.CE_Button.Name = "CE_Button"
-        Me.CE_Button.SelectedColor = System.Drawing.SystemColors.Control
+        Me.CE_Button.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.CE_Button.Size = New System.Drawing.Size(230, 25)
         Me.CE_Button.TabIndex = 1
         '
@@ -132,6 +129,7 @@ Partial Class ColorListDialog
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(254, 291)
+        Me.Controls.Add(Me.lstColors)
         Me.Controls.Add(Me.OK_Button)
         Me.Controls.Add(Me.b_Down)
         Me.Controls.Add(Me.Cancel_Button)
@@ -139,7 +137,6 @@ Partial Class ColorListDialog
         Me.Controls.Add(Me.b_Remove)
         Me.Controls.Add(Me.b_Add)
         Me.Controls.Add(Me.CE_Button)
-        Me.Controls.Add(Me.lstColors)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
         Me.KeyPreview = True
         Me.MaximizeBox = False
@@ -153,10 +150,10 @@ Partial Class ColorListDialog
     End Sub
     Friend WithEvents OK_Button As System.Windows.Forms.Button
     Friend WithEvents Cancel_Button As System.Windows.Forms.Button
-    Friend WithEvents lstColors As System.Windows.Forms.ListBox
     Friend WithEvents CE_Button As ColorEditorButton
     Friend WithEvents b_Add As MyButton
     Friend WithEvents b_Remove As MyButton
     Friend WithEvents b_Up As MyButton
     Friend WithEvents b_Down As MyButton
+    Friend WithEvents lstColors As ColorListBox
 End Class

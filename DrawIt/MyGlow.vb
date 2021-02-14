@@ -4,14 +4,21 @@
 Public Class MyGlow
 
 #Region "Enum"
-    Public Enum GlowStyle
-        OnShape
-        OnBorder
-    End Enum
+	Public Enum GlowStyle
+		OnShape
+		OnBorder
+	End Enum
+
+	Public Enum Clip
+		None
+		Inside
+		Outside
+	End Enum
+
 #End Region
 
 #Region "Properties"
-    Private _enabled As Boolean = False
+	Private _enabled As Boolean = False
     Public Property Enabled() As Boolean
         Get
             Return _enabled
@@ -22,16 +29,26 @@ Public Class MyGlow
     End Property
 
     Private _style As GlowStyle = GlowStyle.OnShape
-    Public Property GStyle() As GlowStyle
-        Get
-            Return _style
-        End Get
-        Set(ByVal value As GlowStyle)
-            _style = value
-        End Set
-    End Property
+	Public Property GStyle() As GlowStyle
+		Get
+			Return _style
+		End Get
+		Set(ByVal value As GlowStyle)
+			_style = value
+		End Set
+	End Property
 
-    Private _before As Boolean = True
+	Private _clip As Clip = Clip.None
+	Public Property GClip() As Clip
+		Get
+			Return _clip
+		End Get
+		Set(ByVal value As Clip)
+			_clip = value
+		End Set
+	End Property
+
+	Private _before As Boolean = True
     Public Property BeforeFill() As Boolean
         Get
             Return _before

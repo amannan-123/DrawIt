@@ -67,10 +67,10 @@ Partial Class ColorSelector
         'TextBox1
         '
         Me.TextBox1.Font = New System.Drawing.Font("Segoe UI", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TextBox1.Location = New System.Drawing.Point(58, 4)
+        Me.TextBox1.Location = New System.Drawing.Point(58, 2)
         Me.TextBox1.Name = "TextBox1"
         Me.TextBox1.ReadOnly = True
-        Me.TextBox1.Size = New System.Drawing.Size(219, 22)
+        Me.TextBox1.Size = New System.Drawing.Size(214, 22)
         Me.TextBox1.TabIndex = 5
         Me.TextBox1.TabStop = False
         '
@@ -84,10 +84,10 @@ Partial Class ColorSelector
         Me.cb_Colors.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cb_Colors.IntegralHeight = False
         Me.cb_Colors.ItemHeight = 20
-        Me.cb_Colors.Location = New System.Drawing.Point(58, 28)
+        Me.cb_Colors.Location = New System.Drawing.Point(58, 26)
         Me.cb_Colors.MaxDropDownItems = 14
         Me.cb_Colors.Name = "cb_Colors"
-        Me.cb_Colors.Size = New System.Drawing.Size(219, 26)
+        Me.cb_Colors.Size = New System.Drawing.Size(214, 26)
         Me.cb_Colors.TabIndex = 6
         '
         'MyPanel2
@@ -103,9 +103,9 @@ Partial Class ColorSelector
         Me.MyPanel2.Controls.Add(Me.p_rgb)
         Me.MyPanel2.Controls.Add(Me.p_hsl)
         Me.MyPanel2.Controls.Add(Me.p_hsb)
-        Me.MyPanel2.Location = New System.Drawing.Point(2, 60)
+        Me.MyPanel2.Location = New System.Drawing.Point(2, 58)
         Me.MyPanel2.Name = "MyPanel2"
-        Me.MyPanel2.Size = New System.Drawing.Size(275, 202)
+        Me.MyPanel2.Size = New System.Drawing.Size(270, 202)
         Me.MyPanel2.TabIndex = 7
         '
         'Button2
@@ -136,7 +136,7 @@ Partial Class ColorSelector
         '
         Me.t_Hex.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.t_Hex.Font = New System.Drawing.Font("Segoe UI", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.t_Hex.Location = New System.Drawing.Point(103, 169)
+        Me.t_Hex.Location = New System.Drawing.Point(101, 169)
         Me.t_Hex.MaxLength = 8
         Me.t_Hex.Name = "t_Hex"
         Me.t_Hex.Size = New System.Drawing.Size(70, 22)
@@ -147,7 +147,7 @@ Partial Class ColorSelector
         Me.t_alpha.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.t_alpha.Colors = New System.Drawing.Color() {System.Drawing.Color.White, System.Drawing.Color.Black}
         Me.t_alpha.Factors = New Single() {0!, 1.0!}
-        Me.t_alpha.Location = New System.Drawing.Point(62, 12)
+        Me.t_alpha.Location = New System.Drawing.Point(59, 12)
         Me.t_alpha.Maximum = 255.0!
         Me.t_alpha.Name = "t_alpha"
         Me.t_alpha.Positions = New Single() {0!, 1.0!}
@@ -159,7 +159,7 @@ Partial Class ColorSelector
         '
         Me.Label1.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(19, 16)
+        Me.Label1.Location = New System.Drawing.Point(16, 16)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(37, 13)
         Me.Label1.TabIndex = 0
@@ -171,9 +171,9 @@ Partial Class ColorSelector
         Me.MyPanel3.Controls.Add(Me.r_hsb)
         Me.MyPanel3.Controls.Add(Me.r_hsl)
         Me.MyPanel3.Controls.Add(Me.r_rgb)
-        Me.MyPanel3.Location = New System.Drawing.Point(10, 36)
+        Me.MyPanel3.Location = New System.Drawing.Point(8, 36)
         Me.MyPanel3.Name = "MyPanel3"
-        Me.MyPanel3.Size = New System.Drawing.Size(254, 23)
+        Me.MyPanel3.Size = New System.Drawing.Size(252, 23)
         Me.MyPanel3.TabIndex = 1
         '
         'r_hsb
@@ -213,7 +213,7 @@ Partial Class ColorSelector
         Me.Label11.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.Label11.AutoSize = True
         Me.Label11.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label11.Location = New System.Drawing.Point(57, 171)
+        Me.Label11.Location = New System.Drawing.Point(55, 171)
         Me.Label11.Name = "Label11"
         Me.Label11.Size = New System.Drawing.Size(49, 17)
         Me.Label11.TabIndex = 5
@@ -229,7 +229,7 @@ Partial Class ColorSelector
         Me.p_rgb.Controls.Add(Me.Label2)
         Me.p_rgb.Controls.Add(Me.Label3)
         Me.p_rgb.Controls.Add(Me.Label4)
-        Me.p_rgb.Location = New System.Drawing.Point(10, 65)
+        Me.p_rgb.Location = New System.Drawing.Point(8, 65)
         Me.p_rgb.Name = "p_rgb"
         Me.p_rgb.Size = New System.Drawing.Size(252, 96)
         Me.p_rgb.TabIndex = 2
@@ -307,7 +307,7 @@ Partial Class ColorSelector
         Me.p_hsl.Controls.Add(Me.t_hue1)
         Me.p_hsl.Controls.Add(Me.Label6)
         Me.p_hsl.Controls.Add(Me.Label7)
-        Me.p_hsl.Location = New System.Drawing.Point(10, 65)
+        Me.p_hsl.Location = New System.Drawing.Point(8, 65)
         Me.p_hsl.Name = "p_hsl"
         Me.p_hsl.Size = New System.Drawing.Size(252, 96)
         Me.p_hsl.TabIndex = 2
@@ -381,7 +381,7 @@ Partial Class ColorSelector
         Me.p_hsb.Controls.Add(Me.Label8)
         Me.p_hsb.Controls.Add(Me.Label9)
         Me.p_hsb.Controls.Add(Me.Label10)
-        Me.p_hsb.Location = New System.Drawing.Point(10, 65)
+        Me.p_hsb.Location = New System.Drawing.Point(8, 65)
         Me.p_hsb.Name = "p_hsb"
         Me.p_hsb.Size = New System.Drawing.Size(252, 96)
         Me.p_hsb.TabIndex = 2
@@ -447,10 +447,11 @@ Partial Class ColorSelector
         '
         'MyPanel1
         '
+        Me.MyPanel1.BackColor = System.Drawing.Color.White
         Me.MyPanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.MyPanel1.Location = New System.Drawing.Point(2, 4)
+        Me.MyPanel1.Location = New System.Drawing.Point(2, 2)
         Me.MyPanel1.Name = "MyPanel1"
-        Me.MyPanel1.Size = New System.Drawing.Size(50, 50)
+        Me.MyPanel1.Size = New System.Drawing.Size(54, 50)
         Me.MyPanel1.TabIndex = 4
         '
         'ColorSelector
@@ -462,7 +463,7 @@ Partial Class ColorSelector
         Me.Controls.Add(Me.MyPanel1)
         Me.Controls.Add(Me.cb_Colors)
         Me.Name = "ColorSelector"
-        Me.Size = New System.Drawing.Size(280, 265)
+        Me.Size = New System.Drawing.Size(274, 262)
         Me.MyPanel2.ResumeLayout(False)
         Me.MyPanel2.PerformLayout()
         Me.MyPanel3.ResumeLayout(False)

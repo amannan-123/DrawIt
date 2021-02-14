@@ -50,47 +50,53 @@ Public Class TestForm
         Dim c2 As Color = Color.HotPink
 
         Dim rect = New RectangleF(20, 20, ClientRectangle.Width - 40, ClientRectangle.Height - 40)
-        Dim cent As New PointF(rect.X + (rect.Width / 2),
-                               rect.Y + (rect.Height / 2))
-        Dim copies As Integer = 50
-        Dim ra As RectangleF = rect
-        ra.Inflate(1, 1)
-        Dim lgb As New LinearGradientBrush(ra, c1, c2, LinearGradientMode.Horizontal)
-        g.DrawPath(New Pen(lgb), getpath(rect))
-        For i = 1 To copies
-            rect.Inflate(-rect.Width + (rect.Width * 0.965), -rect.Height + (rect.Height * 0.965))
-            Dim mm As New Matrix
-            mm.RotateAt(-7 * i, cent)
-            g.Transform = mm
-            Dim pth As GraphicsPath = getpath(rect)
-            If IsNothing(pth) Then Exit For
-            If pth.GetBounds.Width <= 1 Or pth.GetBounds.Height <= 1 Then Exit For
-            Dim rb As RectangleF = rect
-            rb.Inflate(1, 1)
-            If rb.Width = 0 Or rb.Height = 0 Then Exit For
-            Dim lgb2 As New LinearGradientBrush(rb, c1, c2, LinearGradientMode.Horizontal)
-            g.DrawPath(New Pen(lgb2, 1.5), pth)
-        Next
+		Dim cent As New PointF(rect.X + (rect.Width / 2),
+							   rect.Y + (rect.Height / 2))
+		Dim copies As Integer = 50
+		Dim ra As RectangleF = rect
+		ra.Inflate(1, 1)
+		Dim lgb As New LinearGradientBrush(ra, c1, c2, LinearGradientMode.Horizontal)
+		g.DrawPath(New Pen(lgb), getpath(rect))
+		For i = 1 To copies
+			rect.Inflate(-rect.Width + (rect.Width * 0.965), -rect.Height + (rect.Height * 0.965))
+			Dim mm As New Matrix
+			mm.RotateAt(-7 * i, cent)
+			g.Transform = mm
+			Dim pth As GraphicsPath = getpath(rect)
+			If IsNothing(pth) Then Exit For
+			If pth.GetBounds.Width <= 1 Or pth.GetBounds.Height <= 1 Then Exit For
+			Dim rb As RectangleF = rect
+			rb.Inflate(1, 1)
+			If rb.Width = 0 Or rb.Height = 0 Then Exit For
+			Dim lgb2 As New LinearGradientBrush(rb, c1, c2, LinearGradientMode.Horizontal)
+			g.DrawPath(New Pen(lgb2, 1.5), pth)
+		Next
 
-    End Sub
+	End Sub
 
-    Private Sub TestForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        'Dim proc = Process.GetProcessById(11048)
-        'Dim hnd = proc.MainWindowHandle
+	Private Sub TestForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+		'Dim proc = Process.GetProcessById(11048)
+		'Dim hnd = proc.MainWindowHandle
 
-    End Sub
+	End Sub
 
-    Private Sub TestForm_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
-        Invalidate()
-    End Sub
+	Private Sub TestForm_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
+		Invalidate()
+	End Sub
 
-    Private Sub CheckBox1_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox1.CheckedChanged
-        EnableBlur(Handle, CheckBox1.Checked)
-    End Sub
+	Private Sub CheckBox1_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox1.CheckedChanged
+		EnableBlur(Handle, CheckBox1.Checked)
+	End Sub
 
-    Private Function ToAbgr(color As Color) As Integer
-        Return (CInt(color.A) << 24) Or (CInt(color.B) << 16) Or (CInt(color.G) << 8) Or color.R
-    End Function
+	Private Function ToAbgr(color As Color) As Integer
+		Return (CInt(color.A) << 24) Or (CInt(color.B) << 16) Or (CInt(color.G) << 8) Or color.R
+	End Function
+
+	Private Sub MyTabControl1_TabRemoving(sender As Object, e As MyControls.TabRemovingEventArgs)
+		If MessageBox.Show("Tab", "Do you want to close tab?", MessageBoxButtons.YesNo) = DialogResult.No Then
+			e.Cancel = True
+		End If
+	End Sub
 
 End Class
 

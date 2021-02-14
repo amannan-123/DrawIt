@@ -12,14 +12,8 @@ Public Class MyPanel
         ' Add any initialization after the InitializeComponent() call.
         SetStyle(ControlStyles.AllPaintingInWmPaint, True)
         SetStyle(ControlStyles.OptimizedDoubleBuffer, True)
+        SetStyle(ControlStyles.UserPaint, True)
+        SetStyle(ControlStyles.UserMouse, True)
     End Sub
-
-    'Protected Overrides Sub OnPaint(e As PaintEventArgs)
-    '    MyBase.OnPaint(e)
-    '    Dim g As Graphics = e.Graphics
-    '    Dim br = New HatchBrush(HatchStyle.LargeCheckerBoard, Color.White, Color.Silver)
-    '    g.FillRectangle(br, ClientRectangle)
-    '    g.FillRectangle(New SolidBrush(BackColor), ClientRectangle)
-    'End Sub
 
 End Class

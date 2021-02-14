@@ -1,6 +1,7 @@
 ﻿Imports System.ComponentModel
 Imports System.Drawing
 Imports System.Drawing.Drawing2D
+Imports System.Drawing.Text
 Imports System.Windows.Forms
 
 <DefaultEvent("ValueChanged")>
@@ -251,6 +252,7 @@ Public Class PointSelector
     Private Sub PointSelector_Paint(sender As Object, e As PaintEventArgs) Handles MyBase.Paint
         Dim g As Graphics = e.Graphics
         g.SmoothingMode = SmoothingMode.AntiAlias
+        g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit
 
         Dim pn As New Pen(BordersColor, 2)
 

@@ -1,6 +1,7 @@
 ﻿Imports System.ComponentModel
 Imports System.Drawing
 Imports System.Drawing.Drawing2D
+Imports System.Drawing.Text
 Imports System.Windows.Forms
 
 ''' <summary>
@@ -244,6 +245,7 @@ Public Class FlatButton
     Private Sub FlatButton_Paint(sender As Object, e As System.Windows.Forms.PaintEventArgs) Handles MyBase.Paint
         Dim g As Graphics = e.Graphics
         g.SmoothingMode = SmoothingMode.AntiAlias
+        g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit
 
         g.Clear(BackColor)
 
@@ -300,4 +302,8 @@ Public Class FlatButton
             InvokeOnClick(Me, New EventArgs())
         End If
     End Sub
+
+	Private Sub FlatButton_Leave(sender As Object, e As EventArgs) Handles MyBase.Leave
+		ResetState()
+	End Sub
 End Class

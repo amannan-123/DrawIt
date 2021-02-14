@@ -3,6 +3,7 @@ Imports System.Drawing.Drawing2D
 Imports System.ComponentModel
 Imports System.Windows.Forms
 Imports System.Drawing
+Imports System.Drawing.Text
 #End Region
 
 <ToolboxBitmap(GetType(TrackBar))>
@@ -351,9 +352,11 @@ Public Class MyTrackBar
 #Region "Paint"
 
     Private Sub MyTrackBar_Paint(sender As Object, e As PaintEventArgs) Handles MyBase.Paint
-        Dim g As Graphics = e.Graphics
-        g.SmoothingMode = SmoothingMode.AntiAlias
-        g.RenderingOrigin = rectSliderBar.Location
+		Dim bmp As New Bitmap(Width, Height)
+		Dim g As Graphics = Graphics.FromImage(bmp)
+		g.SmoothingMode = SmoothingMode.AntiAlias
+		g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit
+		g.RenderingOrigin = rectSliderBar.Location
 
         'Dim rectValueBar As Rectangle = New Rectangle(rectSliderBar.X, rectSliderBar.Y, CInt(sngSliderPos - rectSliderBar.X), rectSliderBar.Height)
 
@@ -399,7 +402,13 @@ Public Class MyTrackBar
             g.DrawRectangle(pn, rect)
         End If
 
-    End Sub
+		If Enabled Then
+			e.Graphics.DrawImageUnscaled(bmp, 0, 0)
+		Else
+			ControlPaint.DrawImageDisabled(e.Graphics, bmp, 0, 0, BackColor)
+		End If
+
+	End Sub
 
     Private Sub MyTrackBar_Enter(sender As Object, e As EventArgs) Handles MyBase.Enter, MyBase.Leave
         Invalidate()

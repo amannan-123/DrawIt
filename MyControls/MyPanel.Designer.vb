@@ -22,8 +22,12 @@ Partial Class MyPanel
 	'Do not modify it using the code editor.
 	<System.Diagnostics.DebuggerStepThrough()> _
 	Private Sub InitializeComponent()
-		components = New System.ComponentModel.Container()
+        Me.SuspendLayout()
+        '
+        'MyPanel
+        '
+        Me.ResumeLayout(False)
 
-	End Sub
+    End Sub
 
 End Class
