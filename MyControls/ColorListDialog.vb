@@ -80,4 +80,5 @@ Public Class ColorListDialog
             CE_Button.SelectedColor = lstColors.Items(ind)
         End If
     End Sub
+
 End Class

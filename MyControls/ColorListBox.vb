@@ -1,413 +1,631 @@
-﻿Imports System.ComponentModel
-Imports System.ComponentModel.Design
+﻿#Region "Imports"
+Imports System.ComponentModel
 Imports System.Drawing
 Imports System.Drawing.Design
 Imports System.Windows.Forms
 Imports System.Windows.Forms.Design
+#End Region
 
+#Region "ColorListBox"
 <Designer(GetType(ColorListDesigner))>
 <Description("Custom listbox for choosing colors.")>
-<DefaultProperty("Colors")>
+<DefaultProperty("Items")>
 <DefaultEvent("SelectedIndexChanged")>
 Public Class ColorListBox
 
-    Sub New()
-        InitializeComponent()
-        SetStyle(ControlStyles.AllPaintingInWmPaint, True)
-        SetStyle(ControlStyles.OptimizedDoubleBuffer, True)
-        SetStyle(ControlStyles.UserPaint, True)
-        SetStyle(ControlStyles.UserMouse, True)
-        AutoScaleMode = AutoScaleMode.None
-    End Sub
+#Region "Enum"
+	Public Enum DrawMode
+		[Default]
+		Custom
+	End Enum
+#End Region
 
-    Private h_ind As Integer = -1
+#Region "Declarations"
+	Private h_ind As Integer = -1
+#End Region
 
-    Public Event SelectedIndexChanged(sender As Object, e As EventArgs)
+#Region "New"
+	Sub New()
+		InitializeComponent()
+		SetStyle(ControlStyles.AllPaintingInWmPaint, True)
+		SetStyle(ControlStyles.OptimizedDoubleBuffer, True)
+		SetStyle(ControlStyles.UserPaint, True)
+		SetStyle(ControlStyles.UserMouse, True)
+		AutoScaleMode = AutoScaleMode.None
+	End Sub
+#End Region
 
-    Private _lst As New ColorsCollection(Me)
-    <DesignerSerializationVisibility(DesignerSerializationVisibility.Content)>
-    <Editor(GetType(CollectionEditor), GetType(UITypeEditor))>
-    Public Property Items() As ColorsCollection
-        Get
-            Return _lst
-        End Get
-        Set(ByVal value As ColorsCollection)
-            _lst = value
-            RefreshItems()
-        End Set
-    End Property
+#Region "Events"
+	''' <summary>
+	''' Occurs whenever a particular item needs to be painted.
+	''' </summary>
+	<Description("Occurs whenever a particular item needs to be painted.")>
+	Public Event DrawItem(ByVal sender As Object, ByVal e As DrawItemsEventArgs)
 
-    Private s_ind As Integer = -1
-    Public Property SelectedIndex() As Integer
-        Get
-            If s_ind < 0 Or s_ind > _lst.Count - 1 Then Return -1
-            Return s_ind
-        End Get
-        Set(ByVal value As Integer)
-            s_ind = value
-            RaiseEvent SelectedIndexChanged(Me, New EventArgs)
-            pChild.Invalidate()
-        End Set
-    End Property
+	''' <summary>
+	''' Occurs when the value of SelectedIndex property changes.
+	''' </summary>
+	<Description("Occurs when the value of SelectedIndex property changes.")>
+	Public Event SelectedIndexChanged(sender As Object, e As EventArgs)
+#End Region
 
-    <Browsable(False), EditorBrowsable(EditorBrowsableState.Never)>
-    Public ReadOnly Property SelectedItem() As Color
-        Get
-            If s_ind = -1 Then Return Nothing
-            Return _lst(s_ind)
-        End Get
-    End Property
+#Region "Properties"
+	Private _mode As DrawMode = DrawMode.Default
+	<DefaultValue(GetType(DrawMode), "Default")>
+	Public Property DrawingMode() As DrawMode
+		Get
+			Return _mode
+		End Get
+		Set(ByVal value As DrawMode)
+			_mode = value
+		End Set
+	End Property
 
-    Private s_col As Color = Color.DimGray
-    <DefaultValue(GetType(Color), "DimGray")>
-    Public Property SelectedColor() As Color
-        Get
-            Return s_col
-        End Get
-        Set(ByVal value As Color)
-            s_col = value
-            pChild.Invalidate()
-        End Set
-    End Property
+	Private _lst As New ColorsCollection(Me)
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Content)>
+	<Editor(GetType(ColorsEditor), GetType(UITypeEditor))>
+	Public Property Items() As ColorsCollection
+		Get
+			Return _lst
+		End Get
+		Set(ByVal value As ColorsCollection)
+			_lst = value
+			RefreshItems()
+		End Set
+	End Property
 
-    Private h_col As Color = Color.Gray
-    <DefaultValue(GetType(Color), "Gray")>
-    Public Property HoverColor() As Color
-        Get
-            Return h_col
-        End Get
-        Set(ByVal value As Color)
-            h_col = value
-            pChild.Invalidate()
-        End Set
-    End Property
+	Private s_ind As Integer = -1
+	Public Property SelectedIndex() As Integer
+		Get
+			If s_ind < 0 Or s_ind > _lst.Count - 1 Then Return -1
+			Return s_ind
+		End Get
+		Set(ByVal value As Integer)
+			s_ind = value
+			If s_ind < 0 Or s_ind > Items.Count - 1 Then s_ind = -1
+			If s_ind > -1 Then
+				While GetItemRect(s_ind).Top < 0
+					MyVScrollBar1.Value -= ItemHeight
+				End While
+				While GetItemRect(s_ind).Bottom > Height
+					MyVScrollBar1.Value += ItemHeight
+				End While
+			End If
+			RaiseEvent SelectedIndexChanged(Me, New EventArgs)
+			Invalidate()
+		End Set
+	End Property
 
-    Private n_col As Color = Color.DarkGray
-    <DefaultValue(GetType(Color), "DarkGray")>
-    Public Property NormalColor() As Color
-        Get
-            Return n_col
-        End Get
-        Set(ByVal value As Color)
-            n_col = value
-            pChild.Invalidate()
-        End Set
-    End Property
+	<Browsable(False), EditorBrowsable(EditorBrowsableState.Never)>
+	Public ReadOnly Property SelectedItem() As Color
+		Get
+			If s_ind = -1 Then Return Nothing
+			Return _lst(s_ind)
+		End Get
+	End Property
 
-    Private item_h As Integer = 20
-    <DefaultValue(GetType(Integer), "20")>
-    Public Property ItemHeight() As Integer
-        Get
-            Return item_h
-        End Get
-        Set(ByVal value As Integer)
-            item_h = value
-            UpdateSize()
-            pChild.Invalidate()
-        End Set
-    End Property
+	Private s_col As Color = Color.DimGray
+	<DefaultValue(GetType(Color), "DimGray")>
+	Public Property SelectedColor() As Color
+		Get
+			Return s_col
+		End Get
+		Set(ByVal value As Color)
+			s_col = value
+			Invalidate()
+		End Set
+	End Property
 
-    Private Sub UpdateSize()
-        pChild.Width = Width - 17
-        Dim hgt As Integer = Items.Count * ItemHeight
-        If hgt > Height Then
-            pChild.Height = hgt
-        Else
-            pChild.Height = Height
-            pChild.Width = Width
-        End If
-    End Sub
+	Private h_col As Color = Color.Gray
+	<DefaultValue(GetType(Color), "Gray")>
+	Public Property HoverColor() As Color
+		Get
+			Return h_col
+		End Get
+		Set(ByVal value As Color)
+			h_col = value
+			Invalidate()
+		End Set
+	End Property
 
-    Private Sub RefreshItems()
-        If s_ind < 0 Or s_ind > _lst.Count - 1 Then s_ind = -1
-        UpdateSize()
-        pChild.Invalidate()
-    End Sub
+	Private n_col As Color = Color.DarkGray
+	<DefaultValue(GetType(Color), "DarkGray")>
+	Public Property NormalColor() As Color
+		Get
+			Return n_col
+		End Get
+		Set(ByVal value As Color)
+			n_col = value
+			Invalidate()
+		End Set
+	End Property
 
-    Private Function GetItemRect(i As Integer) As Rectangle
-        Dim y As Integer = i * ItemHeight
-        Return New Rectangle(0, y, pChild.Width, ItemHeight)
-    End Function
+	Private item_h As Integer = 20
+	<DefaultValue(GetType(Integer), "20")>
+	Public Property ItemHeight() As Integer
+		Get
+			Return item_h
+		End Get
+		Set(ByVal value As Integer)
+			item_h = value
+			UpdateSize()
+			Invalidate()
+		End Set
+	End Property
+#End Region
 
-    Private Sub pChild_MouseDown(sender As Object, e As MouseEventArgs) Handles pChild.MouseDown
-        For i As Integer = 0 To _lst.Count - 1
-            If GetItemRect(i).Contains(e.Location) Then SelectedIndex = i
-        Next
-        pChild.Invalidate()
-    End Sub
+#Region "Private Functions"
+	Private Sub UpdateSize()
+		Dim i_height = Items.Count * ItemHeight
+		If i_height > Height Then
+			MyVScrollBar1.Visible = True
+			MyVScrollBar1.Maximum = i_height - Height
+		Else
+			MyVScrollBar1.Visible = False
+			MyVScrollBar1.Maximum = 1
+		End If
+	End Sub
 
-    Private Sub pChild_MouseMove(sender As Object, e As MouseEventArgs) Handles pChild.MouseMove
-        h_ind = -1
-        For i As Integer = 0 To _lst.Count - 1
-            If GetItemRect(i).Contains(e.Location) Then h_ind = i
-        Next
-        pChild.Invalidate()
-    End Sub
+	Private Sub RefreshItems()
+		If s_ind < 0 Or s_ind > _lst.Count - 1 Then s_ind = -1
+		UpdateSize()
+		Invalidate()
+	End Sub
 
-    Private Sub pChild_MouseLeave(sender As Object, e As EventArgs) Handles pChild.MouseLeave
-        h_ind = -1
-        pChild.Invalidate()
-    End Sub
+	Private Function GetItemRect(i As Integer) As Rectangle
+		Dim y As Integer = i * ItemHeight
+		If MyVScrollBar1.Visible Then y -= MyVScrollBar1.Value
+		Dim i_width As Integer = If(MyVScrollBar1.Visible, Width - MyVScrollBar1.Width, Width)
+		Return New Rectangle(0, y, i_width, ItemHeight)
+	End Function
+#End Region
 
-    Private Sub pChild_Paint(sender As Object, e As PaintEventArgs) Handles pChild.Paint
-        Dim g As Graphics = e.Graphics
+#Region "Resize"
+	Private Sub ColorList_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
+		If Height < 45 Then Height = 45
+		UpdateSize()
+	End Sub
 
-        For i As Integer = 0 To _lst.Count - 1
-            Dim rect As Rectangle = GetItemRect(i)
-            If i = SelectedIndex Then
-                g.FillRectangle(New SolidBrush(SelectedColor), rect)
-            ElseIf i = h_ind Then
-                g.FillRectangle(New SolidBrush(HoverColor), rect)
-            Else
-                g.FillRectangle(New SolidBrush(NormalColor), rect)
-            End If
+	Private Sub ColorList_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+		MyVScrollBar1.Bind(Me)
+		UpdateSize()
+	End Sub
+#End Region
 
-            Dim itemString As String = _lst(i).Name
-            Dim myBrush As New SolidBrush(_lst(i))
-            Dim c_rect As New Rectangle(rect.X + 2, rect.Y + 2, 20, rect.Height - 5)
+#Region "Keyboard"
+	Protected Overrides Function IsInputKey(ByVal keyData As Keys) As Boolean
+		Select Case keyData
+			Case Keys.Up, Keys.Down
+				Return True
+			Case Else
+				Return MyBase.IsInputKey(keyData)
+		End Select
+	End Function
 
-            'Draw a Color Swatch
-            e.Graphics.FillRectangle(myBrush, c_rect)
-            e.Graphics.DrawRectangle(Pens.Black, c_rect)
+	Private Sub ColorList_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
+		Select Case e.KeyData
+			Case Keys.Up
+				If SelectedIndex > 0 Then SelectedIndex -= 1
+			Case Keys.Down
+				If SelectedIndex < _lst.Count - 1 Then SelectedIndex += 1
+		End Select
+	End Sub
+#End Region
 
-            ' Draw the text in the item.
-            Dim rt As New Rectangle(c_rect.Right, rect.Y, rect.Width - c_rect.Right, rect.Height)
-            Dim sf As New StringFormat
-            sf.Alignment = StringAlignment.Center
-            sf.LineAlignment = StringAlignment.Center
-            e.Graphics.DrawString(itemString, Font, New SolidBrush(ForeColor), rt, sf)
+#Region "Mouse"
+	Private Sub ColorListBox_MouseDown(sender As Object, e As MouseEventArgs) Handles MyBase.MouseDown
+		s_ind = -1
+		For i As Integer = 0 To _lst.Count - 1
+			If GetItemRect(i).Contains(e.Location) Then SelectedIndex = i
+		Next
+		Invalidate()
+	End Sub
 
-        Next
+	Private Sub ColorListBox_MouseMove(sender As Object, e As MouseEventArgs) Handles MyBase.MouseMove
+		h_ind = -1
+		For i As Integer = 0 To _lst.Count - 1
+			If GetItemRect(i).Contains(e.Location) Then h_ind = i
+		Next
+		Invalidate()
+	End Sub
 
-        Dim b_rect As New Rectangle(0, VerticalScroll.Value, pChild.Width, Height)
-        b_rect.Width -= 1
-        b_rect.Height -= 1
-        g.DrawRectangle(Pens.Black, b_rect)
+	Private Sub ColorListBox_MouseLeave(sender As Object, e As EventArgs) Handles MyBase.MouseLeave
+		h_ind = -1
+		Invalidate()
+	End Sub
+#End Region
 
-    End Sub
+#Region "Paint"
+	Private Sub ColorListBox_Paint(sender As Object, e As PaintEventArgs) Handles MyBase.Paint
+		Dim g As Graphics = e.Graphics
 
-    Private Sub ColorList_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
-        UpdateSize()
-    End Sub
+		If DesignMode Or DrawingMode = DrawMode.Default Then
 
-    Private Sub ColorList_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        UpdateSize()
-    End Sub
+			For i As Integer = 0 To _lst.Count - 1
+				Dim rect As Rectangle = GetItemRect(i)
+				If i = SelectedIndex Then
+					g.FillRectangle(New SolidBrush(SelectedColor), rect)
+				ElseIf i = h_ind Then
+					g.FillRectangle(New SolidBrush(HoverColor), rect)
+				Else
+					g.FillRectangle(New SolidBrush(NormalColor), rect)
+				End If
 
-    Protected Overrides Function IsInputKey(ByVal keyData As Keys) As Boolean
-        Select Case keyData
-            Case Keys.Up, Keys.Down
-                Return True
-            Case Else
-                Return MyBase.IsInputKey(keyData)
-        End Select
-    End Function
+				Dim itemString As String = _lst(i).Name
+				Dim myBrush As New SolidBrush(_lst(i))
+				Dim c_rect As New Rectangle(rect.X + 2, rect.Y + 2, 20, rect.Height - 5)
 
-    Private Sub ColorList_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
-        Select Case e.KeyData
-            Case Keys.Up
-                If SelectedIndex > 0 Then
-                    SelectedIndex -= 1
-                End If
-                pChild.Invalidate()
-            Case Keys.Down
-                If SelectedIndex < _lst.Count - 1 Then
-                    SelectedIndex += 1
-                End If
-                pChild.Invalidate()
-        End Select
-    End Sub
+				'Draw a Color Swatch
+				g.FillRectangle(myBrush, c_rect)
+				g.DrawRectangle(Pens.Black, c_rect)
 
-    Public Class ColorsCollection
-        Implements IList(Of Color), IList, IEnumerable(Of Color)
+				' Draw the text in the item.
+				Dim rt As New Rectangle(c_rect.Right, rect.Y, rect.Width - c_rect.Right, rect.Height)
+				Dim sf As New StringFormat
+				sf.Alignment = StringAlignment.Center
+				sf.LineAlignment = StringAlignment.Center
+				g.DrawString(itemString, Font, New SolidBrush(ForeColor), rt, sf)
 
-        Private _lst As New List(Of Color)
+			Next
 
-        Private _ctrl As ColorListBox
+			Dim b_rect As New Rectangle(0, 0, Width, Height)
+			b_rect.Width -= 1
+			b_rect.Height -= 1
+			g.DrawRectangle(Pens.Black, b_rect)
 
-        Sub New(ctrl As ColorListBox)
-            _ctrl = ctrl
-        End Sub
+		ElseIf DrawingMode = DrawMode.Custom Then
 
-        Default Public Property Item(index As Integer) As Color Implements IList(Of Color).Item
-            Get
-                Return DirectCast(_lst, IList(Of Color))(index)
-            End Get
-            Set(value As Color)
-                DirectCast(_lst, IList(Of Color))(index) = value
-                _ctrl.RefreshItems()
-            End Set
-        End Property
+			RaiseEvent DrawItem(Me, New DrawItemsEventArgs(g, -1, BackColor, ClientRectangle, DrawItemsEventArgs.ItemState.Background))
 
-        Public ReadOnly Property Count As Integer Implements ICollection(Of Color).Count
-            Get
-                Return DirectCast(_lst, IList(Of Color)).Count
-            End Get
-        End Property
+			For i As Integer = 0 To _lst.Count - 1
+				Dim rect As Rectangle = GetItemRect(i)
+				If i = SelectedIndex Then
+					RaiseEvent DrawItem(Me, New DrawItemsEventArgs(g, i, Items(i), rect, DrawItemsEventArgs.ItemState.Selected))
+				ElseIf i = h_ind Then
+					RaiseEvent DrawItem(Me, New DrawItemsEventArgs(g, i, Items(i), rect, DrawItemsEventArgs.ItemState.Hover))
+				Else
+					RaiseEvent DrawItem(Me, New DrawItemsEventArgs(g, i, Items(i), rect, DrawItemsEventArgs.ItemState.Normal))
+				End If
+			Next
 
-        Public ReadOnly Property IsReadOnly As Boolean Implements ICollection(Of Color).IsReadOnly
-            Get
-                Return DirectCast(_lst, IList(Of Color)).IsReadOnly
-            End Get
-        End Property
+			RaiseEvent DrawItem(Me, New DrawItemsEventArgs(g, -1, ForeColor, ClientRectangle, DrawItemsEventArgs.ItemState.Foreground))
 
-        Private ReadOnly Property IList_IsReadOnly As Boolean Implements IList.IsReadOnly
-            Get
-                Return DirectCast(_lst, IList).IsReadOnly
-            End Get
-        End Property
+		End If
 
-        Public ReadOnly Property IsFixedSize As Boolean Implements IList.IsFixedSize
-            Get
-                Return DirectCast(_lst, IList).IsFixedSize
-            End Get
-        End Property
+	End Sub
+#End Region
 
-        Private ReadOnly Property ICollection_Count As Integer Implements ICollection.Count
-            Get
-                Return DirectCast(_lst, IList).Count
-            End Get
-        End Property
+#Region "ScrollBar"
+	Private Sub MyVScrollBar1_Scroll(sender As Object, e As EventArgs) Handles MyVScrollBar1.Scroll
+		h_ind = -1
+		Invalidate()
+	End Sub
+#End Region
 
-        Public ReadOnly Property SyncRoot As Object Implements ICollection.SyncRoot
-            Get
-                Return DirectCast(_lst, IList).SyncRoot
-            End Get
-        End Property
+#Region "ColorsCollection"
+	Public Class ColorsCollection
+		Implements IList(Of Color), IList
 
-        Public ReadOnly Property IsSynchronized As Boolean Implements ICollection.IsSynchronized
-            Get
-                Return DirectCast(_lst, IList).IsSynchronized
-            End Get
-        End Property
+		Private _lst As New List(Of Color)
 
-        Property IList_Item(index As Integer) As Object Implements IList.Item
-            Get
-                Return DirectCast(_lst, IList)(index)
-            End Get
-            Set(value As Object)
-                DirectCast(_lst, IList)(index) = value
-                _ctrl.RefreshItems()
-            End Set
-        End Property
+		Private _ctrl As ColorListBox
 
-        Public Function IndexOf(item As Color) As Integer Implements IList(Of Color).IndexOf
-            Return DirectCast(_lst, IList(Of Color)).IndexOf(item)
-            _ctrl.RefreshItems()
-        End Function
+		Sub New(ctrl As ColorListBox)
+			_ctrl = ctrl
+		End Sub
 
-        Public Sub Insert(index As Integer, item As Color) Implements IList(Of Color).Insert
-            DirectCast(_lst, IList(Of Color)).Insert(index, item)
-            _ctrl.RefreshItems()
-        End Sub
+		Default Public Property Item(index As Integer) As Color Implements IList(Of Color).Item
+			Get
+				Return DirectCast(_lst, IList(Of Color))(index)
+			End Get
+			Set(value As Color)
+				DirectCast(_lst, IList(Of Color))(index) = value
+				_ctrl.RefreshItems()
+			End Set
+		End Property
 
-        Public Sub RemoveAt(index As Integer) Implements IList(Of Color).RemoveAt
-            DirectCast(_lst, IList(Of Color)).RemoveAt(index)
-            _ctrl.RefreshItems()
-        End Sub
+		Public ReadOnly Property Count As Integer Implements ICollection(Of Color).Count
+			Get
+				Return DirectCast(_lst, IList(Of Color)).Count
+			End Get
+		End Property
 
-        Public Sub Add(item As Color) Implements ICollection(Of Color).Add
-            DirectCast(_lst, IList(Of Color)).Add(item)
-            _ctrl.RefreshItems()
-        End Sub
+		Public ReadOnly Property IsReadOnly As Boolean Implements ICollection(Of Color).IsReadOnly
+			Get
+				Return DirectCast(_lst, IList(Of Color)).IsReadOnly
+			End Get
+		End Property
 
-        Public Sub Clear() Implements ICollection(Of Color).Clear
-            DirectCast(_lst, IList(Of Color)).Clear()
-            _ctrl.RefreshItems()
-        End Sub
+		Private ReadOnly Property IList_IsReadOnly As Boolean Implements IList.IsReadOnly
+			Get
+				Return DirectCast(_lst, IList).IsReadOnly
+			End Get
+		End Property
 
-        Public Function Contains(item As Color) As Boolean Implements ICollection(Of Color).Contains
-            Return DirectCast(_lst, IList(Of Color)).Contains(item)
-            _ctrl.RefreshItems()
-        End Function
+		Public ReadOnly Property IsFixedSize As Boolean Implements IList.IsFixedSize
+			Get
+				Return DirectCast(_lst, IList).IsFixedSize
+			End Get
+		End Property
 
-        Public Sub CopyTo(array() As Color, arrayIndex As Integer) Implements ICollection(Of Color).CopyTo
-            DirectCast(_lst, IList(Of Color)).CopyTo(array, arrayIndex)
-            _ctrl.RefreshItems()
-        End Sub
+		Private ReadOnly Property ICollection_Count As Integer Implements ICollection.Count
+			Get
+				Return DirectCast(_lst, IList).Count
+			End Get
+		End Property
 
-        Public Function Remove(item As Color) As Boolean Implements ICollection(Of Color).Remove
-            Return DirectCast(_lst, IList(Of Color)).Remove(item)
-            _ctrl.RefreshItems()
-        End Function
+		Public ReadOnly Property SyncRoot As Object Implements ICollection.SyncRoot
+			Get
+				Return DirectCast(_lst, IList).SyncRoot
+			End Get
+		End Property
 
-        Public Function GetEnumerator() As IEnumerator(Of Color) Implements IEnumerable(Of Color).GetEnumerator
-            Return DirectCast(_lst, IList(Of Color)).GetEnumerator()
-            _ctrl.RefreshItems()
-        End Function
+		Public ReadOnly Property IsSynchronized As Boolean Implements ICollection.IsSynchronized
+			Get
+				Return DirectCast(_lst, IList).IsSynchronized
+			End Get
+		End Property
 
-        Private Function IEnumerable_GetEnumerator() As IEnumerator Implements IEnumerable.GetEnumerator
-            Return DirectCast(_lst, IList(Of Color)).GetEnumerator()
-            _ctrl.RefreshItems()
-        End Function
+		Property IList_Item(index As Integer) As Object Implements IList.Item
+			Get
+				Return DirectCast(_lst, IList)(index)
+			End Get
+			Set(value As Object)
+				DirectCast(_lst, IList)(index) = value
+				_ctrl.RefreshItems()
+			End Set
+		End Property
 
-        Public Function Add(value As Object) As Integer Implements IList.Add
-            Return DirectCast(_lst, IList).Add(value)
-            _ctrl.RefreshItems()
-        End Function
+		Public Function IndexOf(item As Color) As Integer Implements IList(Of Color).IndexOf
+			Return DirectCast(_lst, IList(Of Color)).IndexOf(item)
+			_ctrl.RefreshItems()
+		End Function
 
-        Public Function Contains(value As Object) As Boolean Implements IList.Contains
-            Return DirectCast(_lst, IList).Contains(value)
-            _ctrl.RefreshItems()
-        End Function
+		Public Sub Insert(index As Integer, item As Color) Implements IList(Of Color).Insert
+			DirectCast(_lst, IList(Of Color)).Insert(index, item)
+			_ctrl.RefreshItems()
+		End Sub
 
-        Private Sub IList_Clear() Implements IList.Clear
-            DirectCast(_lst, IList).Clear()
-            _ctrl.RefreshItems()
-        End Sub
+		Public Sub RemoveAt(index As Integer) Implements IList(Of Color).RemoveAt
+			DirectCast(_lst, IList(Of Color)).RemoveAt(index)
+			_ctrl.RefreshItems()
+		End Sub
 
-        Public Function IndexOf(value As Object) As Integer Implements IList.IndexOf
-            Return DirectCast(_lst, IList).IndexOf(value)
-            _ctrl.RefreshItems()
-        End Function
+		Public Sub Add(item As Color) Implements ICollection(Of Color).Add
+			DirectCast(_lst, IList(Of Color)).Add(item)
+			_ctrl.RefreshItems()
+		End Sub
 
-        Public Sub Insert(index As Integer, value As Object) Implements IList.Insert
-            DirectCast(_lst, IList).Insert(index, value)
-            _ctrl.RefreshItems()
-        End Sub
+		Public Sub Clear() Implements ICollection(Of Color).Clear
+			DirectCast(_lst, IList(Of Color)).Clear()
+			_ctrl.RefreshItems()
+		End Sub
 
-        Public Sub Remove(value As Object) Implements IList.Remove
-            DirectCast(_lst, IList).Remove(value)
-            _ctrl.RefreshItems()
-        End Sub
+		Public Function Contains(item As Color) As Boolean Implements ICollection(Of Color).Contains
+			Return DirectCast(_lst, IList(Of Color)).Contains(item)
+			_ctrl.RefreshItems()
+		End Function
 
-        Private Sub IList_RemoveAt(index As Integer) Implements IList.RemoveAt
-            DirectCast(_lst, IList).RemoveAt(index)
-            _ctrl.RefreshItems()
-        End Sub
+		Public Sub CopyTo(array() As Color, arrayIndex As Integer) Implements ICollection(Of Color).CopyTo
+			DirectCast(_lst, IList(Of Color)).CopyTo(array, arrayIndex)
+			_ctrl.RefreshItems()
+		End Sub
 
-        Public Sub CopyTo(array As Array, index As Integer) Implements ICollection.CopyTo
-            DirectCast(_lst, IList).CopyTo(array, index)
-            _ctrl.RefreshItems()
-        End Sub
+		Public Function Remove(item As Color) As Boolean Implements ICollection(Of Color).Remove
+			Return DirectCast(_lst, IList(Of Color)).Remove(item)
+			_ctrl.RefreshItems()
+		End Function
 
-    End Class
+		Public Function GetEnumerator() As IEnumerator(Of Color) Implements IEnumerable(Of Color).GetEnumerator
+			Return DirectCast(_lst, IList(Of Color)).GetEnumerator()
+			_ctrl.RefreshItems()
+		End Function
 
-    Private Sub pChild_LocationChanged(sender As Object, e As EventArgs) Handles pChild.LocationChanged
-        pChild.Invalidate()
-    End Sub
+		Private Function IEnumerable_GetEnumerator() As IEnumerator Implements IEnumerable.GetEnumerator
+			Return DirectCast(_lst, IList(Of Color)).GetEnumerator()
+			_ctrl.RefreshItems()
+		End Function
+
+		Public Function Add(value As Object) As Integer Implements IList.Add
+			Return DirectCast(_lst, IList).Add(value)
+			_ctrl.RefreshItems()
+		End Function
+
+		Public Function Contains(value As Object) As Boolean Implements IList.Contains
+			Return DirectCast(_lst, IList).Contains(value)
+			_ctrl.RefreshItems()
+		End Function
+
+		Private Sub IList_Clear() Implements IList.Clear
+			DirectCast(_lst, IList).Clear()
+			_ctrl.RefreshItems()
+		End Sub
+
+		Public Function IndexOf(value As Object) As Integer Implements IList.IndexOf
+			Return DirectCast(_lst, IList).IndexOf(value)
+			_ctrl.RefreshItems()
+		End Function
+
+		Public Sub Insert(index As Integer, value As Object) Implements IList.Insert
+			DirectCast(_lst, IList).Insert(index, value)
+			_ctrl.RefreshItems()
+		End Sub
+
+		Public Sub Remove(value As Object) Implements IList.Remove
+			DirectCast(_lst, IList).Remove(value)
+			_ctrl.RefreshItems()
+		End Sub
+
+		Private Sub IList_RemoveAt(index As Integer) Implements IList.RemoveAt
+			DirectCast(_lst, IList).RemoveAt(index)
+			_ctrl.RefreshItems()
+		End Sub
+
+		Public Sub CopyTo(array As Array, index As Integer) Implements ICollection.CopyTo
+			DirectCast(_lst, IList).CopyTo(array, index)
+			_ctrl.RefreshItems()
+		End Sub
+
+	End Class
+#End Region
 
 End Class
+#End Region
 
+#Region "DrawItemsEventArgs"
+''' <summary>
+''' Provides data for the DrawItem event of <see cref='ColorListBox'/> control.
+''' </summary>
+Public Class DrawItemsEventArgs
+	Inherits EventArgs
+
+	Public Enum ItemState
+		''' <summary>
+		''' The item is in normal state.
+		''' </summary>
+		Normal
+		''' <summary>
+		''' Cursor is within item region.
+		''' </summary>
+		Hover
+		''' <summary>
+		''' The item is in selected state.
+		''' </summary>
+		Selected
+		''' <summary>
+		''' Background of control.
+		''' </summary>
+		Background
+		''' <summary>
+		''' Foreground of control.
+		''' </summary>
+		Foreground
+	End Enum
+
+	Sub New(_g As Graphics, _i As Integer, _clr As Color, _bd As Rectangle, _st As ItemState)
+		g = _g
+		_index = _i
+		bound = _bd
+		st = _st
+		clr = _clr
+	End Sub
+
+	Private _index As Integer
+	''' <summary>
+	''' Gets the index value of the item being drawn.
+	''' </summary>
+	Public ReadOnly Property Index() As Integer
+		Get
+			Return _index
+		End Get
+	End Property
+
+	Private g As Graphics
+	''' <summary>
+	''' Gets the graphics surface to draw the item on.
+	''' </summary>
+	Public ReadOnly Property Graphics() As Graphics
+		Get
+			Return g
+		End Get
+	End Property
+
+	Private bound As Rectangle
+	''' <summary>
+	''' Gets the rectangle that represents the bounds of the item being drawn.
+	''' </summary>
+	Public ReadOnly Property Bounds() As Rectangle
+		Get
+			Return bound
+		End Get
+	End Property
+
+	Private st As ItemState
+	''' <summary>
+	''' Gets the state of the item being drawn.
+	''' </summary>
+	Public ReadOnly Property State() As ItemState
+		Get
+			Return st
+		End Get
+	End Property
+
+	Private clr As Color
+	''' <summary>
+	''' Gets the list box item being drawn.
+	''' </summary>
+	Public ReadOnly Property Item() As Color
+		Get
+			Return clr
+		End Get
+	End Property
+End Class
+#End Region
+
+#Region "Control Designer"
 Public Class ColorListDesigner
-    Inherits ControlDesigner
+	Inherits ControlDesigner
 
-    Private _list As ColorListBox
-    Public Overrides Sub Initialize(ByVal component As IComponent)
-        MyBase.Initialize(component)
+	Private _list As ColorListBox
+	Public Overrides Sub Initialize(ByVal component As IComponent)
+		MyBase.Initialize(component)
 
-        ' Get list control shortcut reference
-        _list = CType(component, ColorListBox)
-    End Sub
+		' Get list control shortcut reference
+		_list = CType(component, ColorListBox)
+	End Sub
 
-    Protected Overrides Function GetHitTest(point As Point) As Boolean
-        If _list.VerticalScroll.Visible Then
-            point = _list.PointToClient(point)
-            'scrollbar rectangle
-            Dim rect As New Rectangle(_list.Width - 17, 0, 17, _list.Height)
-            If rect.Contains(point) Then Return True
-        End If
-        Return MyBase.GetHitTest(point)
-    End Function
+	Protected Overrides Function GetHitTest(point As Point) As Boolean
+		If _list.MyVScrollBar1.Visible Then
+			point = _list.MyVScrollBar1.PointToClient(point)
+			'scrollbar rectangle
+			If _list.MyVScrollBar1.ClientRectangle.Contains(point) Then Return True
+		End If
+		Return MyBase.GetHitTest(point)
+	End Function
 
 End Class
+#End Region
+
+#Region "Items Editor"
+Public Class ColorsEditor
+	Inherits UITypeEditor
+
+	Public Overrides Function GetEditStyle(context As ITypeDescriptorContext) As UITypeEditorEditStyle
+		Return UITypeEditorEditStyle.Modal
+	End Function
+
+	Public Overrides Function EditValue(context As ITypeDescriptorContext, provider As IServiceProvider, value As Object) As Object
+		Dim editor_service As IWindowsFormsEditorService =
+			CType(provider.GetService(GetType(IWindowsFormsEditorService)),
+				IWindowsFormsEditorService)
+		If editor_service Is Nothing Then Return value
+
+		' Control to be modofied
+		Dim Instance As ColorListBox = CType(context.Instance, ColorListBox)
+
+		' Prepare the editing dialog.
+		Dim dlg As New ColorListDialog
+
+		' Load colors in dialog.
+		dlg.LoadColors(Instance.Items.ToArray)
+
+		' Display the dialog.
+		If editor_service.ShowDialog(dlg) = DialogResult.OK Then
+
+			'initiate change
+			context.OnComponentChanging()
+
+			'change items
+			Instance.Items = dlg.lstColors.Items
+
+			'finalize change
+			context.OnComponentChanged()
+
+			Return dlg.lstColors.Items
+		End If
+
+		Return value
+	End Function
+
+End Class
+#End Region

@@ -135,12 +135,13 @@ Public Class MyTrackBar
         Get
             Return _minimum
         End Get
-        Set(ByVal Value As Single)
-            _minimum = Value
-            SetSliderFromValues()
-            Invalidate()
-        End Set
-    End Property
+		Set(ByVal Value As Single)
+			If Value >= _maximum Then Value = _maximum - 1
+			_minimum = Value
+			SetSliderFromValues()
+			Invalidate()
+		End Set
+	End Property
 
     Private _maximum As Single = 100
     <Category("TrackBar")>
@@ -150,12 +151,13 @@ Public Class MyTrackBar
         Get
             Return _maximum
         End Get
-        Set(ByVal Value As Single)
-            _maximum = Value
-            SetSliderFromValues()
-            Invalidate()
-        End Set
-    End Property
+		Set(ByVal Value As Single)
+			If Value <= _minimum Then Value = _minimum + 1
+			_maximum = Value
+			SetSliderFromValues()
+			Invalidate()
+		End Set
+	End Property
 
     Private _increment As Single = 1
     <Category("TrackBar")>
@@ -268,10 +270,9 @@ Public Class MyTrackBar
 
 #Region "Slider Position"
     Private Sub UpdateSlider(ByVal xPos As Single)
-        Dim rect As Rectangle = rectSlider
-        sngSliderPos = xPos
-        If sngSliderPos - rectSliderBar.X < 0 Then sngSliderPos = rectSliderBar.X
-        If sngSliderPos > rectSliderBar.Right Then sngSliderPos = rectSliderBar.Right
+		sngSliderPos = xPos
+		If sngSliderPos < rectSliderBar.X Then sngSliderPos = rectSliderBar.X
+		If sngSliderPos > rectSliderBar.Right Then sngSliderPos = rectSliderBar.Right
         rectSlider = New Rectangle(sngSliderPos - 4, 2, 8, Height - 5)
     End Sub
 
@@ -355,12 +356,11 @@ Public Class MyTrackBar
 		Dim bmp As New Bitmap(Width, Height)
 		Dim g As Graphics = Graphics.FromImage(bmp)
 		g.SmoothingMode = SmoothingMode.AntiAlias
-		g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit
 		g.RenderingOrigin = rectSliderBar.Location
 
-        'Dim rectValueBar As Rectangle = New Rectangle(rectSliderBar.X, rectSliderBar.Y, CInt(sngSliderPos - rectSliderBar.X), rectSliderBar.Height)
+		'Dim rectValueBar As Rectangle = New Rectangle(rectSliderBar.X, rectSliderBar.Y, CInt(sngSliderPos - rectSliderBar.X), rectSliderBar.Height)
 
-        Dim br = New HatchBrush(HatchStyle.LargeCheckerBoard, Color.White, Color.Silver)
+		Dim br = New HatchBrush(HatchStyle.LargeCheckerBoard, Color.White, Color.Silver)
         g.FillRectangle(br, rectSliderBar)
 
         Dim brSlider As New LinearGradientBrush(rectSliderBar, Color1, Color2, 0)
@@ -386,15 +386,17 @@ Public Class MyTrackBar
         g.FillRectangle(New SolidBrush(ThumbColor), rectSlider)
         g.DrawRectangle(New Pen(ThumbBorderColor), rectSlider)
 
-        Dim rectVal As New Rectangle(rectSliderBar.Right + 4, 0, 40, Height)
-        Dim sf As New StringFormat()
-        sf.Alignment = StringAlignment.Center
+		Dim sf As New StringFormat()
+		sf.Alignment = StringAlignment.Center
         sf.LineAlignment = StringAlignment.Center
         Dim str As String = CSng(Math.Round(Value, 2)).ToString
-        Dim tbr As New SolidBrush(ForeColor)
-        g.DrawString(str, Font, tbr, rectVal, sf)
+		Dim tbr As New SolidBrush(ForeColor)
+		Dim t_size = TextRenderer.MeasureText(str, Font)
+		Dim rectVal As New Rectangle(rectSliderBar.Right + 5, Height / 2 - t_size.Height / 2, t_size.Width, t_size.Height)
 
-        If Focused Then
+		TextRenderer.DrawText(e.Graphics, str, Font, rectVal, ForeColor, TextFormatFlags.SingleLine)
+
+		If Focused Then
             Dim pn As New Pen(Color.Gray, 1)
             pn.DashStyle = DashStyle.Dash
             Dim rect As Rectangle = ClientRectangle

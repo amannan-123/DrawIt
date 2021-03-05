@@ -92,12 +92,39 @@ Public Class TestForm
 		Return (CInt(color.A) << 24) Or (CInt(color.B) << 16) Or (CInt(color.G) << 8) Or color.R
 	End Function
 
-	Private Sub MyTabControl1_TabRemoving(sender As Object, e As MyControls.TabRemovingEventArgs)
-		If MessageBox.Show("Tab", "Do you want to close tab?", MessageBoxButtons.YesNo) = DialogResult.No Then
-			e.Cancel = True
-		End If
+	Private Sub FlatButton1_Click(sender As Object, e As EventArgs) Handles FlatButton1.Click
+		ColorListBox1.SelectedIndex = 7
 	End Sub
 
+	Private Sub ListBox1_DrawItem(sender As Object, e As DrawItemEventArgs)
+
+	End Sub
+
+	Private Sub ColorListBox1_DrawItem(sender As Object, e As MyControls.DrawItemsEventArgs) Handles ColorListBox1.DrawItem
+		Dim g As Graphics = e.Graphics
+		Dim rect As Rectangle = e.Bounds
+		Dim clr As Color = e.Item
+		If e.State = MyControls.DrawItemsEventArgs.ItemState.Foreground Then
+			rect.Width -= 1
+			rect.Height -= 1
+			g.DrawRectangle(Pens.Black, rect)
+		Else
+			If e.State = MyControls.DrawItemsEventArgs.ItemState.Hover Then clr = ControlPaint.Light(clr, 0.9)
+			g.FillRectangle(New SolidBrush(clr), rect)
+			rect.Width -= 1
+			If e.Index = ColorListBox1.Items.Count - 1 Then rect.Height -= 1
+			g.DrawRectangle(Pens.Black, rect)
+			If e.State = MyControls.DrawItemsEventArgs.ItemState.Selected Then
+				Dim p1 As Point = New Point(rect.X, rect.Bottom)
+				Dim p2 As Point = New Point(rect.Right, rect.Bottom)
+				g.DrawLine(New Pen(Color.Red, 2), p1, p2)
+			End If
+		End If
+    End Sub
+
+	Private Sub MyVScrollBar1_Scroll(sender As Object, e As EventArgs) Handles MyVScrollBar1.Scroll
+		Text = MyVScrollBar1.Value
+	End Sub
 End Class
 
 Class W10BlurHelper

@@ -245,9 +245,8 @@ Public Class FlatButton
     Private Sub FlatButton_Paint(sender As Object, e As System.Windows.Forms.PaintEventArgs) Handles MyBase.Paint
         Dim g As Graphics = e.Graphics
         g.SmoothingMode = SmoothingMode.AntiAlias
-        g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit
 
-        g.Clear(BackColor)
+		g.Clear(BackColor)
 
         Dim _fill As Color = Color.Transparent
         Dim _text As Color = Color.Transparent

@@ -187,6 +187,7 @@ Public Class MyTabControl
 					m_changeService.OnComponentChanged(Me, member, old_p, TabPages)
 				Else
 					TabPages.Remove(tp)
+					tp.Dispose()
 				End If
 				End If
 			End If
@@ -295,6 +296,7 @@ Public Class MyTabControl
 
 		sf.FormatFlags = StringFormatFlags.DisplayFormatControl
 		If TabPages.Count = 0 Then
+			g.TextRenderingHint = Drawing.Text.TextRenderingHint.AntiAlias
 			g.DrawString("Please insert tab!", New Font("Segoe UI", 20), New SolidBrush(ForeColor), ClientRectangle, sf)
 		End If
 
@@ -303,7 +305,6 @@ Public Class MyTabControl
 		If Enabled Then
 			e.Graphics.DrawImageUnscaled(_bmp, 0, 0)
 		Else
-
 			ControlPaint.DrawImageDisabled(e.Graphics, _bmp, 0, 0, BackColor)
 		End If
 

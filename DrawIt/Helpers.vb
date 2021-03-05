@@ -126,9 +126,9 @@ Module Helpers
         Return gp
     End Function
 
-    Public Function ToPercentage(rect As RectangleF, pt As PointF) As PointF
-		Return New PointF(100 - ((rect.Right - pt.X) * 100) / (rect.Right - rect.X),
-						  100 - ((rect.Bottom - pt.Y) * 100) / (rect.Bottom - rect.Y))
+	Public Function ToPercentage(rect As RectangleF, pt As PointF) As PointF
+		Return New PointF((pt.X - rect.X) * 100 / (rect.Right - rect.X),
+						  (pt.Y - rect.Y) * 100 / (rect.Bottom - rect.Y))
 	End Function
 
 	Public Function FromPercentage(rect As RectangleF, pt As PointF) As PointF
@@ -136,7 +136,7 @@ Module Helpers
 						  pt.Y * (rect.Bottom - rect.Y) / 100 + rect.Y)
 	End Function
 
-    Public Function AnchorToCursor(ByVal eAnchor As MOperations, _angle As Single) As Cursor
+	Public Function AnchorToCursor(ByVal eAnchor As MOperations, _angle As Single) As Cursor
         Dim snAngle As Single = _angle
         Select Case eAnchor
             Case MOperations.Rotate

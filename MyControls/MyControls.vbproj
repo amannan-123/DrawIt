@@ -150,6 +150,12 @@
     <Compile Include="MyTrackBar.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="MyVScrollBar.Designer.vb">
+      <DependentUpon>MyVScrollBar.vb</DependentUpon>
+    </Compile>
+    <Compile Include="MyVScrollBar.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="PointSelector.Designer.vb">
       <DependentUpon>PointSelector.vb</DependentUpon>
     </Compile>
@@ -199,6 +205,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MyTrackBar.resx">
       <DependentUpon>MyTrackBar.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MyVScrollBar.resx">
+      <DependentUpon>MyVScrollBar.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PointSelector.resx">
       <DependentUpon>PointSelector.vb</DependentUpon>
