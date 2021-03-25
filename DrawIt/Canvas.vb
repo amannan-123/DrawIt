@@ -79,6 +79,10 @@ Public Class Canvas
 		End Get
 		Set(ByVal value As MainForm)
 			_frm = value
+			If Not IsNothing(_frm) Then
+				AddHandler _frm.ResizeBegin, AddressOf F_ResizeStarted
+				AddHandler _frm.ResizeEnd, AddressOf F_ResizeEnded
+			End If
 		End Set
 	End Property
 
@@ -149,6 +153,27 @@ Public Class Canvas
 			_highlight = value
 		End Set
 	End Property
+#End Region
+
+#Region "From Resize"
+	Private _fres As Boolean = False
+	Public Property FResizing() As Boolean
+		Get
+			Return _fres
+		End Get
+		Set(ByVal value As Boolean)
+			_fres = value
+			Invalidate()
+		End Set
+	End Property
+
+	Private Sub F_ResizeStarted(sender As Object, e As EventArgs)
+		FResizing = True
+	End Sub
+
+	Private Sub F_ResizeEnded(sender As Object, e As EventArgs)
+		FResizing = False
+	End Sub
 #End Region
 
 #Region "File Operations"
@@ -633,6 +658,19 @@ Public Class Canvas
 #End Region
 
 #Region "Paint Event"
+	Private Sub DrawControlSize(g As Graphics)
+		Dim rect As New Rectangle(Width - 107, 7, 100, 20)
+		Dim fnt As New Font("Segoe UI", 12)
+		Dim sf As New StringFormat()
+		sf.Alignment = StringAlignment.Center
+		sf.LineAlignment = StringAlignment.Center
+		Dim bbr As New SolidBrush(Color.FromArgb(130, Color.White))
+		g.FillRectangle(bbr, rect)
+		g.DrawString(Width & " , " & Height, fnt, Brushes.Black, rect, sf)
+		bbr.Dispose()
+		fnt.Dispose()
+	End Sub
+
 	Private Sub DrawSize(g As Graphics, shp As Shape, Optional ByVal _horz As Boolean = True, Optional ByVal _vert As Boolean = True)
 		g.PixelOffsetMode = PixelOffsetMode.Default
 		Select Case shp.Angle
@@ -965,6 +1003,9 @@ Public Class Canvas
 		Dim rt As Rectangle = ClientRectangle
 		rt.Width -= 1 : rt.Height -= 1
 		g.DrawRectangle(Pens.Black, rt)
+
+		'Draw Size if control is being resized
+		If FResizing AndAlso Docked = True Then DrawControlSize(g)
 
 		'Force Garbage Collector
 		If Not DesignMode Then GC.Collect()

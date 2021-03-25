@@ -193,10 +193,7 @@ Public Class ShapePointsEditor
 				Case DrawType.ClosedCurve
 					g.DrawClosedCurve(Pens.Black, p_pos.ToArray, Tension, FillMode.Winding)
 				Case DrawType.Beziers
-					If p_pos.Count > 1 Then g.DrawLines(Pens.Black, p_pos.ToArray)
-					If (p_pos.Count - 1) Mod 3 = 0 Then
-						g.DrawBeziers(Pens.Black, p_pos.ToArray)
-					End If
+					If (p_pos.Count - 1) Mod 3 = 0 Then g.DrawBeziers(Pens.Black, p_pos.ToArray)
 			End Select
 		End If
 

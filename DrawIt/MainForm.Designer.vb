@@ -60,85 +60,9 @@ Partial Class MainForm
 		Me.tbStroke = New MyControls.MyButton()
 		Me.tbFill = New MyControls.MyButton()
 		Me.pMain = New MyControls.MyPanel()
-		Me.pGlow = New MyControls.MyPanel()
-		Me.cb_EGlow = New System.Windows.Forms.CheckBox()
-		Me.TB_Feather = New MyControls.MyTrackBar()
-		Me.Label54 = New System.Windows.Forms.Label()
-		Me.TB_Glow = New MyControls.MyTrackBar()
-		Me.Label53 = New System.Windows.Forms.Label()
-		Me.cb_gfill = New System.Windows.Forms.CheckBox()
-		Me.cb_GClip = New System.Windows.Forms.ComboBox()
-		Me.Label2 = New System.Windows.Forms.Label()
-		Me.cb_GStyle = New System.Windows.Forms.ComboBox()
-		Me.Label52 = New System.Windows.Forms.Label()
-		Me.Label50 = New System.Windows.Forms.Label()
-		Me.CE_Glow = New MyControls.ColorEditorButton()
-		Me.pStroke = New MyControls.MyPanel()
-		Me.TB_PSY = New MyControls.MyTrackBar()
-		Me.Label44 = New System.Windows.Forms.Label()
-		Me.TB_PSX = New MyControls.MyTrackBar()
-		Me.Label43 = New System.Windows.Forms.Label()
-		Me.Label42 = New System.Windows.Forms.Label()
-		Me.CB_LJoin = New System.Windows.Forms.ComboBox()
-		Me.Label41 = New System.Windows.Forms.Label()
-		Me.CB_ECap = New System.Windows.Forms.ComboBox()
-		Me.Label40 = New System.Windows.Forms.Label()
-		Me.CB_SCap = New System.Windows.Forms.ComboBox()
-		Me.Label39 = New System.Windows.Forms.Label()
-		Me.CB_DCap = New System.Windows.Forms.ComboBox()
-		Me.Label36 = New System.Windows.Forms.Label()
-		Me.CB_DStyle = New System.Windows.Forms.ComboBox()
-		Me.Label35 = New System.Windows.Forms.Label()
-		Me.TB_PAngle = New MyControls.MyTrackBar()
-		Me.Label34 = New System.Windows.Forms.Label()
-		Me.CB_PGamma = New System.Windows.Forms.CheckBox()
-		Me.PWidth = New MyControls.MyTrackBar()
-		Me.Label33 = New System.Windows.Forms.Label()
-		Me.cb_PHatchStyle = New System.Windows.Forms.ComboBox()
-		Me.Label30 = New System.Windows.Forms.Label()
-		Me.Label31 = New System.Windows.Forms.Label()
-		Me.CE_PBack = New MyControls.ColorEditorButton()
-		Me.CE_PFore = New MyControls.ColorEditorButton()
-		Me.Label32 = New System.Windows.Forms.Label()
-		Me.rbpHatch = New System.Windows.Forms.RadioButton()
-		Me.rbpLinear = New System.Windows.Forms.RadioButton()
-		Me.rbpSolid = New System.Windows.Forms.RadioButton()
-		Me.LP_CBEditor = New MyControls.ColorBlendEditor()
-		Me.Label37 = New System.Windows.Forms.Label()
-		Me.CE_PSolid = New MyControls.ColorEditorButton()
-		Me.Label38 = New System.Windows.Forms.Label()
-		Me.pHatch = New MyControls.MyPanel()
-		Me.cb_HatchStyle = New System.Windows.Forms.ComboBox()
-		Me.Label23 = New System.Windows.Forms.Label()
-		Me.Label24 = New System.Windows.Forms.Label()
-		Me.CE_H2 = New MyControls.ColorEditorButton()
-		Me.CE_H1 = New MyControls.ColorEditorButton()
-		Me.Label16 = New System.Windows.Forms.Label()
 		Me.pSolid = New MyControls.MyPanel()
 		Me.Label4 = New System.Windows.Forms.Label()
 		Me.CE_Solid = New MyControls.ColorEditorButton()
-		Me.pTexture = New MyControls.MyPanel()
-		Me.cb_RotateFlip = New System.Windows.Forms.ComboBox()
-		Me.Label26 = New System.Windows.Forms.Label()
-		Me.B_TImage = New MyControls.MyButton()
-		Me.B_TClip = New MyControls.MyButton()
-		Me.Label20 = New System.Windows.Forms.Label()
-		Me.PB_Texture = New System.Windows.Forms.PictureBox()
-		Me.CB_Trans = New System.Windows.Forms.CheckBox()
-		Me.Label21 = New System.Windows.Forms.Label()
-		Me.CE_Trans = New MyControls.ColorEditorButton()
-		Me.pShadow = New MyControls.MyPanel()
-		Me.PS_Shadow = New MyControls.PointSelector()
-		Me.TB_SFeather = New MyControls.MyTrackBar()
-		Me.Label55 = New System.Windows.Forms.Label()
-		Me.TB_SBlur = New MyControls.MyTrackBar()
-		Me.Label57 = New System.Windows.Forms.Label()
-		Me.Label56 = New System.Windows.Forms.Label()
-		Me.cb_EShadow = New System.Windows.Forms.CheckBox()
-		Me.cb_clip = New System.Windows.Forms.CheckBox()
-		Me.cb_fill = New System.Windows.Forms.CheckBox()
-		Me.Label58 = New System.Windows.Forms.Label()
-		Me.CE_Shadow = New MyControls.ColorEditorButton()
 		Me.pLinear = New MyControls.MyPanel()
 		Me.L_BEditor = New MyControls.BlendEditor()
 		Me.L_CBEditor = New MyControls.ColorBlendEditor()
@@ -184,6 +108,82 @@ Partial Class MainForm
 		Me.Label17 = New System.Windows.Forms.Label()
 		Me.Label18 = New System.Windows.Forms.Label()
 		Me.CE_P1 = New MyControls.ColorEditorButton()
+		Me.pHatch = New MyControls.MyPanel()
+		Me.cb_HatchStyle = New System.Windows.Forms.ComboBox()
+		Me.Label23 = New System.Windows.Forms.Label()
+		Me.Label24 = New System.Windows.Forms.Label()
+		Me.CE_H2 = New MyControls.ColorEditorButton()
+		Me.CE_H1 = New MyControls.ColorEditorButton()
+		Me.Label16 = New System.Windows.Forms.Label()
+		Me.pTexture = New MyControls.MyPanel()
+		Me.cb_RotateFlip = New System.Windows.Forms.ComboBox()
+		Me.Label26 = New System.Windows.Forms.Label()
+		Me.B_TImage = New MyControls.MyButton()
+		Me.B_TClip = New MyControls.MyButton()
+		Me.Label20 = New System.Windows.Forms.Label()
+		Me.PB_Texture = New System.Windows.Forms.PictureBox()
+		Me.CB_Trans = New System.Windows.Forms.CheckBox()
+		Me.Label21 = New System.Windows.Forms.Label()
+		Me.CE_Trans = New MyControls.ColorEditorButton()
+		Me.pStroke = New MyControls.MyPanel()
+		Me.TB_PSY = New MyControls.MyTrackBar()
+		Me.Label44 = New System.Windows.Forms.Label()
+		Me.TB_PSX = New MyControls.MyTrackBar()
+		Me.Label43 = New System.Windows.Forms.Label()
+		Me.Label42 = New System.Windows.Forms.Label()
+		Me.CB_LJoin = New System.Windows.Forms.ComboBox()
+		Me.Label41 = New System.Windows.Forms.Label()
+		Me.CB_ECap = New System.Windows.Forms.ComboBox()
+		Me.Label40 = New System.Windows.Forms.Label()
+		Me.CB_SCap = New System.Windows.Forms.ComboBox()
+		Me.Label39 = New System.Windows.Forms.Label()
+		Me.CB_DCap = New System.Windows.Forms.ComboBox()
+		Me.Label36 = New System.Windows.Forms.Label()
+		Me.CB_DStyle = New System.Windows.Forms.ComboBox()
+		Me.Label35 = New System.Windows.Forms.Label()
+		Me.TB_PAngle = New MyControls.MyTrackBar()
+		Me.Label34 = New System.Windows.Forms.Label()
+		Me.CB_PGamma = New System.Windows.Forms.CheckBox()
+		Me.PWidth = New MyControls.MyTrackBar()
+		Me.Label33 = New System.Windows.Forms.Label()
+		Me.cb_PHatchStyle = New System.Windows.Forms.ComboBox()
+		Me.Label30 = New System.Windows.Forms.Label()
+		Me.Label31 = New System.Windows.Forms.Label()
+		Me.CE_PBack = New MyControls.ColorEditorButton()
+		Me.CE_PFore = New MyControls.ColorEditorButton()
+		Me.Label32 = New System.Windows.Forms.Label()
+		Me.rbpHatch = New System.Windows.Forms.RadioButton()
+		Me.rbpLinear = New System.Windows.Forms.RadioButton()
+		Me.rbpSolid = New System.Windows.Forms.RadioButton()
+		Me.LP_CBEditor = New MyControls.ColorBlendEditor()
+		Me.Label37 = New System.Windows.Forms.Label()
+		Me.CE_PSolid = New MyControls.ColorEditorButton()
+		Me.Label38 = New System.Windows.Forms.Label()
+		Me.pGlow = New MyControls.MyPanel()
+		Me.cb_EGlow = New System.Windows.Forms.CheckBox()
+		Me.TB_Feather = New MyControls.MyTrackBar()
+		Me.Label54 = New System.Windows.Forms.Label()
+		Me.TB_Glow = New MyControls.MyTrackBar()
+		Me.Label53 = New System.Windows.Forms.Label()
+		Me.cb_gfill = New System.Windows.Forms.CheckBox()
+		Me.cb_GClip = New System.Windows.Forms.ComboBox()
+		Me.Label2 = New System.Windows.Forms.Label()
+		Me.cb_GStyle = New System.Windows.Forms.ComboBox()
+		Me.Label52 = New System.Windows.Forms.Label()
+		Me.Label50 = New System.Windows.Forms.Label()
+		Me.CE_Glow = New MyControls.ColorEditorButton()
+		Me.pShadow = New MyControls.MyPanel()
+		Me.PS_Shadow = New MyControls.PointSelector()
+		Me.TB_SFeather = New MyControls.MyTrackBar()
+		Me.Label55 = New System.Windows.Forms.Label()
+		Me.TB_SBlur = New MyControls.MyTrackBar()
+		Me.Label57 = New System.Windows.Forms.Label()
+		Me.Label56 = New System.Windows.Forms.Label()
+		Me.cb_EShadow = New System.Windows.Forms.CheckBox()
+		Me.cb_clip = New System.Windows.Forms.CheckBox()
+		Me.cb_fill = New System.Windows.Forms.CheckBox()
+		Me.Label58 = New System.Windows.Forms.Label()
+		Me.CE_Shadow = New MyControls.ColorEditorButton()
 		Me.pCanvas = New MyControls.MyPanel()
 		Me.tCanvas = New MyControls.MyTabControl()
 		Me.TabPage1 = New System.Windows.Forms.TabPage()
@@ -197,15 +197,15 @@ Partial Class MainForm
 		CType(Me.ud_Y, System.ComponentModel.ISupportInitialize).BeginInit()
 		CType(Me.ud_X, System.ComponentModel.ISupportInitialize).BeginInit()
 		Me.pMain.SuspendLayout()
-		Me.pGlow.SuspendLayout()
-		Me.pStroke.SuspendLayout()
-		Me.pHatch.SuspendLayout()
 		Me.pSolid.SuspendLayout()
-		Me.pTexture.SuspendLayout()
-		CType(Me.PB_Texture, System.ComponentModel.ISupportInitialize).BeginInit()
-		Me.pShadow.SuspendLayout()
 		Me.pLinear.SuspendLayout()
 		Me.pPath.SuspendLayout()
+		Me.pHatch.SuspendLayout()
+		Me.pTexture.SuspendLayout()
+		CType(Me.PB_Texture, System.ComponentModel.ISupportInitialize).BeginInit()
+		Me.pStroke.SuspendLayout()
+		Me.pGlow.SuspendLayout()
+		Me.pShadow.SuspendLayout()
 		Me.pCanvas.SuspendLayout()
 		Me.tCanvas.SuspendLayout()
 		Me.TabPage1.SuspendLayout()
@@ -666,672 +666,18 @@ Partial Class MainForm
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.pMain.AutoScroll = True
 		Me.pMain.BackColor = System.Drawing.Color.FromArgb(CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer))
-		Me.pMain.Controls.Add(Me.pGlow)
-		Me.pMain.Controls.Add(Me.pStroke)
-		Me.pMain.Controls.Add(Me.pHatch)
 		Me.pMain.Controls.Add(Me.pSolid)
-		Me.pMain.Controls.Add(Me.pTexture)
-		Me.pMain.Controls.Add(Me.pShadow)
 		Me.pMain.Controls.Add(Me.pLinear)
 		Me.pMain.Controls.Add(Me.pPath)
+		Me.pMain.Controls.Add(Me.pHatch)
+		Me.pMain.Controls.Add(Me.pTexture)
+		Me.pMain.Controls.Add(Me.pStroke)
+		Me.pMain.Controls.Add(Me.pGlow)
+		Me.pMain.Controls.Add(Me.pShadow)
 		Me.pMain.Location = New System.Drawing.Point(1088, 30)
 		Me.pMain.Name = "pMain"
 		Me.pMain.Size = New System.Drawing.Size(278, 675)
 		Me.pMain.TabIndex = 5
-		'
-		'pGlow
-		'
-		Me.pGlow.Controls.Add(Me.cb_EGlow)
-		Me.pGlow.Controls.Add(Me.TB_Feather)
-		Me.pGlow.Controls.Add(Me.Label54)
-		Me.pGlow.Controls.Add(Me.TB_Glow)
-		Me.pGlow.Controls.Add(Me.Label53)
-		Me.pGlow.Controls.Add(Me.cb_gfill)
-		Me.pGlow.Controls.Add(Me.cb_GClip)
-		Me.pGlow.Controls.Add(Me.Label2)
-		Me.pGlow.Controls.Add(Me.cb_GStyle)
-		Me.pGlow.Controls.Add(Me.Label52)
-		Me.pGlow.Controls.Add(Me.Label50)
-		Me.pGlow.Controls.Add(Me.CE_Glow)
-		Me.pGlow.Location = New System.Drawing.Point(0, 0)
-		Me.pGlow.Name = "pGlow"
-		Me.pGlow.Size = New System.Drawing.Size(260, 199)
-		Me.pGlow.TabIndex = 0
-		'
-		'cb_EGlow
-		'
-		Me.cb_EGlow.AutoSize = True
-		Me.cb_EGlow.Location = New System.Drawing.Point(9, 6)
-		Me.cb_EGlow.Name = "cb_EGlow"
-		Me.cb_EGlow.Size = New System.Drawing.Size(78, 17)
-		Me.cb_EGlow.TabIndex = 0
-		Me.cb_EGlow.Text = "Draw Glow"
-		Me.cb_EGlow.UseVisualStyleBackColor = True
-		'
-		'TB_Feather
-		'
-		Me.TB_Feather.AllowDecimal = False
-		Me.TB_Feather.BarBorderColor = System.Drawing.Color.White
-		Me.TB_Feather.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
-		Me.TB_Feather.Factors = New Single() {0!, 1.0!}
-		Me.TB_Feather.Location = New System.Drawing.Point(56, 118)
-		Me.TB_Feather.Minimum = 10.0!
-		Me.TB_Feather.Name = "TB_Feather"
-		Me.TB_Feather.Positions = New Single() {0!, 0.5!, 1.0!}
-		Me.TB_Feather.Size = New System.Drawing.Size(200, 20)
-		Me.TB_Feather.TabIndex = 4
-		Me.TB_Feather.ThumbBorderColor = System.Drawing.Color.White
-		Me.TB_Feather.Value = 35.0!
-		'
-		'Label54
-		'
-		Me.Label54.AutoSize = True
-		Me.Label54.Location = New System.Drawing.Point(4, 122)
-		Me.Label54.Name = "Label54"
-		Me.Label54.Size = New System.Drawing.Size(46, 13)
-		Me.Label54.TabIndex = 14
-		Me.Label54.Text = "Feather:"
-		'
-		'TB_Glow
-		'
-		Me.TB_Glow.AllowDecimal = False
-		Me.TB_Glow.BarBorderColor = System.Drawing.Color.White
-		Me.TB_Glow.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
-		Me.TB_Glow.Factors = New Single() {0!, 1.0!}
-		Me.TB_Glow.Location = New System.Drawing.Point(56, 92)
-		Me.TB_Glow.Minimum = 10.0!
-		Me.TB_Glow.Name = "TB_Glow"
-		Me.TB_Glow.Positions = New Single() {0!, 0.5!, 1.0!}
-		Me.TB_Glow.Size = New System.Drawing.Size(200, 20)
-		Me.TB_Glow.TabIndex = 3
-		Me.TB_Glow.ThumbBorderColor = System.Drawing.Color.White
-		Me.TB_Glow.Value = 35.0!
-		'
-		'Label53
-		'
-		Me.Label53.AutoSize = True
-		Me.Label53.Location = New System.Drawing.Point(4, 96)
-		Me.Label53.Name = "Label53"
-		Me.Label53.Size = New System.Drawing.Size(34, 13)
-		Me.Label53.TabIndex = 14
-		Me.Label53.Text = "Glow:"
-		'
-		'cb_gfill
-		'
-		Me.cb_gfill.AutoSize = True
-		Me.cb_gfill.Checked = True
-		Me.cb_gfill.CheckState = System.Windows.Forms.CheckState.Checked
-		Me.cb_gfill.Location = New System.Drawing.Point(9, 144)
-		Me.cb_gfill.Name = "cb_gfill"
-		Me.cb_gfill.Size = New System.Drawing.Size(72, 17)
-		Me.cb_gfill.TabIndex = 5
-		Me.cb_gfill.Text = "Before Fill"
-		Me.cb_gfill.UseVisualStyleBackColor = True
-		'
-		'cb_GClip
-		'
-		Me.cb_GClip.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
-		Me.cb_GClip.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
-		Me.cb_GClip.DropDownHeight = 250
-		Me.cb_GClip.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-		Me.cb_GClip.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.cb_GClip.IntegralHeight = False
-		Me.cb_GClip.ItemHeight = 17
-		Me.cb_GClip.Location = New System.Drawing.Point(70, 167)
-		Me.cb_GClip.MaxDropDownItems = 14
-		Me.cb_GClip.Name = "cb_GClip"
-		Me.cb_GClip.Size = New System.Drawing.Size(186, 25)
-		Me.cb_GClip.TabIndex = 6
-		'
-		'Label2
-		'
-		Me.Label2.AutoSize = True
-		Me.Label2.Location = New System.Drawing.Point(4, 173)
-		Me.Label2.Name = "Label2"
-		Me.Label2.Size = New System.Drawing.Size(47, 13)
-		Me.Label2.TabIndex = 12
-		Me.Label2.Text = "Clipping:"
-		'
-		'cb_GStyle
-		'
-		Me.cb_GStyle.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
-		Me.cb_GStyle.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
-		Me.cb_GStyle.DropDownHeight = 250
-		Me.cb_GStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-		Me.cb_GStyle.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.cb_GStyle.IntegralHeight = False
-		Me.cb_GStyle.ItemHeight = 17
-		Me.cb_GStyle.Location = New System.Drawing.Point(70, 60)
-		Me.cb_GStyle.MaxDropDownItems = 14
-		Me.cb_GStyle.Name = "cb_GStyle"
-		Me.cb_GStyle.Size = New System.Drawing.Size(186, 25)
-		Me.cb_GStyle.TabIndex = 2
-		'
-		'Label52
-		'
-		Me.Label52.AutoSize = True
-		Me.Label52.Location = New System.Drawing.Point(4, 66)
-		Me.Label52.Name = "Label52"
-		Me.Label52.Size = New System.Drawing.Size(60, 13)
-		Me.Label52.TabIndex = 12
-		Me.Label52.Text = "Glow Style:"
-		'
-		'Label50
-		'
-		Me.Label50.AutoSize = True
-		Me.Label50.Location = New System.Drawing.Point(4, 35)
-		Me.Label50.Name = "Label50"
-		Me.Label50.Size = New System.Drawing.Size(61, 13)
-		Me.Label50.TabIndex = 8
-		Me.Label50.Text = "Glow Color:"
-		'
-		'CE_Glow
-		'
-		Me.CE_Glow.BackColor = System.Drawing.SystemColors.Control
-		Me.CE_Glow.Location = New System.Drawing.Point(70, 29)
-		Me.CE_Glow.MyText = "ChooseColor"
-		Me.CE_Glow.Name = "CE_Glow"
-		Me.CE_Glow.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
-		Me.CE_Glow.Size = New System.Drawing.Size(186, 25)
-		Me.CE_Glow.TabIndex = 1
-		'
-		'pStroke
-		'
-		Me.pStroke.Controls.Add(Me.TB_PSY)
-		Me.pStroke.Controls.Add(Me.Label44)
-		Me.pStroke.Controls.Add(Me.TB_PSX)
-		Me.pStroke.Controls.Add(Me.Label43)
-		Me.pStroke.Controls.Add(Me.Label42)
-		Me.pStroke.Controls.Add(Me.CB_LJoin)
-		Me.pStroke.Controls.Add(Me.Label41)
-		Me.pStroke.Controls.Add(Me.CB_ECap)
-		Me.pStroke.Controls.Add(Me.Label40)
-		Me.pStroke.Controls.Add(Me.CB_SCap)
-		Me.pStroke.Controls.Add(Me.Label39)
-		Me.pStroke.Controls.Add(Me.CB_DCap)
-		Me.pStroke.Controls.Add(Me.Label36)
-		Me.pStroke.Controls.Add(Me.CB_DStyle)
-		Me.pStroke.Controls.Add(Me.Label35)
-		Me.pStroke.Controls.Add(Me.TB_PAngle)
-		Me.pStroke.Controls.Add(Me.Label34)
-		Me.pStroke.Controls.Add(Me.CB_PGamma)
-		Me.pStroke.Controls.Add(Me.PWidth)
-		Me.pStroke.Controls.Add(Me.Label33)
-		Me.pStroke.Controls.Add(Me.cb_PHatchStyle)
-		Me.pStroke.Controls.Add(Me.Label30)
-		Me.pStroke.Controls.Add(Me.Label31)
-		Me.pStroke.Controls.Add(Me.CE_PBack)
-		Me.pStroke.Controls.Add(Me.CE_PFore)
-		Me.pStroke.Controls.Add(Me.Label32)
-		Me.pStroke.Controls.Add(Me.rbpHatch)
-		Me.pStroke.Controls.Add(Me.rbpLinear)
-		Me.pStroke.Controls.Add(Me.rbpSolid)
-		Me.pStroke.Controls.Add(Me.LP_CBEditor)
-		Me.pStroke.Controls.Add(Me.Label37)
-		Me.pStroke.Controls.Add(Me.CE_PSolid)
-		Me.pStroke.Controls.Add(Me.Label38)
-		Me.pStroke.Location = New System.Drawing.Point(0, 0)
-		Me.pStroke.Name = "pStroke"
-		Me.pStroke.Size = New System.Drawing.Size(260, 696)
-		Me.pStroke.TabIndex = 0
-		'
-		'TB_PSY
-		'
-		Me.TB_PSY.BarBorderColor = System.Drawing.Color.White
-		Me.TB_PSY.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
-		Me.TB_PSY.Factors = New Single() {0!, 1.0!}
-		Me.TB_PSY.Increment = 0.1!
-		Me.TB_PSY.Location = New System.Drawing.Point(67, 668)
-		Me.TB_PSY.Maximum = 2.0!
-		Me.TB_PSY.Minimum = 0.1!
-		Me.TB_PSY.Name = "TB_PSY"
-		Me.TB_PSY.Positions = New Single() {0!, 0.5!, 1.0!}
-		Me.TB_PSY.Size = New System.Drawing.Size(186, 20)
-		Me.TB_PSY.TabIndex = 17
-		Me.TB_PSY.ThumbBorderColor = System.Drawing.Color.White
-		Me.TB_PSY.Value = 1.0!
-		'
-		'Label44
-		'
-		Me.Label44.AutoSize = True
-		Me.Label44.Location = New System.Drawing.Point(2, 672)
-		Me.Label44.Name = "Label44"
-		Me.Label44.Size = New System.Drawing.Size(47, 13)
-		Me.Label44.TabIndex = 29
-		Me.Label44.Text = "Scale Y:"
-		'
-		'TB_PSX
-		'
-		Me.TB_PSX.BarBorderColor = System.Drawing.Color.White
-		Me.TB_PSX.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
-		Me.TB_PSX.Factors = New Single() {0!, 1.0!}
-		Me.TB_PSX.Increment = 0.1!
-		Me.TB_PSX.Location = New System.Drawing.Point(67, 643)
-		Me.TB_PSX.Maximum = 2.0!
-		Me.TB_PSX.Minimum = 0.1!
-		Me.TB_PSX.Name = "TB_PSX"
-		Me.TB_PSX.Positions = New Single() {0!, 0.5!, 1.0!}
-		Me.TB_PSX.Size = New System.Drawing.Size(186, 20)
-		Me.TB_PSX.TabIndex = 16
-		Me.TB_PSX.ThumbBorderColor = System.Drawing.Color.White
-		Me.TB_PSX.Value = 1.0!
-		'
-		'Label43
-		'
-		Me.Label43.AutoSize = True
-		Me.Label43.Location = New System.Drawing.Point(2, 647)
-		Me.Label43.Name = "Label43"
-		Me.Label43.Size = New System.Drawing.Size(47, 13)
-		Me.Label43.TabIndex = 29
-		Me.Label43.Text = "Scale X:"
-		'
-		'Label42
-		'
-		Me.Label42.BackColor = System.Drawing.Color.Transparent
-		Me.Label42.Font = New System.Drawing.Font("Consolas", 17.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.Label42.ForeColor = System.Drawing.Color.White
-		Me.Label42.Location = New System.Drawing.Point(0, 426)
-		Me.Label42.Name = "Label42"
-		Me.Label42.Size = New System.Drawing.Size(260, 29)
-		Me.Label42.TabIndex = 28
-		Me.Label42.Text = "Style"
-		Me.Label42.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-		'
-		'CB_LJoin
-		'
-		Me.CB_LJoin.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
-		Me.CB_LJoin.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
-		Me.CB_LJoin.DropDownHeight = 250
-		Me.CB_LJoin.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-		Me.CB_LJoin.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.CB_LJoin.IntegralHeight = False
-		Me.CB_LJoin.ItemHeight = 17
-		Me.CB_LJoin.Location = New System.Drawing.Point(67, 612)
-		Me.CB_LJoin.MaxDropDownItems = 14
-		Me.CB_LJoin.Name = "CB_LJoin"
-		Me.CB_LJoin.Size = New System.Drawing.Size(186, 25)
-		Me.CB_LJoin.TabIndex = 15
-		'
-		'Label41
-		'
-		Me.Label41.AutoSize = True
-		Me.Label41.Location = New System.Drawing.Point(2, 618)
-		Me.Label41.Name = "Label41"
-		Me.Label41.Size = New System.Drawing.Size(52, 13)
-		Me.Label41.TabIndex = 26
-		Me.Label41.Text = "Line Join:"
-		'
-		'CB_ECap
-		'
-		Me.CB_ECap.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
-		Me.CB_ECap.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
-		Me.CB_ECap.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
-		Me.CB_ECap.DropDownHeight = 250
-		Me.CB_ECap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-		Me.CB_ECap.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.CB_ECap.IntegralHeight = False
-		Me.CB_ECap.ItemHeight = 20
-		Me.CB_ECap.Location = New System.Drawing.Point(67, 580)
-		Me.CB_ECap.MaxDropDownItems = 14
-		Me.CB_ECap.Name = "CB_ECap"
-		Me.CB_ECap.Size = New System.Drawing.Size(186, 26)
-		Me.CB_ECap.TabIndex = 14
-		'
-		'Label40
-		'
-		Me.Label40.AutoSize = True
-		Me.Label40.Location = New System.Drawing.Point(2, 586)
-		Me.Label40.Name = "Label40"
-		Me.Label40.Size = New System.Drawing.Size(51, 13)
-		Me.Label40.TabIndex = 26
-		Me.Label40.Text = "End Cap:"
-		'
-		'CB_SCap
-		'
-		Me.CB_SCap.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
-		Me.CB_SCap.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
-		Me.CB_SCap.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
-		Me.CB_SCap.DropDownHeight = 250
-		Me.CB_SCap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-		Me.CB_SCap.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.CB_SCap.IntegralHeight = False
-		Me.CB_SCap.ItemHeight = 20
-		Me.CB_SCap.Location = New System.Drawing.Point(67, 548)
-		Me.CB_SCap.MaxDropDownItems = 14
-		Me.CB_SCap.Name = "CB_SCap"
-		Me.CB_SCap.Size = New System.Drawing.Size(186, 26)
-		Me.CB_SCap.TabIndex = 13
-		'
-		'Label39
-		'
-		Me.Label39.AutoSize = True
-		Me.Label39.Location = New System.Drawing.Point(2, 554)
-		Me.Label39.Name = "Label39"
-		Me.Label39.Size = New System.Drawing.Size(54, 13)
-		Me.Label39.TabIndex = 26
-		Me.Label39.Text = "Start Cap:"
-		'
-		'CB_DCap
-		'
-		Me.CB_DCap.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
-		Me.CB_DCap.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
-		Me.CB_DCap.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
-		Me.CB_DCap.DropDownHeight = 250
-		Me.CB_DCap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-		Me.CB_DCap.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.CB_DCap.IntegralHeight = False
-		Me.CB_DCap.ItemHeight = 20
-		Me.CB_DCap.Location = New System.Drawing.Point(67, 516)
-		Me.CB_DCap.MaxDropDownItems = 14
-		Me.CB_DCap.Name = "CB_DCap"
-		Me.CB_DCap.Size = New System.Drawing.Size(186, 26)
-		Me.CB_DCap.TabIndex = 12
-		'
-		'Label36
-		'
-		Me.Label36.AutoSize = True
-		Me.Label36.Location = New System.Drawing.Point(2, 522)
-		Me.Label36.Name = "Label36"
-		Me.Label36.Size = New System.Drawing.Size(57, 13)
-		Me.Label36.TabIndex = 26
-		Me.Label36.Text = "Dash Cap:"
-		'
-		'CB_DStyle
-		'
-		Me.CB_DStyle.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
-		Me.CB_DStyle.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
-		Me.CB_DStyle.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
-		Me.CB_DStyle.DropDownHeight = 250
-		Me.CB_DStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-		Me.CB_DStyle.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.CB_DStyle.IntegralHeight = False
-		Me.CB_DStyle.ItemHeight = 20
-		Me.CB_DStyle.Location = New System.Drawing.Point(67, 484)
-		Me.CB_DStyle.MaxDropDownItems = 14
-		Me.CB_DStyle.Name = "CB_DStyle"
-		Me.CB_DStyle.Size = New System.Drawing.Size(186, 26)
-		Me.CB_DStyle.TabIndex = 11
-		'
-		'Label35
-		'
-		Me.Label35.AutoSize = True
-		Me.Label35.Location = New System.Drawing.Point(2, 490)
-		Me.Label35.Name = "Label35"
-		Me.Label35.Size = New System.Drawing.Size(61, 13)
-		Me.Label35.TabIndex = 26
-		Me.Label35.Text = "Dash Style:"
-		'
-		'TB_PAngle
-		'
-		Me.TB_PAngle.AllowDecimal = False
-		Me.TB_PAngle.BarBorderColor = System.Drawing.Color.White
-		Me.TB_PAngle.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
-		Me.TB_PAngle.Factors = New Single() {0!, 1.0!}
-		Me.TB_PAngle.Location = New System.Drawing.Point(67, 295)
-		Me.TB_PAngle.Maximum = 360.0!
-		Me.TB_PAngle.Name = "TB_PAngle"
-		Me.TB_PAngle.Positions = New Single() {0!, 0.5!, 1.0!}
-		Me.TB_PAngle.Size = New System.Drawing.Size(186, 20)
-		Me.TB_PAngle.TabIndex = 5
-		Me.TB_PAngle.ThumbBorderColor = System.Drawing.Color.White
-		'
-		'Label34
-		'
-		Me.Label34.AutoSize = True
-		Me.Label34.Location = New System.Drawing.Point(2, 299)
-		Me.Label34.Name = "Label34"
-		Me.Label34.Size = New System.Drawing.Size(37, 13)
-		Me.Label34.TabIndex = 23
-		Me.Label34.Text = "Angle:"
-		'
-		'CB_PGamma
-		'
-		Me.CB_PGamma.AutoSize = True
-		Me.CB_PGamma.Location = New System.Drawing.Point(4, 275)
-		Me.CB_PGamma.Name = "CB_PGamma"
-		Me.CB_PGamma.Size = New System.Drawing.Size(113, 17)
-		Me.CB_PGamma.TabIndex = 4
-		Me.CB_PGamma.Text = "Gamma Correction"
-		Me.CB_PGamma.UseVisualStyleBackColor = True
-		'
-		'PWidth
-		'
-		Me.PWidth.BarBorderColor = System.Drawing.Color.White
-		Me.PWidth.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
-		Me.PWidth.Factors = New Single() {0!, 1.0!}
-		Me.PWidth.Location = New System.Drawing.Point(47, 458)
-		Me.PWidth.Maximum = 50.0!
-		Me.PWidth.Name = "PWidth"
-		Me.PWidth.Positions = New Single() {0!, 0.5!, 1.0!}
-		Me.PWidth.Size = New System.Drawing.Size(208, 20)
-		Me.PWidth.TabIndex = 10
-		Me.PWidth.ThumbBorderColor = System.Drawing.Color.White
-		Me.PWidth.Value = 1.0!
-		'
-		'Label33
-		'
-		Me.Label33.AutoSize = True
-		Me.Label33.Location = New System.Drawing.Point(3, 462)
-		Me.Label33.Name = "Label33"
-		Me.Label33.Size = New System.Drawing.Size(38, 13)
-		Me.Label33.TabIndex = 21
-		Me.Label33.Text = "Width:"
-		'
-		'cb_PHatchStyle
-		'
-		Me.cb_PHatchStyle.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
-		Me.cb_PHatchStyle.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
-		Me.cb_PHatchStyle.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
-		Me.cb_PHatchStyle.DropDownHeight = 250
-		Me.cb_PHatchStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-		Me.cb_PHatchStyle.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.cb_PHatchStyle.IntegralHeight = False
-		Me.cb_PHatchStyle.ItemHeight = 20
-		Me.cb_PHatchStyle.Location = New System.Drawing.Point(67, 397)
-		Me.cb_PHatchStyle.MaxDropDownItems = 14
-		Me.cb_PHatchStyle.Name = "cb_PHatchStyle"
-		Me.cb_PHatchStyle.Size = New System.Drawing.Size(186, 26)
-		Me.cb_PHatchStyle.TabIndex = 9
-		'
-		'Label30
-		'
-		Me.Label30.AutoSize = True
-		Me.Label30.Location = New System.Drawing.Point(2, 372)
-		Me.Label30.Name = "Label30"
-		Me.Label30.Size = New System.Drawing.Size(59, 13)
-		Me.Label30.TabIndex = 17
-		Me.Label30.Text = "BackColor:"
-		'
-		'Label31
-		'
-		Me.Label31.AutoSize = True
-		Me.Label31.Location = New System.Drawing.Point(2, 341)
-		Me.Label31.Name = "Label31"
-		Me.Label31.Size = New System.Drawing.Size(55, 13)
-		Me.Label31.TabIndex = 18
-		Me.Label31.Text = "ForeColor:"
-		'
-		'CE_PBack
-		'
-		Me.CE_PBack.BackColor = System.Drawing.SystemColors.Control
-		Me.CE_PBack.Location = New System.Drawing.Point(67, 366)
-		Me.CE_PBack.MyText = "ChooseColor"
-		Me.CE_PBack.Name = "CE_PBack"
-		Me.CE_PBack.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
-		Me.CE_PBack.Size = New System.Drawing.Size(186, 25)
-		Me.CE_PBack.TabIndex = 8
-		'
-		'CE_PFore
-		'
-		Me.CE_PFore.BackColor = System.Drawing.SystemColors.Control
-		Me.CE_PFore.Location = New System.Drawing.Point(67, 335)
-		Me.CE_PFore.MyText = "ChooseColor"
-		Me.CE_PFore.Name = "CE_PFore"
-		Me.CE_PFore.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
-		Me.CE_PFore.Size = New System.Drawing.Size(186, 25)
-		Me.CE_PFore.TabIndex = 7
-		'
-		'Label32
-		'
-		Me.Label32.AutoSize = True
-		Me.Label32.Location = New System.Drawing.Point(2, 403)
-		Me.Label32.Name = "Label32"
-		Me.Label32.Size = New System.Drawing.Size(65, 13)
-		Me.Label32.TabIndex = 19
-		Me.Label32.Text = "Hatch Style:"
-		'
-		'rbpHatch
-		'
-		Me.rbpHatch.AutoSize = True
-		Me.rbpHatch.Location = New System.Drawing.Point(5, 318)
-		Me.rbpHatch.Name = "rbpHatch"
-		Me.rbpHatch.Size = New System.Drawing.Size(54, 17)
-		Me.rbpHatch.TabIndex = 6
-		Me.rbpHatch.Text = "Hatch"
-		Me.rbpHatch.UseVisualStyleBackColor = True
-		'
-		'rbpLinear
-		'
-		Me.rbpLinear.AutoSize = True
-		Me.rbpLinear.Location = New System.Drawing.Point(4, 86)
-		Me.rbpLinear.Name = "rbpLinear"
-		Me.rbpLinear.Size = New System.Drawing.Size(94, 17)
-		Me.rbpLinear.TabIndex = 2
-		Me.rbpLinear.Text = "LinearGradient"
-		Me.rbpLinear.UseVisualStyleBackColor = True
-		'
-		'rbpSolid
-		'
-		Me.rbpSolid.AutoSize = True
-		Me.rbpSolid.Checked = True
-		Me.rbpSolid.Location = New System.Drawing.Point(5, 32)
-		Me.rbpSolid.Name = "rbpSolid"
-		Me.rbpSolid.Size = New System.Drawing.Size(48, 17)
-		Me.rbpSolid.TabIndex = 0
-		Me.rbpSolid.TabStop = True
-		Me.rbpSolid.Text = "Solid"
-		Me.rbpSolid.UseVisualStyleBackColor = True
-		'
-		'LP_CBEditor
-		'
-		Me.LP_CBEditor.BackColor = System.Drawing.Color.White
-		Me.LP_CBEditor.Colors = New System.Drawing.Color() {System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer)), System.Drawing.Color.Black}
-		Me.LP_CBEditor.ForeColor = System.Drawing.Color.Black
-		Me.LP_CBEditor.Location = New System.Drawing.Point(2, 109)
-		Me.LP_CBEditor.MinimumSize = New System.Drawing.Size(250, 160)
-		Me.LP_CBEditor.Name = "LP_CBEditor"
-		Me.LP_CBEditor.Positions = New Single() {0!, 1.0!}
-		Me.LP_CBEditor.Size = New System.Drawing.Size(250, 160)
-		Me.LP_CBEditor.TabIndex = 3
-		'
-		'Label37
-		'
-		Me.Label37.AutoSize = True
-		Me.Label37.Location = New System.Drawing.Point(2, 61)
-		Me.Label37.Name = "Label37"
-		Me.Label37.Size = New System.Drawing.Size(60, 13)
-		Me.Label37.TabIndex = 10
-		Me.Label37.Text = "Solid Color:"
-		'
-		'CE_PSolid
-		'
-		Me.CE_PSolid.BackColor = System.Drawing.SystemColors.Control
-		Me.CE_PSolid.Location = New System.Drawing.Point(67, 55)
-		Me.CE_PSolid.MyText = "ChooseColor"
-		Me.CE_PSolid.Name = "CE_PSolid"
-		Me.CE_PSolid.SelectedColor = System.Drawing.Color.Black
-		Me.CE_PSolid.Size = New System.Drawing.Size(186, 25)
-		Me.CE_PSolid.TabIndex = 1
-		'
-		'Label38
-		'
-		Me.Label38.BackColor = System.Drawing.Color.Transparent
-		Me.Label38.Font = New System.Drawing.Font("Consolas", 17.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.Label38.ForeColor = System.Drawing.Color.White
-		Me.Label38.Location = New System.Drawing.Point(0, 5)
-		Me.Label38.Name = "Label38"
-		Me.Label38.Size = New System.Drawing.Size(260, 29)
-		Me.Label38.TabIndex = 0
-		Me.Label38.Text = "Fill"
-		Me.Label38.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-		'
-		'pHatch
-		'
-		Me.pHatch.BackColor = System.Drawing.Color.FromArgb(CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer))
-		Me.pHatch.Controls.Add(Me.cb_HatchStyle)
-		Me.pHatch.Controls.Add(Me.Label23)
-		Me.pHatch.Controls.Add(Me.Label24)
-		Me.pHatch.Controls.Add(Me.CE_H2)
-		Me.pHatch.Controls.Add(Me.CE_H1)
-		Me.pHatch.Controls.Add(Me.Label16)
-		Me.pHatch.ForeColor = System.Drawing.Color.White
-		Me.pHatch.Location = New System.Drawing.Point(0, 0)
-		Me.pHatch.Name = "pHatch"
-		Me.pHatch.Size = New System.Drawing.Size(260, 103)
-		Me.pHatch.TabIndex = 0
-		'
-		'cb_HatchStyle
-		'
-		Me.cb_HatchStyle.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
-		Me.cb_HatchStyle.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
-		Me.cb_HatchStyle.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
-		Me.cb_HatchStyle.DropDownHeight = 250
-		Me.cb_HatchStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-		Me.cb_HatchStyle.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.cb_HatchStyle.IntegralHeight = False
-		Me.cb_HatchStyle.ItemHeight = 20
-		Me.cb_HatchStyle.Location = New System.Drawing.Point(69, 68)
-		Me.cb_HatchStyle.MaxDropDownItems = 14
-		Me.cb_HatchStyle.Name = "cb_HatchStyle"
-		Me.cb_HatchStyle.Size = New System.Drawing.Size(186, 26)
-		Me.cb_HatchStyle.TabIndex = 2
-		'
-		'Label23
-		'
-		Me.Label23.AutoSize = True
-		Me.Label23.Location = New System.Drawing.Point(4, 43)
-		Me.Label23.Name = "Label23"
-		Me.Label23.Size = New System.Drawing.Size(59, 13)
-		Me.Label23.TabIndex = 10
-		Me.Label23.Text = "BackColor:"
-		'
-		'Label24
-		'
-		Me.Label24.AutoSize = True
-		Me.Label24.Location = New System.Drawing.Point(4, 12)
-		Me.Label24.Name = "Label24"
-		Me.Label24.Size = New System.Drawing.Size(55, 13)
-		Me.Label24.TabIndex = 10
-		Me.Label24.Text = "ForeColor:"
-		'
-		'CE_H2
-		'
-		Me.CE_H2.BackColor = System.Drawing.SystemColors.Control
-		Me.CE_H2.Location = New System.Drawing.Point(69, 37)
-		Me.CE_H2.MyText = "ChooseColor"
-		Me.CE_H2.Name = "CE_H2"
-		Me.CE_H2.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
-		Me.CE_H2.Size = New System.Drawing.Size(186, 25)
-		Me.CE_H2.TabIndex = 1
-		'
-		'CE_H1
-		'
-		Me.CE_H1.BackColor = System.Drawing.SystemColors.Control
-		Me.CE_H1.Location = New System.Drawing.Point(69, 6)
-		Me.CE_H1.MyText = "ChooseColor"
-		Me.CE_H1.Name = "CE_H1"
-		Me.CE_H1.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
-		Me.CE_H1.Size = New System.Drawing.Size(186, 25)
-		Me.CE_H1.TabIndex = 0
-		'
-		'Label16
-		'
-		Me.Label16.AutoSize = True
-		Me.Label16.Location = New System.Drawing.Point(4, 74)
-		Me.Label16.Name = "Label16"
-		Me.Label16.Size = New System.Drawing.Size(65, 13)
-		Me.Label16.TabIndex = 10
-		Me.Label16.Text = "Hatch Style:"
 		'
 		'pSolid
 		'
@@ -1360,257 +706,6 @@ Partial Class MainForm
 		Me.CE_Solid.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
 		Me.CE_Solid.Size = New System.Drawing.Size(186, 25)
 		Me.CE_Solid.TabIndex = 0
-		'
-		'pTexture
-		'
-		Me.pTexture.Controls.Add(Me.cb_RotateFlip)
-		Me.pTexture.Controls.Add(Me.Label26)
-		Me.pTexture.Controls.Add(Me.B_TImage)
-		Me.pTexture.Controls.Add(Me.B_TClip)
-		Me.pTexture.Controls.Add(Me.Label20)
-		Me.pTexture.Controls.Add(Me.PB_Texture)
-		Me.pTexture.Controls.Add(Me.CB_Trans)
-		Me.pTexture.Controls.Add(Me.Label21)
-		Me.pTexture.Controls.Add(Me.CE_Trans)
-		Me.pTexture.Location = New System.Drawing.Point(0, 0)
-		Me.pTexture.Name = "pTexture"
-		Me.pTexture.Size = New System.Drawing.Size(260, 385)
-		Me.pTexture.TabIndex = 0
-		'
-		'cb_RotateFlip
-		'
-		Me.cb_RotateFlip.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
-		Me.cb_RotateFlip.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
-		Me.cb_RotateFlip.DropDownHeight = 250
-		Me.cb_RotateFlip.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-		Me.cb_RotateFlip.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.cb_RotateFlip.IntegralHeight = False
-		Me.cb_RotateFlip.ItemHeight = 17
-		Me.cb_RotateFlip.Location = New System.Drawing.Point(71, 353)
-		Me.cb_RotateFlip.MaxDropDownItems = 14
-		Me.cb_RotateFlip.Name = "cb_RotateFlip"
-		Me.cb_RotateFlip.Size = New System.Drawing.Size(185, 25)
-		Me.cb_RotateFlip.TabIndex = 4
-		'
-		'Label26
-		'
-		Me.Label26.AutoSize = True
-		Me.Label26.Location = New System.Drawing.Point(5, 359)
-		Me.Label26.Name = "Label26"
-		Me.Label26.Size = New System.Drawing.Size(58, 13)
-		Me.Label26.TabIndex = 15
-		Me.Label26.Text = "RotateFlip:"
-		'
-		'B_TImage
-		'
-		Me.B_TImage.BackColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer))
-		Me.B_TImage.ForeColor = System.Drawing.Color.White
-		Me.B_TImage.Location = New System.Drawing.Point(132, 258)
-		Me.B_TImage.MyText = "Choose File"
-		Me.B_TImage.Name = "B_TImage"
-		Me.B_TImage.Size = New System.Drawing.Size(123, 30)
-		Me.B_TImage.TabIndex = 1
-		'
-		'B_TClip
-		'
-		Me.B_TClip.BackColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer))
-		Me.B_TClip.ForeColor = System.Drawing.Color.White
-		Me.B_TClip.Location = New System.Drawing.Point(6, 258)
-		Me.B_TClip.MyText = "From Clipboard"
-		Me.B_TClip.Name = "B_TClip"
-		Me.B_TClip.Size = New System.Drawing.Size(123, 30)
-		Me.B_TClip.TabIndex = 0
-		'
-		'Label20
-		'
-		Me.Label20.AutoSize = True
-		Me.Label20.Location = New System.Drawing.Point(5, 6)
-		Me.Label20.Name = "Label20"
-		Me.Label20.Size = New System.Drawing.Size(39, 13)
-		Me.Label20.TabIndex = 13
-		Me.Label20.Text = "Image:"
-		'
-		'PB_Texture
-		'
-		Me.PB_Texture.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-		Me.PB_Texture.Location = New System.Drawing.Point(6, 22)
-		Me.PB_Texture.Name = "PB_Texture"
-		Me.PB_Texture.Size = New System.Drawing.Size(249, 230)
-		Me.PB_Texture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-		Me.PB_Texture.TabIndex = 12
-		Me.PB_Texture.TabStop = False
-		'
-		'CB_Trans
-		'
-		Me.CB_Trans.AutoSize = True
-		Me.CB_Trans.Location = New System.Drawing.Point(7, 298)
-		Me.CB_Trans.Name = "CB_Trans"
-		Me.CB_Trans.Size = New System.Drawing.Size(91, 17)
-		Me.CB_Trans.TabIndex = 2
-		Me.CB_Trans.Text = "Transparency"
-		Me.CB_Trans.UseVisualStyleBackColor = True
-		'
-		'Label21
-		'
-		Me.Label21.AutoSize = True
-		Me.Label21.Location = New System.Drawing.Point(5, 324)
-		Me.Label21.Name = "Label21"
-		Me.Label21.Size = New System.Drawing.Size(34, 13)
-		Me.Label21.TabIndex = 10
-		Me.Label21.Text = "Color:"
-		'
-		'CE_Trans
-		'
-		Me.CE_Trans.BackColor = System.Drawing.SystemColors.Control
-		Me.CE_Trans.Location = New System.Drawing.Point(71, 318)
-		Me.CE_Trans.MyText = "ChooseColor"
-		Me.CE_Trans.Name = "CE_Trans"
-		Me.CE_Trans.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
-		Me.CE_Trans.Size = New System.Drawing.Size(185, 25)
-		Me.CE_Trans.TabIndex = 3
-		'
-		'pShadow
-		'
-		Me.pShadow.Controls.Add(Me.PS_Shadow)
-		Me.pShadow.Controls.Add(Me.TB_SFeather)
-		Me.pShadow.Controls.Add(Me.Label55)
-		Me.pShadow.Controls.Add(Me.TB_SBlur)
-		Me.pShadow.Controls.Add(Me.Label57)
-		Me.pShadow.Controls.Add(Me.Label56)
-		Me.pShadow.Controls.Add(Me.cb_EShadow)
-		Me.pShadow.Controls.Add(Me.cb_clip)
-		Me.pShadow.Controls.Add(Me.cb_fill)
-		Me.pShadow.Controls.Add(Me.Label58)
-		Me.pShadow.Controls.Add(Me.CE_Shadow)
-		Me.pShadow.Location = New System.Drawing.Point(0, 0)
-		Me.pShadow.Name = "pShadow"
-		Me.pShadow.Size = New System.Drawing.Size(260, 427)
-		Me.pShadow.TabIndex = 0
-		'
-		'PS_Shadow
-		'
-		Me.PS_Shadow.BackColor = System.Drawing.Color.Transparent
-		Me.PS_Shadow.BackRectColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer))
-		Me.PS_Shadow.BordersColor = System.Drawing.Color.White
-		Me.PS_Shadow.Font = New System.Drawing.Font("Consolas", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.PS_Shadow.Location = New System.Drawing.Point(6, 174)
-		Me.PS_Shadow.Maximum = New System.Drawing.Point(50, 50)
-		Me.PS_Shadow.Minimum = New System.Drawing.Point(-50, -50)
-		Me.PS_Shadow.Name = "PS_Shadow"
-		Me.PS_Shadow.Size = New System.Drawing.Size(249, 249)
-		Me.PS_Shadow.TabIndex = 6
-		Me.PS_Shadow.ThumbColor = System.Drawing.Color.Black
-		Me.PS_Shadow.Value = New System.Drawing.Point(10, 10)
-		'
-		'TB_SFeather
-		'
-		Me.TB_SFeather.AllowDecimal = False
-		Me.TB_SFeather.BarBorderColor = System.Drawing.Color.White
-		Me.TB_SFeather.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
-		Me.TB_SFeather.Factors = New Single() {0!, 1.0!}
-		Me.TB_SFeather.Location = New System.Drawing.Point(58, 86)
-		Me.TB_SFeather.Minimum = 10.0!
-		Me.TB_SFeather.Name = "TB_SFeather"
-		Me.TB_SFeather.Positions = New Single() {0!, 0.5!, 1.0!}
-		Me.TB_SFeather.Size = New System.Drawing.Size(197, 20)
-		Me.TB_SFeather.TabIndex = 3
-		Me.TB_SFeather.ThumbBorderColor = System.Drawing.Color.White
-		Me.TB_SFeather.Value = 100.0!
-		'
-		'Label55
-		'
-		Me.Label55.AutoSize = True
-		Me.Label55.Location = New System.Drawing.Point(4, 86)
-		Me.Label55.Name = "Label55"
-		Me.Label55.Size = New System.Drawing.Size(46, 13)
-		Me.Label55.TabIndex = 14
-		Me.Label55.Text = "Feather:"
-		'
-		'TB_SBlur
-		'
-		Me.TB_SBlur.AllowDecimal = False
-		Me.TB_SBlur.BarBorderColor = System.Drawing.Color.White
-		Me.TB_SBlur.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
-		Me.TB_SBlur.Factors = New Single() {0!, 1.0!}
-		Me.TB_SBlur.Location = New System.Drawing.Point(58, 60)
-		Me.TB_SBlur.Maximum = 10.0!
-		Me.TB_SBlur.Name = "TB_SBlur"
-		Me.TB_SBlur.Positions = New Single() {0!, 0.5!, 1.0!}
-		Me.TB_SBlur.Size = New System.Drawing.Size(197, 20)
-		Me.TB_SBlur.TabIndex = 2
-		Me.TB_SBlur.ThumbBorderColor = System.Drawing.Color.White
-		Me.TB_SBlur.Value = 2.0!
-		'
-		'Label57
-		'
-		Me.Label57.AutoSize = True
-		Me.Label57.Location = New System.Drawing.Point(9, 158)
-		Me.Label57.Name = "Label57"
-		Me.Label57.Size = New System.Drawing.Size(38, 13)
-		Me.Label57.TabIndex = 14
-		Me.Label57.Text = "Offset:"
-		'
-		'Label56
-		'
-		Me.Label56.AutoSize = True
-		Me.Label56.Location = New System.Drawing.Point(4, 60)
-		Me.Label56.Name = "Label56"
-		Me.Label56.Size = New System.Drawing.Size(28, 13)
-		Me.Label56.TabIndex = 14
-		Me.Label56.Text = "Blur:"
-		'
-		'cb_EShadow
-		'
-		Me.cb_EShadow.AutoSize = True
-		Me.cb_EShadow.Location = New System.Drawing.Point(9, 6)
-		Me.cb_EShadow.Name = "cb_EShadow"
-		Me.cb_EShadow.Size = New System.Drawing.Size(93, 17)
-		Me.cb_EShadow.TabIndex = 0
-		Me.cb_EShadow.Text = "Draw Shadow"
-		Me.cb_EShadow.UseVisualStyleBackColor = True
-		'
-		'cb_clip
-		'
-		Me.cb_clip.AutoSize = True
-		Me.cb_clip.Checked = True
-		Me.cb_clip.CheckState = System.Windows.Forms.CheckState.Checked
-		Me.cb_clip.Location = New System.Drawing.Point(9, 135)
-		Me.cb_clip.Name = "cb_clip"
-		Me.cb_clip.Size = New System.Drawing.Size(100, 17)
-		Me.cb_clip.TabIndex = 5
-		Me.cb_clip.Text = "Region Clipping"
-		Me.cb_clip.UseVisualStyleBackColor = True
-		'
-		'cb_fill
-		'
-		Me.cb_fill.AutoSize = True
-		Me.cb_fill.Checked = True
-		Me.cb_fill.CheckState = System.Windows.Forms.CheckState.Checked
-		Me.cb_fill.Location = New System.Drawing.Point(9, 112)
-		Me.cb_fill.Name = "cb_fill"
-		Me.cb_fill.Size = New System.Drawing.Size(38, 17)
-		Me.cb_fill.TabIndex = 4
-		Me.cb_fill.Text = "Fill"
-		Me.cb_fill.UseVisualStyleBackColor = True
-		'
-		'Label58
-		'
-		Me.Label58.AutoSize = True
-		Me.Label58.Location = New System.Drawing.Point(4, 35)
-		Me.Label58.Name = "Label58"
-		Me.Label58.Size = New System.Drawing.Size(76, 13)
-		Me.Label58.TabIndex = 8
-		Me.Label58.Text = "Shadow Color:"
-		'
-		'CE_Shadow
-		'
-		Me.CE_Shadow.BackColor = System.Drawing.SystemColors.Control
-		Me.CE_Shadow.Location = New System.Drawing.Point(86, 29)
-		Me.CE_Shadow.MyText = "ChooseColor"
-		Me.CE_Shadow.Name = "CE_Shadow"
-		Me.CE_Shadow.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-		Me.CE_Shadow.Size = New System.Drawing.Size(170, 25)
-		Me.CE_Shadow.TabIndex = 1
 		'
 		'pLinear
 		'
@@ -2148,6 +1243,911 @@ Partial Class MainForm
 		Me.CE_P1.Size = New System.Drawing.Size(186, 25)
 		Me.CE_P1.TabIndex = 0
 		'
+		'pHatch
+		'
+		Me.pHatch.BackColor = System.Drawing.Color.FromArgb(CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer))
+		Me.pHatch.Controls.Add(Me.cb_HatchStyle)
+		Me.pHatch.Controls.Add(Me.Label23)
+		Me.pHatch.Controls.Add(Me.Label24)
+		Me.pHatch.Controls.Add(Me.CE_H2)
+		Me.pHatch.Controls.Add(Me.CE_H1)
+		Me.pHatch.Controls.Add(Me.Label16)
+		Me.pHatch.ForeColor = System.Drawing.Color.White
+		Me.pHatch.Location = New System.Drawing.Point(0, 0)
+		Me.pHatch.Name = "pHatch"
+		Me.pHatch.Size = New System.Drawing.Size(260, 103)
+		Me.pHatch.TabIndex = 0
+		'
+		'cb_HatchStyle
+		'
+		Me.cb_HatchStyle.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
+		Me.cb_HatchStyle.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+		Me.cb_HatchStyle.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
+		Me.cb_HatchStyle.DropDownHeight = 250
+		Me.cb_HatchStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+		Me.cb_HatchStyle.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.cb_HatchStyle.IntegralHeight = False
+		Me.cb_HatchStyle.ItemHeight = 20
+		Me.cb_HatchStyle.Location = New System.Drawing.Point(69, 68)
+		Me.cb_HatchStyle.MaxDropDownItems = 14
+		Me.cb_HatchStyle.Name = "cb_HatchStyle"
+		Me.cb_HatchStyle.Size = New System.Drawing.Size(186, 26)
+		Me.cb_HatchStyle.TabIndex = 2
+		'
+		'Label23
+		'
+		Me.Label23.AutoSize = True
+		Me.Label23.Location = New System.Drawing.Point(4, 43)
+		Me.Label23.Name = "Label23"
+		Me.Label23.Size = New System.Drawing.Size(59, 13)
+		Me.Label23.TabIndex = 10
+		Me.Label23.Text = "BackColor:"
+		'
+		'Label24
+		'
+		Me.Label24.AutoSize = True
+		Me.Label24.Location = New System.Drawing.Point(4, 12)
+		Me.Label24.Name = "Label24"
+		Me.Label24.Size = New System.Drawing.Size(55, 13)
+		Me.Label24.TabIndex = 10
+		Me.Label24.Text = "ForeColor:"
+		'
+		'CE_H2
+		'
+		Me.CE_H2.BackColor = System.Drawing.SystemColors.Control
+		Me.CE_H2.Location = New System.Drawing.Point(69, 37)
+		Me.CE_H2.MyText = "ChooseColor"
+		Me.CE_H2.Name = "CE_H2"
+		Me.CE_H2.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
+		Me.CE_H2.Size = New System.Drawing.Size(186, 25)
+		Me.CE_H2.TabIndex = 1
+		'
+		'CE_H1
+		'
+		Me.CE_H1.BackColor = System.Drawing.SystemColors.Control
+		Me.CE_H1.Location = New System.Drawing.Point(69, 6)
+		Me.CE_H1.MyText = "ChooseColor"
+		Me.CE_H1.Name = "CE_H1"
+		Me.CE_H1.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
+		Me.CE_H1.Size = New System.Drawing.Size(186, 25)
+		Me.CE_H1.TabIndex = 0
+		'
+		'Label16
+		'
+		Me.Label16.AutoSize = True
+		Me.Label16.Location = New System.Drawing.Point(4, 74)
+		Me.Label16.Name = "Label16"
+		Me.Label16.Size = New System.Drawing.Size(65, 13)
+		Me.Label16.TabIndex = 10
+		Me.Label16.Text = "Hatch Style:"
+		'
+		'pTexture
+		'
+		Me.pTexture.Controls.Add(Me.cb_RotateFlip)
+		Me.pTexture.Controls.Add(Me.Label26)
+		Me.pTexture.Controls.Add(Me.B_TImage)
+		Me.pTexture.Controls.Add(Me.B_TClip)
+		Me.pTexture.Controls.Add(Me.Label20)
+		Me.pTexture.Controls.Add(Me.PB_Texture)
+		Me.pTexture.Controls.Add(Me.CB_Trans)
+		Me.pTexture.Controls.Add(Me.Label21)
+		Me.pTexture.Controls.Add(Me.CE_Trans)
+		Me.pTexture.Location = New System.Drawing.Point(0, 0)
+		Me.pTexture.Name = "pTexture"
+		Me.pTexture.Size = New System.Drawing.Size(260, 385)
+		Me.pTexture.TabIndex = 0
+		'
+		'cb_RotateFlip
+		'
+		Me.cb_RotateFlip.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
+		Me.cb_RotateFlip.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+		Me.cb_RotateFlip.DropDownHeight = 250
+		Me.cb_RotateFlip.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+		Me.cb_RotateFlip.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.cb_RotateFlip.IntegralHeight = False
+		Me.cb_RotateFlip.ItemHeight = 17
+		Me.cb_RotateFlip.Location = New System.Drawing.Point(71, 353)
+		Me.cb_RotateFlip.MaxDropDownItems = 14
+		Me.cb_RotateFlip.Name = "cb_RotateFlip"
+		Me.cb_RotateFlip.Size = New System.Drawing.Size(185, 25)
+		Me.cb_RotateFlip.TabIndex = 4
+		'
+		'Label26
+		'
+		Me.Label26.AutoSize = True
+		Me.Label26.Location = New System.Drawing.Point(5, 359)
+		Me.Label26.Name = "Label26"
+		Me.Label26.Size = New System.Drawing.Size(58, 13)
+		Me.Label26.TabIndex = 15
+		Me.Label26.Text = "RotateFlip:"
+		'
+		'B_TImage
+		'
+		Me.B_TImage.BackColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer))
+		Me.B_TImage.ForeColor = System.Drawing.Color.White
+		Me.B_TImage.Location = New System.Drawing.Point(132, 258)
+		Me.B_TImage.MyText = "Choose File"
+		Me.B_TImage.Name = "B_TImage"
+		Me.B_TImage.Size = New System.Drawing.Size(123, 30)
+		Me.B_TImage.TabIndex = 1
+		'
+		'B_TClip
+		'
+		Me.B_TClip.BackColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer))
+		Me.B_TClip.ForeColor = System.Drawing.Color.White
+		Me.B_TClip.Location = New System.Drawing.Point(6, 258)
+		Me.B_TClip.MyText = "From Clipboard"
+		Me.B_TClip.Name = "B_TClip"
+		Me.B_TClip.Size = New System.Drawing.Size(123, 30)
+		Me.B_TClip.TabIndex = 0
+		'
+		'Label20
+		'
+		Me.Label20.AutoSize = True
+		Me.Label20.Location = New System.Drawing.Point(5, 6)
+		Me.Label20.Name = "Label20"
+		Me.Label20.Size = New System.Drawing.Size(39, 13)
+		Me.Label20.TabIndex = 13
+		Me.Label20.Text = "Image:"
+		'
+		'PB_Texture
+		'
+		Me.PB_Texture.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+		Me.PB_Texture.Location = New System.Drawing.Point(6, 22)
+		Me.PB_Texture.Name = "PB_Texture"
+		Me.PB_Texture.Size = New System.Drawing.Size(249, 230)
+		Me.PB_Texture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+		Me.PB_Texture.TabIndex = 12
+		Me.PB_Texture.TabStop = False
+		'
+		'CB_Trans
+		'
+		Me.CB_Trans.AutoSize = True
+		Me.CB_Trans.Location = New System.Drawing.Point(7, 298)
+		Me.CB_Trans.Name = "CB_Trans"
+		Me.CB_Trans.Size = New System.Drawing.Size(91, 17)
+		Me.CB_Trans.TabIndex = 2
+		Me.CB_Trans.Text = "Transparency"
+		Me.CB_Trans.UseVisualStyleBackColor = True
+		'
+		'Label21
+		'
+		Me.Label21.AutoSize = True
+		Me.Label21.Location = New System.Drawing.Point(5, 324)
+		Me.Label21.Name = "Label21"
+		Me.Label21.Size = New System.Drawing.Size(34, 13)
+		Me.Label21.TabIndex = 10
+		Me.Label21.Text = "Color:"
+		'
+		'CE_Trans
+		'
+		Me.CE_Trans.BackColor = System.Drawing.SystemColors.Control
+		Me.CE_Trans.Location = New System.Drawing.Point(71, 318)
+		Me.CE_Trans.MyText = "ChooseColor"
+		Me.CE_Trans.Name = "CE_Trans"
+		Me.CE_Trans.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
+		Me.CE_Trans.Size = New System.Drawing.Size(185, 25)
+		Me.CE_Trans.TabIndex = 3
+		'
+		'pStroke
+		'
+		Me.pStroke.Controls.Add(Me.TB_PSY)
+		Me.pStroke.Controls.Add(Me.Label44)
+		Me.pStroke.Controls.Add(Me.TB_PSX)
+		Me.pStroke.Controls.Add(Me.Label43)
+		Me.pStroke.Controls.Add(Me.Label42)
+		Me.pStroke.Controls.Add(Me.CB_LJoin)
+		Me.pStroke.Controls.Add(Me.Label41)
+		Me.pStroke.Controls.Add(Me.CB_ECap)
+		Me.pStroke.Controls.Add(Me.Label40)
+		Me.pStroke.Controls.Add(Me.CB_SCap)
+		Me.pStroke.Controls.Add(Me.Label39)
+		Me.pStroke.Controls.Add(Me.CB_DCap)
+		Me.pStroke.Controls.Add(Me.Label36)
+		Me.pStroke.Controls.Add(Me.CB_DStyle)
+		Me.pStroke.Controls.Add(Me.Label35)
+		Me.pStroke.Controls.Add(Me.TB_PAngle)
+		Me.pStroke.Controls.Add(Me.Label34)
+		Me.pStroke.Controls.Add(Me.CB_PGamma)
+		Me.pStroke.Controls.Add(Me.PWidth)
+		Me.pStroke.Controls.Add(Me.Label33)
+		Me.pStroke.Controls.Add(Me.cb_PHatchStyle)
+		Me.pStroke.Controls.Add(Me.Label30)
+		Me.pStroke.Controls.Add(Me.Label31)
+		Me.pStroke.Controls.Add(Me.CE_PBack)
+		Me.pStroke.Controls.Add(Me.CE_PFore)
+		Me.pStroke.Controls.Add(Me.Label32)
+		Me.pStroke.Controls.Add(Me.rbpHatch)
+		Me.pStroke.Controls.Add(Me.rbpLinear)
+		Me.pStroke.Controls.Add(Me.rbpSolid)
+		Me.pStroke.Controls.Add(Me.LP_CBEditor)
+		Me.pStroke.Controls.Add(Me.Label37)
+		Me.pStroke.Controls.Add(Me.CE_PSolid)
+		Me.pStroke.Controls.Add(Me.Label38)
+		Me.pStroke.Location = New System.Drawing.Point(0, 0)
+		Me.pStroke.Name = "pStroke"
+		Me.pStroke.Size = New System.Drawing.Size(260, 696)
+		Me.pStroke.TabIndex = 0
+		'
+		'TB_PSY
+		'
+		Me.TB_PSY.BarBorderColor = System.Drawing.Color.White
+		Me.TB_PSY.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
+		Me.TB_PSY.Factors = New Single() {0!, 1.0!}
+		Me.TB_PSY.Increment = 0.1!
+		Me.TB_PSY.Location = New System.Drawing.Point(67, 668)
+		Me.TB_PSY.Maximum = 2.0!
+		Me.TB_PSY.Minimum = 0.1!
+		Me.TB_PSY.Name = "TB_PSY"
+		Me.TB_PSY.Positions = New Single() {0!, 0.5!, 1.0!}
+		Me.TB_PSY.Size = New System.Drawing.Size(186, 20)
+		Me.TB_PSY.TabIndex = 17
+		Me.TB_PSY.ThumbBorderColor = System.Drawing.Color.White
+		Me.TB_PSY.Value = 1.0!
+		'
+		'Label44
+		'
+		Me.Label44.AutoSize = True
+		Me.Label44.Location = New System.Drawing.Point(2, 672)
+		Me.Label44.Name = "Label44"
+		Me.Label44.Size = New System.Drawing.Size(47, 13)
+		Me.Label44.TabIndex = 29
+		Me.Label44.Text = "Scale Y:"
+		'
+		'TB_PSX
+		'
+		Me.TB_PSX.BarBorderColor = System.Drawing.Color.White
+		Me.TB_PSX.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
+		Me.TB_PSX.Factors = New Single() {0!, 1.0!}
+		Me.TB_PSX.Increment = 0.1!
+		Me.TB_PSX.Location = New System.Drawing.Point(67, 643)
+		Me.TB_PSX.Maximum = 2.0!
+		Me.TB_PSX.Minimum = 0.1!
+		Me.TB_PSX.Name = "TB_PSX"
+		Me.TB_PSX.Positions = New Single() {0!, 0.5!, 1.0!}
+		Me.TB_PSX.Size = New System.Drawing.Size(186, 20)
+		Me.TB_PSX.TabIndex = 16
+		Me.TB_PSX.ThumbBorderColor = System.Drawing.Color.White
+		Me.TB_PSX.Value = 1.0!
+		'
+		'Label43
+		'
+		Me.Label43.AutoSize = True
+		Me.Label43.Location = New System.Drawing.Point(2, 647)
+		Me.Label43.Name = "Label43"
+		Me.Label43.Size = New System.Drawing.Size(47, 13)
+		Me.Label43.TabIndex = 29
+		Me.Label43.Text = "Scale X:"
+		'
+		'Label42
+		'
+		Me.Label42.BackColor = System.Drawing.Color.Transparent
+		Me.Label42.Font = New System.Drawing.Font("Consolas", 17.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.Label42.ForeColor = System.Drawing.Color.White
+		Me.Label42.Location = New System.Drawing.Point(0, 426)
+		Me.Label42.Name = "Label42"
+		Me.Label42.Size = New System.Drawing.Size(260, 29)
+		Me.Label42.TabIndex = 28
+		Me.Label42.Text = "Style"
+		Me.Label42.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+		'
+		'CB_LJoin
+		'
+		Me.CB_LJoin.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
+		Me.CB_LJoin.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+		Me.CB_LJoin.DropDownHeight = 250
+		Me.CB_LJoin.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+		Me.CB_LJoin.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.CB_LJoin.IntegralHeight = False
+		Me.CB_LJoin.ItemHeight = 17
+		Me.CB_LJoin.Location = New System.Drawing.Point(67, 612)
+		Me.CB_LJoin.MaxDropDownItems = 14
+		Me.CB_LJoin.Name = "CB_LJoin"
+		Me.CB_LJoin.Size = New System.Drawing.Size(186, 25)
+		Me.CB_LJoin.TabIndex = 15
+		'
+		'Label41
+		'
+		Me.Label41.AutoSize = True
+		Me.Label41.Location = New System.Drawing.Point(2, 618)
+		Me.Label41.Name = "Label41"
+		Me.Label41.Size = New System.Drawing.Size(52, 13)
+		Me.Label41.TabIndex = 26
+		Me.Label41.Text = "Line Join:"
+		'
+		'CB_ECap
+		'
+		Me.CB_ECap.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
+		Me.CB_ECap.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+		Me.CB_ECap.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
+		Me.CB_ECap.DropDownHeight = 250
+		Me.CB_ECap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+		Me.CB_ECap.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.CB_ECap.IntegralHeight = False
+		Me.CB_ECap.ItemHeight = 20
+		Me.CB_ECap.Location = New System.Drawing.Point(67, 580)
+		Me.CB_ECap.MaxDropDownItems = 14
+		Me.CB_ECap.Name = "CB_ECap"
+		Me.CB_ECap.Size = New System.Drawing.Size(186, 26)
+		Me.CB_ECap.TabIndex = 14
+		'
+		'Label40
+		'
+		Me.Label40.AutoSize = True
+		Me.Label40.Location = New System.Drawing.Point(2, 586)
+		Me.Label40.Name = "Label40"
+		Me.Label40.Size = New System.Drawing.Size(51, 13)
+		Me.Label40.TabIndex = 26
+		Me.Label40.Text = "End Cap:"
+		'
+		'CB_SCap
+		'
+		Me.CB_SCap.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
+		Me.CB_SCap.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+		Me.CB_SCap.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
+		Me.CB_SCap.DropDownHeight = 250
+		Me.CB_SCap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+		Me.CB_SCap.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.CB_SCap.IntegralHeight = False
+		Me.CB_SCap.ItemHeight = 20
+		Me.CB_SCap.Location = New System.Drawing.Point(67, 548)
+		Me.CB_SCap.MaxDropDownItems = 14
+		Me.CB_SCap.Name = "CB_SCap"
+		Me.CB_SCap.Size = New System.Drawing.Size(186, 26)
+		Me.CB_SCap.TabIndex = 13
+		'
+		'Label39
+		'
+		Me.Label39.AutoSize = True
+		Me.Label39.Location = New System.Drawing.Point(2, 554)
+		Me.Label39.Name = "Label39"
+		Me.Label39.Size = New System.Drawing.Size(54, 13)
+		Me.Label39.TabIndex = 26
+		Me.Label39.Text = "Start Cap:"
+		'
+		'CB_DCap
+		'
+		Me.CB_DCap.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
+		Me.CB_DCap.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+		Me.CB_DCap.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
+		Me.CB_DCap.DropDownHeight = 250
+		Me.CB_DCap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+		Me.CB_DCap.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.CB_DCap.IntegralHeight = False
+		Me.CB_DCap.ItemHeight = 20
+		Me.CB_DCap.Location = New System.Drawing.Point(67, 516)
+		Me.CB_DCap.MaxDropDownItems = 14
+		Me.CB_DCap.Name = "CB_DCap"
+		Me.CB_DCap.Size = New System.Drawing.Size(186, 26)
+		Me.CB_DCap.TabIndex = 12
+		'
+		'Label36
+		'
+		Me.Label36.AutoSize = True
+		Me.Label36.Location = New System.Drawing.Point(2, 522)
+		Me.Label36.Name = "Label36"
+		Me.Label36.Size = New System.Drawing.Size(57, 13)
+		Me.Label36.TabIndex = 26
+		Me.Label36.Text = "Dash Cap:"
+		'
+		'CB_DStyle
+		'
+		Me.CB_DStyle.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
+		Me.CB_DStyle.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+		Me.CB_DStyle.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
+		Me.CB_DStyle.DropDownHeight = 250
+		Me.CB_DStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+		Me.CB_DStyle.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.CB_DStyle.IntegralHeight = False
+		Me.CB_DStyle.ItemHeight = 20
+		Me.CB_DStyle.Location = New System.Drawing.Point(67, 484)
+		Me.CB_DStyle.MaxDropDownItems = 14
+		Me.CB_DStyle.Name = "CB_DStyle"
+		Me.CB_DStyle.Size = New System.Drawing.Size(186, 26)
+		Me.CB_DStyle.TabIndex = 11
+		'
+		'Label35
+		'
+		Me.Label35.AutoSize = True
+		Me.Label35.Location = New System.Drawing.Point(2, 490)
+		Me.Label35.Name = "Label35"
+		Me.Label35.Size = New System.Drawing.Size(61, 13)
+		Me.Label35.TabIndex = 26
+		Me.Label35.Text = "Dash Style:"
+		'
+		'TB_PAngle
+		'
+		Me.TB_PAngle.AllowDecimal = False
+		Me.TB_PAngle.BarBorderColor = System.Drawing.Color.White
+		Me.TB_PAngle.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
+		Me.TB_PAngle.Factors = New Single() {0!, 1.0!}
+		Me.TB_PAngle.Location = New System.Drawing.Point(67, 295)
+		Me.TB_PAngle.Maximum = 360.0!
+		Me.TB_PAngle.Name = "TB_PAngle"
+		Me.TB_PAngle.Positions = New Single() {0!, 0.5!, 1.0!}
+		Me.TB_PAngle.Size = New System.Drawing.Size(186, 20)
+		Me.TB_PAngle.TabIndex = 5
+		Me.TB_PAngle.ThumbBorderColor = System.Drawing.Color.White
+		'
+		'Label34
+		'
+		Me.Label34.AutoSize = True
+		Me.Label34.Location = New System.Drawing.Point(2, 299)
+		Me.Label34.Name = "Label34"
+		Me.Label34.Size = New System.Drawing.Size(37, 13)
+		Me.Label34.TabIndex = 23
+		Me.Label34.Text = "Angle:"
+		'
+		'CB_PGamma
+		'
+		Me.CB_PGamma.AutoSize = True
+		Me.CB_PGamma.Location = New System.Drawing.Point(4, 275)
+		Me.CB_PGamma.Name = "CB_PGamma"
+		Me.CB_PGamma.Size = New System.Drawing.Size(113, 17)
+		Me.CB_PGamma.TabIndex = 4
+		Me.CB_PGamma.Text = "Gamma Correction"
+		Me.CB_PGamma.UseVisualStyleBackColor = True
+		'
+		'PWidth
+		'
+		Me.PWidth.BarBorderColor = System.Drawing.Color.White
+		Me.PWidth.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
+		Me.PWidth.Factors = New Single() {0!, 1.0!}
+		Me.PWidth.Location = New System.Drawing.Point(47, 458)
+		Me.PWidth.Maximum = 50.0!
+		Me.PWidth.Name = "PWidth"
+		Me.PWidth.Positions = New Single() {0!, 0.5!, 1.0!}
+		Me.PWidth.Size = New System.Drawing.Size(208, 20)
+		Me.PWidth.TabIndex = 10
+		Me.PWidth.ThumbBorderColor = System.Drawing.Color.White
+		Me.PWidth.Value = 1.0!
+		'
+		'Label33
+		'
+		Me.Label33.AutoSize = True
+		Me.Label33.Location = New System.Drawing.Point(3, 462)
+		Me.Label33.Name = "Label33"
+		Me.Label33.Size = New System.Drawing.Size(38, 13)
+		Me.Label33.TabIndex = 21
+		Me.Label33.Text = "Width:"
+		'
+		'cb_PHatchStyle
+		'
+		Me.cb_PHatchStyle.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
+		Me.cb_PHatchStyle.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+		Me.cb_PHatchStyle.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
+		Me.cb_PHatchStyle.DropDownHeight = 250
+		Me.cb_PHatchStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+		Me.cb_PHatchStyle.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.cb_PHatchStyle.IntegralHeight = False
+		Me.cb_PHatchStyle.ItemHeight = 20
+		Me.cb_PHatchStyle.Location = New System.Drawing.Point(67, 397)
+		Me.cb_PHatchStyle.MaxDropDownItems = 14
+		Me.cb_PHatchStyle.Name = "cb_PHatchStyle"
+		Me.cb_PHatchStyle.Size = New System.Drawing.Size(186, 26)
+		Me.cb_PHatchStyle.TabIndex = 9
+		'
+		'Label30
+		'
+		Me.Label30.AutoSize = True
+		Me.Label30.Location = New System.Drawing.Point(2, 372)
+		Me.Label30.Name = "Label30"
+		Me.Label30.Size = New System.Drawing.Size(59, 13)
+		Me.Label30.TabIndex = 17
+		Me.Label30.Text = "BackColor:"
+		'
+		'Label31
+		'
+		Me.Label31.AutoSize = True
+		Me.Label31.Location = New System.Drawing.Point(2, 341)
+		Me.Label31.Name = "Label31"
+		Me.Label31.Size = New System.Drawing.Size(55, 13)
+		Me.Label31.TabIndex = 18
+		Me.Label31.Text = "ForeColor:"
+		'
+		'CE_PBack
+		'
+		Me.CE_PBack.BackColor = System.Drawing.SystemColors.Control
+		Me.CE_PBack.Location = New System.Drawing.Point(67, 366)
+		Me.CE_PBack.MyText = "ChooseColor"
+		Me.CE_PBack.Name = "CE_PBack"
+		Me.CE_PBack.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
+		Me.CE_PBack.Size = New System.Drawing.Size(186, 25)
+		Me.CE_PBack.TabIndex = 8
+		'
+		'CE_PFore
+		'
+		Me.CE_PFore.BackColor = System.Drawing.SystemColors.Control
+		Me.CE_PFore.Location = New System.Drawing.Point(67, 335)
+		Me.CE_PFore.MyText = "ChooseColor"
+		Me.CE_PFore.Name = "CE_PFore"
+		Me.CE_PFore.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
+		Me.CE_PFore.Size = New System.Drawing.Size(186, 25)
+		Me.CE_PFore.TabIndex = 7
+		'
+		'Label32
+		'
+		Me.Label32.AutoSize = True
+		Me.Label32.Location = New System.Drawing.Point(2, 403)
+		Me.Label32.Name = "Label32"
+		Me.Label32.Size = New System.Drawing.Size(65, 13)
+		Me.Label32.TabIndex = 19
+		Me.Label32.Text = "Hatch Style:"
+		'
+		'rbpHatch
+		'
+		Me.rbpHatch.AutoSize = True
+		Me.rbpHatch.Location = New System.Drawing.Point(5, 318)
+		Me.rbpHatch.Name = "rbpHatch"
+		Me.rbpHatch.Size = New System.Drawing.Size(54, 17)
+		Me.rbpHatch.TabIndex = 6
+		Me.rbpHatch.Text = "Hatch"
+		Me.rbpHatch.UseVisualStyleBackColor = True
+		'
+		'rbpLinear
+		'
+		Me.rbpLinear.AutoSize = True
+		Me.rbpLinear.Location = New System.Drawing.Point(4, 86)
+		Me.rbpLinear.Name = "rbpLinear"
+		Me.rbpLinear.Size = New System.Drawing.Size(94, 17)
+		Me.rbpLinear.TabIndex = 2
+		Me.rbpLinear.Text = "LinearGradient"
+		Me.rbpLinear.UseVisualStyleBackColor = True
+		'
+		'rbpSolid
+		'
+		Me.rbpSolid.AutoSize = True
+		Me.rbpSolid.Checked = True
+		Me.rbpSolid.Location = New System.Drawing.Point(5, 32)
+		Me.rbpSolid.Name = "rbpSolid"
+		Me.rbpSolid.Size = New System.Drawing.Size(48, 17)
+		Me.rbpSolid.TabIndex = 0
+		Me.rbpSolid.TabStop = True
+		Me.rbpSolid.Text = "Solid"
+		Me.rbpSolid.UseVisualStyleBackColor = True
+		'
+		'LP_CBEditor
+		'
+		Me.LP_CBEditor.BackColor = System.Drawing.Color.White
+		Me.LP_CBEditor.Colors = New System.Drawing.Color() {System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer)), System.Drawing.Color.Black}
+		Me.LP_CBEditor.ForeColor = System.Drawing.Color.Black
+		Me.LP_CBEditor.Location = New System.Drawing.Point(2, 109)
+		Me.LP_CBEditor.MinimumSize = New System.Drawing.Size(250, 160)
+		Me.LP_CBEditor.Name = "LP_CBEditor"
+		Me.LP_CBEditor.Positions = New Single() {0!, 1.0!}
+		Me.LP_CBEditor.Size = New System.Drawing.Size(250, 160)
+		Me.LP_CBEditor.TabIndex = 3
+		'
+		'Label37
+		'
+		Me.Label37.AutoSize = True
+		Me.Label37.Location = New System.Drawing.Point(2, 61)
+		Me.Label37.Name = "Label37"
+		Me.Label37.Size = New System.Drawing.Size(60, 13)
+		Me.Label37.TabIndex = 10
+		Me.Label37.Text = "Solid Color:"
+		'
+		'CE_PSolid
+		'
+		Me.CE_PSolid.BackColor = System.Drawing.SystemColors.Control
+		Me.CE_PSolid.Location = New System.Drawing.Point(67, 55)
+		Me.CE_PSolid.MyText = "ChooseColor"
+		Me.CE_PSolid.Name = "CE_PSolid"
+		Me.CE_PSolid.SelectedColor = System.Drawing.Color.Black
+		Me.CE_PSolid.Size = New System.Drawing.Size(186, 25)
+		Me.CE_PSolid.TabIndex = 1
+		'
+		'Label38
+		'
+		Me.Label38.BackColor = System.Drawing.Color.Transparent
+		Me.Label38.Font = New System.Drawing.Font("Consolas", 17.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.Label38.ForeColor = System.Drawing.Color.White
+		Me.Label38.Location = New System.Drawing.Point(0, 5)
+		Me.Label38.Name = "Label38"
+		Me.Label38.Size = New System.Drawing.Size(260, 29)
+		Me.Label38.TabIndex = 0
+		Me.Label38.Text = "Fill"
+		Me.Label38.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+		'
+		'pGlow
+		'
+		Me.pGlow.Controls.Add(Me.cb_EGlow)
+		Me.pGlow.Controls.Add(Me.TB_Feather)
+		Me.pGlow.Controls.Add(Me.Label54)
+		Me.pGlow.Controls.Add(Me.TB_Glow)
+		Me.pGlow.Controls.Add(Me.Label53)
+		Me.pGlow.Controls.Add(Me.cb_gfill)
+		Me.pGlow.Controls.Add(Me.cb_GClip)
+		Me.pGlow.Controls.Add(Me.Label2)
+		Me.pGlow.Controls.Add(Me.cb_GStyle)
+		Me.pGlow.Controls.Add(Me.Label52)
+		Me.pGlow.Controls.Add(Me.Label50)
+		Me.pGlow.Controls.Add(Me.CE_Glow)
+		Me.pGlow.Location = New System.Drawing.Point(0, 0)
+		Me.pGlow.Name = "pGlow"
+		Me.pGlow.Size = New System.Drawing.Size(260, 199)
+		Me.pGlow.TabIndex = 0
+		'
+		'cb_EGlow
+		'
+		Me.cb_EGlow.AutoSize = True
+		Me.cb_EGlow.Location = New System.Drawing.Point(9, 6)
+		Me.cb_EGlow.Name = "cb_EGlow"
+		Me.cb_EGlow.Size = New System.Drawing.Size(78, 17)
+		Me.cb_EGlow.TabIndex = 0
+		Me.cb_EGlow.Text = "Draw Glow"
+		Me.cb_EGlow.UseVisualStyleBackColor = True
+		'
+		'TB_Feather
+		'
+		Me.TB_Feather.AllowDecimal = False
+		Me.TB_Feather.BarBorderColor = System.Drawing.Color.White
+		Me.TB_Feather.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
+		Me.TB_Feather.Factors = New Single() {0!, 1.0!}
+		Me.TB_Feather.Location = New System.Drawing.Point(56, 118)
+		Me.TB_Feather.Minimum = 10.0!
+		Me.TB_Feather.Name = "TB_Feather"
+		Me.TB_Feather.Positions = New Single() {0!, 0.5!, 1.0!}
+		Me.TB_Feather.Size = New System.Drawing.Size(200, 20)
+		Me.TB_Feather.TabIndex = 4
+		Me.TB_Feather.ThumbBorderColor = System.Drawing.Color.White
+		Me.TB_Feather.Value = 35.0!
+		'
+		'Label54
+		'
+		Me.Label54.AutoSize = True
+		Me.Label54.Location = New System.Drawing.Point(4, 122)
+		Me.Label54.Name = "Label54"
+		Me.Label54.Size = New System.Drawing.Size(46, 13)
+		Me.Label54.TabIndex = 14
+		Me.Label54.Text = "Feather:"
+		'
+		'TB_Glow
+		'
+		Me.TB_Glow.AllowDecimal = False
+		Me.TB_Glow.BarBorderColor = System.Drawing.Color.White
+		Me.TB_Glow.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
+		Me.TB_Glow.Factors = New Single() {0!, 1.0!}
+		Me.TB_Glow.Location = New System.Drawing.Point(56, 92)
+		Me.TB_Glow.Minimum = 10.0!
+		Me.TB_Glow.Name = "TB_Glow"
+		Me.TB_Glow.Positions = New Single() {0!, 0.5!, 1.0!}
+		Me.TB_Glow.Size = New System.Drawing.Size(200, 20)
+		Me.TB_Glow.TabIndex = 3
+		Me.TB_Glow.ThumbBorderColor = System.Drawing.Color.White
+		Me.TB_Glow.Value = 35.0!
+		'
+		'Label53
+		'
+		Me.Label53.AutoSize = True
+		Me.Label53.Location = New System.Drawing.Point(4, 96)
+		Me.Label53.Name = "Label53"
+		Me.Label53.Size = New System.Drawing.Size(34, 13)
+		Me.Label53.TabIndex = 14
+		Me.Label53.Text = "Glow:"
+		'
+		'cb_gfill
+		'
+		Me.cb_gfill.AutoSize = True
+		Me.cb_gfill.Checked = True
+		Me.cb_gfill.CheckState = System.Windows.Forms.CheckState.Checked
+		Me.cb_gfill.Location = New System.Drawing.Point(9, 144)
+		Me.cb_gfill.Name = "cb_gfill"
+		Me.cb_gfill.Size = New System.Drawing.Size(72, 17)
+		Me.cb_gfill.TabIndex = 5
+		Me.cb_gfill.Text = "Before Fill"
+		Me.cb_gfill.UseVisualStyleBackColor = True
+		'
+		'cb_GClip
+		'
+		Me.cb_GClip.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
+		Me.cb_GClip.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+		Me.cb_GClip.DropDownHeight = 250
+		Me.cb_GClip.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+		Me.cb_GClip.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.cb_GClip.IntegralHeight = False
+		Me.cb_GClip.ItemHeight = 17
+		Me.cb_GClip.Location = New System.Drawing.Point(70, 167)
+		Me.cb_GClip.MaxDropDownItems = 14
+		Me.cb_GClip.Name = "cb_GClip"
+		Me.cb_GClip.Size = New System.Drawing.Size(186, 25)
+		Me.cb_GClip.TabIndex = 6
+		'
+		'Label2
+		'
+		Me.Label2.AutoSize = True
+		Me.Label2.Location = New System.Drawing.Point(4, 173)
+		Me.Label2.Name = "Label2"
+		Me.Label2.Size = New System.Drawing.Size(47, 13)
+		Me.Label2.TabIndex = 12
+		Me.Label2.Text = "Clipping:"
+		'
+		'cb_GStyle
+		'
+		Me.cb_GStyle.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append
+		Me.cb_GStyle.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
+		Me.cb_GStyle.DropDownHeight = 250
+		Me.cb_GStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+		Me.cb_GStyle.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.cb_GStyle.IntegralHeight = False
+		Me.cb_GStyle.ItemHeight = 17
+		Me.cb_GStyle.Location = New System.Drawing.Point(70, 60)
+		Me.cb_GStyle.MaxDropDownItems = 14
+		Me.cb_GStyle.Name = "cb_GStyle"
+		Me.cb_GStyle.Size = New System.Drawing.Size(186, 25)
+		Me.cb_GStyle.TabIndex = 2
+		'
+		'Label52
+		'
+		Me.Label52.AutoSize = True
+		Me.Label52.Location = New System.Drawing.Point(4, 66)
+		Me.Label52.Name = "Label52"
+		Me.Label52.Size = New System.Drawing.Size(60, 13)
+		Me.Label52.TabIndex = 12
+		Me.Label52.Text = "Glow Style:"
+		'
+		'Label50
+		'
+		Me.Label50.AutoSize = True
+		Me.Label50.Location = New System.Drawing.Point(4, 35)
+		Me.Label50.Name = "Label50"
+		Me.Label50.Size = New System.Drawing.Size(61, 13)
+		Me.Label50.TabIndex = 8
+		Me.Label50.Text = "Glow Color:"
+		'
+		'CE_Glow
+		'
+		Me.CE_Glow.BackColor = System.Drawing.SystemColors.Control
+		Me.CE_Glow.Location = New System.Drawing.Point(70, 29)
+		Me.CE_Glow.MyText = "ChooseColor"
+		Me.CE_Glow.Name = "CE_Glow"
+		Me.CE_Glow.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
+		Me.CE_Glow.Size = New System.Drawing.Size(186, 25)
+		Me.CE_Glow.TabIndex = 1
+		'
+		'pShadow
+		'
+		Me.pShadow.Controls.Add(Me.PS_Shadow)
+		Me.pShadow.Controls.Add(Me.TB_SFeather)
+		Me.pShadow.Controls.Add(Me.Label55)
+		Me.pShadow.Controls.Add(Me.TB_SBlur)
+		Me.pShadow.Controls.Add(Me.Label57)
+		Me.pShadow.Controls.Add(Me.Label56)
+		Me.pShadow.Controls.Add(Me.cb_EShadow)
+		Me.pShadow.Controls.Add(Me.cb_clip)
+		Me.pShadow.Controls.Add(Me.cb_fill)
+		Me.pShadow.Controls.Add(Me.Label58)
+		Me.pShadow.Controls.Add(Me.CE_Shadow)
+		Me.pShadow.Location = New System.Drawing.Point(0, 0)
+		Me.pShadow.Name = "pShadow"
+		Me.pShadow.Size = New System.Drawing.Size(260, 427)
+		Me.pShadow.TabIndex = 0
+		'
+		'PS_Shadow
+		'
+		Me.PS_Shadow.BackColor = System.Drawing.Color.Transparent
+		Me.PS_Shadow.BackRectColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer))
+		Me.PS_Shadow.BordersColor = System.Drawing.Color.White
+		Me.PS_Shadow.Font = New System.Drawing.Font("Consolas", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.PS_Shadow.Location = New System.Drawing.Point(6, 174)
+		Me.PS_Shadow.Maximum = New System.Drawing.Point(50, 50)
+		Me.PS_Shadow.Minimum = New System.Drawing.Point(-50, -50)
+		Me.PS_Shadow.Name = "PS_Shadow"
+		Me.PS_Shadow.Size = New System.Drawing.Size(249, 249)
+		Me.PS_Shadow.TabIndex = 6
+		Me.PS_Shadow.ThumbColor = System.Drawing.Color.Black
+		Me.PS_Shadow.Value = New System.Drawing.Point(10, 10)
+		'
+		'TB_SFeather
+		'
+		Me.TB_SFeather.AllowDecimal = False
+		Me.TB_SFeather.BarBorderColor = System.Drawing.Color.White
+		Me.TB_SFeather.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
+		Me.TB_SFeather.Factors = New Single() {0!, 1.0!}
+		Me.TB_SFeather.Location = New System.Drawing.Point(58, 86)
+		Me.TB_SFeather.Minimum = 10.0!
+		Me.TB_SFeather.Name = "TB_SFeather"
+		Me.TB_SFeather.Positions = New Single() {0!, 0.5!, 1.0!}
+		Me.TB_SFeather.Size = New System.Drawing.Size(197, 20)
+		Me.TB_SFeather.TabIndex = 3
+		Me.TB_SFeather.ThumbBorderColor = System.Drawing.Color.White
+		Me.TB_SFeather.Value = 100.0!
+		'
+		'Label55
+		'
+		Me.Label55.AutoSize = True
+		Me.Label55.Location = New System.Drawing.Point(4, 86)
+		Me.Label55.Name = "Label55"
+		Me.Label55.Size = New System.Drawing.Size(46, 13)
+		Me.Label55.TabIndex = 14
+		Me.Label55.Text = "Feather:"
+		'
+		'TB_SBlur
+		'
+		Me.TB_SBlur.AllowDecimal = False
+		Me.TB_SBlur.BarBorderColor = System.Drawing.Color.White
+		Me.TB_SBlur.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
+		Me.TB_SBlur.Factors = New Single() {0!, 1.0!}
+		Me.TB_SBlur.Location = New System.Drawing.Point(58, 60)
+		Me.TB_SBlur.Maximum = 10.0!
+		Me.TB_SBlur.Name = "TB_SBlur"
+		Me.TB_SBlur.Positions = New Single() {0!, 0.5!, 1.0!}
+		Me.TB_SBlur.Size = New System.Drawing.Size(197, 20)
+		Me.TB_SBlur.TabIndex = 2
+		Me.TB_SBlur.ThumbBorderColor = System.Drawing.Color.White
+		Me.TB_SBlur.Value = 2.0!
+		'
+		'Label57
+		'
+		Me.Label57.AutoSize = True
+		Me.Label57.Location = New System.Drawing.Point(9, 158)
+		Me.Label57.Name = "Label57"
+		Me.Label57.Size = New System.Drawing.Size(38, 13)
+		Me.Label57.TabIndex = 14
+		Me.Label57.Text = "Offset:"
+		'
+		'Label56
+		'
+		Me.Label56.AutoSize = True
+		Me.Label56.Location = New System.Drawing.Point(4, 60)
+		Me.Label56.Name = "Label56"
+		Me.Label56.Size = New System.Drawing.Size(28, 13)
+		Me.Label56.TabIndex = 14
+		Me.Label56.Text = "Blur:"
+		'
+		'cb_EShadow
+		'
+		Me.cb_EShadow.AutoSize = True
+		Me.cb_EShadow.Location = New System.Drawing.Point(9, 6)
+		Me.cb_EShadow.Name = "cb_EShadow"
+		Me.cb_EShadow.Size = New System.Drawing.Size(93, 17)
+		Me.cb_EShadow.TabIndex = 0
+		Me.cb_EShadow.Text = "Draw Shadow"
+		Me.cb_EShadow.UseVisualStyleBackColor = True
+		'
+		'cb_clip
+		'
+		Me.cb_clip.AutoSize = True
+		Me.cb_clip.Checked = True
+		Me.cb_clip.CheckState = System.Windows.Forms.CheckState.Checked
+		Me.cb_clip.Location = New System.Drawing.Point(9, 135)
+		Me.cb_clip.Name = "cb_clip"
+		Me.cb_clip.Size = New System.Drawing.Size(100, 17)
+		Me.cb_clip.TabIndex = 5
+		Me.cb_clip.Text = "Region Clipping"
+		Me.cb_clip.UseVisualStyleBackColor = True
+		'
+		'cb_fill
+		'
+		Me.cb_fill.AutoSize = True
+		Me.cb_fill.Checked = True
+		Me.cb_fill.CheckState = System.Windows.Forms.CheckState.Checked
+		Me.cb_fill.Location = New System.Drawing.Point(9, 112)
+		Me.cb_fill.Name = "cb_fill"
+		Me.cb_fill.Size = New System.Drawing.Size(38, 17)
+		Me.cb_fill.TabIndex = 4
+		Me.cb_fill.Text = "Fill"
+		Me.cb_fill.UseVisualStyleBackColor = True
+		'
+		'Label58
+		'
+		Me.Label58.AutoSize = True
+		Me.Label58.Location = New System.Drawing.Point(4, 35)
+		Me.Label58.Name = "Label58"
+		Me.Label58.Size = New System.Drawing.Size(76, 13)
+		Me.Label58.TabIndex = 8
+		Me.Label58.Text = "Shadow Color:"
+		'
+		'CE_Shadow
+		'
+		Me.CE_Shadow.BackColor = System.Drawing.SystemColors.Control
+		Me.CE_Shadow.Location = New System.Drawing.Point(86, 29)
+		Me.CE_Shadow.MyText = "ChooseColor"
+		Me.CE_Shadow.Name = "CE_Shadow"
+		Me.CE_Shadow.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
+		Me.CE_Shadow.Size = New System.Drawing.Size(170, 25)
+		Me.CE_Shadow.TabIndex = 1
+		'
 		'pCanvas
 		'
 		Me.pCanvas.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
@@ -2228,23 +2228,23 @@ Partial Class MainForm
 		CType(Me.ud_Y, System.ComponentModel.ISupportInitialize).EndInit()
 		CType(Me.ud_X, System.ComponentModel.ISupportInitialize).EndInit()
 		Me.pMain.ResumeLayout(False)
-		Me.pGlow.ResumeLayout(False)
-		Me.pGlow.PerformLayout()
-		Me.pStroke.ResumeLayout(False)
-		Me.pStroke.PerformLayout()
-		Me.pHatch.ResumeLayout(False)
-		Me.pHatch.PerformLayout()
 		Me.pSolid.ResumeLayout(False)
 		Me.pSolid.PerformLayout()
-		Me.pTexture.ResumeLayout(False)
-		Me.pTexture.PerformLayout()
-		CType(Me.PB_Texture, System.ComponentModel.ISupportInitialize).EndInit()
-		Me.pShadow.ResumeLayout(False)
-		Me.pShadow.PerformLayout()
 		Me.pLinear.ResumeLayout(False)
 		Me.pLinear.PerformLayout()
 		Me.pPath.ResumeLayout(False)
 		Me.pPath.PerformLayout()
+		Me.pHatch.ResumeLayout(False)
+		Me.pHatch.PerformLayout()
+		Me.pTexture.ResumeLayout(False)
+		Me.pTexture.PerformLayout()
+		CType(Me.PB_Texture, System.ComponentModel.ISupportInitialize).EndInit()
+		Me.pStroke.ResumeLayout(False)
+		Me.pStroke.PerformLayout()
+		Me.pGlow.ResumeLayout(False)
+		Me.pGlow.PerformLayout()
+		Me.pShadow.ResumeLayout(False)
+		Me.pShadow.PerformLayout()
 		Me.pCanvas.ResumeLayout(False)
 		Me.tCanvas.ResumeLayout(False)
 		Me.TabPage1.ResumeLayout(False)

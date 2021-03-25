@@ -23,7 +23,7 @@ Public Class PointsEditor
                 TB_Tension.Enabled = False
             Case MyShape.ShapeStyle.Lines
                 old_p = shp.MShape.PolygonPoints
-				PEditor.ShapeType = MyControls.ShapePointsEditor.DrawType.Beziers
+				PEditor.ShapeType = MyControls.ShapePointsEditor.DrawType.Lines
 				TB_Tension.Enabled = False
             Case MyShape.ShapeStyle.Curves
                 old_p = shp.MShape.CurvePoints
