@@ -25,6 +25,24 @@ Partial Class MainForm
 		Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(MainForm))
 		Me.openDialog = New System.Windows.Forms.OpenFileDialog()
 		Me.saveDialog = New System.Windows.Forms.SaveFileDialog()
+		Me.pSettings = New MyControls.MovablePanel()
+		Me.set_ord = New System.Windows.Forms.ComboBox()
+		Me.set_Apply = New MyControls.MyButton()
+		Me.Label25 = New System.Windows.Forms.Label()
+		Me.Label22 = New System.Windows.Forms.Label()
+		Me.set_bclr = New MyControls.ColorEditorButton()
+		Me.set_pclr = New MyControls.ColorEditorButton()
+		Me.set_hgt = New System.Windows.Forms.CheckBox()
+		Me.set_H = New System.Windows.Forms.NumericUpDown()
+		Me.set_W = New System.Windows.Forms.NumericUpDown()
+		Me.set_r2 = New System.Windows.Forms.RadioButton()
+		Me.set_r1 = New System.Windows.Forms.RadioButton()
+		Me.Label51 = New System.Windows.Forms.Label()
+		Me.Label60 = New System.Windows.Forms.Label()
+		Me.Label19 = New System.Windows.Forms.Label()
+		Me.Label59 = New System.Windows.Forms.Label()
+		Me.Label3 = New System.Windows.Forms.Label()
+		Me.set_BC = New MyControls.ColorEditorButton()
 		Me.pSideBar = New MyControls.MyPanel()
 		Me.btNewC = New MyControls.FlatButton()
 		Me.btExit = New MyControls.FlatButton()
@@ -188,6 +206,9 @@ Partial Class MainForm
 		Me.tCanvas = New MyControls.MyTabControl()
 		Me.TabPage1 = New System.Windows.Forms.TabPage()
 		Me.CanvasControl1 = New DrawIt.CanvasControl()
+		Me.pSettings.SuspendLayout()
+		CType(Me.set_H, System.ComponentModel.ISupportInitialize).BeginInit()
+		CType(Me.set_W, System.ComponentModel.ISupportInitialize).BeginInit()
 		Me.pSideBar.SuspendLayout()
 		Me.tTop.SuspendLayout()
 		Me.tBottom.SuspendLayout()
@@ -216,6 +237,234 @@ Partial Class MainForm
 		Me.openDialog.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.bmp, *.gif, *.png) | *.jpg; *.jpeg; *.jpe; *" &
 	".bmp; *.gif; *.png"""
 		Me.openDialog.Title = "Choose Image"
+		'
+		'pSettings
+		'
+		Me.pSettings.BackColor = System.Drawing.Color.FromArgb(CType(CType(70, Byte), Integer), CType(CType(70, Byte), Integer), CType(CType(70, Byte), Integer))
+		Me.pSettings.Controls.Add(Me.set_ord)
+		Me.pSettings.Controls.Add(Me.set_Apply)
+		Me.pSettings.Controls.Add(Me.Label25)
+		Me.pSettings.Controls.Add(Me.Label22)
+		Me.pSettings.Controls.Add(Me.set_bclr)
+		Me.pSettings.Controls.Add(Me.set_pclr)
+		Me.pSettings.Controls.Add(Me.set_hgt)
+		Me.pSettings.Controls.Add(Me.set_H)
+		Me.pSettings.Controls.Add(Me.set_W)
+		Me.pSettings.Controls.Add(Me.set_r2)
+		Me.pSettings.Controls.Add(Me.set_r1)
+		Me.pSettings.Controls.Add(Me.Label51)
+		Me.pSettings.Controls.Add(Me.Label60)
+		Me.pSettings.Controls.Add(Me.Label19)
+		Me.pSettings.Controls.Add(Me.Label59)
+		Me.pSettings.Controls.Add(Me.Label3)
+		Me.pSettings.Controls.Add(Me.set_BC)
+		Me.pSettings.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.pSettings.ForeColor = System.Drawing.Color.White
+		Me.pSettings.Location = New System.Drawing.Point(800, 100)
+		Me.pSettings.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+		Me.pSettings.Name = "pSettings"
+		Me.pSettings.Resizable = False
+		Me.pSettings.Size = New System.Drawing.Size(250, 310)
+		Me.pSettings.TabIndex = 8
+		Me.pSettings.Text = "Settings"
+		Me.pSettings.Visible = False
+		'
+		'set_ord
+		'
+		Me.set_ord.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+		Me.set_ord.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.set_ord.FormattingEnabled = True
+		Me.set_ord.Items.AddRange(New Object() {"AboveFirst", "BelowFirst"})
+		Me.set_ord.Location = New System.Drawing.Point(92, 143)
+		Me.set_ord.Name = "set_ord"
+		Me.set_ord.Size = New System.Drawing.Size(154, 25)
+		Me.set_ord.TabIndex = 10
+		'
+		'set_Apply
+		'
+		Me.set_Apply.Anchor = System.Windows.Forms.AnchorStyles.None
+		Me.set_Apply.BackColor = System.Drawing.Color.Black
+		Me.set_Apply.ForeColor = System.Drawing.Color.White
+		Me.set_Apply.Location = New System.Drawing.Point(88, 265)
+		Me.set_Apply.MyText = "Apply"
+		Me.set_Apply.Name = "set_Apply"
+		Me.set_Apply.Size = New System.Drawing.Size(75, 30)
+		Me.set_Apply.TabIndex = 16
+		'
+		'Label25
+		'
+		Me.Label25.AutoSize = True
+		Me.Label25.BackColor = System.Drawing.Color.Transparent
+		Me.Label25.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.Label25.Location = New System.Drawing.Point(28, 240)
+		Me.Label25.Name = "Label25"
+		Me.Label25.Size = New System.Drawing.Size(41, 13)
+		Me.Label25.TabIndex = 14
+		Me.Label25.Text = "Border:"
+		'
+		'Label22
+		'
+		Me.Label22.AutoSize = True
+		Me.Label22.BackColor = System.Drawing.Color.Transparent
+		Me.Label22.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.Label22.Location = New System.Drawing.Point(28, 210)
+		Me.Label22.Name = "Label22"
+		Me.Label22.Size = New System.Drawing.Size(32, 13)
+		Me.Label22.TabIndex = 12
+		Me.Label22.Text = "Path:"
+		'
+		'set_bclr
+		'
+		Me.set_bclr.BackColor = System.Drawing.Color.White
+		Me.set_bclr.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.set_bclr.Location = New System.Drawing.Point(76, 234)
+		Me.set_bclr.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+		Me.set_bclr.MyText = "ChooseColor"
+		Me.set_bclr.Name = "set_bclr"
+		Me.set_bclr.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(0, Byte), Integer))
+		Me.set_bclr.Size = New System.Drawing.Size(170, 25)
+		Me.set_bclr.TabIndex = 15
+		'
+		'set_pclr
+		'
+		Me.set_pclr.BackColor = System.Drawing.Color.White
+		Me.set_pclr.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.set_pclr.Location = New System.Drawing.Point(76, 204)
+		Me.set_pclr.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+		Me.set_pclr.MyText = "ChooseColor"
+		Me.set_pclr.Name = "set_pclr"
+		Me.set_pclr.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(255, Byte), Integer))
+		Me.set_pclr.Size = New System.Drawing.Size(170, 25)
+		Me.set_pclr.TabIndex = 13
+		'
+		'set_hgt
+		'
+		Me.set_hgt.AutoSize = True
+		Me.set_hgt.BackColor = System.Drawing.Color.Transparent
+		Me.set_hgt.Checked = True
+		Me.set_hgt.CheckState = System.Windows.Forms.CheckState.Checked
+		Me.set_hgt.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.set_hgt.Location = New System.Drawing.Point(6, 182)
+		Me.set_hgt.Name = "set_hgt"
+		Me.set_hgt.Size = New System.Drawing.Size(106, 17)
+		Me.set_hgt.TabIndex = 11
+		Me.set_hgt.Text = "Highlight Shapes"
+		Me.set_hgt.UseVisualStyleBackColor = False
+		'
+		'set_H
+		'
+		Me.set_H.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!)
+		Me.set_H.Location = New System.Drawing.Point(176, 107)
+		Me.set_H.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
+		Me.set_H.Minimum = New Decimal(New Integer() {10, 0, 0, 0})
+		Me.set_H.Name = "set_H"
+		Me.set_H.Size = New System.Drawing.Size(70, 20)
+		Me.set_H.TabIndex = 8
+		Me.set_H.Value = New Decimal(New Integer() {500, 0, 0, 0})
+		'
+		'set_W
+		'
+		Me.set_W.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!)
+		Me.set_W.Location = New System.Drawing.Point(47, 107)
+		Me.set_W.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
+		Me.set_W.Minimum = New Decimal(New Integer() {10, 0, 0, 0})
+		Me.set_W.Name = "set_W"
+		Me.set_W.Size = New System.Drawing.Size(70, 20)
+		Me.set_W.TabIndex = 6
+		Me.set_W.Value = New Decimal(New Integer() {500, 0, 0, 0})
+		'
+		'set_r2
+		'
+		Me.set_r2.AutoSize = True
+		Me.set_r2.BackColor = System.Drawing.Color.Transparent
+		Me.set_r2.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!)
+		Me.set_r2.Location = New System.Drawing.Point(122, 84)
+		Me.set_r2.Name = "set_r2"
+		Me.set_r2.Size = New System.Drawing.Size(60, 17)
+		Me.set_r2.TabIndex = 4
+		Me.set_r2.Text = "Manual"
+		Me.set_r2.UseVisualStyleBackColor = False
+		'
+		'set_r1
+		'
+		Me.set_r1.AutoSize = True
+		Me.set_r1.BackColor = System.Drawing.Color.Transparent
+		Me.set_r1.Checked = True
+		Me.set_r1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!)
+		Me.set_r1.Location = New System.Drawing.Point(69, 84)
+		Me.set_r1.Name = "set_r1"
+		Me.set_r1.Size = New System.Drawing.Size(47, 17)
+		Me.set_r1.TabIndex = 3
+		Me.set_r1.TabStop = True
+		Me.set_r1.Text = "Auto"
+		Me.set_r1.UseVisualStyleBackColor = False
+		'
+		'Label51
+		'
+		Me.Label51.AutoSize = True
+		Me.Label51.BackColor = System.Drawing.Color.Transparent
+		Me.Label51.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.Label51.Location = New System.Drawing.Point(3, 68)
+		Me.Label51.Name = "Label51"
+		Me.Label51.Size = New System.Drawing.Size(38, 13)
+		Me.Label51.TabIndex = 2
+		Me.Label51.Text = "Sizing:"
+		'
+		'Label60
+		'
+		Me.Label60.AutoSize = True
+		Me.Label60.BackColor = System.Drawing.Color.Transparent
+		Me.Label60.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.Label60.Location = New System.Drawing.Point(129, 109)
+		Me.Label60.Name = "Label60"
+		Me.Label60.Size = New System.Drawing.Size(41, 13)
+		Me.Label60.TabIndex = 7
+		Me.Label60.Text = "Height:"
+		'
+		'Label19
+		'
+		Me.Label19.AutoSize = True
+		Me.Label19.BackColor = System.Drawing.Color.Transparent
+		Me.Label19.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.Label19.Location = New System.Drawing.Point(3, 149)
+		Me.Label19.Name = "Label19"
+		Me.Label19.Size = New System.Drawing.Size(83, 13)
+		Me.Label19.TabIndex = 9
+		Me.Label19.Text = "Selection Order:"
+		'
+		'Label59
+		'
+		Me.Label59.AutoSize = True
+		Me.Label59.BackColor = System.Drawing.Color.Transparent
+		Me.Label59.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.Label59.Location = New System.Drawing.Point(3, 109)
+		Me.Label59.Name = "Label59"
+		Me.Label59.Size = New System.Drawing.Size(38, 13)
+		Me.Label59.TabIndex = 5
+		Me.Label59.Text = "Width:"
+		'
+		'Label3
+		'
+		Me.Label3.AutoSize = True
+		Me.Label3.BackColor = System.Drawing.Color.Transparent
+		Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.Label3.Location = New System.Drawing.Point(3, 38)
+		Me.Label3.Name = "Label3"
+		Me.Label3.Size = New System.Drawing.Size(62, 13)
+		Me.Label3.TabIndex = 0
+		Me.Label3.Text = "Back Color:"
+		'
+		'set_BC
+		'
+		Me.set_BC.BackColor = System.Drawing.Color.White
+		Me.set_BC.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.set_BC.Location = New System.Drawing.Point(72, 32)
+		Me.set_BC.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+		Me.set_BC.MyText = "ChooseColor"
+		Me.set_BC.Name = "set_BC"
+		Me.set_BC.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(248, Byte), Integer), CType(CType(255, Byte), Integer))
+		Me.set_BC.Size = New System.Drawing.Size(174, 25)
+		Me.set_BC.TabIndex = 1
 		'
 		'pSideBar
 		'
@@ -2201,6 +2450,7 @@ Partial Class MainForm
 		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
 		Me.BackColor = System.Drawing.Color.Black
 		Me.ClientSize = New System.Drawing.Size(1366, 705)
+		Me.Controls.Add(Me.pSettings)
 		Me.Controls.Add(Me.pSideBar)
 		Me.Controls.Add(Me.tTop)
 		Me.Controls.Add(Me.tbShadow)
@@ -2217,6 +2467,10 @@ Partial Class MainForm
 		Me.ShowIcon = False
 		Me.Text = "MainForm"
 		Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
+		Me.pSettings.ResumeLayout(False)
+		Me.pSettings.PerformLayout()
+		CType(Me.set_H, System.ComponentModel.ISupportInitialize).EndInit()
+		CType(Me.set_W, System.ComponentModel.ISupportInitialize).EndInit()
 		Me.pSideBar.ResumeLayout(False)
 		Me.tTop.ResumeLayout(False)
 		Me.tTop.PerformLayout()
@@ -2416,4 +2670,22 @@ Partial Class MainForm
 	Friend WithEvents cb_GClip As ComboBox
 	Friend WithEvents Label2 As Label
 	Friend WithEvents CanvasControl1 As CanvasControl
+	Friend WithEvents pSettings As MyControls.MovablePanel
+	Friend WithEvents Label3 As Label
+	Friend WithEvents set_BC As MyControls.ColorEditorButton
+	Friend WithEvents Label25 As Label
+	Friend WithEvents Label22 As Label
+	Friend WithEvents set_bclr As MyControls.ColorEditorButton
+	Friend WithEvents set_pclr As MyControls.ColorEditorButton
+	Friend WithEvents set_hgt As CheckBox
+	Friend WithEvents set_H As NumericUpDown
+	Friend WithEvents set_W As NumericUpDown
+	Friend WithEvents set_r2 As RadioButton
+	Friend WithEvents set_r1 As RadioButton
+	Friend WithEvents Label51 As Label
+	Friend WithEvents Label60 As Label
+	Friend WithEvents Label59 As Label
+	Friend WithEvents set_Apply As MyControls.MyButton
+	Friend WithEvents set_ord As ComboBox
+	Friend WithEvents Label19 As Label
 End Class

@@ -1,4 +1,5 @@
 ﻿Imports System.ComponentModel
+Imports System.ComponentModel.Design
 Imports System.Drawing.Drawing2D
 Imports System.Drawing.Text
 Imports System.IO
@@ -658,6 +659,10 @@ Public Class Canvas
 #End Region
 
 #Region "Paint Event"
+	Private Function IsDesignMode() As Boolean
+		Return Process.GetCurrentProcess().ProcessName = "devenv"
+	End Function
+
 	Private Sub DrawControlSize(g As Graphics)
 		Dim rect As New Rectangle(Width - 107, 7, 100, 20)
 		Dim fnt As New Font("Segoe UI", 12)
@@ -797,11 +802,12 @@ Public Class Canvas
 		g.SmoothingMode = SmoothingMode.HighQuality
 
 		'Draw background of canvas
-		Dim bk As New HatchBrush(HatchStyle.LargeCheckerBoard, Color.White, Color.Silver)
-		g.FillRectangle(bk, ClientRectangle)
+		If BackColor.A < 255 Then
+			Dim bk As New HatchBrush(HatchStyle.LargeCheckerBoard, Color.White, Color.Silver)
+			g.FillRectangle(bk, ClientRectangle)
+			bk.Dispose()
+		End If
 		g.FillRectangle(New SolidBrush(BackColor), ClientRectangle)
-		bk.Dispose()
-
 		SetImageSize()
 
 		If Not IsNothing(img) Then
@@ -1008,7 +1014,7 @@ Public Class Canvas
 		If FResizing AndAlso Docked = True Then DrawControlSize(g)
 
 		'Force Garbage Collector
-		If Not DesignMode Then GC.Collect()
+		If Not IsDesignMode() Then GC.Collect()
 
 	End Sub
 

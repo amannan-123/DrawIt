@@ -13,7 +13,15 @@ Public Class MainForm
 		Return Nothing
 	End Function
 
+	Private Function CurrentCanvasControl() As CanvasControl
+		If tCanvas.TabPages.Count > 0 Then
+			Return DirectCast(tCanvas.SelectedTab.Controls()(0), CanvasControl)
+		End If
+		Return Nothing
+	End Function
+
 	Private Sub tCanvas_SelectedIndexChanged(sender As Object, e As EventArgs) Handles tCanvas.SelectedIndexChanged
+		UpdateSettings()
 		UpdateControls()
 	End Sub
 #End Region
@@ -130,6 +138,27 @@ Public Class MainForm
 			ud_W.Value = 0
 			ud_H.Value = 0
 			ud_A.Value = 0
+		End If
+	End Sub
+
+	Private Sub UpdateSettings()
+		Dim cn = CurrentCanvas()
+		If Not IsNothing(cn) Then
+			pSettings.Text = tCanvas.SelectedTab.Text & " Settings"
+			set_BC.SelectedColor = cn.BackColor
+			If cn.Docked Then
+				set_r1.Checked = True
+			Else
+				set_r2.Checked = True
+			End If
+			If Not cn.Docked Then
+				set_W.Value = cn.Width
+				set_H.Value = cn.Height
+			End If
+			set_ord.SelectedItem = cn.SelectionOrder.ToString
+			set_hgt.Checked = cn.HighlightShapes
+			set_pclr.SelectedColor = cn.PathHighlightColor
+			set_bclr.SelectedColor = cn.BorderHighlightColor
 		End If
 	End Sub
 #End Region
@@ -1358,13 +1387,38 @@ Public Class MainForm
 	End Sub
 
 	Private Sub btSettings_Click(sender As Object, e As EventArgs) Handles btSettings.Click
-
+		UpdateSettings()
+		pSettings.Visible = True
 	End Sub
 
 	Private Sub btExit_Click(sender As Object, e As EventArgs) Handles btExit.Click
 		Close()
 	End Sub
+#End Region
 
+#Region "Settings"
+	Private Sub set_r1_CheckedChanged(sender As Object, e As EventArgs) Handles set_r2.CheckedChanged, set_r1.CheckedChanged
+		set_W.Enabled = set_r2.Checked
+		set_H.Enabled = set_W.Enabled
+	End Sub
+
+	Private Sub set_Apply_Click(sender As Object, e As EventArgs) Handles set_Apply.Click
+		Dim cn = CurrentCanvas()
+		If Not IsNothing(cn) Then
+			cn.BackColor = set_BC.SelectedColor
+			cn.Docked = set_r1.Checked
+			If Not cn.Docked Then
+				cn.Width = set_W.Value
+				cn.Height = set_H.Value
+			End If
+			cn.SelectionOrder = [Enum].Parse(GetType(Canvas.SelectOrder), set_ord.SelectedItem)
+			cn.HighlightShapes = set_hgt.Checked
+			cn.PathHighlightColor = set_pclr.SelectedColor
+			cn.BorderHighlightColor = set_bclr.SelectedColor
+			CurrentCanvasControl.SetSize()
+			pSettings.Visible = False
+		End If
+	End Sub
 #End Region
 
 End Class

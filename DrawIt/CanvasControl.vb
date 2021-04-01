@@ -1,10 +1,10 @@
 ﻿Public Class CanvasControl
 
-	Private Sub SetSize()
+	Public Sub SetSize()
 		If baseCanvas.Docked Then
 			baseCanvas.Dock = DockStyle.Fill
 		Else
-			If baseCanvas.Dock = DockStyle.Fill Then baseCanvas.Dock = DockStyle.None
+			baseCanvas.Dock = DockStyle.None
 			Dim center As New Point(Width / 2, Height / 2)
 			Dim rect As Rectangle
 			rect.Location = baseCanvas.Location
@@ -20,6 +20,7 @@
 				rect.Y = 0
 			End If
 			baseCanvas.Bounds = rect
+			Invalidate()
 		End If
 	End Sub
 
@@ -38,4 +39,11 @@
 	Protected Overrides Function ScrollToControl(activeControl As Control) As Point
 		Return DisplayRectangle.Location
 	End Function
+
+	Private Sub CanvasControl_Paint(sender As Object, e As PaintEventArgs) Handles MyBase.Paint
+		Dim g As Graphics = e.Graphics
+		Dim rect = New Rectangle(baseCanvas.Location, baseCanvas.Size)
+		rect.Inflate(10, 10)
+		g.DrawRectangle(Pens.RoyalBlue, rect)
+	End Sub
 End Class

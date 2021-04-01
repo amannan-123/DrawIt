@@ -23,6 +23,7 @@ Partial Class TestForm
 	<System.Diagnostics.DebuggerStepThrough()>
 	Private Sub InitializeComponent()
 		Me.CheckBox1 = New System.Windows.Forms.CheckBox()
+		Me.MovablePanel1 = New MyControls.MovablePanel()
 		Me.MyVScrollBar1 = New MyControls.MyVScrollBar()
 		Me.FlatButton1 = New MyControls.FlatButton()
 		Me.ColorListBox1 = New MyControls.ColorListBox()
@@ -38,6 +39,18 @@ Partial Class TestForm
 		Me.CheckBox1.TabIndex = 0
 		Me.CheckBox1.Text = "Blur"
 		Me.CheckBox1.UseVisualStyleBackColor = True
+		'
+		'MovablePanel1
+		'
+		Me.MovablePanel1.BackColor = System.Drawing.Color.FromArgb(CType(CType(70, Byte), Integer), CType(CType(70, Byte), Integer), CType(CType(70, Byte), Integer))
+		Me.MovablePanel1.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.MovablePanel1.ForeColor = System.Drawing.Color.White
+		Me.MovablePanel1.Location = New System.Drawing.Point(305, 35)
+		Me.MovablePanel1.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+		Me.MovablePanel1.Name = "MovablePanel1"
+		Me.MovablePanel1.Size = New System.Drawing.Size(200, 250)
+		Me.MovablePanel1.TabIndex = 4
+		Me.MovablePanel1.Text = "MovablePanel1"
 		'
 		'MyVScrollBar1
 		'
@@ -82,10 +95,12 @@ Partial Class TestForm
 		Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
 		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
 		Me.ClientSize = New System.Drawing.Size(683, 307)
+		Me.Controls.Add(Me.MovablePanel1)
 		Me.Controls.Add(Me.MyVScrollBar1)
 		Me.Controls.Add(Me.FlatButton1)
 		Me.Controls.Add(Me.ColorListBox1)
 		Me.Controls.Add(Me.CheckBox1)
+		Me.DoubleBuffered = True
 		Me.Name = "TestForm"
 		Me.Text = "TestForm"
 		Me.ResumeLayout(False)
@@ -97,4 +112,5 @@ Partial Class TestForm
 	Friend WithEvents ColorListBox1 As MyControls.ColorListBox
 	Friend WithEvents FlatButton1 As MyControls.FlatButton
 	Friend WithEvents MyVScrollBar1 As MyControls.MyVScrollBar
+	Friend WithEvents MovablePanel1 As MyControls.MovablePanel
 End Class

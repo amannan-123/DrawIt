@@ -28,11 +28,11 @@ Partial Class CanvasControl
 		'baseCanvas
 		'
 		Me.baseCanvas.BackColor = System.Drawing.Color.Transparent
+		Me.baseCanvas.FResizing = False
 		Me.baseCanvas.Location = New System.Drawing.Point(0, 0)
 		Me.baseCanvas.MainForm = Nothing
 		Me.baseCanvas.Margin = New System.Windows.Forms.Padding(0)
 		Me.baseCanvas.Name = "baseCanvas"
-		Me.baseCanvas.SelectionRectangleColor = System.Drawing.Color.RoyalBlue
 		Me.baseCanvas.Size = New System.Drawing.Size(300, 300)
 		Me.baseCanvas.TabIndex = 2
 		'

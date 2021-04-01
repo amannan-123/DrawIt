@@ -111,6 +111,12 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Helpers.vb" />
+    <Compile Include="MovablePanel.Designer.vb">
+      <DependentUpon>MovablePanel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="MovablePanel.vb">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -190,6 +196,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FlatButton.resx">
       <DependentUpon>FlatButton.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MovablePanel.resx">
+      <DependentUpon>MovablePanel.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>

@@ -12,7 +12,6 @@ Public Class ShapePointsEditor
         Polygon
         Curves
 		ClosedCurve
-		Beziers
 	End Enum
 
     Sub New()
@@ -192,8 +191,6 @@ Public Class ShapePointsEditor
 					g.DrawCurve(Pens.Black, p_pos.ToArray, Tension)
 				Case DrawType.ClosedCurve
 					g.DrawClosedCurve(Pens.Black, p_pos.ToArray, Tension, FillMode.Winding)
-				Case DrawType.Beziers
-					If (p_pos.Count - 1) Mod 3 = 0 Then g.DrawBeziers(Pens.Black, p_pos.ToArray)
 			End Select
 		End If
 
