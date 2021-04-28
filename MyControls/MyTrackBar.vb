@@ -259,6 +259,7 @@ Public Class MyTrackBar
 
     Private Sub gSizer_Resize(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Resize
         Resizeit()
+        Invalidate()
     End Sub
 
     Private Sub Resizeit()
