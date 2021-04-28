@@ -1,10 +1,11 @@
-﻿Imports System.ComponentModel
-Imports System.ComponentModel.Design
+﻿#Region "Imports"
+Imports System.ComponentModel
 Imports System.Drawing.Drawing2D
 Imports System.Drawing.Text
 Imports System.IO
 Imports System.Runtime.Serialization.Formatters.Binary
 Imports System.Runtime.Serialization.Formatters.Soap
+#End Region
 
 Public Class Canvas
 
@@ -42,6 +43,13 @@ Public Class Canvas
 		AboveFirst
 		BelowFirst
 	End Enum
+
+	Enum DShape
+		Lines = 4
+		Polygon = 5
+		Curves = 6
+		ClosedCurve = 7
+	End Enum
 #End Region
 
 #Region "Globals"
@@ -59,6 +67,9 @@ Public Class Canvas
 	Dim m_rect As New List(Of RectangleF)
 	Dim m_ang As Single
 	Dim s_rect As New RectangleF
+	Dim d_shape As DShape
+	Dim d_mode As Boolean = False
+	Dim t_pts As New List(Of PointF)
 #End Region
 
 #Region "Properties"
@@ -240,6 +251,17 @@ Public Class Canvas
 #End Region
 
 #Region "Functions"
+	Private Function DModeMin() As Integer
+		Select Case d_shape
+			Case DShape.Polygon, DShape.Curves, DShape.ClosedCurve
+				Return 3
+			Case DShape.Lines
+				Return 2
+			Case Else
+				Return -1
+		End Select
+	End Function
+
 	Public Function ShapeInCursor(_loc As Point) As Integer
 		Dim ind As Integer = -1
 		If shps.Count = 0 Then Return ind
@@ -365,10 +387,41 @@ Public Class Canvas
 			DeselectAll()
 			Dim sty As MyShape.ShapeStyle = [Enum].Parse(GetType(MyShape.ShapeStyle), MainForm.cb_Shape.SelectedItem)
 			Dim bty As MyBrush.BrushType = [Enum].Parse(GetType(MyBrush.BrushType), MainForm.cb_Brush.SelectedItem)
-			shp = New Shape(m_pt, sty, bty)
-			shp.Selected = True
-			shps.Add(shp)
-			op = MOperations.Draw
+			Select Case sty
+				Case MyShape.ShapeStyle.Lines, MyShape.ShapeStyle.Polygon, MyShape.ShapeStyle.Curves, MyShape.ShapeStyle.ClosedCurve
+					d_shape = sty
+					If e.Button = MouseButtons.Left Then
+						d_mode = True
+						t_pts.Add(e.Location)
+					ElseIf e.Button = MouseButtons.Right Then
+						If t_pts.Count >= DModeMin() Then
+							Dim _min As PointF
+							Dim _max As PointF
+							_min.X = t_pts.Min(Function(pt As PointF) pt.X) - 1
+							_min.Y = t_pts.Min(Function(pt As PointF) pt.Y) - 1
+							_max.X = t_pts.Max(Function(pt As PointF) pt.X) + 1
+							_max.Y = t_pts.Max(Function(pt As PointF) pt.Y) + 1
+							Dim sshp As New Shape(_min, sty, bty)
+							Dim rectf As New RectangleF(_min, New SizeF(_max.X - _min.X, _max.Y - _min.Y))
+							sshp.BaseRect = rectf
+							Dim l_perc = New List(Of PointF)
+							t_pts.ForEach(Sub(x) l_perc.Add(ToPercentage(rectf, x)))
+							If d_shape = 4 Or d_shape = 5 Then
+								sshp.MShape.PolygonPoints = l_perc.ToArray()
+							Else
+								sshp.MShape.CurvePoints = l_perc.ToArray()
+							End If
+							shps.Add(sshp)
+							d_mode = False
+							t_pts.Clear()
+						End If
+					End If
+				Case Else
+					shp = New Shape(m_pt, sty, bty)
+					shp.Selected = True
+					shps.Add(shp)
+					op = MOperations.Draw
+			End Select
 		ElseIf MainForm.rSelect.Checked Then
 			If curr > -1 Then
 				If shps(curr).Selected = False Then
@@ -649,7 +702,7 @@ Public Class Canvas
 		SetPrimary()
 		cloned = False
 		cloning = False
-		MainForm.rSelect.Checked = True
+		If Not d_mode Then MainForm.rSelect.Checked = True
 		Cursor = Cursors.Default
 		op = MOperations.None
 		s_rect = Rectangle.Empty
@@ -982,6 +1035,23 @@ Public Class Canvas
 
 			'Draw image containing shapes
 			g.DrawImageUnscaled(img, 0, 0, Width, Height)
+		End If
+
+		'Draw mode points
+		If d_mode Then
+			t_pts.ForEach(Sub(x) DrawPoint(g, x))
+			If t_pts.Count >= DModeMin() Then
+				Select Case d_shape
+					Case DShape.Lines
+						g.DrawLines(Pens.Black, t_pts.ToArray())
+					Case DShape.Polygon
+						g.DrawPolygon(Pens.Black, t_pts.ToArray())
+					Case DShape.Curves
+						g.DrawCurve(Pens.Black, t_pts.ToArray())
+					Case DShape.ClosedCurve
+						g.DrawClosedCurve(Pens.Black, t_pts.ToArray())
+				End Select
+			End If
 		End If
 
 		'Draw Highlighted Shape

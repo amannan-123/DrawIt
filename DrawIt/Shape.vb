@@ -9,7 +9,7 @@ Public Class Shape
 
     End Sub
 
-    Sub New(_loc As Point, _shp As MyShape.ShapeStyle, _br As MyBrush.BrushType)
+    Sub New(_loc As PointF, _shp As MyShape.ShapeStyle, _br As MyBrush.BrushType)
         FBrush.BType = _br
         MShape.SType = _shp
         _rect.Location = _loc
