@@ -53,23 +53,23 @@ Public Class Canvas
 #End Region
 
 #Region "Globals"
-	Dim img As Bitmap
-	Dim shps As New List(Of Shape)
-	Dim cloned As Boolean = False
-	Dim cloning As Boolean = False
-	Dim up_fix As Boolean = True
-	Dim old_sl As New List(Of Integer)
-	Dim ht_shp As Integer
-	Dim htype As Integer = 0
-	Dim op As MOperations = MOperations.None
-	Dim m_pt As Point
-	Dim m_cnt As PointF
-	Dim m_rect As New List(Of RectangleF)
-	Dim m_ang As Single
-	Dim s_rect As New RectangleF
-	Dim d_shape As DShape
-	Dim d_mode As Boolean = False
-	Dim t_pts As New List(Of PointF)
+	Private img As Bitmap
+	Private shps As New List(Of Shape)
+	Private cloned As Boolean = False
+	Private cloning As Boolean = False
+	Private up_fix As Boolean = True
+	Private ReadOnly old_sl As New List(Of Integer)
+	Private ht_shp As Integer
+	Private htype As Integer = 0
+	Private op As MOperations = MOperations.None
+	Private m_pt As Point
+	Private m_cnt As PointF
+	Private ReadOnly m_rect As New List(Of RectangleF)
+	Private m_ang As Single
+	Private s_rect As New RectangleF
+	Private d_shape As DShape
+	Private d_mode As Boolean = False
+	Private ReadOnly t_pts As New List(Of PointF)
 #End Region
 
 #Region "Properties"
@@ -79,7 +79,7 @@ Public Class Canvas
 		Get
 			Return _auto
 		End Get
-		Set(ByVal value As Boolean)
+		Set(value As Boolean)
 			_auto = value
 		End Set
 	End Property
@@ -89,7 +89,7 @@ Public Class Canvas
 		Get
 			Return _frm
 		End Get
-		Set(ByVal value As MainForm)
+		Set(value As MainForm)
 			_frm = value
 			If Not IsNothing(_frm) Then
 				AddHandler _frm.ResizeBegin, AddressOf F_ResizeStarted
@@ -104,7 +104,7 @@ Public Class Canvas
 		Get
 			Return _ord
 		End Get
-		Set(ByVal value As SelectOrder)
+		Set(value As SelectOrder)
 			_ord = value
 			SetPrimary()
 			Invalidate()
@@ -117,7 +117,7 @@ Public Class Canvas
 		Get
 			Return hg_pth
 		End Get
-		Set(ByVal value As Color)
+		Set(value As Color)
 			hg_pth = value
 		End Set
 	End Property
@@ -128,7 +128,7 @@ Public Class Canvas
 		Get
 			Return hg_brd
 		End Get
-		Set(ByVal value As Color)
+		Set(value As Color)
 			hg_brd = value
 		End Set
 	End Property
@@ -139,7 +139,7 @@ Public Class Canvas
 		Get
 			Return clr_sz
 		End Get
-		Set(ByVal value As Color)
+		Set(value As Color)
 			clr_sz = value
 		End Set
 	End Property
@@ -150,7 +150,7 @@ Public Class Canvas
 		Get
 			Return clr_sel
 		End Get
-		Set(ByVal value As Color)
+		Set(value As Color)
 			clr_sel = value
 		End Set
 	End Property
@@ -161,7 +161,7 @@ Public Class Canvas
 		Get
 			Return _highlight
 		End Get
-		Set(ByVal value As Boolean)
+		Set(value As Boolean)
 			_highlight = value
 		End Set
 	End Property
@@ -173,7 +173,7 @@ Public Class Canvas
 		Get
 			Return _fres
 		End Get
-		Set(ByVal value As Boolean)
+		Set(value As Boolean)
 			_fres = value
 			Invalidate()
 		End Set
@@ -392,7 +392,13 @@ Public Class Canvas
 					d_shape = sty
 					If e.Button = MouseButtons.Left Then
 						d_mode = True
-						t_pts.Add(e.Location)
+						Dim n_pt As Point = e.Location
+						If My.Computer.Keyboard.CtrlKeyDown Then
+							If t_pts.Count > 0 Then n_pt.X = t_pts.Last().X
+						ElseIf My.Computer.Keyboard.ShiftKeyDown Then
+							If t_pts.Count > 0 Then n_pt.Y = t_pts.Last().Y
+						End If
+						t_pts.Add(n_pt)
 					ElseIf e.Button = MouseButtons.Right Then
 						If t_pts.Count >= DModeMin() Then
 							Dim _min As PointF
@@ -424,11 +430,11 @@ Public Class Canvas
 			End Select
 		ElseIf MainForm.rSelect.Checked Then
 			If curr > -1 Then
-				If shps(curr).Selected = False Then
-					If My.Computer.Keyboard.CtrlKeyDown = False Then
-						DeselectAll()
-					Else
+				If Not shps(curr).Selected Then
+					If My.Computer.Keyboard.CtrlKeyDown Then
 						up_fix = False
+					Else
+						DeselectAll()
 					End If
 					shps(curr).Selected = True
 				End If
@@ -729,7 +735,7 @@ Public Class Canvas
 		fnt.Dispose()
 	End Sub
 
-	Private Sub DrawSize(g As Graphics, shp As Shape, Optional ByVal _horz As Boolean = True, Optional ByVal _vert As Boolean = True)
+	Private Sub DrawSize(g As Graphics, shp As Shape, Optional _horz As Boolean = True, Optional _vert As Boolean = True)
 		g.PixelOffsetMode = PixelOffsetMode.Default
 		Select Case shp.Angle
 			Case 0, 90, 180, 270, 360
@@ -841,7 +847,7 @@ Public Class Canvas
 
 	End Sub
 
-	Private Sub DrawPoint(g As Graphics, pt As PointF, Optional ByVal first As Boolean = False)
+	Private Sub DrawPoint(g As Graphics, pt As PointF, Optional first As Boolean = False)
 		Dim rt As New RectangleF(pt, SizeF.Empty)
 		rt.Inflate(5, 5)
 		g.FillEllipse(New SolidBrush(Color.FromArgb(180, Color.Black)), rt)
@@ -1096,7 +1102,7 @@ Public Class Canvas
 #End Region
 
 #Region "KeyBoard Event"
-	Protected Overrides Function IsInputKey(ByVal keyData As Keys) As Boolean
+	Protected Overrides Function IsInputKey(keyData As Keys) As Boolean
 		Select Case keyData
 			Case Keys.Left, Keys.Right, Keys.Up, Keys.Down,
 				 Keys.Shift Or Keys.Left, Keys.Shift Or Keys.Right,

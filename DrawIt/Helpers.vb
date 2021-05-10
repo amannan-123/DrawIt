@@ -13,10 +13,10 @@ Module Helpers
 		BottomLeft
 		Bottom
 		BottomRight
-        Move
-        Rotate
-        Draw
-        Selection
+		Move
+		Rotate
+		Draw
+		Selection
 		Centering
 		None
 	End Enum
@@ -24,7 +24,7 @@ Module Helpers
 #End Region
 
 #Region "Functions"
-	Public Function GetRoundedRectPath(ByVal BaseRect As RectangleF, UpperLeft As Single, ulc As MyShape.CornerType, UpperRight As Single, urc As MyShape.CornerType, LowerLeft As Single, llc As MyShape.CornerType, LowerRight As Single, lrc As MyShape.CornerType) As GraphicsPath
+	Public Function GetRoundedRectPath(BaseRect As RectangleF, UpperLeft As Single, ulc As MyShape.CornerType, UpperRight As Single, urc As MyShape.CornerType, LowerLeft As Single, llc As MyShape.CornerType, LowerRight As Single, lrc As MyShape.CornerType) As GraphicsPath
 
 		Dim ArcRect As RectangleF
 		Dim MyPath As New GraphicsPath()
@@ -107,24 +107,24 @@ Module Helpers
 		Return MyPath
 	End Function
 
-    Public Function SpiralPath(rect As RectangleF, spirals As Integer) As GraphicsPath
-        Dim cx = rect.Width
-        Dim cy = rect.Height
-        Dim iNumRevs = spirals
-        Dim iNumPoints As Integer = (rect.Width * rect.Height) / (spirals * spirals)
-        If iNumPoints < 30 Then iNumPoints = 30
-        Dim aptf As PointF() = New PointF(iNumPoints - 1) {}
-        Dim fAngle, fScale As Single
-        For i As Integer = 0 To iNumPoints - 1
-            fAngle = (i * 2 * Math.PI / (iNumPoints / iNumRevs))
-            fScale = 1 - i / iNumPoints
-            aptf(i).X = (cx / 2 * (1 + fScale * Math.Cos(fAngle)))
-            aptf(i).Y = (cy / 2 * (1 + fScale * Math.Sin(fAngle)))
-        Next
-        Dim gp As New GraphicsPath
-        gp.AddCurve(aptf)
-        Return gp
-    End Function
+	Public Function SpiralPath(rect As RectangleF, spirals As Integer) As GraphicsPath
+		Dim cx = rect.Width
+		Dim cy = rect.Height
+		Dim iNumRevs = spirals
+		Dim iNumPoints As Integer = (rect.Width * rect.Height) / (spirals * spirals)
+		If iNumPoints < 30 Then iNumPoints = 30
+		Dim aptf As PointF() = New PointF(iNumPoints - 1) {}
+		Dim fAngle, fScale As Single
+		For i As Integer = 0 To iNumPoints - 1
+			fAngle = (i * 2 * Math.PI / (iNumPoints / iNumRevs))
+			fScale = 1 - i / iNumPoints
+			aptf(i).X = (cx / 2 * (1 + fScale * Math.Cos(fAngle)))
+			aptf(i).Y = (cy / 2 * (1 + fScale * Math.Sin(fAngle)))
+		Next
+		Dim gp As New GraphicsPath
+		gp.AddCurve(aptf)
+		Return gp
+	End Function
 
 	Public Function ToPercentage(rect As RectangleF, pt As PointF) As PointF
 		Return New PointF((pt.X - rect.X) * 100 / (rect.Right - rect.X),
@@ -136,73 +136,73 @@ Module Helpers
 						  pt.Y * (rect.Bottom - rect.Y) / 100 + rect.Y)
 	End Function
 
-	Public Function AnchorToCursor(ByVal eAnchor As MOperations, _angle As Single) As Cursor
-        Dim snAngle As Single = _angle
-        Select Case eAnchor
-            Case MOperations.Rotate
-                Return Cursors.Hand
-            Case MOperations.TopLeft To MOperations.BottomRight
-                Select Case eAnchor
-                    Case MOperations.TopLeft, MOperations.BottomRight
-                        snAngle += 45
-                    Case MOperations.Top, MOperations.Bottom
-                        snAngle += 90
-                    Case MOperations.TopRight, MOperations.BottomLeft
-                        snAngle += 135
-                    Case MOperations.Left, MOperations.Right
-                        ' No additional rotation
-                End Select
-                If snAngle > 360 Then snAngle -= 360
-                ' Select base on snAngle
-                Select Case snAngle
-                    Case 26 To 68, 204 To 248
-                        Return Cursors.SizeNWSE
-                    Case 69 To 113, 249 To 293
-                        Return Cursors.SizeNS
-                    Case 114 To 158, 294 To 338
-                        Return Cursors.SizeNESW
-                    Case Else ' 0 To 23, 159 To 203, 339 To 360
-                        Return Cursors.SizeWE
-                End Select
-            Case Else
-                Return Cursors.Default
-        End Select
-    End Function
+	Public Function AnchorToCursor(eAnchor As MOperations, _angle As Single) As Cursor
+		Dim snAngle As Single = _angle
+		Select Case eAnchor
+			Case MOperations.Rotate
+				Return Cursors.Hand
+			Case MOperations.TopLeft To MOperations.BottomRight
+				Select Case eAnchor
+					Case MOperations.TopLeft, MOperations.BottomRight
+						snAngle += 45
+					Case MOperations.Top, MOperations.Bottom
+						snAngle += 90
+					Case MOperations.TopRight, MOperations.BottomLeft
+						snAngle += 135
+					Case MOperations.Left, MOperations.Right
+						' No additional rotation
+				End Select
+				If snAngle > 360 Then snAngle -= 360
+				' Select base on snAngle
+				Select Case snAngle
+					Case 26 To 68, 204 To 248
+						Return Cursors.SizeNWSE
+					Case 69 To 113, 249 To 293
+						Return Cursors.SizeNS
+					Case 114 To 158, 294 To 338
+						Return Cursors.SizeNESW
+					Case Else ' 0 To 23, 159 To 203, 339 To 360
+						Return Cursors.SizeWE
+				End Select
+			Case Else
+				Return Cursors.Default
+		End Select
+	End Function
 
-    Public Function EditRotateAngle(snRotation As Single, dbAngle As Double, Optional ByVal _quantized As Boolean = False) As Single
+	Public Function EditRotateAngle(snRotation As Single, dbAngle As Double, Optional _quantized As Boolean = False) As Single
 
 		' Get new angle and trim decimals
 		Dim snOut As Single = Int(snRotation + dbAngle)
 
 		' Keep within 0 ~ 359.9
 		If (snOut >= 360) Then snOut = snOut Mod 360
-		If (snOut <0) Then snOut = 360 - (-snOut Mod 360)
+		If (snOut < 0) Then snOut = 360 - (-snOut Mod 360)
 
-        ' Quantize
-        If _quantized Then
-            Dim bQuantized As Boolean = False
-            For snTarget As Single = 0.0 To 360 Step 45
-                snOut = QuantizeRotation(snOut, snTarget, bQuantized)
-                If bQuantized Then Exit For
-            Next snTarget
-        Else
-            snRotation = snOut
-        End If
+		' Quantize
+		If _quantized Then
+			Dim bQuantized As Boolean = False
+			For snTarget As Single = 0.0 To 360 Step 45
+				snOut = QuantizeRotation(snOut, snTarget, bQuantized)
+				If bQuantized Then Exit For
+			Next snTarget
+		Else
+			snRotation = snOut
+		End If
 
-        ' Return
-        Return snOut
+		' Return
+		Return snOut
 
-    End Function
+	End Function
 
-    Private Function QuantizeRotation(ByVal snRotation As Single,
-									  ByVal snTarget As Single,
+	Private Function QuantizeRotation(snRotation As Single,
+snTarget As Single,
 									  ByRef bQuantized As Boolean) As Single
 
-        ' Quantize angle
-        Dim snQuantize As Single = 5
+		' Quantize angle
+		Dim snQuantize As Single = 5
 
-        ' Set init
-        Dim snLowRef As Single = (snTarget - snQuantize)
+		' Set init
+		Dim snLowRef As Single = (snTarget - snQuantize)
 		Dim snHiRef As Single = (snTarget + snQuantize)
 
 		' Keep targets within boundires
@@ -214,9 +214,9 @@ Module Helpers
 		If snLowRef < snHiRef Then
 			Select Case snRotation
 				Case snLowRef To snHiRef
-                    ' Quantized
-                    bQuantized = True
-                    Return snTarget
+					' Quantized
+					bQuantized = True
+					Return snTarget
 				Case Else
 					' No quantize
 					Return snRotation
@@ -224,13 +224,13 @@ Module Helpers
 		Else
 			Select Case snRotation
 				Case snLowRef To 360, 0 To snHiRef
-                    ' Quantized
-                    bQuantized = True
-                    Return snTarget
-                Case Else
-                    ' No quantize
-                    Return snRotation
-            End Select
+					' Quantized
+					bQuantized = True
+					Return snTarget
+				Case Else
+					' No quantize
+					Return snRotation
+			End Select
 		End If
 	End Function
 

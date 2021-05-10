@@ -18,7 +18,7 @@ Public Class MyBrush
 		Get
 			Return sty
 		End Get
-		Set(ByVal value As BrushType)
+		Set(value As BrushType)
 			sty = value
 		End Set
 	End Property
@@ -30,7 +30,7 @@ Public Class MyBrush
 		Get
 			Return _sld
 		End Get
-		Set(ByVal value As Color)
+		Set(value As Color)
 			_sld = value
 		End Set
 	End Property
@@ -42,7 +42,7 @@ Public Class MyBrush
 		Get
 			Return _lg1
 		End Get
-		Set(ByVal value As Color)
+		Set(value As Color)
 			_lg1 = value
 		End Set
 	End Property
@@ -52,7 +52,7 @@ Public Class MyBrush
 		Get
 			Return _lg2
 		End Get
-		Set(ByVal value As Color)
+		Set(value As Color)
 			_lg2 = value
 		End Set
 	End Property
@@ -62,7 +62,7 @@ Public Class MyBrush
 		Get
 			Return l_angle
 		End Get
-		Set(ByVal value As Integer)
+		Set(value As Integer)
 			l_angle = value
 		End Set
 	End Property
@@ -72,7 +72,7 @@ Public Class MyBrush
 		Get
 			Return _gamma
 		End Get
-		Set(ByVal value As Boolean)
+		Set(value As Boolean)
 			_gamma = value
 		End Set
 	End Property
@@ -82,7 +82,7 @@ Public Class MyBrush
 		Get
 			Return _tri
 		End Get
-		Set(ByVal value As Boolean)
+		Set(value As Boolean)
 			If value Then LBell = False
 			_tri = value
 		End Set
@@ -93,7 +93,7 @@ Public Class MyBrush
 		Get
 			Return tri_f
 		End Get
-		Set(ByVal value As Single)
+		Set(value As Single)
 			tri_f = value
 		End Set
 	End Property
@@ -103,7 +103,7 @@ Public Class MyBrush
 		Get
 			Return tri_s
 		End Get
-		Set(ByVal value As Single)
+		Set(value As Single)
 			tri_s = value
 		End Set
 	End Property
@@ -113,7 +113,7 @@ Public Class MyBrush
 		Get
 			Return _bell
 		End Get
-		Set(ByVal value As Boolean)
+		Set(value As Boolean)
 			If value Then LTriangular = False
 			_bell = value
 		End Set
@@ -124,7 +124,7 @@ Public Class MyBrush
 		Get
 			Return bell_f
 		End Get
-		Set(ByVal value As Single)
+		Set(value As Single)
 			bell_f = value
 		End Set
 	End Property
@@ -134,7 +134,7 @@ Public Class MyBrush
 		Get
 			Return bell_s
 		End Get
-		Set(ByVal value As Single)
+		Set(value As Single)
 			bell_s = value
 		End Set
 	End Property
@@ -144,7 +144,7 @@ Public Class MyBrush
 		Get
 			Return l_inter
 		End Get
-		Set(ByVal value As Boolean)
+		Set(value As Boolean)
 			If value Then LBlend = False
 			l_inter = value
 		End Set
@@ -155,7 +155,7 @@ Public Class MyBrush
 		Get
 			Return l_intcol
 		End Get
-		Set(ByVal value As Color())
+		Set(value As Color())
 			l_intcol = value
 		End Set
 	End Property
@@ -165,7 +165,7 @@ Public Class MyBrush
 		Get
 			Return l_intpol
 		End Get
-		Set(ByVal value As Single())
+		Set(value As Single())
 			l_intpol = value
 		End Set
 	End Property
@@ -175,7 +175,7 @@ Public Class MyBrush
 		Get
 			Return l_blend
 		End Get
-		Set(ByVal value As Boolean)
+		Set(value As Boolean)
 			If value Then LInterpolate = False
 			l_blend = value
 		End Set
@@ -186,7 +186,7 @@ Public Class MyBrush
 		Get
 			Return l_bldfac
 		End Get
-		Set(ByVal value As Single())
+		Set(value As Single())
 			l_bldfac = value
 		End Set
 	End Property
@@ -196,7 +196,7 @@ Public Class MyBrush
 		Get
 			Return l_bldpos
 		End Get
-		Set(ByVal value As Single())
+		Set(value As Single())
 			l_bldpos = value
 		End Set
 	End Property
@@ -208,7 +208,7 @@ Public Class MyBrush
 		Get
 			Return _pg1
 		End Get
-		Set(ByVal value As Color)
+		Set(value As Color)
 			_pg1 = value
 		End Set
 	End Property
@@ -218,7 +218,7 @@ Public Class MyBrush
 		Get
 			Return _pg2
 		End Get
-		Set(ByVal value As Color())
+		Set(value As Color())
 			_pg2 = value
 		End Set
 	End Property
@@ -228,7 +228,7 @@ Public Class MyBrush
 		Get
 			Return p_cent
 		End Get
-		Set(ByVal value As PointF)
+		Set(value As PointF)
 			p_cent = value
 		End Set
 	End Property
@@ -238,7 +238,7 @@ Public Class MyBrush
 		Get
 			Return pfoc_x
 		End Get
-		Set(ByVal value As Single)
+		Set(value As Single)
 			pfoc_x = value
 		End Set
 	End Property
@@ -248,7 +248,7 @@ Public Class MyBrush
 		Get
 			Return pfoc_y
 		End Get
-		Set(ByVal value As Single)
+		Set(value As Single)
 			pfoc_y = value
 		End Set
 	End Property
@@ -258,7 +258,7 @@ Public Class MyBrush
 		Get
 			Return p_tri
 		End Get
-		Set(ByVal value As Boolean)
+		Set(value As Boolean)
 			If value Then PBell = False
 			p_tri = value
 		End Set
@@ -269,7 +269,7 @@ Public Class MyBrush
 		Get
 			Return ptri_f
 		End Get
-		Set(ByVal value As Single)
+		Set(value As Single)
 			ptri_f = value
 		End Set
 	End Property
@@ -279,7 +279,7 @@ Public Class MyBrush
 		Get
 			Return ptri_s
 		End Get
-		Set(ByVal value As Single)
+		Set(value As Single)
 			ptri_s = value
 		End Set
 	End Property
@@ -289,7 +289,7 @@ Public Class MyBrush
 		Get
 			Return p_bell
 		End Get
-		Set(ByVal value As Boolean)
+		Set(value As Boolean)
 			If value Then PTriangular = False
 			p_bell = value
 		End Set
@@ -300,7 +300,7 @@ Public Class MyBrush
 		Get
 			Return pbell_f
 		End Get
-		Set(ByVal value As Single)
+		Set(value As Single)
 			pbell_f = value
 		End Set
 	End Property
@@ -310,7 +310,7 @@ Public Class MyBrush
 		Get
 			Return pbell_s
 		End Get
-		Set(ByVal value As Single)
+		Set(value As Single)
 			pbell_s = value
 		End Set
 	End Property
@@ -320,7 +320,7 @@ Public Class MyBrush
 		Get
 			Return p_inter
 		End Get
-		Set(ByVal value As Boolean)
+		Set(value As Boolean)
 			If value Then PBlend = False
 			p_inter = value
 		End Set
@@ -331,7 +331,7 @@ Public Class MyBrush
 		Get
 			Return p_intcol
 		End Get
-		Set(ByVal value As Color())
+		Set(value As Color())
 			p_intcol = value
 		End Set
 	End Property
@@ -341,7 +341,7 @@ Public Class MyBrush
 		Get
 			Return p_intpol
 		End Get
-		Set(ByVal value As Single())
+		Set(value As Single())
 			p_intpol = value
 		End Set
 	End Property
@@ -351,7 +351,7 @@ Public Class MyBrush
 		Get
 			Return p_blend
 		End Get
-		Set(ByVal value As Boolean)
+		Set(value As Boolean)
 			If value Then PInterpolate = False
 			p_blend = value
 		End Set
@@ -362,7 +362,7 @@ Public Class MyBrush
 		Get
 			Return p_bldfac
 		End Get
-		Set(ByVal value As Single())
+		Set(value As Single())
 			p_bldfac = value
 		End Set
 	End Property
@@ -372,7 +372,7 @@ Public Class MyBrush
 		Get
 			Return p_bldpos
 		End Get
-		Set(ByVal value As Single())
+		Set(value As Single())
 			p_bldpos = value
 		End Set
 	End Property
@@ -384,7 +384,7 @@ Public Class MyBrush
 		Get
 			Return _hb1
 		End Get
-		Set(ByVal value As Color)
+		Set(value As Color)
 			_hb1 = value
 		End Set
 	End Property
@@ -394,7 +394,7 @@ Public Class MyBrush
 		Get
 			Return _hb2
 		End Get
-		Set(ByVal value As Color)
+		Set(value As Color)
 			_hb2 = value
 		End Set
 	End Property
@@ -404,7 +404,7 @@ Public Class MyBrush
 		Get
 			Return _hst
 		End Get
-		Set(ByVal value As HatchStyle)
+		Set(value As HatchStyle)
 			_hst = value
 		End Set
 	End Property
@@ -416,7 +416,7 @@ Public Class MyBrush
 		Get
 			Return t_img
 		End Get
-		Set(ByVal value As Image)
+		Set(value As Image)
 			t_img = value
 		End Set
 	End Property
@@ -426,7 +426,7 @@ Public Class MyBrush
 		Get
 			Return t_trn
 		End Get
-		Set(ByVal value As Boolean)
+		Set(value As Boolean)
 			t_trn = value
 		End Set
 	End Property
@@ -436,7 +436,7 @@ Public Class MyBrush
 		Get
 			Return t_col
 		End Get
-		Set(ByVal value As Color)
+		Set(value As Color)
 			t_col = value
 		End Set
 	End Property
@@ -446,7 +446,7 @@ Public Class MyBrush
 		Get
 			Return t_rot
 		End Get
-		Set(ByVal value As RotateFlipType)
+		Set(value As RotateFlipType)
 			t_rot = value
 		End Set
 	End Property

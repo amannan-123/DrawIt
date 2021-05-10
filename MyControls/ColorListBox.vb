@@ -40,7 +40,7 @@ Public Class ColorListBox
 	''' Occurs whenever a particular item needs to be painted.
 	''' </summary>
 	<Description("Occurs whenever a particular item needs to be painted.")>
-	Public Event DrawItem(ByVal sender As Object, ByVal e As DrawItemsEventArgs)
+	Public Event DrawItem(sender As Object, e As DrawItemsEventArgs)
 
 	''' <summary>
 	''' Occurs when the value of SelectedIndex property changes.
@@ -56,7 +56,7 @@ Public Class ColorListBox
 		Get
 			Return _mode
 		End Get
-		Set(ByVal value As DrawMode)
+		Set(value As DrawMode)
 			_mode = value
 		End Set
 	End Property
@@ -68,7 +68,7 @@ Public Class ColorListBox
 		Get
 			Return _lst
 		End Get
-		Set(ByVal value As ColorsCollection)
+		Set(value As ColorsCollection)
 			_lst = value
 			RefreshItems()
 		End Set
@@ -80,7 +80,7 @@ Public Class ColorListBox
 			If s_ind < 0 Or s_ind > _lst.Count - 1 Then Return -1
 			Return s_ind
 		End Get
-		Set(ByVal value As Integer)
+		Set(value As Integer)
 			s_ind = value
 			If s_ind < 0 Or s_ind > Items.Count - 1 Then s_ind = -1
 			If s_ind > -1 Then
@@ -110,7 +110,7 @@ Public Class ColorListBox
 		Get
 			Return s_col
 		End Get
-		Set(ByVal value As Color)
+		Set(value As Color)
 			s_col = value
 			Invalidate()
 		End Set
@@ -122,7 +122,7 @@ Public Class ColorListBox
 		Get
 			Return h_col
 		End Get
-		Set(ByVal value As Color)
+		Set(value As Color)
 			h_col = value
 			Invalidate()
 		End Set
@@ -134,7 +134,7 @@ Public Class ColorListBox
 		Get
 			Return n_col
 		End Get
-		Set(ByVal value As Color)
+		Set(value As Color)
 			n_col = value
 			Invalidate()
 		End Set
@@ -146,7 +146,7 @@ Public Class ColorListBox
 		Get
 			Return item_h
 		End Get
-		Set(ByVal value As Integer)
+		Set(value As Integer)
 			item_h = value
 			UpdateSize()
 			Invalidate()
@@ -193,7 +193,7 @@ Public Class ColorListBox
 #End Region
 
 #Region "Keyboard"
-	Protected Overrides Function IsInputKey(ByVal keyData As Keys) As Boolean
+	Protected Overrides Function IsInputKey(keyData As Keys) As Boolean
 		Select Case keyData
 			Case Keys.Up, Keys.Down
 				Return True
@@ -567,7 +567,7 @@ Public Class ColorListDesigner
 	Inherits ControlDesigner
 
 	Private _list As ColorListBox
-	Public Overrides Sub Initialize(ByVal component As IComponent)
+	Public Overrides Sub Initialize(component As IComponent)
 		MyBase.Initialize(component)
 
 		' Get list control shortcut reference

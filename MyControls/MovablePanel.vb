@@ -37,7 +37,7 @@ Public Class MovablePanel
 		Get
 			Return _txt
 		End Get
-		Set(ByVal value As String)
+		Set(value As String)
 			_txt = value
 			Invalidate()
 		End Set
@@ -49,7 +49,7 @@ Public Class MovablePanel
 		Get
 			Return _res
 		End Get
-		Set(ByVal value As Boolean)
+		Set(value As Boolean)
 			_res = value
 		End Set
 	End Property

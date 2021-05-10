@@ -46,7 +46,7 @@ Public Class MyTabControl
 		Get
 			Return _min
 		End Get
-		Set(ByVal value As Integer)
+		Set(value As Integer)
 			If value < 0 Then value = 0
 			_min = value
 		End Set
@@ -60,7 +60,7 @@ Public Class MyTabControl
 		Get
 			Return _back
 		End Get
-		Set(ByVal value As Color)
+		Set(value As Color)
 			_back = value
 			Invalidate()
 		End Set
@@ -74,7 +74,7 @@ Public Class MyTabControl
 		Get
 			Return _fore
 		End Get
-		Set(ByVal value As Color)
+		Set(value As Color)
 			_fore = value
 			Invalidate()
 		End Set
@@ -90,7 +90,7 @@ Public Class MyTabControl
 		Get
 			Return _sback
 		End Get
-		Set(ByVal value As Color)
+		Set(value As Color)
 			_sback = value
 			Invalidate()
 		End Set
@@ -106,7 +106,7 @@ Public Class MyTabControl
 		Get
 			Return _nback
 		End Get
-		Set(ByVal value As Color)
+		Set(value As Color)
 			_nback = value
 			Invalidate()
 		End Set
@@ -189,8 +189,8 @@ Public Class MyTabControl
 					TabPages.Remove(tp)
 					tp.Dispose()
 				End If
-				End If
 			End If
+		End If
 		MyBase.OnMouseDown(e)
 	End Sub
 

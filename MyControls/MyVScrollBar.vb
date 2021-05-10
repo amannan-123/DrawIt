@@ -41,7 +41,7 @@ Public Class MyVScrollBar
 
 	<Category("ScrollBar")>
 	<Description("Occurs when the user moves the scroll box.")>
-	Public Shadows Event Scroll(ByVal sender As Object, ByVal e As EventArgs)
+	Public Shadows Event Scroll(sender As Object, e As EventArgs)
 
 #End Region
 
@@ -55,7 +55,7 @@ Public Class MyVScrollBar
 		Get
 			Return _clrB
 		End Get
-		Set(ByVal value As Color)
+		Set(value As Color)
 			_clrB = value
 			Invalidate()
 		End Set
@@ -69,7 +69,7 @@ Public Class MyVScrollBar
 		Get
 			Return _clrT
 		End Get
-		Set(ByVal value As Color)
+		Set(value As Color)
 			_clrT = value
 			Invalidate()
 		End Set
@@ -83,7 +83,7 @@ Public Class MyVScrollBar
 		Get
 			Return d_min
 		End Get
-		Set(ByVal value As Boolean)
+		Set(value As Boolean)
 			d_min = value
 			Invalidate()
 		End Set
@@ -97,7 +97,7 @@ Public Class MyVScrollBar
 		Get
 			Return _arr
 		End Get
-		Set(ByVal value As Boolean)
+		Set(value As Boolean)
 			_arr = value
 		End Set
 	End Property
@@ -110,7 +110,7 @@ Public Class MyVScrollBar
 		Get
 			Return _value
 		End Get
-		Set(ByVal _val As Integer)
+		Set(_val As Integer)
 			If _value <> _val Then
 				If _val < _minimum Then _val = _minimum
 				If _val > _maximum Then _val = _maximum
@@ -130,7 +130,7 @@ Public Class MyVScrollBar
 		Get
 			Return _minimum
 		End Get
-		Set(ByVal _val As Integer)
+		Set(_val As Integer)
 			If _val >= _maximum Then _val = _maximum - 1
 			_minimum = _val
 			If Value < Minimum Then Value = Minimum
@@ -147,7 +147,7 @@ Public Class MyVScrollBar
 		Get
 			Return _maximum
 		End Get
-		Set(ByVal _val As Integer)
+		Set(_val As Integer)
 			If _val <= _minimum Then _val = _minimum + 1
 			_maximum = _val
 			If Value > Maximum Then Value = Maximum
@@ -164,7 +164,7 @@ Public Class MyVScrollBar
 		Get
 			Return _inc_s
 		End Get
-		Set(ByVal value As Integer)
+		Set(value As Integer)
 			If value < 0 Then value = 0
 			_inc_s = value
 		End Set
@@ -178,7 +178,7 @@ Public Class MyVScrollBar
 		Get
 			Return _inc_l
 		End Get
-		Set(ByVal value As Integer)
+		Set(value As Integer)
 			If value < 0 Then value = 0
 			_inc_l = value
 		End Set
@@ -207,7 +207,7 @@ Public Class MyVScrollBar
 		AddHandler _ctrl.MouseWheel, AddressOf MyVScrollBar_MouseWheel
 	End Sub
 
-	Private Sub UpdateSlider(ByVal xPos As Single)
+	Private Sub UpdateSlider(xPos As Single)
 		sngSliderPos = xPos
 		Dim t_size As Integer = Math.Max(rectScroll.Height - (Maximum - Minimum), 15)
 		rectSlider = rectScroll
@@ -217,7 +217,7 @@ Public Class MyVScrollBar
 		rectThumb = New Rectangle(0, sngSliderPos, Width - 1, t_size)
 	End Sub
 
-	Private Sub SetSliderValue(ByVal _y As Single)
+	Private Sub SetSliderValue(_y As Single)
 		Dim perc As Single = ToPercentage(rectSlider.Y, rectSlider.Bottom, _y)
 		Dim _val As Single = FromPercentage(Minimum, Maximum, perc)
 		Value = _val
@@ -300,7 +300,7 @@ Public Class MyVScrollBar
 #End Region
 
 #Region "Keyboard Events"
-	Protected Overrides Function IsInputKey(ByVal keyData As Keys) As Boolean
+	Protected Overrides Function IsInputKey(keyData As Keys) As Boolean
 		'Because a Usercontrol ignores the arrows in the KeyDown Event
 		'and changes focus no matter what in the KeyUp Event
 		'This is needed to fix the KeyDown problem

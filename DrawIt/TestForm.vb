@@ -3,53 +3,53 @@ Imports System.Runtime.InteropServices
 
 Public Class TestForm
 
-    Private Sub EnableBlur(hwnd As IntPtr, enabled As Boolean)
+	Private Sub EnableBlur(hwnd As IntPtr, enabled As Boolean)
 
-        Dim accent = New W10BlurHelper.AccentPolicy()
-        If enabled Then
-            accent.AccentState = W10BlurHelper.AccentState.ACCENT_ENABLE_BLURBEHIND
-        Else
-            accent.AccentState = W10BlurHelper.AccentState.ACCENT_DISABLED
-        End If
-        Dim transparency = 100
-        Dim clr = Color.SteelBlue
-        accent.GradientColor = (transparency << 24) Or (ToAbgr(clr) And &HFFFFFF)
-        accent.AccentFlags = W10BlurHelper.AccentFlag.DrawBottomBorder
-        Dim accentStructSize = Marshal.SizeOf(accent)
+		Dim accent = New W10BlurHelper.AccentPolicy()
+		If enabled Then
+			accent.AccentState = W10BlurHelper.AccentState.ACCENT_ENABLE_BLURBEHIND
+		Else
+			accent.AccentState = W10BlurHelper.AccentState.ACCENT_DISABLED
+		End If
+		Dim transparency = 100
+		Dim clr = Color.SteelBlue
+		accent.GradientColor = (transparency << 24) Or (ToAbgr(clr) And &HFFFFFF)
+		accent.AccentFlags = W10BlurHelper.AccentFlag.DrawBottomBorder
+		Dim accentStructSize = Marshal.SizeOf(accent)
 
-        Dim accentPtr = Marshal.AllocHGlobal(accentStructSize)
-        Marshal.StructureToPtr(accent, accentPtr, False)
+		Dim accentPtr = Marshal.AllocHGlobal(accentStructSize)
+		Marshal.StructureToPtr(accent, accentPtr, False)
 
-        Dim Data = New W10BlurHelper.WindowCompositionAttributeData()
-        Data.Attribute = W10BlurHelper.WindowCompositionAttribute.WCA_ACCENT_POLICY
-        Data.SizeOfData = accentStructSize
-        Data.Data = accentPtr
-        W10BlurHelper.SetWindowCompositionAttribute(hwnd, Data)
+		Dim Data = New W10BlurHelper.WindowCompositionAttributeData()
+		Data.Attribute = W10BlurHelper.WindowCompositionAttribute.WCA_ACCENT_POLICY
+		Data.SizeOfData = accentStructSize
+		Data.Data = accentPtr
+		W10BlurHelper.SetWindowCompositionAttribute(hwnd, Data)
 
-        Marshal.FreeHGlobal(accentPtr)
-    End Sub
+		Marshal.FreeHGlobal(accentPtr)
+	End Sub
 
-    Private Function getpath(rect As RectangleF)
-        Dim lst As New List(Of PointF)
-        lst.Add(FromPercentage(rect, New PointF(0, 25)))
-        lst.Add(FromPercentage(rect, New PointF(0, 75)))
-        lst.Add(FromPercentage(rect, New PointF(50, 100)))
-        lst.Add(FromPercentage(rect, New PointF(100, 75)))
-        lst.Add(FromPercentage(rect, New PointF(100, 25)))
-        lst.Add(FromPercentage(rect, New PointF(50, 0)))
-        Dim gp As New GraphicsPath
-        gp.AddPolygon(lst.ToArray)
-        Return gp
-    End Function
+	Private Function getpath(rect As RectangleF)
+		Dim lst As New List(Of PointF)
+		lst.Add(FromPercentage(rect, New PointF(0, 25)))
+		lst.Add(FromPercentage(rect, New PointF(0, 75)))
+		lst.Add(FromPercentage(rect, New PointF(50, 100)))
+		lst.Add(FromPercentage(rect, New PointF(100, 75)))
+		lst.Add(FromPercentage(rect, New PointF(100, 25)))
+		lst.Add(FromPercentage(rect, New PointF(50, 0)))
+		Dim gp As New GraphicsPath
+		gp.AddPolygon(lst.ToArray)
+		Return gp
+	End Function
 
-    Private Sub TestForm_Paint(sender As Object, e As PaintEventArgs) 'Handles MyBase.Paint
-        Dim g As Graphics = e.Graphics
-        g.SmoothingMode = SmoothingMode.HighQuality
+	Private Sub TestForm_Paint(sender As Object, e As PaintEventArgs) 'Handles MyBase.Paint
+		Dim g As Graphics = e.Graphics
+		g.SmoothingMode = SmoothingMode.HighQuality
 
-        Dim c1 As Color = Color.SteelBlue
-        Dim c2 As Color = Color.HotPink
+		Dim c1 As Color = Color.SteelBlue
+		Dim c2 As Color = Color.HotPink
 
-        Dim rect = New RectangleF(20, 20, ClientRectangle.Width - 40, ClientRectangle.Height - 40)
+		Dim rect = New RectangleF(20, 20, ClientRectangle.Width - 40, ClientRectangle.Height - 40)
 		Dim cent As New PointF(rect.X + (rect.Width / 2),
 							   rect.Y + (rect.Height / 2))
 		Dim copies As Integer = 50
@@ -120,7 +120,7 @@ Public Class TestForm
 				g.DrawLine(New Pen(Color.Red, 2), p1, p2)
 			End If
 		End If
-    End Sub
+	End Sub
 
 	Private Sub MyVScrollBar1_Scroll(sender As Object, e As EventArgs) Handles MyVScrollBar1.Scroll
 		Text = MyVScrollBar1.Value
@@ -129,47 +129,47 @@ End Class
 
 Class W10BlurHelper
 
-    Enum AccentState
-        ACCENT_DISABLED = 0
-        ACCENT_ENABLE_GRADIENT = 1
-        ACCENT_ENABLE_TRANSPARENTGRADIENT = 2
-        ACCENT_ENABLE_BLURBEHIND = 3
-        ACCENT_ENABLE_ACRYLICBLURBEHIND = 4
-        ACCENT_INVALID_STATE = 5
-    End Enum
+	Enum AccentState
+		ACCENT_DISABLED = 0
+		ACCENT_ENABLE_GRADIENT = 1
+		ACCENT_ENABLE_TRANSPARENTGRADIENT = 2
+		ACCENT_ENABLE_BLURBEHIND = 3
+		ACCENT_ENABLE_ACRYLICBLURBEHIND = 4
+		ACCENT_INVALID_STATE = 5
+	End Enum
 
-    Enum AccentFlag
-        DrawLeftBorder = 1 << 5
-        DrawTopBorder = 1 << 6
-        DrawRightBorder = 1 << 7
-        DrawBottomBorder = 1 << 8
-        DrawAllBorders = (DrawLeftBorder Or DrawTopBorder Or DrawRightBorder Or DrawBottomBorder)
-    End Enum
+	Enum AccentFlag
+		DrawLeftBorder = 1 << 5
+		DrawTopBorder = 1 << 6
+		DrawRightBorder = 1 << 7
+		DrawBottomBorder = 1 << 8
+		DrawAllBorders = (DrawLeftBorder Or DrawTopBorder Or DrawRightBorder Or DrawBottomBorder)
+	End Enum
 
-    <StructLayout(LayoutKind.Sequential)>
-    Structure AccentPolicy
-        Public AccentState As AccentState
-        Public AccentFlags As Integer
-        Public GradientColor As Integer
-        Public AnimationId As Integer
-    End Structure
+	<StructLayout(LayoutKind.Sequential)>
+	Structure AccentPolicy
+		Public AccentState As AccentState
+		Public AccentFlags As Integer
+		Public GradientColor As Integer
+		Public AnimationId As Integer
+	End Structure
 
-    Enum WindowCompositionAttribute
-        ' ...
-        WCA_ACCENT_POLICY = 19
-        ' ...
-    End Enum
+	Enum WindowCompositionAttribute
+		' ...
+		WCA_ACCENT_POLICY = 19
+		' ...
+	End Enum
 
-    <StructLayout(LayoutKind.Sequential)>
-    Structure WindowCompositionAttributeData
-        Public Attribute As WindowCompositionAttribute
-        Public Data As IntPtr
-        Public SizeOfData As Integer
-    End Structure
+	<StructLayout(LayoutKind.Sequential)>
+	Structure WindowCompositionAttributeData
+		Public Attribute As WindowCompositionAttribute
+		Public Data As IntPtr
+		Public SizeOfData As Integer
+	End Structure
 
-    <DllImport("user32.dll")>
-    Shared Function SetWindowCompositionAttribute(hwnd As IntPtr, ByRef data As WindowCompositionAttributeData) As Integer
+	<DllImport("user32.dll")>
+	Shared Function SetWindowCompositionAttribute(hwnd As IntPtr, ByRef data As WindowCompositionAttributeData) As Integer
 
-    End Function
+	End Function
 
 End Class

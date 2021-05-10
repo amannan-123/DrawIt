@@ -4,16 +4,16 @@ Imports System.Windows.Forms
 
 Public Class MyPanel
 
-    Sub New()
+	Sub New()
 
-        ' This call is required by the designer.
-        InitializeComponent()
+		' This call is required by the designer.
+		InitializeComponent()
 
-        ' Add any initialization after the InitializeComponent() call.
-        SetStyle(ControlStyles.AllPaintingInWmPaint, True)
-        SetStyle(ControlStyles.OptimizedDoubleBuffer, True)
-        SetStyle(ControlStyles.UserPaint, True)
-        SetStyle(ControlStyles.UserMouse, True)
-    End Sub
+		' Add any initialization after the InitializeComponent() call.
+		SetStyle(ControlStyles.AllPaintingInWmPaint, True)
+		SetStyle(ControlStyles.OptimizedDoubleBuffer, True)
+		SetStyle(ControlStyles.UserPaint, True)
+		SetStyle(ControlStyles.UserMouse, True)
+	End Sub
 
 End Class

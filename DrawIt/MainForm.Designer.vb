@@ -205,6 +205,11 @@ Partial Class MainForm
 		Me.pCanvas = New MyControls.MyPanel()
 		Me.tCanvas = New MyControls.MyTabControl()
 		Me.TabPage1 = New System.Windows.Forms.TabPage()
+		Me.pShear = New MyControls.MovablePanel()
+		Me.Label61 = New System.Windows.Forms.Label()
+		Me.TBShrX = New MyControls.MyTrackBar()
+		Me.Label62 = New System.Windows.Forms.Label()
+		Me.TBShrY = New MyControls.MyTrackBar()
 		Me.CanvasControl1 = New DrawIt.CanvasControl()
 		Me.pSettings.SuspendLayout()
 		CType(Me.set_H, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -230,6 +235,7 @@ Partial Class MainForm
 		Me.pCanvas.SuspendLayout()
 		Me.tCanvas.SuspendLayout()
 		Me.TabPage1.SuspendLayout()
+		Me.pShear.SuspendLayout()
 		Me.SuspendLayout()
 		'
 		'openDialog
@@ -2434,6 +2440,82 @@ Partial Class MainForm
 		Me.TabPage1.TabIndex = 0
 		Me.TabPage1.Text = "Canvas1"
 		'
+		'pShear
+		'
+		Me.pShear.BackColor = System.Drawing.Color.FromArgb(CType(CType(70, Byte), Integer), CType(CType(70, Byte), Integer), CType(CType(70, Byte), Integer))
+		Me.pShear.Controls.Add(Me.TBShrY)
+		Me.pShear.Controls.Add(Me.Label62)
+		Me.pShear.Controls.Add(Me.TBShrX)
+		Me.pShear.Controls.Add(Me.Label61)
+		Me.pShear.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.pShear.ForeColor = System.Drawing.Color.White
+		Me.pShear.Location = New System.Drawing.Point(800, 413)
+		Me.pShear.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+		Me.pShear.Name = "pShear"
+		Me.pShear.Resizable = False
+		Me.pShear.Size = New System.Drawing.Size(250, 103)
+		Me.pShear.TabIndex = 9
+		Me.pShear.Text = "Shear"
+		Me.pShear.Visible = False
+		'
+		'Label61
+		'
+		Me.Label61.AutoSize = True
+		Me.Label61.BackColor = System.Drawing.Color.Transparent
+		Me.Label61.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.Label61.Location = New System.Drawing.Point(3, 38)
+		Me.Label61.Name = "Label61"
+		Me.Label61.Size = New System.Drawing.Size(48, 13)
+		Me.Label61.TabIndex = 2
+		Me.Label61.Text = "Shear X:"
+		'
+		'TBShrX
+		'
+		Me.TBShrX.BackColor = System.Drawing.Color.Transparent
+		Me.TBShrX.BarBorderColor = System.Drawing.Color.White
+		Me.TBShrX.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
+		Me.TBShrX.Factors = New Single() {0!, 1.0!}
+		Me.TBShrX.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!)
+		Me.TBShrX.Increment = 0.1!
+		Me.TBShrX.Location = New System.Drawing.Point(58, 34)
+		Me.TBShrX.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+		Me.TBShrX.Maximum = 1.0!
+		Me.TBShrX.Minimum = -1.0!
+		Me.TBShrX.Name = "TBShrX"
+		Me.TBShrX.Positions = New Single() {0!, 0.5!, 1.0!}
+		Me.TBShrX.Size = New System.Drawing.Size(188, 20)
+		Me.TBShrX.TabIndex = 6
+		Me.TBShrX.ThumbBorderColor = System.Drawing.Color.White
+		'
+		'Label62
+		'
+		Me.Label62.AutoSize = True
+		Me.Label62.BackColor = System.Drawing.Color.Transparent
+		Me.Label62.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.Label62.Location = New System.Drawing.Point(3, 68)
+		Me.Label62.Name = "Label62"
+		Me.Label62.Size = New System.Drawing.Size(48, 13)
+		Me.Label62.TabIndex = 2
+		Me.Label62.Text = "Shear Y:"
+		'
+		'TBShrY
+		'
+		Me.TBShrY.BackColor = System.Drawing.Color.Transparent
+		Me.TBShrY.BarBorderColor = System.Drawing.Color.White
+		Me.TBShrY.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
+		Me.TBShrY.Factors = New Single() {0!, 1.0!}
+		Me.TBShrY.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!)
+		Me.TBShrY.Increment = 0.1!
+		Me.TBShrY.Location = New System.Drawing.Point(58, 64)
+		Me.TBShrY.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+		Me.TBShrY.Maximum = 1.0!
+		Me.TBShrY.Minimum = -1.0!
+		Me.TBShrY.Name = "TBShrY"
+		Me.TBShrY.Positions = New Single() {0!, 0.5!, 1.0!}
+		Me.TBShrY.Size = New System.Drawing.Size(188, 20)
+		Me.TBShrY.TabIndex = 6
+		Me.TBShrY.ThumbBorderColor = System.Drawing.Color.White
+		'
 		'CanvasControl1
 		'
 		Me.CanvasControl1.AutoScroll = True
@@ -2446,10 +2528,10 @@ Partial Class MainForm
 		'
 		'MainForm
 		'
-		Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
-		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None
 		Me.BackColor = System.Drawing.Color.Black
 		Me.ClientSize = New System.Drawing.Size(1366, 705)
+		Me.Controls.Add(Me.pShear)
 		Me.Controls.Add(Me.pSettings)
 		Me.Controls.Add(Me.pSideBar)
 		Me.Controls.Add(Me.tTop)
@@ -2502,6 +2584,8 @@ Partial Class MainForm
 		Me.pCanvas.ResumeLayout(False)
 		Me.tCanvas.ResumeLayout(False)
 		Me.TabPage1.ResumeLayout(False)
+		Me.pShear.ResumeLayout(False)
+		Me.pShear.PerformLayout()
 		Me.ResumeLayout(False)
 
 	End Sub
@@ -2688,4 +2772,9 @@ Partial Class MainForm
 	Friend WithEvents set_Apply As MyControls.MyButton
 	Friend WithEvents set_ord As ComboBox
 	Friend WithEvents Label19 As Label
+	Friend WithEvents pShear As MyControls.MovablePanel
+	Friend WithEvents TBShrY As MyControls.MyTrackBar
+	Friend WithEvents Label62 As Label
+	Friend WithEvents TBShrX As MyControls.MyTrackBar
+	Friend WithEvents Label61 As Label
 End Class
