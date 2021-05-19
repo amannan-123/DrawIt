@@ -205,12 +205,12 @@ Partial Class MainForm
 		Me.pCanvas = New MyControls.MyPanel()
 		Me.tCanvas = New MyControls.MyTabControl()
 		Me.TabPage1 = New System.Windows.Forms.TabPage()
-		Me.pShear = New MyControls.MovablePanel()
-		Me.Label61 = New System.Windows.Forms.Label()
-		Me.TBShrX = New MyControls.MyTrackBar()
-		Me.Label62 = New System.Windows.Forms.Label()
-		Me.TBShrY = New MyControls.MyTrackBar()
 		Me.CanvasControl1 = New DrawIt.CanvasControl()
+		Me.pShear = New MyControls.MovablePanel()
+		Me.TBShrY = New MyControls.MyTrackBar()
+		Me.Label62 = New System.Windows.Forms.Label()
+		Me.TBShrX = New MyControls.MyTrackBar()
+		Me.Label61 = New System.Windows.Forms.Label()
 		Me.pSettings.SuspendLayout()
 		CType(Me.set_H, System.ComponentModel.ISupportInitialize).BeginInit()
 		CType(Me.set_W, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -2440,6 +2440,16 @@ Partial Class MainForm
 		Me.TabPage1.TabIndex = 0
 		Me.TabPage1.Text = "Canvas1"
 		'
+		'CanvasControl1
+		'
+		Me.CanvasControl1.AutoScroll = True
+		Me.CanvasControl1.Dock = System.Windows.Forms.DockStyle.Fill
+		Me.CanvasControl1.Location = New System.Drawing.Point(0, 0)
+		Me.CanvasControl1.Margin = New System.Windows.Forms.Padding(0)
+		Me.CanvasControl1.Name = "CanvasControl1"
+		Me.CanvasControl1.Size = New System.Drawing.Size(1032, 581)
+		Me.CanvasControl1.TabIndex = 0
+		'
 		'pShear
 		'
 		Me.pShear.BackColor = System.Drawing.Color.FromArgb(CType(CType(70, Byte), Integer), CType(CType(70, Byte), Integer), CType(CType(70, Byte), Integer))
@@ -2457,46 +2467,6 @@ Partial Class MainForm
 		Me.pShear.TabIndex = 9
 		Me.pShear.Text = "Shear"
 		Me.pShear.Visible = False
-		'
-		'Label61
-		'
-		Me.Label61.AutoSize = True
-		Me.Label61.BackColor = System.Drawing.Color.Transparent
-		Me.Label61.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.Label61.Location = New System.Drawing.Point(3, 38)
-		Me.Label61.Name = "Label61"
-		Me.Label61.Size = New System.Drawing.Size(48, 13)
-		Me.Label61.TabIndex = 2
-		Me.Label61.Text = "Shear X:"
-		'
-		'TBShrX
-		'
-		Me.TBShrX.BackColor = System.Drawing.Color.Transparent
-		Me.TBShrX.BarBorderColor = System.Drawing.Color.White
-		Me.TBShrX.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
-		Me.TBShrX.Factors = New Single() {0!, 1.0!}
-		Me.TBShrX.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!)
-		Me.TBShrX.Increment = 0.1!
-		Me.TBShrX.Location = New System.Drawing.Point(58, 34)
-		Me.TBShrX.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
-		Me.TBShrX.Maximum = 1.0!
-		Me.TBShrX.Minimum = -1.0!
-		Me.TBShrX.Name = "TBShrX"
-		Me.TBShrX.Positions = New Single() {0!, 0.5!, 1.0!}
-		Me.TBShrX.Size = New System.Drawing.Size(188, 20)
-		Me.TBShrX.TabIndex = 6
-		Me.TBShrX.ThumbBorderColor = System.Drawing.Color.White
-		'
-		'Label62
-		'
-		Me.Label62.AutoSize = True
-		Me.Label62.BackColor = System.Drawing.Color.Transparent
-		Me.Label62.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.Label62.Location = New System.Drawing.Point(3, 68)
-		Me.Label62.Name = "Label62"
-		Me.Label62.Size = New System.Drawing.Size(48, 13)
-		Me.Label62.TabIndex = 2
-		Me.Label62.Text = "Shear Y:"
 		'
 		'TBShrY
 		'
@@ -2516,15 +2486,45 @@ Partial Class MainForm
 		Me.TBShrY.TabIndex = 6
 		Me.TBShrY.ThumbBorderColor = System.Drawing.Color.White
 		'
-		'CanvasControl1
+		'Label62
 		'
-		Me.CanvasControl1.AutoScroll = True
-		Me.CanvasControl1.Dock = System.Windows.Forms.DockStyle.Fill
-		Me.CanvasControl1.Location = New System.Drawing.Point(0, 0)
-		Me.CanvasControl1.Margin = New System.Windows.Forms.Padding(0)
-		Me.CanvasControl1.Name = "CanvasControl1"
-		Me.CanvasControl1.Size = New System.Drawing.Size(1032, 581)
-		Me.CanvasControl1.TabIndex = 0
+		Me.Label62.AutoSize = True
+		Me.Label62.BackColor = System.Drawing.Color.Transparent
+		Me.Label62.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.Label62.Location = New System.Drawing.Point(3, 68)
+		Me.Label62.Name = "Label62"
+		Me.Label62.Size = New System.Drawing.Size(48, 13)
+		Me.Label62.TabIndex = 2
+		Me.Label62.Text = "Shear Y:"
+		'
+		'TBShrX
+		'
+		Me.TBShrX.BackColor = System.Drawing.Color.Transparent
+		Me.TBShrX.BarBorderColor = System.Drawing.Color.White
+		Me.TBShrX.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
+		Me.TBShrX.Factors = New Single() {0!, 1.0!}
+		Me.TBShrX.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!)
+		Me.TBShrX.Increment = 0.1!
+		Me.TBShrX.Location = New System.Drawing.Point(58, 34)
+		Me.TBShrX.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+		Me.TBShrX.Maximum = 1.0!
+		Me.TBShrX.Minimum = -1.0!
+		Me.TBShrX.Name = "TBShrX"
+		Me.TBShrX.Positions = New Single() {0!, 0.5!, 1.0!}
+		Me.TBShrX.Size = New System.Drawing.Size(188, 20)
+		Me.TBShrX.TabIndex = 6
+		Me.TBShrX.ThumbBorderColor = System.Drawing.Color.White
+		'
+		'Label61
+		'
+		Me.Label61.AutoSize = True
+		Me.Label61.BackColor = System.Drawing.Color.Transparent
+		Me.Label61.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.Label61.Location = New System.Drawing.Point(3, 38)
+		Me.Label61.Name = "Label61"
+		Me.Label61.Size = New System.Drawing.Size(48, 13)
+		Me.Label61.TabIndex = 2
+		Me.Label61.Text = "Shear X:"
 		'
 		'MainForm
 		'

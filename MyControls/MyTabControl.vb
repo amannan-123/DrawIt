@@ -36,6 +36,12 @@ Public Class MyTabControl
 	<Description("Occurs before tabpage is removed by clicking on cross icon.")>
 	Public Event TabRemoving(sender As Object, e As TabRemovingEventArgs)
 
+	''' <summary>
+	''' Occurs after tabpage is removed by clicking on cross icon.
+	''' </summary>
+	<Description("Occurs after tabpage is removed by clicking on cross icon.")>
+	Public Event TabRemoved(sender As Object, e As EventArgs)
+
 	Private _min As Integer = 1
 	''' <summary>
 	''' The minimum number of tabpages on control.
@@ -187,6 +193,7 @@ Public Class MyTabControl
 					m_changeService.OnComponentChanged(Me, member, old_p, TabPages)
 				Else
 					TabPages.Remove(tp)
+					RaiseEvent TabRemoved(Me, New EventArgs)
 					tp.Dispose()
 				End If
 			End If

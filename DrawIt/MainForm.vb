@@ -29,8 +29,8 @@ Public Class MainForm
 	End Function
 
 	Private Sub tCanvas_SelectedIndexChanged(sender As Object, e As EventArgs) Handles tCanvas.SelectedIndexChanged
-		UpdateSettings()
 		UpdateControls()
+		UpdateSettings()
 	End Sub
 #End Region
 
@@ -136,6 +136,9 @@ Public Class MainForm
 				PB_Texture.Image = Nothing
 				MainShape = Nothing
 			End If
+		Else
+			PB_Texture.Image = Nothing
+			MainShape = Nothing
 		End If
 		UpdateBoundControls()
 	End Sub
@@ -1461,4 +1464,5 @@ Public Class MainForm
 		If e.KeyData = Keys.F12 Then pShear.Visible = Not pShear.Visible
 	End Sub
 #End Region
+
 End Class
