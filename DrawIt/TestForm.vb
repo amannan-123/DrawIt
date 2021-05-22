@@ -30,13 +30,14 @@ Public Class TestForm
 	End Sub
 
 	Private Function getpath(rect As RectangleF)
-		Dim lst As New List(Of PointF)
-		lst.Add(FromPercentage(rect, New PointF(0, 25)))
-		lst.Add(FromPercentage(rect, New PointF(0, 75)))
-		lst.Add(FromPercentage(rect, New PointF(50, 100)))
-		lst.Add(FromPercentage(rect, New PointF(100, 75)))
-		lst.Add(FromPercentage(rect, New PointF(100, 25)))
-		lst.Add(FromPercentage(rect, New PointF(50, 0)))
+		Dim lst As New List(Of PointF) From {
+			FromPercentage(rect, New PointF(0, 25)),
+			FromPercentage(rect, New PointF(0, 75)),
+			FromPercentage(rect, New PointF(50, 100)),
+			FromPercentage(rect, New PointF(100, 75)),
+			FromPercentage(rect, New PointF(100, 25)),
+			FromPercentage(rect, New PointF(50, 0))
+		}
 		Dim gp As New GraphicsPath
 		gp.AddPolygon(lst.ToArray)
 		Return gp

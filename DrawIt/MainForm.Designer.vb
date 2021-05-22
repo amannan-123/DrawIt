@@ -205,12 +205,18 @@ Partial Class MainForm
 		Me.pCanvas = New MyControls.MyPanel()
 		Me.tCanvas = New MyControls.MyTabControl()
 		Me.TabPage1 = New System.Windows.Forms.TabPage()
-		Me.CanvasControl1 = New DrawIt.CanvasControl()
 		Me.pShear = New MyControls.MovablePanel()
 		Me.TBShrY = New MyControls.MyTrackBar()
 		Me.Label62 = New System.Windows.Forms.Label()
 		Me.TBShrX = New MyControls.MyTrackBar()
 		Me.Label61 = New System.Windows.Forms.Label()
+		Me.CanvasControl1 = New DrawIt.CanvasControl()
+		Me.Label63 = New System.Windows.Forms.Label()
+		Me.PictureBox1 = New System.Windows.Forms.PictureBox()
+		Me.MyButton1 = New MyControls.MyButton()
+		Me.MyButton2 = New MyControls.MyButton()
+		Me.TextBox1 = New System.Windows.Forms.TextBox()
+		Me.Label64 = New System.Windows.Forms.Label()
 		Me.pSettings.SuspendLayout()
 		CType(Me.set_H, System.ComponentModel.ISupportInitialize).BeginInit()
 		CType(Me.set_W, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -236,6 +242,7 @@ Partial Class MainForm
 		Me.tCanvas.SuspendLayout()
 		Me.TabPage1.SuspendLayout()
 		Me.pShear.SuspendLayout()
+		CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
 		Me.SuspendLayout()
 		'
 		'openDialog
@@ -247,6 +254,11 @@ Partial Class MainForm
 		'pSettings
 		'
 		Me.pSettings.BackColor = System.Drawing.Color.FromArgb(CType(CType(70, Byte), Integer), CType(CType(70, Byte), Integer), CType(CType(70, Byte), Integer))
+		Me.pSettings.Controls.Add(Me.Label64)
+		Me.pSettings.Controls.Add(Me.TextBox1)
+		Me.pSettings.Controls.Add(Me.MyButton2)
+		Me.pSettings.Controls.Add(Me.MyButton1)
+		Me.pSettings.Controls.Add(Me.PictureBox1)
 		Me.pSettings.Controls.Add(Me.set_ord)
 		Me.pSettings.Controls.Add(Me.set_Apply)
 		Me.pSettings.Controls.Add(Me.Label25)
@@ -262,36 +274,38 @@ Partial Class MainForm
 		Me.pSettings.Controls.Add(Me.Label60)
 		Me.pSettings.Controls.Add(Me.Label19)
 		Me.pSettings.Controls.Add(Me.Label59)
+		Me.pSettings.Controls.Add(Me.Label63)
 		Me.pSettings.Controls.Add(Me.Label3)
 		Me.pSettings.Controls.Add(Me.set_BC)
 		Me.pSettings.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
 		Me.pSettings.ForeColor = System.Drawing.Color.White
-		Me.pSettings.Location = New System.Drawing.Point(800, 100)
+		Me.pSettings.Location = New System.Drawing.Point(828, 79)
 		Me.pSettings.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
 		Me.pSettings.Name = "pSettings"
 		Me.pSettings.Resizable = False
-		Me.pSettings.Size = New System.Drawing.Size(250, 310)
+		Me.pSettings.Size = New System.Drawing.Size(250, 466)
 		Me.pSettings.TabIndex = 8
 		Me.pSettings.Text = "Settings"
 		Me.pSettings.Visible = False
 		'
 		'set_ord
 		'
+		Me.set_ord.Anchor = System.Windows.Forms.AnchorStyles.Bottom
 		Me.set_ord.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
 		Me.set_ord.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
 		Me.set_ord.FormattingEnabled = True
 		Me.set_ord.Items.AddRange(New Object() {"AboveFirst", "BelowFirst"})
-		Me.set_ord.Location = New System.Drawing.Point(92, 143)
+		Me.set_ord.Location = New System.Drawing.Point(91, 316)
 		Me.set_ord.Name = "set_ord"
 		Me.set_ord.Size = New System.Drawing.Size(154, 25)
 		Me.set_ord.TabIndex = 10
 		'
 		'set_Apply
 		'
-		Me.set_Apply.Anchor = System.Windows.Forms.AnchorStyles.None
+		Me.set_Apply.Anchor = System.Windows.Forms.AnchorStyles.Bottom
 		Me.set_Apply.BackColor = System.Drawing.Color.Black
 		Me.set_Apply.ForeColor = System.Drawing.Color.White
-		Me.set_Apply.Location = New System.Drawing.Point(88, 265)
+		Me.set_Apply.Location = New System.Drawing.Point(88, 421)
 		Me.set_Apply.MyText = "Apply"
 		Me.set_Apply.Name = "set_Apply"
 		Me.set_Apply.Size = New System.Drawing.Size(75, 30)
@@ -299,10 +313,11 @@ Partial Class MainForm
 		'
 		'Label25
 		'
+		Me.Label25.Anchor = System.Windows.Forms.AnchorStyles.Bottom
 		Me.Label25.AutoSize = True
 		Me.Label25.BackColor = System.Drawing.Color.Transparent
 		Me.Label25.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.Label25.Location = New System.Drawing.Point(28, 240)
+		Me.Label25.Location = New System.Drawing.Point(27, 398)
 		Me.Label25.Name = "Label25"
 		Me.Label25.Size = New System.Drawing.Size(41, 13)
 		Me.Label25.TabIndex = 14
@@ -310,10 +325,11 @@ Partial Class MainForm
 		'
 		'Label22
 		'
+		Me.Label22.Anchor = System.Windows.Forms.AnchorStyles.Bottom
 		Me.Label22.AutoSize = True
 		Me.Label22.BackColor = System.Drawing.Color.Transparent
 		Me.Label22.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.Label22.Location = New System.Drawing.Point(28, 210)
+		Me.Label22.Location = New System.Drawing.Point(27, 368)
 		Me.Label22.Name = "Label22"
 		Me.Label22.Size = New System.Drawing.Size(32, 13)
 		Me.Label22.TabIndex = 12
@@ -321,9 +337,10 @@ Partial Class MainForm
 		'
 		'set_bclr
 		'
+		Me.set_bclr.Anchor = System.Windows.Forms.AnchorStyles.Bottom
 		Me.set_bclr.BackColor = System.Drawing.Color.White
 		Me.set_bclr.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.set_bclr.Location = New System.Drawing.Point(76, 234)
+		Me.set_bclr.Location = New System.Drawing.Point(75, 392)
 		Me.set_bclr.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
 		Me.set_bclr.MyText = "ChooseColor"
 		Me.set_bclr.Name = "set_bclr"
@@ -333,9 +350,10 @@ Partial Class MainForm
 		'
 		'set_pclr
 		'
+		Me.set_pclr.Anchor = System.Windows.Forms.AnchorStyles.Bottom
 		Me.set_pclr.BackColor = System.Drawing.Color.White
 		Me.set_pclr.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.set_pclr.Location = New System.Drawing.Point(76, 204)
+		Me.set_pclr.Location = New System.Drawing.Point(75, 362)
 		Me.set_pclr.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
 		Me.set_pclr.MyText = "ChooseColor"
 		Me.set_pclr.Name = "set_pclr"
@@ -345,12 +363,13 @@ Partial Class MainForm
 		'
 		'set_hgt
 		'
+		Me.set_hgt.Anchor = System.Windows.Forms.AnchorStyles.Bottom
 		Me.set_hgt.AutoSize = True
 		Me.set_hgt.BackColor = System.Drawing.Color.Transparent
 		Me.set_hgt.Checked = True
 		Me.set_hgt.CheckState = System.Windows.Forms.CheckState.Checked
 		Me.set_hgt.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.set_hgt.Location = New System.Drawing.Point(6, 182)
+		Me.set_hgt.Location = New System.Drawing.Point(5, 342)
 		Me.set_hgt.Name = "set_hgt"
 		Me.set_hgt.Size = New System.Drawing.Size(106, 17)
 		Me.set_hgt.TabIndex = 11
@@ -359,8 +378,9 @@ Partial Class MainForm
 		'
 		'set_H
 		'
+		Me.set_H.Anchor = System.Windows.Forms.AnchorStyles.Bottom
 		Me.set_H.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!)
-		Me.set_H.Location = New System.Drawing.Point(176, 107)
+		Me.set_H.Location = New System.Drawing.Point(175, 290)
 		Me.set_H.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
 		Me.set_H.Minimum = New Decimal(New Integer() {10, 0, 0, 0})
 		Me.set_H.Name = "set_H"
@@ -370,8 +390,9 @@ Partial Class MainForm
 		'
 		'set_W
 		'
+		Me.set_W.Anchor = System.Windows.Forms.AnchorStyles.Bottom
 		Me.set_W.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!)
-		Me.set_W.Location = New System.Drawing.Point(47, 107)
+		Me.set_W.Location = New System.Drawing.Point(48, 290)
 		Me.set_W.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
 		Me.set_W.Minimum = New Decimal(New Integer() {10, 0, 0, 0})
 		Me.set_W.Name = "set_W"
@@ -381,10 +402,11 @@ Partial Class MainForm
 		'
 		'set_r2
 		'
+		Me.set_r2.Anchor = System.Windows.Forms.AnchorStyles.Bottom
 		Me.set_r2.AutoSize = True
 		Me.set_r2.BackColor = System.Drawing.Color.Transparent
 		Me.set_r2.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!)
-		Me.set_r2.Location = New System.Drawing.Point(122, 84)
+		Me.set_r2.Location = New System.Drawing.Point(130, 267)
 		Me.set_r2.Name = "set_r2"
 		Me.set_r2.Size = New System.Drawing.Size(60, 17)
 		Me.set_r2.TabIndex = 4
@@ -393,24 +415,26 @@ Partial Class MainForm
 		'
 		'set_r1
 		'
+		Me.set_r1.Anchor = System.Windows.Forms.AnchorStyles.Bottom
 		Me.set_r1.AutoSize = True
 		Me.set_r1.BackColor = System.Drawing.Color.Transparent
 		Me.set_r1.Checked = True
 		Me.set_r1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!)
-		Me.set_r1.Location = New System.Drawing.Point(69, 84)
+		Me.set_r1.Location = New System.Drawing.Point(63, 267)
 		Me.set_r1.Name = "set_r1"
-		Me.set_r1.Size = New System.Drawing.Size(47, 17)
+		Me.set_r1.Size = New System.Drawing.Size(61, 17)
 		Me.set_r1.TabIndex = 3
 		Me.set_r1.TabStop = True
-		Me.set_r1.Text = "Auto"
+		Me.set_r1.Text = "Auto Fit"
 		Me.set_r1.UseVisualStyleBackColor = False
 		'
 		'Label51
 		'
+		Me.Label51.Anchor = System.Windows.Forms.AnchorStyles.Bottom
 		Me.Label51.AutoSize = True
 		Me.Label51.BackColor = System.Drawing.Color.Transparent
 		Me.Label51.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.Label51.Location = New System.Drawing.Point(3, 68)
+		Me.Label51.Location = New System.Drawing.Point(4, 258)
 		Me.Label51.Name = "Label51"
 		Me.Label51.Size = New System.Drawing.Size(38, 13)
 		Me.Label51.TabIndex = 2
@@ -418,10 +442,11 @@ Partial Class MainForm
 		'
 		'Label60
 		'
+		Me.Label60.Anchor = System.Windows.Forms.AnchorStyles.Bottom
 		Me.Label60.AutoSize = True
 		Me.Label60.BackColor = System.Drawing.Color.Transparent
 		Me.Label60.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.Label60.Location = New System.Drawing.Point(129, 109)
+		Me.Label60.Location = New System.Drawing.Point(128, 292)
 		Me.Label60.Name = "Label60"
 		Me.Label60.Size = New System.Drawing.Size(41, 13)
 		Me.Label60.TabIndex = 7
@@ -429,10 +454,11 @@ Partial Class MainForm
 		'
 		'Label19
 		'
+		Me.Label19.Anchor = System.Windows.Forms.AnchorStyles.Bottom
 		Me.Label19.AutoSize = True
 		Me.Label19.BackColor = System.Drawing.Color.Transparent
 		Me.Label19.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.Label19.Location = New System.Drawing.Point(3, 149)
+		Me.Label19.Location = New System.Drawing.Point(4, 322)
 		Me.Label19.Name = "Label19"
 		Me.Label19.Size = New System.Drawing.Size(83, 13)
 		Me.Label19.TabIndex = 9
@@ -440,10 +466,11 @@ Partial Class MainForm
 		'
 		'Label59
 		'
+		Me.Label59.Anchor = System.Windows.Forms.AnchorStyles.Bottom
 		Me.Label59.AutoSize = True
 		Me.Label59.BackColor = System.Drawing.Color.Transparent
 		Me.Label59.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.Label59.Location = New System.Drawing.Point(3, 109)
+		Me.Label59.Location = New System.Drawing.Point(4, 292)
 		Me.Label59.Name = "Label59"
 		Me.Label59.Size = New System.Drawing.Size(38, 13)
 		Me.Label59.TabIndex = 5
@@ -2440,16 +2467,6 @@ Partial Class MainForm
 		Me.TabPage1.TabIndex = 0
 		Me.TabPage1.Text = "Canvas1"
 		'
-		'CanvasControl1
-		'
-		Me.CanvasControl1.AutoScroll = True
-		Me.CanvasControl1.Dock = System.Windows.Forms.DockStyle.Fill
-		Me.CanvasControl1.Location = New System.Drawing.Point(0, 0)
-		Me.CanvasControl1.Margin = New System.Windows.Forms.Padding(0)
-		Me.CanvasControl1.Name = "CanvasControl1"
-		Me.CanvasControl1.Size = New System.Drawing.Size(1032, 581)
-		Me.CanvasControl1.TabIndex = 0
-		'
 		'pShear
 		'
 		Me.pShear.BackColor = System.Drawing.Color.FromArgb(CType(CType(70, Byte), Integer), CType(CType(70, Byte), Integer), CType(CType(70, Byte), Integer))
@@ -2459,7 +2476,7 @@ Partial Class MainForm
 		Me.pShear.Controls.Add(Me.Label61)
 		Me.pShear.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
 		Me.pShear.ForeColor = System.Drawing.Color.White
-		Me.pShear.Location = New System.Drawing.Point(800, 413)
+		Me.pShear.Location = New System.Drawing.Point(828, 548)
 		Me.pShear.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
 		Me.pShear.Name = "pShear"
 		Me.pShear.Resizable = False
@@ -2526,6 +2543,83 @@ Partial Class MainForm
 		Me.Label61.TabIndex = 2
 		Me.Label61.Text = "Shear X:"
 		'
+		'CanvasControl1
+		'
+		Me.CanvasControl1.AutoScroll = True
+		Me.CanvasControl1.Dock = System.Windows.Forms.DockStyle.Fill
+		Me.CanvasControl1.Location = New System.Drawing.Point(0, 0)
+		Me.CanvasControl1.Margin = New System.Windows.Forms.Padding(0)
+		Me.CanvasControl1.Name = "CanvasControl1"
+		Me.CanvasControl1.Size = New System.Drawing.Size(1032, 581)
+		Me.CanvasControl1.TabIndex = 0
+		'
+		'Label63
+		'
+		Me.Label63.AutoSize = True
+		Me.Label63.BackColor = System.Drawing.Color.Transparent
+		Me.Label63.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.Label63.Location = New System.Drawing.Point(3, 61)
+		Me.Label63.Name = "Label63"
+		Me.Label63.Size = New System.Drawing.Size(100, 13)
+		Me.Label63.TabIndex = 0
+		Me.Label63.Text = "Background Image:"
+		'
+		'PictureBox1
+		'
+		Me.PictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+		Me.PictureBox1.Location = New System.Drawing.Point(3, 77)
+		Me.PictureBox1.Name = "PictureBox1"
+		Me.PictureBox1.Size = New System.Drawing.Size(179, 135)
+		Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+		Me.PictureBox1.TabIndex = 17
+		Me.PictureBox1.TabStop = False
+		'
+		'MyButton1
+		'
+		Me.MyButton1.Anchor = System.Windows.Forms.AnchorStyles.None
+		Me.MyButton1.BackColor = System.Drawing.Color.Black
+		Me.MyButton1.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+		Me.MyButton1.ForeColor = System.Drawing.Color.White
+		Me.MyButton1.Location = New System.Drawing.Point(188, 77)
+		Me.MyButton1.MyText = "Load"
+		Me.MyButton1.Name = "MyButton1"
+		Me.MyButton1.Size = New System.Drawing.Size(58, 25)
+		Me.MyButton1.TabIndex = 18
+		'
+		'MyButton2
+		'
+		Me.MyButton2.Anchor = System.Windows.Forms.AnchorStyles.None
+		Me.MyButton2.BackColor = System.Drawing.Color.Black
+		Me.MyButton2.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+		Me.MyButton2.ForeColor = System.Drawing.Color.White
+		Me.MyButton2.Location = New System.Drawing.Point(189, 108)
+		Me.MyButton2.MyText = "Clear"
+		Me.MyButton2.Name = "MyButton2"
+		Me.MyButton2.Size = New System.Drawing.Size(58, 25)
+		Me.MyButton2.TabIndex = 18
+		'
+		'TextBox1
+		'
+		Me.TextBox1.Anchor = System.Windows.Forms.AnchorStyles.Bottom
+		Me.TextBox1.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+		Me.TextBox1.Location = New System.Drawing.Point(5, 230)
+		Me.TextBox1.MaxLength = 30
+		Me.TextBox1.Name = "TextBox1"
+		Me.TextBox1.Size = New System.Drawing.Size(238, 25)
+		Me.TextBox1.TabIndex = 19
+		'
+		'Label64
+		'
+		Me.Label64.Anchor = System.Windows.Forms.AnchorStyles.Bottom
+		Me.Label64.AutoSize = True
+		Me.Label64.BackColor = System.Drawing.Color.Transparent
+		Me.Label64.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.Label64.Location = New System.Drawing.Point(4, 216)
+		Me.Label64.Name = "Label64"
+		Me.Label64.Size = New System.Drawing.Size(38, 13)
+		Me.Label64.TabIndex = 20
+		Me.Label64.Text = "Name:"
+		'
 		'MainForm
 		'
 		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None
@@ -2586,6 +2680,7 @@ Partial Class MainForm
 		Me.TabPage1.ResumeLayout(False)
 		Me.pShear.ResumeLayout(False)
 		Me.pShear.PerformLayout()
+		CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
 		Me.ResumeLayout(False)
 
 	End Sub
@@ -2777,4 +2872,10 @@ Partial Class MainForm
 	Friend WithEvents Label62 As Label
 	Friend WithEvents TBShrX As MyControls.MyTrackBar
 	Friend WithEvents Label61 As Label
+	Friend WithEvents MyButton2 As MyControls.MyButton
+	Friend WithEvents MyButton1 As MyControls.MyButton
+	Friend WithEvents PictureBox1 As PictureBox
+	Friend WithEvents Label63 As Label
+	Friend WithEvents Label64 As Label
+	Friend WithEvents TextBox1 As TextBox
 End Class

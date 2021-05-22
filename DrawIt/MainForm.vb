@@ -165,11 +165,7 @@ Public Class MainForm
 		If Not IsNothing(cn) Then
 			pSettings.Text = tCanvas.SelectedTab.Text & " Settings"
 			set_BC.SelectedColor = cn.BackColor
-			If cn.Docked Then
-				set_r1.Checked = True
-			Else
-				set_r2.Checked = True
-			End If
+			set_r1.Checked = cn.Docked
 			If Not cn.Docked Then
 				set_W.Value = cn.Width
 				set_H.Value = cn.Height
@@ -185,6 +181,9 @@ Public Class MainForm
 #Region "Load"
 	Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 		CanvasControl1.baseCanvas.MainForm = Me
+		MainCanvas = CanvasControl1.baseCanvas
+		UpdateSettings()
+
 		For Each str As String In [Enum].GetNames(GetType(MyShape.ShapeStyle))
 			cb_Shape.Items.Add(str)
 		Next

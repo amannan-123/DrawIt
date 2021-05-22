@@ -363,16 +363,17 @@ Public Class Shape
 		If Not IsNothing(gp) Then
 			Dim rg As New Region(gp)
 			If Primary AndAlso _anc Then
-				Dim _anchors As New List(Of GraphicsPath)
-				_anchors.Add(TopLeft())
-				_anchors.Add(Top())
-				_anchors.Add(TopRight())
-				_anchors.Add(Left())
-				_anchors.Add(Right())
-				_anchors.Add(BottomLeft())
-				_anchors.Add(Bottom())
-				_anchors.Add(BottomRight())
-				_anchors.Add(Rotate())
+				Dim _anchors As New List(Of GraphicsPath) From {
+					TopLeft(),
+					Top(),
+					TopRight(),
+					Left(),
+					Right(),
+					BottomLeft(),
+					Bottom(),
+					BottomRight(),
+					Rotate()
+				}
 				If FBrush.BType = MyBrush.BrushType.PathGradient Then _anchors.Add(Centering())
 				For Each anc As GraphicsPath In _anchors
 					rg.Union(anc)
@@ -401,10 +402,11 @@ Public Class Shape
 				Case MyShape.ShapeStyle.Ellipse
 					gp.AddEllipse(rt)
 				Case MyShape.ShapeStyle.Triangle
-					Dim _lst As New List(Of PointF)
-					_lst.Add(FromPercentage(rt, New PointF(50, 0)))
-					_lst.Add(FromPercentage(rt, New PointF(0, 100)))
-					_lst.Add(FromPercentage(rt, New PointF(100, 100)))
+					Dim _lst As New List(Of PointF) From {
+						FromPercentage(rt, New PointF(50, 0)),
+						FromPercentage(rt, New PointF(0, 100)),
+						FromPercentage(rt, New PointF(100, 100))
+					}
 					gp.AddPolygon(_lst.ToArray)
 				Case MyShape.ShapeStyle.Lines
 					If MShape.PolygonPoints.Length < 2 Then Return Nothing

@@ -713,7 +713,7 @@ Public Class Canvas
 		op = MOperations.None
 		s_rect = Rectangle.Empty
 		Invalidate()
-
+		MainForm.UpdateBoundControls()
 	End Sub
 #End Region
 
@@ -866,18 +866,24 @@ Public Class Canvas
 			g.FillRectangle(bk, ClientRectangle)
 			bk.Dispose()
 		End If
-		g.FillRectangle(New SolidBrush(BackColor), ClientRectangle)
+
 		SetImageSize()
 
 		If Not IsNothing(img) Then
 
-#Region "Drawing Shapes On Image"
-			'Draw all shapes on image
+#Region "Drawing On Image"
 			Dim ig As Graphics = Graphics.FromImage(img)
-			ig.Clear(Color.Transparent)
+
+			'Drawing background
+			ig.FillRectangle(New SolidBrush(BackColor), ClientRectangle)
+			If Not IsNothing(BackgroundImage) Then
+				ig.DrawImage(BackgroundImage, New Rectangle(0, 0, img.Width, img.Height))
+			End If
+
 			ig.SmoothingMode = SmoothingMode.AntiAlias
 			ig.TextRenderingHint = TextRenderingHint.AntiAlias
 
+			'Draw all shapes on image
 			For Each shp As Shape In shps
 				ig.RenderingOrigin = New Point(shp.BaseRect.Location.X,
 											  shp.BaseRect.Location.Y)
@@ -910,16 +916,7 @@ Public Class Canvas
 				End If
 				If Not IsNothing(fbr) Then fbr.Dispose()
 				If Not IsNothing(dpn) Then dpn.Dispose()
-				If Not IsNothing(pth) Then
-					'Try
-					'	For i As Integer = 0 To pth.PathPoints.Length - 1
-					'		DrawPoint(g, pth.PathPoints(i), i = 0)
-					'	Next
-					'Catch ex As Exception
-
-					'End Try
-					pth.Dispose()
-				End If
+				If Not IsNothing(pth) Then pth.Dispose()
 
 				If shp.Glow.Enabled AndAlso Not shp.Glow.BeforeFill Then CreateGlow(ig, shp)
 
@@ -938,25 +935,27 @@ Public Class Canvas
 						Select Case op
 							Case MOperations.None, MOperations.Draw, MOperations.Selection
 
-								Dim _anchors As New List(Of GraphicsPath)
-								_anchors.Add(shp.TopLeft(False))
-								_anchors.Add(shp.Top(False))
-								_anchors.Add(shp.TopRight(False))
-								_anchors.Add(shp.Left(False))
-								_anchors.Add(shp.Right(False))
-								_anchors.Add(shp.BottomLeft(False))
-								_anchors.Add(shp.Bottom(False))
-								_anchors.Add(shp.BottomRight(False))
-								_anchors.Add(shp.Rotate(False))
+								Dim _anchors As New List(Of GraphicsPath) From {
+									shp.TopLeft(False),
+									shp.Top(False),
+									shp.TopRight(False),
+									shp.Left(False),
+									shp.Right(False),
+									shp.BottomLeft(False),
+									shp.Bottom(False),
+									shp.BottomRight(False),
+									shp.Rotate(False)
+								}
 								If shp.FBrush.BType = MyBrush.BrushType.PathGradient Then _anchors.Add(shp.Centering(False))
 								_anchors.Reverse()
 
 								'Draw all anchors
-								For Each gp As GraphicsPath In _anchors
-									ig.FillPath(br, gp)
-									ig.DrawPath(pn, gp)
-								Next
+								_anchors.ForEach(Sub(gp)
+													 ig.FillPath(br, gp)
+													 ig.DrawPath(pn, gp)
+												 End Sub)
 								_anchors.Clear()
+
 								'Draw Rotation Anchor Line
 								Dim pt1 As New PointF(shp.Top(False).GetBounds().X + (shp.Top(False).GetBounds().Width / 2),
 										 shp.Top(False).GetBounds().Top)

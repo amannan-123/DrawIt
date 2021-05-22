@@ -5,19 +5,17 @@
 			baseCanvas.Dock = DockStyle.Fill
 		Else
 			baseCanvas.Dock = DockStyle.None
-			Dim center As New Point(Width / 2, Height / 2)
-			Dim rect As Rectangle
-			rect.Location = baseCanvas.Location
-			rect.Size = baseCanvas.Size
+			Dim center As New Point(ClientRectangle.Width / 2, ClientRectangle.Height / 2)
+			Dim rect As Rectangle = baseCanvas.ClientRectangle
 			If rect.Width < Width Then
 				rect.X = center.X - (rect.Width / 2)
 			Else
-				rect.X = 0
+				rect.X = DisplayRectangle.X
 			End If
 			If rect.Height < Height Then
 				rect.Y = center.Y - (rect.Height / 2)
 			Else
-				rect.Y = 0
+				rect.Y = DisplayRectangle.Y
 			End If
 			baseCanvas.Bounds = rect
 			Invalidate()
@@ -25,10 +23,6 @@
 	End Sub
 
 	Private Sub CanvasControl_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-		SetSize()
-	End Sub
-
-	Private Sub baseCanvas_Resize(sender As Object, e As EventArgs) Handles baseCanvas.Resize
 		SetSize()
 	End Sub
 

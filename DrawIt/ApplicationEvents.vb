@@ -11,6 +11,7 @@ Namespace My
 
 		Protected Overrides Sub OnStartupNextInstance(eventArgs As StartupNextInstanceEventArgs)
 			'Handling here
+
 			MyBase.OnStartupNextInstance(eventArgs)
 		End Sub
 
