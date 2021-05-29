@@ -26,6 +26,11 @@ Partial Class MainForm
 		Me.openDialog = New System.Windows.Forms.OpenFileDialog()
 		Me.saveDialog = New System.Windows.Forms.SaveFileDialog()
 		Me.pSettings = New MyControls.MovablePanel()
+		Me.Label64 = New System.Windows.Forms.Label()
+		Me.set_cname = New System.Windows.Forms.TextBox()
+		Me.set_cpic = New MyControls.MyButton()
+		Me.set_lpic = New MyControls.MyButton()
+		Me.set_PB = New System.Windows.Forms.PictureBox()
 		Me.set_ord = New System.Windows.Forms.ComboBox()
 		Me.set_Apply = New MyControls.MyButton()
 		Me.Label25 = New System.Windows.Forms.Label()
@@ -41,6 +46,7 @@ Partial Class MainForm
 		Me.Label60 = New System.Windows.Forms.Label()
 		Me.Label19 = New System.Windows.Forms.Label()
 		Me.Label59 = New System.Windows.Forms.Label()
+		Me.Label63 = New System.Windows.Forms.Label()
 		Me.Label3 = New System.Windows.Forms.Label()
 		Me.set_BC = New MyControls.ColorEditorButton()
 		Me.pSideBar = New MyControls.MyPanel()
@@ -205,19 +211,14 @@ Partial Class MainForm
 		Me.pCanvas = New MyControls.MyPanel()
 		Me.tCanvas = New MyControls.MyTabControl()
 		Me.TabPage1 = New System.Windows.Forms.TabPage()
+		Me.CanvasControl1 = New DrawIt.CanvasControl()
 		Me.pShear = New MyControls.MovablePanel()
 		Me.TBShrY = New MyControls.MyTrackBar()
 		Me.Label62 = New System.Windows.Forms.Label()
 		Me.TBShrX = New MyControls.MyTrackBar()
 		Me.Label61 = New System.Windows.Forms.Label()
-		Me.CanvasControl1 = New DrawIt.CanvasControl()
-		Me.Label63 = New System.Windows.Forms.Label()
-		Me.PictureBox1 = New System.Windows.Forms.PictureBox()
-		Me.MyButton1 = New MyControls.MyButton()
-		Me.MyButton2 = New MyControls.MyButton()
-		Me.TextBox1 = New System.Windows.Forms.TextBox()
-		Me.Label64 = New System.Windows.Forms.Label()
 		Me.pSettings.SuspendLayout()
+		CType(Me.set_PB, System.ComponentModel.ISupportInitialize).BeginInit()
 		CType(Me.set_H, System.ComponentModel.ISupportInitialize).BeginInit()
 		CType(Me.set_W, System.ComponentModel.ISupportInitialize).BeginInit()
 		Me.pSideBar.SuspendLayout()
@@ -242,7 +243,6 @@ Partial Class MainForm
 		Me.tCanvas.SuspendLayout()
 		Me.TabPage1.SuspendLayout()
 		Me.pShear.SuspendLayout()
-		CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
 		Me.SuspendLayout()
 		'
 		'openDialog
@@ -255,10 +255,10 @@ Partial Class MainForm
 		'
 		Me.pSettings.BackColor = System.Drawing.Color.FromArgb(CType(CType(70, Byte), Integer), CType(CType(70, Byte), Integer), CType(CType(70, Byte), Integer))
 		Me.pSettings.Controls.Add(Me.Label64)
-		Me.pSettings.Controls.Add(Me.TextBox1)
-		Me.pSettings.Controls.Add(Me.MyButton2)
-		Me.pSettings.Controls.Add(Me.MyButton1)
-		Me.pSettings.Controls.Add(Me.PictureBox1)
+		Me.pSettings.Controls.Add(Me.set_cname)
+		Me.pSettings.Controls.Add(Me.set_cpic)
+		Me.pSettings.Controls.Add(Me.set_lpic)
+		Me.pSettings.Controls.Add(Me.set_PB)
 		Me.pSettings.Controls.Add(Me.set_ord)
 		Me.pSettings.Controls.Add(Me.set_Apply)
 		Me.pSettings.Controls.Add(Me.Label25)
@@ -287,6 +287,62 @@ Partial Class MainForm
 		Me.pSettings.TabIndex = 8
 		Me.pSettings.Text = "Settings"
 		Me.pSettings.Visible = False
+		'
+		'Label64
+		'
+		Me.Label64.Anchor = System.Windows.Forms.AnchorStyles.Bottom
+		Me.Label64.AutoSize = True
+		Me.Label64.BackColor = System.Drawing.Color.Transparent
+		Me.Label64.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.Label64.Location = New System.Drawing.Point(4, 216)
+		Me.Label64.Name = "Label64"
+		Me.Label64.Size = New System.Drawing.Size(38, 13)
+		Me.Label64.TabIndex = 20
+		Me.Label64.Text = "Name:"
+		'
+		'set_cname
+		'
+		Me.set_cname.Anchor = System.Windows.Forms.AnchorStyles.Bottom
+		Me.set_cname.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+		Me.set_cname.Location = New System.Drawing.Point(5, 230)
+		Me.set_cname.MaxLength = 30
+		Me.set_cname.Name = "set_cname"
+		Me.set_cname.Size = New System.Drawing.Size(238, 25)
+		Me.set_cname.TabIndex = 19
+		'
+		'set_cpic
+		'
+		Me.set_cpic.Anchor = System.Windows.Forms.AnchorStyles.None
+		Me.set_cpic.BackColor = System.Drawing.Color.Black
+		Me.set_cpic.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+		Me.set_cpic.ForeColor = System.Drawing.Color.White
+		Me.set_cpic.Location = New System.Drawing.Point(189, 108)
+		Me.set_cpic.MyText = "Clear"
+		Me.set_cpic.Name = "set_cpic"
+		Me.set_cpic.Size = New System.Drawing.Size(58, 25)
+		Me.set_cpic.TabIndex = 18
+		'
+		'set_lpic
+		'
+		Me.set_lpic.Anchor = System.Windows.Forms.AnchorStyles.None
+		Me.set_lpic.BackColor = System.Drawing.Color.Black
+		Me.set_lpic.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+		Me.set_lpic.ForeColor = System.Drawing.Color.White
+		Me.set_lpic.Location = New System.Drawing.Point(188, 77)
+		Me.set_lpic.MyText = "Load"
+		Me.set_lpic.Name = "set_lpic"
+		Me.set_lpic.Size = New System.Drawing.Size(58, 25)
+		Me.set_lpic.TabIndex = 18
+		'
+		'set_PB
+		'
+		Me.set_PB.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+		Me.set_PB.Location = New System.Drawing.Point(3, 77)
+		Me.set_PB.Name = "set_PB"
+		Me.set_PB.Size = New System.Drawing.Size(179, 135)
+		Me.set_PB.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+		Me.set_PB.TabIndex = 17
+		Me.set_PB.TabStop = False
 		'
 		'set_ord
 		'
@@ -475,6 +531,17 @@ Partial Class MainForm
 		Me.Label59.Size = New System.Drawing.Size(38, 13)
 		Me.Label59.TabIndex = 5
 		Me.Label59.Text = "Width:"
+		'
+		'Label63
+		'
+		Me.Label63.AutoSize = True
+		Me.Label63.BackColor = System.Drawing.Color.Transparent
+		Me.Label63.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.Label63.Location = New System.Drawing.Point(3, 61)
+		Me.Label63.Name = "Label63"
+		Me.Label63.Size = New System.Drawing.Size(100, 13)
+		Me.Label63.TabIndex = 0
+		Me.Label63.Text = "Background Image:"
 		'
 		'Label3
 		'
@@ -2467,6 +2534,16 @@ Partial Class MainForm
 		Me.TabPage1.TabIndex = 0
 		Me.TabPage1.Text = "Canvas1"
 		'
+		'CanvasControl1
+		'
+		Me.CanvasControl1.AutoScroll = True
+		Me.CanvasControl1.Dock = System.Windows.Forms.DockStyle.Fill
+		Me.CanvasControl1.Location = New System.Drawing.Point(0, 0)
+		Me.CanvasControl1.Margin = New System.Windows.Forms.Padding(0)
+		Me.CanvasControl1.Name = "CanvasControl1"
+		Me.CanvasControl1.Size = New System.Drawing.Size(1032, 581)
+		Me.CanvasControl1.TabIndex = 0
+		'
 		'pShear
 		'
 		Me.pShear.BackColor = System.Drawing.Color.FromArgb(CType(CType(70, Byte), Integer), CType(CType(70, Byte), Integer), CType(CType(70, Byte), Integer))
@@ -2543,83 +2620,6 @@ Partial Class MainForm
 		Me.Label61.TabIndex = 2
 		Me.Label61.Text = "Shear X:"
 		'
-		'CanvasControl1
-		'
-		Me.CanvasControl1.AutoScroll = True
-		Me.CanvasControl1.Dock = System.Windows.Forms.DockStyle.Fill
-		Me.CanvasControl1.Location = New System.Drawing.Point(0, 0)
-		Me.CanvasControl1.Margin = New System.Windows.Forms.Padding(0)
-		Me.CanvasControl1.Name = "CanvasControl1"
-		Me.CanvasControl1.Size = New System.Drawing.Size(1032, 581)
-		Me.CanvasControl1.TabIndex = 0
-		'
-		'Label63
-		'
-		Me.Label63.AutoSize = True
-		Me.Label63.BackColor = System.Drawing.Color.Transparent
-		Me.Label63.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.Label63.Location = New System.Drawing.Point(3, 61)
-		Me.Label63.Name = "Label63"
-		Me.Label63.Size = New System.Drawing.Size(100, 13)
-		Me.Label63.TabIndex = 0
-		Me.Label63.Text = "Background Image:"
-		'
-		'PictureBox1
-		'
-		Me.PictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-		Me.PictureBox1.Location = New System.Drawing.Point(3, 77)
-		Me.PictureBox1.Name = "PictureBox1"
-		Me.PictureBox1.Size = New System.Drawing.Size(179, 135)
-		Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-		Me.PictureBox1.TabIndex = 17
-		Me.PictureBox1.TabStop = False
-		'
-		'MyButton1
-		'
-		Me.MyButton1.Anchor = System.Windows.Forms.AnchorStyles.None
-		Me.MyButton1.BackColor = System.Drawing.Color.Black
-		Me.MyButton1.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-		Me.MyButton1.ForeColor = System.Drawing.Color.White
-		Me.MyButton1.Location = New System.Drawing.Point(188, 77)
-		Me.MyButton1.MyText = "Load"
-		Me.MyButton1.Name = "MyButton1"
-		Me.MyButton1.Size = New System.Drawing.Size(58, 25)
-		Me.MyButton1.TabIndex = 18
-		'
-		'MyButton2
-		'
-		Me.MyButton2.Anchor = System.Windows.Forms.AnchorStyles.None
-		Me.MyButton2.BackColor = System.Drawing.Color.Black
-		Me.MyButton2.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-		Me.MyButton2.ForeColor = System.Drawing.Color.White
-		Me.MyButton2.Location = New System.Drawing.Point(189, 108)
-		Me.MyButton2.MyText = "Clear"
-		Me.MyButton2.Name = "MyButton2"
-		Me.MyButton2.Size = New System.Drawing.Size(58, 25)
-		Me.MyButton2.TabIndex = 18
-		'
-		'TextBox1
-		'
-		Me.TextBox1.Anchor = System.Windows.Forms.AnchorStyles.Bottom
-		Me.TextBox1.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-		Me.TextBox1.Location = New System.Drawing.Point(5, 230)
-		Me.TextBox1.MaxLength = 30
-		Me.TextBox1.Name = "TextBox1"
-		Me.TextBox1.Size = New System.Drawing.Size(238, 25)
-		Me.TextBox1.TabIndex = 19
-		'
-		'Label64
-		'
-		Me.Label64.Anchor = System.Windows.Forms.AnchorStyles.Bottom
-		Me.Label64.AutoSize = True
-		Me.Label64.BackColor = System.Drawing.Color.Transparent
-		Me.Label64.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.Label64.Location = New System.Drawing.Point(4, 216)
-		Me.Label64.Name = "Label64"
-		Me.Label64.Size = New System.Drawing.Size(38, 13)
-		Me.Label64.TabIndex = 20
-		Me.Label64.Text = "Name:"
-		'
 		'MainForm
 		'
 		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None
@@ -2645,6 +2645,7 @@ Partial Class MainForm
 		Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
 		Me.pSettings.ResumeLayout(False)
 		Me.pSettings.PerformLayout()
+		CType(Me.set_PB, System.ComponentModel.ISupportInitialize).EndInit()
 		CType(Me.set_H, System.ComponentModel.ISupportInitialize).EndInit()
 		CType(Me.set_W, System.ComponentModel.ISupportInitialize).EndInit()
 		Me.pSideBar.ResumeLayout(False)
@@ -2680,7 +2681,6 @@ Partial Class MainForm
 		Me.TabPage1.ResumeLayout(False)
 		Me.pShear.ResumeLayout(False)
 		Me.pShear.PerformLayout()
-		CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
 		Me.ResumeLayout(False)
 
 	End Sub
@@ -2872,10 +2872,10 @@ Partial Class MainForm
 	Friend WithEvents Label62 As Label
 	Friend WithEvents TBShrX As MyControls.MyTrackBar
 	Friend WithEvents Label61 As Label
-	Friend WithEvents MyButton2 As MyControls.MyButton
-	Friend WithEvents MyButton1 As MyControls.MyButton
-	Friend WithEvents PictureBox1 As PictureBox
+	Friend WithEvents set_cpic As MyControls.MyButton
+	Friend WithEvents set_lpic As MyControls.MyButton
+	Friend WithEvents set_PB As PictureBox
 	Friend WithEvents Label63 As Label
 	Friend WithEvents Label64 As Label
-	Friend WithEvents TextBox1 As TextBox
+	Friend WithEvents set_cname As TextBox
 End Class

@@ -163,8 +163,11 @@ Public Class MainForm
 	Private Sub UpdateSettings()
 		Dim cn = MainCanvas()
 		If Not IsNothing(cn) Then
-			pSettings.Text = tCanvas.SelectedTab.Text & " Settings"
+			If cn.Text = "" Then cn.Text = tCanvas.SelectedTab.Text
+			pSettings.Text = cn.Text & " Settings"
 			set_BC.SelectedColor = cn.BackColor
+			set_PB.Image = cn.BackgroundImage
+			set_cname.Text = cn.Text
 			set_r1.Checked = cn.Docked
 			If Not cn.Docked Then
 				set_W.Value = cn.Width
@@ -1350,7 +1353,8 @@ Public Class MainForm
 		cn.baseCanvas.BackColor = Color.Transparent
 		cn.baseCanvas.MainForm = Me
 		cn.Dock = DockStyle.Fill
-		Dim tp As New TabPage("Canvas" & tCanvas.TabCount + 1)
+		cn.Text = "Canvas" & tCanvas.TabCount + 1
+		Dim tp As New TabPage(cn.Text)
 		tp.BorderStyle = BorderStyle.FixedSingle
 		tp.Controls.Add(cn)
 		tCanvas.TabPages.Add(tp)
@@ -1371,7 +1375,8 @@ Public Class MainForm
 					'Handle exception here
 					Continue For
 				End If
-				Dim tp As New TabPage(Path.GetFileNameWithoutExtension(str))
+				cn.Text = Path.GetFileNameWithoutExtension(str)
+				Dim tp As New TabPage(cn.Text)
 				tp.BorderStyle = BorderStyle.FixedSingle
 				tp.Controls.Add(cn)
 				tCanvas.TabPages.Add(tp)
@@ -1386,7 +1391,7 @@ Public Class MainForm
 		saveDialog.Title = "Save As"
 		saveDialog.Filter = "Binary File (*.bin)|*.bin|Image File (*.png)|*.png|SOAP File (*.soap)|*.soap"
 		saveDialog.DefaultExt = "*.dif"
-		saveDialog.FileName = tCanvas.SelectedTab.Text
+		saveDialog.FileName = cn.Text
 		If saveDialog.ShowDialog = DialogResult.OK Then
 			Dim inf As New FileInfo(saveDialog.FileName)
 			Select Case inf.Extension.ToLower
@@ -1415,6 +1420,19 @@ Public Class MainForm
 #End Region
 
 #Region "Settings"
+	Private Sub set_lpic_Click(sender As Object, e As EventArgs) Handles set_lpic.Click
+		openDialog.Multiselect = False
+		openDialog.Title = "Choose Image"
+		openDialog.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.bmp, *.gif, *.png) | *.jpg; *.jpeg; *.jpe; *.bmp; *.gif; *.png"
+		If openDialog.ShowDialog = DialogResult.OK Then
+			set_PB.Image = Image.FromFile(openDialog.FileName)
+		End If
+	End Sub
+
+	Private Sub set_cpic_Click(sender As Object, e As EventArgs) Handles set_cpic.Click
+		set_PB.Image = Nothing
+	End Sub
+
 	Private Sub set_r1_CheckedChanged(sender As Object, e As EventArgs) Handles set_r2.CheckedChanged, set_r1.CheckedChanged
 		set_W.Enabled = set_r2.Checked
 		set_H.Enabled = set_W.Enabled
@@ -1424,6 +1442,8 @@ Public Class MainForm
 		Dim cn = MainCanvas()
 		If Not IsNothing(cn) Then
 			cn.BackColor = set_BC.SelectedColor
+			cn.BackgroundImage = set_PB.Image
+			cn.Text = set_cname.Text
 			cn.Docked = set_r1.Checked
 			If Not cn.Docked Then
 				cn.Width = set_W.Value
@@ -1433,6 +1453,7 @@ Public Class MainForm
 			cn.HighlightShapes = set_hgt.Checked
 			cn.PathHighlightColor = set_pclr.SelectedColor
 			cn.BorderHighlightColor = set_bclr.SelectedColor
+			tCanvas.SelectedTab.Text = cn.Text
 			CurrentCanvasControl.SetSize()
 			pSettings.Visible = False
 		End If
