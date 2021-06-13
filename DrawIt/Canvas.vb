@@ -456,8 +456,9 @@ Public Class Canvas
 			shp.CenterPoint = m_cnt
 
 			Dim m_path As New Region(Rectangle.Empty)
+			Dim s_inds = SelectedIndices()
 
-			For Each ind As Integer In SelectedIndices()
+			For Each ind As Integer In s_inds
 				Dim ss As Shape = shps(ind)
 				m_path.Union(ss.Region)
 				m_rect.Add(ss.BaseRect)
@@ -490,7 +491,7 @@ Public Class Canvas
 			ElseIf m_path.IsVisible(e.Location) Then
 				op = MOperations.Move
 				Cursor = Cursors.SizeAll
-				For Each i As Integer In SelectedIndices()
+				For Each i As Integer In s_inds
 					shps(i).Moving = True
 				Next
 			End If
@@ -893,9 +894,6 @@ Public Class Canvas
 						ig.Transform = mm
 					End Using
 
-					Dim br As New SolidBrush(Color.White)
-					Dim pn As New Pen(Color.Black, 1)
-
 					If shp.Shadow.Enabled Then CreateShadow(ig, shp)
 					If shp.Glow.Enabled AndAlso shp.Glow.BeforeFill Then CreateGlow(ig, shp)
 
@@ -924,6 +922,7 @@ Public Class Canvas
 
 					If shp.Selected Then
 						If shp.Primary Then
+
 							If op = MOperations.Draw Or op = MOperations.Selection Or op = MOperations.None Or (op >= MOperations.TopLeft And op <= MOperations.BottomRight) Then
 								Using pth_brd As New GraphicsPath
 									pth_brd.AddRectangle(shp.BaseRect)
@@ -938,20 +937,23 @@ Public Class Canvas
 
 							Select Case op
 								Case MOperations.None, MOperations.Draw, MOperations.Selection
+									Dim br As New SolidBrush(Color.White)
+									Dim pn As New Pen(Color.Black, 1)
 
-									Dim _anchors As New List(Of GraphicsPath) From {
-									shp.TopLeft(False),
-									shp.Top(False),
-									shp.TopRight(False),
-									shp.Left(False),
-									shp.Right(False),
-									shp.BottomLeft(False),
-									shp.Bottom(False),
-									shp.BottomRight(False),
-									shp.Rotate(False)
-								}
+									'Create anchors list
+									Dim _anchors As New List(Of GraphicsPath)
 									If shp.FBrush.BType = MyBrush.BrushType.PathGradient Then _anchors.Add(shp.Centering(False))
-									_anchors.Reverse()
+									_anchors.AddRange({
+										shp.Rotate(False),
+										shp.BottomRight(False),
+										shp.Bottom(False),
+										shp.BottomLeft(False),
+										shp.Right(False),
+										shp.Left(False),
+										shp.TopRight(False),
+										shp.Top(False),
+										shp.TopLeft(False)
+									})
 
 									'Draw all anchors
 									_anchors.ForEach(Sub(gp)
@@ -1035,8 +1037,6 @@ Public Class Canvas
 							End If
 						End If
 					End If
-					br.Dispose()
-					pn.Dispose()
 					ig.PixelOffsetMode = PixelOffsetMode.Default
 				Next
 			End Using
@@ -1075,12 +1075,12 @@ Public Class Canvas
 		If s_rect.Width > 0 AndAlso s_rect.Height > 0 Then
 			Using pth As New GraphicsPath()
 				pth.AddRectangle(s_rect)
-				Dim pn As New Pen(clr_sel)
-				Dim sld As New SolidBrush(Color.FromArgb(50, clr_sel))
-				g.FillPath(sld, pth)
-				g.DrawPath(pn, pth)
-				sld.Dispose()
-				pn.Dispose()
+				Using pn As New Pen(clr_sel)
+					Using sld As New SolidBrush(Color.FromArgb(50, clr_sel))
+						g.FillPath(sld, pth)
+						g.DrawPath(pn, pth)
+					End Using
+				End Using
 			End Using
 		End If
 
