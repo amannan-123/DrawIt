@@ -943,6 +943,160 @@ Public Class Canvas
 
 	End Sub
 
+	Private Sub DrawShape(ig As Graphics, shp As Shape)
+		ig.PixelOffsetMode = PixelOffsetMode.Default
+		ig.RenderingOrigin = New Point(shp.BaseRect.Location.X,
+											  shp.BaseRect.Location.Y)
+		Using mm As New Matrix
+			mm.RotateAt(shp.Angle, shp.CenterPoint)
+			ig.Transform = mm
+		End Using
+
+		If shp.Shadow.Enabled Then CreateShadow(ig, shp)
+		If shp.Glow.Enabled AndAlso shp.Glow.BeforeFill Then CreateGlow(ig, shp)
+
+		'Fill and Draw Shape
+		Dim pth As GraphicsPath = shp.TotalPath(False)
+		Dim fbr As Brush = shp.CreateBrush
+		Dim dpn As Pen = shp.CreatePen
+		If Not IsNothing(pth) Then
+			If Not IsNothing(fbr) Then
+				ig.RenderingOrigin = Point.Ceiling(pth.GetBounds.Location)
+				ig.FillPath(fbr, pth)
+				fbr.Dispose()
+			End If
+			If Not IsNothing(dpn) Then
+				Using ppth As GraphicsPath = pth.Clone
+					If Not IsNothing(shp.SelectionPen) Then ppth.Widen(shp.SelectionPen)
+					ig.RenderingOrigin = Point.Ceiling(ppth.GetBounds.Location)
+				End Using
+				ig.DrawPath(dpn, pth)
+				dpn.Dispose()
+			End If
+			pth.Dispose()
+		End If
+
+		If shp.Glow.Enabled AndAlso Not shp.Glow.BeforeFill Then CreateGlow(ig, shp)
+
+		If shp.Selected Then
+			If shp.Primary Then
+
+				If op = MOperations.Draw Or op = MOperations.Selection Or op = MOperations.None Or (op >= MOperations.TopLeft And op <= MOperations.BottomRight) Then
+					Using pth_brd As New GraphicsPath
+						pth_brd.AddRectangle(shp.BaseRect)
+						Dim pn_brd As New Pen(Brushes.Black) With {
+							.DashPattern = New Single() {2, 2, 2}
+						}
+						ig.DrawPath(pn_brd, pth_brd)
+					End Using
+				End If
+
+				ig.PixelOffsetMode = PixelOffsetMode.HighQuality
+
+				Select Case op
+					Case MOperations.None, MOperations.Draw, MOperations.Selection
+						Dim br As New SolidBrush(Color.White)
+						Dim pn As New Pen(Color.Black, 1)
+
+						'Create anchors list
+						Dim _anchors As New List(Of GraphicsPath)
+						If shp.FBrush.BType = MyBrush.BrushType.PathGradient Then _anchors.Add(shp.Centering(False))
+						_anchors.AddRange({
+							shp.Rotate(False),
+							shp.BottomRight(False),
+							shp.Bottom(False),
+							shp.BottomLeft(False),
+							shp.Right(False),
+							shp.Left(False),
+							shp.TopRight(False),
+							shp.Top(False),
+							shp.TopLeft(False)
+						})
+
+						'Draw all anchors
+						_anchors.ForEach(Sub(gp)
+											 ig.FillPath(br, gp)
+											 ig.DrawPath(pn, gp)
+										 End Sub)
+						_anchors.Clear()
+
+						'Draw Rotation Anchor Line
+						Dim pt1 As New PointF(shp.Top(False).GetBounds().X + (shp.Top(False).GetBounds().Width / 2),
+							 shp.Top(False).GetBounds().Top)
+						Dim pt2 As New PointF(shp.Rotate(False).GetBounds().X + (shp.Rotate(False).GetBounds().Width / 2),
+							 shp.Rotate(False).GetBounds().Bottom)
+						ig.DrawLine(pn, pt1, pt2)
+
+					Case MOperations.TopLeft
+						DrawSize(ig, shp)
+						DrawAnchorEllipse(ig, shp.TopLeft(False).GetBounds)
+
+					Case MOperations.TopRight
+						DrawSize(ig, shp)
+						DrawAnchorEllipse(ig, shp.TopRight(False).GetBounds)
+
+					Case MOperations.BottomLeft
+						DrawSize(ig, shp)
+						DrawAnchorEllipse(ig, shp.BottomLeft(False).GetBounds)
+
+					Case MOperations.BottomRight
+						DrawSize(ig, shp)
+						DrawAnchorEllipse(ig, shp.BottomRight(False).GetBounds)
+
+					Case MOperations.Top
+						DrawSize(ig, shp, False)
+						DrawAnchorEllipse(ig, shp.Top(False).GetBounds)
+
+					Case MOperations.Bottom
+						DrawSize(ig, shp, False)
+						DrawAnchorEllipse(ig, shp.Bottom(False).GetBounds)
+
+					Case MOperations.Left
+						DrawSize(ig, shp,, False)
+						DrawAnchorEllipse(ig, shp.Left(False).GetBounds)
+
+					Case MOperations.Right
+						DrawSize(ig, shp,, False)
+						DrawAnchorEllipse(ig, shp.Right(False).GetBounds)
+
+					Case MOperations.Rotate
+						DrawAnchorEllipse(ig, shp.Rotate(False).GetBounds)
+						Dim dist As Single = shp.CenterPoint.Y - shp.BaseRect.Top
+						Dim rectt As New RectangleF(shp.CenterPoint, SizeF.Empty)
+						rectt.Inflate(dist, dist)
+						Using pnt As New Pen(Color.FromArgb(120, Color.Black), 5)
+							pnt.DashStyle = DashStyle.DashDot
+							pnt.DashCap = DashCap.Round
+							ig.ResetTransform()
+							ig.DrawEllipse(pnt, rectt)
+						End Using
+						If shp.BaseRect.Width >= 25 AndAlso shp.BaseRect.Height >= 25 Then
+							Using sf As New StringFormat()
+								sf.Alignment = StringAlignment.Center
+								sf.LineAlignment = StringAlignment.Center
+								Dim fnt As New Font("Consolas", 15)
+								ig.DrawString(shp.Angle.ToString, fnt, Brushes.Black, shp.BaseRect, sf)
+								fnt.Dispose()
+							End Using
+						End If
+				End Select
+			Else
+				If shp.Moving = False Then
+					Dim rtt As Rectangle = Rectangle.Ceiling(shp.BaseRect)
+					Dim hbr As New HatchBrush(HatchStyle.DarkVertical, Color.White, Color.Black)
+					Select Case shp.Angle
+						Case 0, 90, 180, 270, 360
+							hbr = New HatchBrush(HatchStyle.DarkDownwardDiagonal, Color.White, Color.Black)
+					End Select
+					Dim pns = New Pen(hbr, 5)
+					ig.DrawRectangle(pns, rtt)
+					hbr.Dispose()
+					pns.Dispose()
+				End If
+			End If
+		End If
+	End Sub
+
 	Private Sub Canvas_Paint(sender As Object, e As PaintEventArgs) Handles MyBase.Paint
 		Dim g As Graphics = e.Graphics
 		g.SmoothingMode = SmoothingMode.HighQuality
@@ -968,159 +1122,8 @@ Public Class Canvas
 				ig.FillRectangle(New SolidBrush(BackColor), ClientRectangle)
 
 				'Draw all shapes on image
-				For Each shp As Shape In shps
-					ig.RenderingOrigin = New Point(shp.BaseRect.Location.X,
-											  shp.BaseRect.Location.Y)
-					Using mm As New Matrix
-						mm.RotateAt(shp.Angle, shp.CenterPoint)
-						ig.Transform = mm
-					End Using
+				shps.ForEach(Sub(shp) DrawShape(ig, shp))
 
-					If shp.Shadow.Enabled Then CreateShadow(ig, shp)
-					If shp.Glow.Enabled AndAlso shp.Glow.BeforeFill Then CreateGlow(ig, shp)
-
-					'Fill and Draw Shape
-					Dim pth As GraphicsPath = shp.TotalPath(False)
-					Dim fbr As Brush = shp.CreateBrush
-					Dim dpn As Pen = shp.CreatePen
-					If Not IsNothing(pth) Then
-						If Not IsNothing(fbr) Then
-							ig.RenderingOrigin = Point.Ceiling(pth.GetBounds.Location)
-							ig.FillPath(fbr, pth)
-						End If
-						If Not IsNothing(dpn) Then
-							Using ppth As GraphicsPath = pth.Clone
-								If Not IsNothing(shp.SelectionPen) Then ppth.Widen(shp.SelectionPen)
-								ig.RenderingOrigin = Point.Ceiling(ppth.GetBounds.Location)
-							End Using
-							ig.DrawPath(dpn, pth)
-						End If
-					End If
-					If Not IsNothing(fbr) Then fbr.Dispose()
-					If Not IsNothing(dpn) Then dpn.Dispose()
-					If Not IsNothing(pth) Then pth.Dispose()
-
-					If shp.Glow.Enabled AndAlso Not shp.Glow.BeforeFill Then CreateGlow(ig, shp)
-
-					If shp.Selected Then
-						If shp.Primary Then
-
-							If op = MOperations.Draw Or op = MOperations.Selection Or op = MOperations.None Or (op >= MOperations.TopLeft And op <= MOperations.BottomRight) Then
-								Using pth_brd As New GraphicsPath
-									pth_brd.AddRectangle(shp.BaseRect)
-									Dim pn_brd As New Pen(Brushes.Black) With {
-										.DashPattern = New Single() {2, 2, 2}
-									}
-									ig.DrawPath(pn_brd, pth_brd)
-								End Using
-							End If
-
-							ig.PixelOffsetMode = PixelOffsetMode.HighQuality
-
-							Select Case op
-								Case MOperations.None, MOperations.Draw, MOperations.Selection
-									Dim br As New SolidBrush(Color.White)
-									Dim pn As New Pen(Color.Black, 1)
-
-									'Create anchors list
-									Dim _anchors As New List(Of GraphicsPath)
-									If shp.FBrush.BType = MyBrush.BrushType.PathGradient Then _anchors.Add(shp.Centering(False))
-									_anchors.AddRange({
-										shp.Rotate(False),
-										shp.BottomRight(False),
-										shp.Bottom(False),
-										shp.BottomLeft(False),
-										shp.Right(False),
-										shp.Left(False),
-										shp.TopRight(False),
-										shp.Top(False),
-										shp.TopLeft(False)
-									})
-
-									'Draw all anchors
-									_anchors.ForEach(Sub(gp)
-														 ig.FillPath(br, gp)
-														 ig.DrawPath(pn, gp)
-													 End Sub)
-									_anchors.Clear()
-
-									'Draw Rotation Anchor Line
-									Dim pt1 As New PointF(shp.Top(False).GetBounds().X + (shp.Top(False).GetBounds().Width / 2),
-										 shp.Top(False).GetBounds().Top)
-									Dim pt2 As New PointF(shp.Rotate(False).GetBounds().X + (shp.Rotate(False).GetBounds().Width / 2),
-										 shp.Rotate(False).GetBounds().Bottom)
-									ig.DrawLine(pn, pt1, pt2)
-
-								Case MOperations.TopLeft
-									DrawSize(ig, shp)
-									DrawAnchorEllipse(ig, shp.TopLeft(False).GetBounds)
-
-								Case MOperations.TopRight
-									DrawSize(ig, shp)
-									DrawAnchorEllipse(ig, shp.TopRight(False).GetBounds)
-
-								Case MOperations.BottomLeft
-									DrawSize(ig, shp)
-									DrawAnchorEllipse(ig, shp.BottomLeft(False).GetBounds)
-
-								Case MOperations.BottomRight
-									DrawSize(ig, shp)
-									DrawAnchorEllipse(ig, shp.BottomRight(False).GetBounds)
-
-								Case MOperations.Top
-									DrawSize(ig, shp, False)
-									DrawAnchorEllipse(ig, shp.Top(False).GetBounds)
-
-								Case MOperations.Bottom
-									DrawSize(ig, shp, False)
-									DrawAnchorEllipse(ig, shp.Bottom(False).GetBounds)
-
-								Case MOperations.Left
-									DrawSize(ig, shp,, False)
-									DrawAnchorEllipse(ig, shp.Left(False).GetBounds)
-
-								Case MOperations.Right
-									DrawSize(ig, shp,, False)
-									DrawAnchorEllipse(ig, shp.Right(False).GetBounds)
-
-								Case MOperations.Rotate
-									DrawAnchorEllipse(ig, shp.Rotate(False).GetBounds)
-									Dim dist As Single = shp.CenterPoint.Y - shp.BaseRect.Top
-									Dim rectt As New RectangleF(shp.CenterPoint, SizeF.Empty)
-									rectt.Inflate(dist, dist)
-									Using pnt As New Pen(Color.FromArgb(120, Color.Black), 5)
-										pnt.DashStyle = DashStyle.DashDot
-										pnt.DashCap = DashCap.Round
-										ig.ResetTransform()
-										ig.DrawEllipse(pnt, rectt)
-									End Using
-									If shp.BaseRect.Width >= 25 AndAlso shp.BaseRect.Height >= 25 Then
-										Using sf As New StringFormat()
-											sf.Alignment = StringAlignment.Center
-											sf.LineAlignment = StringAlignment.Center
-											Dim fnt As New Font("Consolas", 15)
-											ig.DrawString(shp.Angle.ToString, fnt, Brushes.Black, shp.BaseRect, sf)
-											fnt.Dispose()
-										End Using
-									End If
-							End Select
-						Else
-							If shp.Moving = False Then
-								Dim rtt As Rectangle = Rectangle.Ceiling(shp.BaseRect)
-								Dim hbr As New HatchBrush(HatchStyle.DarkVertical, Color.White, Color.Black)
-								Select Case shp.Angle
-									Case 0, 90, 180, 270, 360
-										hbr = New HatchBrush(HatchStyle.DarkDownwardDiagonal, Color.White, Color.Black)
-								End Select
-								Dim pns = New Pen(hbr, 5)
-								ig.DrawRectangle(pns, rtt)
-								hbr.Dispose()
-								pns.Dispose()
-							End If
-						End If
-					End If
-					ig.PixelOffsetMode = PixelOffsetMode.Default
-				Next
 			End Using
 #End Region
 
