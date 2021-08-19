@@ -262,6 +262,24 @@ Public Class Canvas
 		End Select
 	End Function
 
+	Private Function DPPath(ind As Integer) As GraphicsPath
+		If ind < 0 Then Return Nothing
+		Dim rt As New RectangleF(t_pts(ind), SizeF.Empty)
+		rt.Inflate(5, 5)
+		Dim pth As New GraphicsPath()
+		pth.AddEllipse(rt)
+		Return pth
+	End Function
+
+	Private Function DPInCursor(ept As Point) As Integer
+		For i As Integer = t_pts.Count - 1 To 0 Step -1
+			If DPPath(i).IsVisible(ept) Then
+				Return i
+			End If
+		Next
+		Return -1
+	End Function
+
 	Public Function ShapeInCursor(_loc As Point) As Integer
 		Dim ind As Integer = -1
 		If shps.Count = 0 Then Return ind
@@ -388,25 +406,37 @@ Public Class Canvas
 			Dim sty As MyShape.ShapeStyle = [Enum].Parse(GetType(MyShape.ShapeStyle), MainForm.cb_Shape.SelectedItem)
 			Dim bty As MyBrush.BrushType = [Enum].Parse(GetType(MyBrush.BrushType), MainForm.cb_Brush.SelectedItem)
 			Select Case sty
-				Case MyShape.ShapeStyle.Lines, MyShape.ShapeStyle.Polygon, MyShape.ShapeStyle.Curves, MyShape.ShapeStyle.ClosedCurve
+				Case MyShape.ShapeStyle.Lines,
+					 MyShape.ShapeStyle.Polygon,
+					 MyShape.ShapeStyle.Curves,
+					 MyShape.ShapeStyle.ClosedCurve
 					d_shape = sty
-					If e.Button = MouseButtons.Left Then
+					If e.Button = MouseButtons.Right Then
 						d_mode = True
-						Dim n_pt As Point = e.Location
-						If My.Computer.Keyboard.CtrlKeyDown Then
-							If t_pts.Count > 0 Then n_pt.X = t_pts.Last().X
-						ElseIf My.Computer.Keyboard.ShiftKeyDown Then
-							If t_pts.Count > 0 Then n_pt.Y = t_pts.Last().Y
+						If My.Computer.Keyboard.AltKeyDown Then
+							If t_pts.Count > 0 Then
+								Dim ind = DPInCursor(e.Location)
+								If ind > -1 Then t_pts.RemoveAt(ind)
+							End If
+						Else
+							Dim n_pt As Point = e.Location
+							If My.Computer.Keyboard.CtrlKeyDown Then
+								If t_pts.Count > 0 Then n_pt.X = t_pts.Last().X
+							ElseIf My.Computer.Keyboard.ShiftKeyDown Then
+								If t_pts.Count > 0 Then n_pt.Y = t_pts.Last().Y
+							End If
+							t_pts.Add(n_pt)
 						End If
-						t_pts.Add(n_pt)
-					ElseIf e.Button = MouseButtons.Right Then
+					ElseIf e.Button = MouseButtons.Left Then
 						If t_pts.Count >= DModeMin() Then
 							Dim _min As PointF
 							Dim _max As PointF
-							_min.X = t_pts.Min(Function(pt As PointF) pt.X) - 1
-							_min.Y = t_pts.Min(Function(pt As PointF) pt.Y) - 1
-							_max.X = t_pts.Max(Function(pt As PointF) pt.X) + 1
-							_max.Y = t_pts.Max(Function(pt As PointF) pt.Y) + 1
+							_min.X = t_pts.Min(Function(pt As PointF) pt.X)
+							_min.Y = t_pts.Min(Function(pt As PointF) pt.Y)
+							_max.X = t_pts.Max(Function(pt As PointF) pt.X)
+							_max.Y = t_pts.Max(Function(pt As PointF) pt.Y)
+							If _min.X = _max.X Then _max.X += 1
+							If _min.Y = _max.Y Then _max.Y += 1
 							Dim sshp As New Shape(_min, sty, bty)
 							Dim rectf As New RectangleF(_min, New SizeF(_max.X - _min.X, _max.Y - _min.Y))
 							sshp.BaseRect = rectf
@@ -420,6 +450,13 @@ Public Class Canvas
 							shps.Add(sshp)
 							d_mode = False
 							t_pts.Clear()
+						Else
+							If Not d_mode Then
+								shp = New Shape(m_pt, sty, bty)
+								shp.Selected = True
+								shps.Add(shp)
+								op = MOperations.Draw
+							End If
 						End If
 					End If
 				Case Else
@@ -583,7 +620,7 @@ Public Class Canvas
 		'create and initialize variables
 		Dim tDest As PointF = e.Location
 		Dim tPt As PointF
-		Dim tRc As RectangleF
+		Dim tRc, oRc As RectangleF
 		If Not IsNothing(shp) Then
 			If shp.Angle Then tDest = RotatePoint(tDest, m_pt, -shp.Angle)
 			tPt = New PointF((tDest.X - m_pt.X), (tDest.Y - m_pt.Y))
@@ -594,6 +631,7 @@ Public Class Canvas
 					tRc = m_rect.First
 				End If
 			End If
+			oRc = tRc
 		End If
 
 		Select Case op
@@ -601,10 +639,22 @@ Public Class Canvas
 				Dim npt As PointF = RotatePoint(e.Location, shp.CenterPoint, -shp.Angle)
 				shp.FBrush.PCenterPoint = ToPercentage(shp.BaseRect, npt)
 			Case MOperations.Draw
-				shp.BaseRect = New RectangleF(Math.Min(e.X, m_pt.X),
+				Dim rtd As New RectangleF(Math.Min(e.X, m_pt.X),
 								   Math.Min(e.Y, m_pt.Y),
 								   Math.Abs(e.X - m_pt.X),
 								   Math.Abs(e.Y - m_pt.Y))
+				If My.Computer.Keyboard.ShiftKeyDown Then
+					Dim mxx As Integer = Math.Max(rtd.Width, rtd.Height)
+					rtd.Width = mxx
+					rtd.Height = mxx
+					If (e.X < m_pt.X And e.Y < m_pt.Y) Or (e.X > m_pt.X And e.Y < m_pt.Y) Then
+						rtd.Y = m_pt.Y - rtd.Height
+					End If
+					If (e.X < m_pt.X And e.Y < m_pt.Y) Or (e.X < m_pt.X And e.Y > m_pt.Y) Then
+						rtd.X = m_pt.X - rtd.Width
+					End If
+				End If
+				shp.BaseRect = rtd
 			Case MOperations.TopLeft
 				tRc.X += tPt.X
 				tRc.Width -= tPt.X
@@ -665,11 +715,24 @@ Public Class Canvas
 					End If
 				End If
 				Dim iXMove, iYMove As Single
-				iXMove = (e.Location.X - m_pt.X)
-				iYMove = (e.Location.Y - m_pt.Y)
+				iXMove = e.Location.X - m_pt.X
+				iYMove = e.Location.Y - m_pt.Y
 				For i As Integer = 0 To m_rect.Count - 1
 					Dim dRc As RectangleF = m_rect(i)
-					dRc.Offset(iXMove, iYMove)
+					If My.Computer.Keyboard.ShiftKeyDown Then
+						Dim dX = Math.Abs(iXMove)
+						Dim dY = Math.Abs(iYMove)
+						If dX > dY Then
+							dRc.Offset(iXMove, 0)
+						ElseIf dY > dX Then
+							dRc.Offset(0, iYMove)
+						Else
+							Dim iinc = Math.Max(iXMove, iYMove)
+							dRc.Offset(iinc, iinc)
+						End If
+					Else
+						dRc.Offset(iXMove, iYMove)
+					End If
 					Dim ss As Shape = shps(SelectedIndices()(i))
 					ss.BaseRect = dRc
 					ss.CenterPoint = New PointF(ss.BaseRect.X + (ss.BaseRect.Width / 2), ss.BaseRect.Y + (ss.BaseRect.Height / 2))
@@ -678,8 +741,36 @@ Public Class Canvas
 
 		'finalize resize operation
 		If op >= MOperations.TopLeft AndAlso op <= MOperations.BottomRight Then
-			If tRc.Width < 1 Then Return
-			If tRc.Height < 1 Then Return
+			If My.Computer.Keyboard.ShiftKeyDown Then
+				Dim rtd As RectangleF = tRc
+				Dim asp As Single = oRc.Width / oRc.Height
+				Select Case op
+					Case MOperations.TopLeft, MOperations.TopRight,
+						 MOperations.BottomLeft, MOperations.BottomRight
+						If oRc.Width > oRc.Height Then
+							rtd.Height = rtd.Width / asp
+						ElseIf oRc.Width < oRc.Height Then
+							rtd.Width = rtd.Height * asp
+						Else
+							Dim mxx As Integer = Math.Max(rtd.Width, rtd.Height)
+							rtd.Width = mxx
+							rtd.Height = mxx
+						End If
+					Case MOperations.Top, MOperations.Bottom
+						rtd.Width = rtd.Height * asp
+					Case MOperations.Left, MOperations.Right
+						rtd.Height = rtd.Width / asp
+				End Select
+				If op = MOperations.TopLeft Or op = MOperations.TopRight Then
+					rtd.Y = oRc.Bottom - rtd.Height
+				End If
+				If op = MOperations.TopLeft Or op = MOperations.BottomLeft Then
+					rtd.X = oRc.Right - rtd.Width
+				End If
+				tRc = rtd
+			End If
+			If tRc.Width <= 0 Then Return
+			If tRc.Height <= 0 Then Return
 			shp.BaseRect = tRc
 		End If
 
@@ -850,15 +941,6 @@ Public Class Canvas
 
 		If shp.Shadow.RegionClipping Then g.ResetClip()
 
-	End Sub
-
-	Private Sub DrawPoint(g As Graphics, pt As PointF, Optional first As Boolean = False)
-		Dim rt As New RectangleF(pt, SizeF.Empty)
-		rt.Inflate(5, 5)
-		g.FillEllipse(New SolidBrush(Color.FromArgb(180, Color.Black)), rt)
-		If first Then
-			g.DrawEllipse(Pens.Red, rt)
-		End If
 	End Sub
 
 	Private Sub Canvas_Paint(sender As Object, e As PaintEventArgs) Handles MyBase.Paint
@@ -1048,7 +1130,10 @@ Public Class Canvas
 
 		'Draw mode
 		If d_mode Then
-			t_pts.ForEach(Sub(x) DrawPoint(g, x))
+			For i As Integer = 0 To t_pts.Count - 1
+				g.FillPath(New SolidBrush(Color.FromArgb(180, Color.Black)),
+						   DPPath(i))
+			Next
 			If t_pts.Count >= DModeMin() Then
 				Select Case d_shape
 					Case DShape.Lines

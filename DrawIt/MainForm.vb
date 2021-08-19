@@ -169,6 +169,7 @@ Public Class MainForm
 			set_PB.Image = cn.BackgroundImage
 			set_cname.Text = cn.Text
 			set_r1.Checked = cn.Docked
+			set_r2.Checked = Not cn.Docked
 			If Not cn.Docked Then
 				set_W.Value = cn.Width
 				set_H.Value = cn.Height
