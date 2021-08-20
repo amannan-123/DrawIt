@@ -76,6 +76,9 @@ Public Class MyShadow
 #End Region
 
 #Region "Clone"
+	''' <summary>
+	''' Creates an exact copy of this <see cref="MyShadow"/> object.
+	''' </summary>
 	Public Function Clone() As MyShadow
 		Dim _new As New MyShadow
 		For Each pd As PropertyDescriptor In TypeDescriptor.GetProperties(GetType(MyShadow))

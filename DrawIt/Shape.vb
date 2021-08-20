@@ -15,17 +15,13 @@ Public Class Shape
 		_rect.Location = _loc
 		_rect.Size = New SizeF(10, 10)
 	End Sub
-
 #End Region
 
 #Region "Globals"
-
 	Private AnchorSize As New SizeF(7, 7)
-
 #End Region
 
 #Region "Properties"
-
 	Private _rect As RectangleF = RectangleF.Empty
 	Public Property BaseRect() As RectangleF
 		Get
@@ -158,16 +154,21 @@ Public Class Shape
 #End Region
 
 #Region "Private Subs"
-
+	''' <summary>
+	''' Apply rotation on <see cref="GraphicsPath"/>.
+	''' </summary>
+	''' <param name="gp"><see cref="GraphicsPath"/> on which rotation should be applied.</param>
 	Private Sub AdjustRotation(ByRef gp As GraphicsPath)
 		Dim mm As New Matrix
 		mm.RotateAt(Angle, _cpt)
 		gp.Transform(mm)
 	End Sub
-
 #End Region
 
 #Region "Drawing Related Functions"
+	''' <summary>
+	''' Returns a region containing path and border.
+	''' </summary>
 	Public Function Region() As Region
 		Dim rg As New Region(Rectangle.Empty)
 		If Not IsNothing(BorderPath) Then rg.Union(BorderPath)
@@ -175,6 +176,9 @@ Public Class Shape
 		Return rg
 	End Function
 
+	''' <summary>
+	''' Returns <see cref="TotalPath(Boolean, Boolean, Boolean)"/> widen with <see cref="SelectionPen(Boolean, Boolean)"/>.
+	''' </summary>
 	Public Function BorderPath() As GraphicsPath
 		Dim gp As GraphicsPath = TotalPath()
 		If Not IsNothing(gp) Then
@@ -184,6 +188,12 @@ Public Class Shape
 		Return Nothing
 	End Function
 
+	''' <summary>
+	''' Returns <see cref="Pen"/> based on <see cref="DPen"/> of current instance.
+	''' </summary>
+	''' <param name="rotated">Apply rotation</param>
+	''' <param name="sheared">Apply shear</param>
+	''' <returns></returns>
 	Public Function SelectionPen(Optional rotated As Boolean = True,
 								 Optional sheared As Boolean = True) As Pen
 		Dim pn As New Pen(Color.Black)
@@ -194,16 +204,23 @@ Public Class Shape
 		pn.DashStyle = DPen.PDashstyle
 		pn.LineJoin = DPen.PLineJoin
 		pn.ScaleTransform(DPen.ScaleX, DPen.ScaleY)
-		Dim mm As New Matrix
-		mm.Translate(_rect.X, _rect.Y)
-		mm.Shear(ShearX, ShearY)
-		If sheared Then pn.MultiplyTransform(mm)
-		Dim mm2 As New Matrix
-		mm2.RotateAt(Angle, CenterPoint)
-		If rotated Then pn.MultiplyTransform(mm2)
+		If sheared Then
+			Dim mm As New Matrix
+			mm.Translate(_rect.X, _rect.Y)
+			mm.Shear(ShearX, ShearY)
+			pn.MultiplyTransform(mm)
+		End If
+		If rotated Then
+			Dim mm As New Matrix
+			mm.RotateAt(Angle, CenterPoint)
+			pn.MultiplyTransform(mm)
+		End If
 		Return pn
 	End Function
 
+	''' <summary>
+	''' Returns <see cref="Brush"/> for drawing border.
+	''' </summary>
 	Public Function PenBrush() As Brush
 		Select Case DPen.PBrush.BType
 			Case MyBrush.BrushType.Solid
@@ -214,7 +231,6 @@ Public Class Shape
 				pth.Widen(SelectionPen)
 				Dim r2 As RectangleF = pth.GetBounds
 				r2.Inflate(1, 1)
-				If r2.Width < 1 Or r2.Height < 1 Then Return Nothing
 				Dim lgb As New LinearGradientBrush(r2, DPen.PBrush.LColor1,
 													DPen.PBrush.LColor2,
 													DPen.PBrush.LinearAngle)
@@ -248,6 +264,10 @@ Public Class Shape
 		Return Nothing
 	End Function
 
+	''' <summary>
+	''' Returns <see cref="Pen"/> for drawing border.
+	''' </summary>
+	''' <returns></returns>
 	Public Function CreatePen() As Pen
 		Dim pn As Pen = SelectionPen(False)
 		If pn.Width = 0 Then Return Nothing
@@ -257,6 +277,9 @@ Public Class Shape
 		Return pn
 	End Function
 
+	''' <summary>
+	''' Returns <see cref="Brush"/> for filling shape.
+	''' </summary>
 	Public Function CreateBrush() As Brush
 		Dim rt As New RectangleF(0, 0, _rect.Width, _rect.Height)
 		Select Case FBrush.BType
@@ -354,12 +377,15 @@ Public Class Shape
 		Return Nothing
 	End Function
 
+	''' <summary>
+	''' Returns <see cref="TotalPath(Boolean, Boolean, Boolean)"/> as <see cref="Drawing.Region"/>.
+	''' </summary>
+	''' <param name="_anc">Include anchors</param>
+	''' <returns></returns>
 	Public Function SelectionPath(Optional _anc As Boolean = True) As Region
 		Dim gp As GraphicsPath = TotalPath()
 		If IsNothing(gp) Then Return Nothing
-		'If MShape.IsClosed = False Then
-		'    gp.Widen(SelectionPen)
-		'End If
+		'If Not MShape.IsClosed Then gp.Widen(SelectionPen)
 		If Not IsNothing(gp) Then
 			Dim rg As New Region(gp)
 			If Primary AndAlso _anc Then
@@ -384,6 +410,13 @@ Public Class Shape
 		Return Nothing
 	End Function
 
+	''' <summary>
+	''' Returns <see cref="GraphicsPath"/> based on <see cref="MShape"/> of current instance.
+	''' </summary>
+	''' <param name="rotated">Apply rotation</param>
+	''' <param name="sheared">Apply shear</param>
+	''' <param name="translated">Apply translation</param>
+	''' <returns></returns>
 	Public Function TotalPath(Optional rotated As Boolean = True,
 							  Optional sheared As Boolean = True,
 							  Optional translated As Boolean = True) As GraphicsPath
@@ -441,7 +474,7 @@ Public Class Shape
 				Case MyShape.ShapeStyle.Arc
 					gp.AddArc(rt, MShape.StartAngle, MShape.SweepAngle)
 				Case MyShape.ShapeStyle.Pie
-					gp.AddPie(New Rectangle(0, 0, rt.Width, rt.Height), MShape.StartAngle, MShape.SweepAngle)
+					gp.AddPie(0, 0, rt.Width, rt.Height, MShape.StartAngle, MShape.SweepAngle)
 				Case MyShape.ShapeStyle.Text
 					Dim stxt = MShape.Text.Trim()
 					If stxt.Length = 0 Then Return Nothing
@@ -449,32 +482,32 @@ Public Class Shape
 					sf.Trimming = StringTrimming.EllipsisCharacter
 					Select Case MShape.TextAlignment
 						Case ContentAlignment.TopLeft
-							sf.Alignment = StringAlignment.Near
 							sf.LineAlignment = StringAlignment.Near
+							sf.Alignment = StringAlignment.Near
 						Case ContentAlignment.TopCenter
-							sf.Alignment = StringAlignment.Center
 							sf.LineAlignment = StringAlignment.Near
+							sf.Alignment = StringAlignment.Center
 						Case ContentAlignment.TopRight
-							sf.Alignment = StringAlignment.Far
 							sf.LineAlignment = StringAlignment.Near
+							sf.Alignment = StringAlignment.Far
 						Case ContentAlignment.MiddleLeft
-							sf.Alignment = StringAlignment.Near
 							sf.LineAlignment = StringAlignment.Center
+							sf.Alignment = StringAlignment.Near
 						Case ContentAlignment.MiddleCenter
-							sf.Alignment = StringAlignment.Center
 							sf.LineAlignment = StringAlignment.Center
+							sf.Alignment = StringAlignment.Center
 						Case ContentAlignment.MiddleRight
-							sf.Alignment = StringAlignment.Far
 							sf.LineAlignment = StringAlignment.Center
-						Case ContentAlignment.BottomLeft
-							sf.Alignment = StringAlignment.Near
-							sf.LineAlignment = StringAlignment.Far
-						Case ContentAlignment.BottomCenter
-							sf.Alignment = StringAlignment.Center
-							sf.LineAlignment = StringAlignment.Far
-						Case ContentAlignment.BottomRight
 							sf.Alignment = StringAlignment.Far
+						Case ContentAlignment.BottomLeft
 							sf.LineAlignment = StringAlignment.Far
+							sf.Alignment = StringAlignment.Near
+						Case ContentAlignment.BottomCenter
+							sf.LineAlignment = StringAlignment.Far
+							sf.Alignment = StringAlignment.Center
+						Case ContentAlignment.BottomRight
+							sf.LineAlignment = StringAlignment.Far
+							sf.Alignment = StringAlignment.Far
 					End Select
 					Dim fl As New FontFamily(MShape.FontName)
 					gp.AddString(MShape.Text, fl, MShape.FontStyle,
@@ -623,6 +656,9 @@ Public Class Shape
 #End Region
 
 #Region "Clone"
+	''' <summary>
+	''' Creates an exact copy of this <see cref="Shape"/> object.
+	''' </summary>
 	Public Function Clone() As Shape
 		Dim _new As New Shape
 		For Each pd As PropertyDescriptor In TypeDescriptor.GetProperties(GetType(Shape))

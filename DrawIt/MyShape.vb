@@ -248,6 +248,9 @@ Public Class MyShape
 #End Region
 
 #Region "Clone"
+	''' <summary>
+	''' Creates an exact copy of this <see cref="MyShape"/> object.
+	''' </summary>
 	Public Function Clone() As MyShape
 		Dim _new As New MyShape
 		For Each pd As PropertyDescriptor In TypeDescriptor.GetProperties(GetType(MyShape))

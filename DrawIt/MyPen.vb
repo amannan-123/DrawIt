@@ -104,6 +104,9 @@ Public Class MyPen
 #End Region
 
 #Region "Clone"
+	''' <summary>
+	''' Creates an exact copy of this <see cref="MyPen"/> object.
+	''' </summary>
 	Public Function Clone() As MyPen
 		Dim _new As New MyPen
 		For Each pd As PropertyDescriptor In TypeDescriptor.GetProperties(GetType(MyPen))
