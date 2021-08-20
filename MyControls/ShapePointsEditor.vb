@@ -7,26 +7,36 @@ Imports System.Drawing
 <DefaultProperty("Points")>
 Public Class ShapePointsEditor
 
+#Region "Enum"
 	Public Enum DrawType
 		Lines
 		Polygon
 		Curves
 		ClosedCurve
 	End Enum
+#End Region
 
+#Region "New"
 	Sub New()
 		InitializeComponent()
 		SetStyle(ControlStyles.AllPaintingInWmPaint, True)
 		SetStyle(ControlStyles.OptimizedDoubleBuffer, True)
 		SetStyle(ControlStyles.SupportsTransparentBackColor, True)
 	End Sub
+#End Region
 
+#Region "Globals"
 	Private m_down As Boolean = False
 	Private rect As RectangleF
 	Private _lst As New List(Of MyPoint)
+	Private hgt As Integer = -1
+#End Region
 
+#Region "Event"
 	Public Event PointsChanged(sender As Object, e As EventArgs)
+#End Region
 
+#Region "Properties"
 	Private _dt As DrawType = DrawType.Lines
 	<DefaultValue(GetType(DrawType), "Lines")>
 	Public Property ShapeType() As DrawType
@@ -66,7 +76,9 @@ Public Class ShapePointsEditor
 			Invalidate()
 		End Set
 	End Property
+#End Region
 
+#Region "Helper Functions"
 	Private Function GetMin() As Integer
 		Select Case ShapeType
 			Case DrawType.Lines
@@ -95,6 +107,67 @@ Public Class ShapePointsEditor
 		Next
 	End Sub
 
+	Private Function PathInCursor(ept As Point) As Integer
+		If _lst.Count < GetMin() Then Return -1
+		Dim pn As New Pen(Color.Black, 3)
+		If ShapeType = DrawType.Polygon Then
+			For p1 As Integer = 0 To _lst.Count - 1
+				Dim pth = LineFromIndex(p1)
+				pth.Widen(pn)
+				If pth.IsVisible(ept) Then Return p1
+			Next
+		ElseIf ShapeType = DrawType.Lines Then
+			For p1 As Integer = 0 To _lst.Count - 2
+				Dim pth = LineFromIndex(p1)
+				pth.Widen(pn)
+				If pth.IsVisible(ept) Then Return p1
+			Next
+		ElseIf ShapeType = DrawType.ClosedCurve Then
+			For p1 As Integer = 0 To _lst.Count - 1
+				Dim pth = CurveFromIndex(p1)
+				pth.Widen(pn)
+				If pth.IsVisible(ept) Then Return p1
+			Next
+		ElseIf ShapeType = DrawType.Curves Then
+			For p1 As Integer = 0 To _lst.Count - 2
+				Dim pth = CurveFromIndex(p1)
+				pth.Widen(pn)
+				If pth.IsVisible(ept) Then Return p1
+			Next
+		End If
+		Return -1
+	End Function
+
+	Private Function LineFromIndex(p1 As Integer) As GraphicsPath
+		Dim p2 = (p1 + 1) Mod _lst.Count
+		Dim gp As New GraphicsPath
+		Dim pt1 = FromPercentage(rect, _lst(p1).Point)
+		Dim pt2 = FromPercentage(rect, _lst(p2).Point)
+		gp.AddLine(pt1, pt2)
+		Return gp
+	End Function
+
+	Private Function CurveFromIndex(p1 As Integer) As GraphicsPath
+		Dim p_pos As New List(Of PointF)
+		For Each pt As PointF In Points
+			p_pos.Add(FromPercentage(rect, pt))
+		Next
+		Dim pth_chk As New GraphicsPath
+		If ShapeType = DrawType.ClosedCurve Then
+			pth_chk.AddClosedCurve(p_pos.ToArray, Tension)
+		ElseIf ShapeType = DrawType.Curves Then
+			pth_chk.AddCurve(p_pos.ToArray, Tension)
+		End If
+		Dim pts_chk = pth_chk.PathPoints
+		Dim pt1 = p1 * 3
+		Dim pt2 = pt1 + 1 Mod pts_chk.Count
+		Dim pt3 = pt2 + 1 Mod pts_chk.Count
+		Dim pt4 = pt3 + 1 Mod pts_chk.Count
+		Dim gp As New GraphicsPath
+		gp.AddBezier(pts_chk(pt1), pts_chk(pt2), pts_chk(pt3), pts_chk(pt4))
+		Return gp
+	End Function
+
 	Private Function PointInCursor(pt As Point) As Integer
 		Dim ind As Integer = -1
 		For Each bl As MyPoint In _lst
@@ -117,10 +190,13 @@ Public Class ShapePointsEditor
 	Private Sub SetRect()
 		rect = New RectangleF(25, 25, Width - 51, Height - 51)
 	End Sub
+#End Region
 
+#Region "Mouse Events"
 	Private Sub ShapePointsEditor_MouseDown(sender As Object, e As MouseEventArgs) Handles MyBase.MouseDown
 		DeselectAll()
 		Dim curr As Integer = PointInCursor(e.Location)
+		Dim curl As Integer = PathInCursor(e.Location)
 		If curr > -1 Then
 			If e.Button = MouseButtons.Left Then
 				_lst(curr).Selected = True
@@ -129,6 +205,14 @@ Public Class ShapePointsEditor
 					_lst.RemoveAt(curr)
 					RaiseEvent PointsChanged(Me, New EventArgs)
 				End If
+			End If
+		ElseIf curl > -1 Then
+			If rect.Contains(e.Location) AndAlso e.Button = MouseButtons.Left Then
+				Dim bl As New MyPoint
+				bl.Point = ToPercentage(rect, e.Location)
+				bl.Selected = True
+				_lst.Insert(curl + 1, bl)
+				RaiseEvent PointsChanged(Me, New EventArgs)
 			End If
 		Else
 			If rect.Contains(e.Location) AndAlso e.Button = MouseButtons.Left Then
@@ -145,12 +229,23 @@ Public Class ShapePointsEditor
 
 	Private Sub ShapePointsEditor_MouseMove(sender As Object, e As MouseEventArgs) Handles MyBase.MouseMove
 		If m_down Then
+			hgt = -1
+			Cursor = Cursors.Hand
 			Dim sel As Integer = SelectedItem()
 			If sel = -1 Then Return
 			Dim bl As MyPoint = _lst(sel)
 			Dim pos = ToPercentage(rect, e.Location)
 			bl.Point = pos
 			RaiseEvent PointsChanged(Me, New EventArgs)
+		Else
+			Dim curr = PointInCursor(e.Location)
+			If curr > -1 Then
+				Cursor = Cursors.Hand
+				hgt = -1
+			Else
+				Cursor = Cursors.Arrow
+				hgt = PathInCursor(e.Location)
+			End If
 		End If
 		Invalidate()
 	End Sub
@@ -158,7 +253,9 @@ Public Class ShapePointsEditor
 	Private Sub ShapePointsEditor_MouseUp(sender As Object, e As MouseEventArgs) Handles MyBase.MouseUp
 		m_down = False
 	End Sub
+#End Region
 
+#Region "Drawing"
 	Private Sub DrawPoint(g As Graphics, bl As MyPoint)
 		g.FillPath(New SolidBrush(Color.FromArgb(180, Color.Black)), PointRegion(bl))
 		g.DrawPath(Pens.Black, PointRegion(bl))
@@ -182,16 +279,27 @@ Public Class ShapePointsEditor
 			For Each pt As PointF In Points
 				p_pos.Add(FromPercentage(rect, pt))
 			Next
+			Dim pth As New GraphicsPath
 			Select Case ShapeType
 				Case DrawType.Lines
-					g.DrawLines(Pens.Black, p_pos.ToArray)
+					pth.AddLines(p_pos.ToArray)
 				Case DrawType.Polygon
-					g.DrawPolygon(Pens.Black, p_pos.ToArray)
+					pth.AddPolygon(p_pos.ToArray)
 				Case DrawType.Curves
-					g.DrawCurve(Pens.Black, p_pos.ToArray, Tension)
+					pth.AddCurve(p_pos.ToArray, Tension)
 				Case DrawType.ClosedCurve
-					g.DrawClosedCurve(Pens.Black, p_pos.ToArray, Tension, FillMode.Winding)
+					pth.AddClosedCurve(p_pos.ToArray, Tension)
 			End Select
+			pth.FillMode = FillMode.Winding
+			g.DrawPath(Pens.Black, pth)
+		End If
+
+		If hgt > -1 Then
+			If ShapeType = DrawType.Lines Or ShapeType = DrawType.Polygon Then
+				g.DrawPath(Pens.Red, LineFromIndex(hgt))
+			Else
+				g.DrawPath(Pens.Red, CurveFromIndex(hgt))
+			End If
 		End If
 
 		For Each pt As MyPoint In _lst
@@ -214,7 +322,9 @@ Public Class ShapePointsEditor
 
 		pn.Dispose()
 	End Sub
+#End Region
 
+#Region "Load & Resize"
 	Private Sub ShapePointsEditor_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 		SetRect()
 	End Sub
@@ -223,7 +333,9 @@ Public Class ShapePointsEditor
 		SetRect()
 		Invalidate()
 	End Sub
+#End Region
 
+#Region "Keyboard Events"
 	Protected Overrides Function IsInputKey(keyData As Keys) As Boolean
 		Select Case keyData
 			Case Keys.Left, Keys.Right, Keys.Up, Keys.Down
@@ -319,6 +431,7 @@ Public Class ShapePointsEditor
 		End Select
 		Invalidate()
 	End Sub
+#End Region
 
 End Class
 
