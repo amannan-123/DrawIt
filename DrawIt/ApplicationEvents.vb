@@ -10,10 +10,20 @@ Namespace My
 	Partial Friend Class MyApplication
 
 		Protected Overrides Sub OnStartupNextInstance(eventArgs As StartupNextInstanceEventArgs)
-			'Handling here
-
+			If eventArgs.CommandLine.Count > 0 Then
+				Dim frm = Application.MainForm
+				If TypeOf frm Is MainForm Then
+					DirectCast(frm, MainForm).OpenFiles(eventArgs.CommandLine.ToArray)
+					eventArgs.BringToForeground = True
+				End If
+			End If
 			MyBase.OnStartupNextInstance(eventArgs)
 		End Sub
+
+		Protected Overrides Function OnUnhandledException(e As UnhandledExceptionEventArgs) As Boolean
+			e.ExitApplication = True
+			Return MyBase.OnUnhandledException(e)
+		End Function
 
 	End Class
 End Namespace

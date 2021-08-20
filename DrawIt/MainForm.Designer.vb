@@ -2512,6 +2512,7 @@ Partial Class MainForm
 		'
 		'tCanvas
 		'
+		Me.tCanvas.AllowDrop = True
 		Me.tCanvas.Controls.Add(Me.TabPage1)
 		Me.tCanvas.Dock = System.Windows.Forms.DockStyle.Fill
 		Me.tCanvas.ItemSize = New System.Drawing.Size(100, 24)

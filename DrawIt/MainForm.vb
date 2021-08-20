@@ -239,6 +239,15 @@ Public Class MainForm
 			cb_GClip.Items.Add(str)
 		Next
 		cb_GClip.SelectedIndex = 0
+
+		Dim args = My.Application.CommandLineArgs
+		If args.Count > 0 Then
+			OpenFiles(args.ToArray)
+			If tCanvas.TabPages.Count > 1 Then
+				tCanvas.TabPages.RemoveAt(0)
+			End If
+		End If
+
 	End Sub
 #End Region
 
@@ -1362,27 +1371,32 @@ Public Class MainForm
 		tCanvas.SelectedTab = tp
 	End Sub
 
+	Public Sub OpenFiles(paths As String())
+		For Each str As String In paths
+			Dim cn As New CanvasControl
+			cn.baseCanvas.BackColor = Color.Transparent
+			cn.baseCanvas.MainForm = Me
+			cn.Dock = DockStyle.Fill
+			If Not IsNothing(cn.baseCanvas.LoadProject(str)) Then
+				cn.Dispose()
+				'Handle exception here
+				Continue For
+			End If
+			cn.Text = Path.GetFileNameWithoutExtension(str)
+			Dim tp As New TabPage(cn.Text)
+			tp.BorderStyle = BorderStyle.FixedSingle
+			tp.Controls.Add(cn)
+			tCanvas.TabPages.Add(tp)
+			tCanvas.SelectedTab = tp
+		Next
+	End Sub
+
 	Private Sub btOpen_Click(sender As Object, e As EventArgs) Handles btOpen.Click
 		openDialog.Multiselect = True
 		openDialog.Title = "Choose Project File"
 		openDialog.Filter = "Binary File (*.bin)|*.bin|SOAP File (*.soap)|*.soap"
 		If openDialog.ShowDialog = DialogResult.OK Then
-			For Each str As String In openDialog.FileNames
-				Dim cn As New CanvasControl
-				cn.baseCanvas.BackColor = Color.Transparent
-				cn.baseCanvas.MainForm = Me
-				cn.Dock = DockStyle.Fill
-				If Not IsNothing(cn.baseCanvas.LoadProject(str)) Then
-					'Handle exception here
-					Continue For
-				End If
-				cn.Text = Path.GetFileNameWithoutExtension(str)
-				Dim tp As New TabPage(cn.Text)
-				tp.BorderStyle = BorderStyle.FixedSingle
-				tp.Controls.Add(cn)
-				tCanvas.TabPages.Add(tp)
-				tCanvas.SelectedTab = tp
-			Next
+			OpenFiles(openDialog.FileNames)
 		End If
 	End Sub
 
@@ -1483,6 +1497,23 @@ Public Class MainForm
 #Region "Keyboard"
 	Private Sub MainForm_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
 		If e.KeyData = Keys.F12 Then pShear.Visible = Not pShear.Visible
+	End Sub
+#End Region
+
+#Region "DragDrop"
+	Private Sub tCanvas_DragEnter(sender As Object, e As DragEventArgs) Handles tCanvas.DragEnter
+		If e.Data.GetDataPresent(DataFormats.FileDrop) Then
+			e.Effect = DragDropEffects.Copy
+		Else
+			e.Effect = DragDropEffects.None
+		End If
+	End Sub
+
+	Private Sub tCanvas_DragDrop(sender As Object, e As DragEventArgs) Handles tCanvas.DragDrop
+		If e.Data.GetDataPresent(DataFormats.FileDrop) Then
+			Dim args As String() = e.Data.GetData(DataFormats.FileDrop)
+			OpenFiles(args)
+		End If
 	End Sub
 #End Region
 
