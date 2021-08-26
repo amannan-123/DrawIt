@@ -278,7 +278,7 @@ Public Class Shape
 	End Function
 
 	''' <summary>
-	''' Returns <see cref="Brush"/> for filling shape.
+	''' Returns <see cref="Brush"/>  based on <see cref="FBrush"/> of current instance.
 	''' </summary>
 	Public Function CreateBrush() As Brush
 		Dim rt As New RectangleF(0, 0, _rect.Width, _rect.Height)
@@ -295,8 +295,7 @@ Public Class Shape
 				lgb.GammaCorrection = FBrush.LGamma
 				If FBrush.LTriangular Then
 					lgb.SetBlendTriangularShape(FBrush.LTriFocus, FBrush.LTriScale)
-				End If
-				If FBrush.LBell Then
+				ElseIf FBrush.LBell Then
 					lgb.SetSigmaBellShape(FBrush.LBellFocus, FBrush.LBellScale)
 				End If
 				If FBrush.LInterpolate Then
@@ -304,8 +303,7 @@ Public Class Shape
 					ip.Colors = FBrush.LInterColors
 					ip.Positions = FBrush.LInterPositions
 					lgb.InterpolationColors = ip
-				End If
-				If FBrush.LBlend Then
+				ElseIf FBrush.LBlend Then
 					Dim bl As New Blend
 					bl.Factors = FBrush.LBlendFactors
 					bl.Positions = FBrush.LBlendPositions
@@ -313,34 +311,28 @@ Public Class Shape
 				End If
 				Return lgb
 			Case MyBrush.BrushType.PathGradient
-				Try
-					Dim ptb As New PathGradientBrush(TotalPath(False))
-					ptb.CenterColor = FBrush.PCenter
-					ptb.SurroundColors = FBrush.PSurround
-					ptb.FocusScales = New PointF(FBrush.PFocusX, FBrush.PFocusY)
-					ptb.CenterPoint = FromPercentage(_rect, FBrush.PCenterPoint)
-					If FBrush.PTriangular Then
-						ptb.SetBlendTriangularShape(FBrush.PTriFocus, FBrush.PTriScale)
-					End If
-					If FBrush.PBell Then
-						ptb.SetSigmaBellShape(FBrush.PBellFocus, FBrush.PBellScale)
-					End If
-					If FBrush.PInterpolate Then
-						Dim ip As New ColorBlend
-						ip.Colors = FBrush.PInterColors
-						ip.Positions = FBrush.PInterPositions
-						ptb.InterpolationColors = ip
-					End If
-					If FBrush.PBlend Then
-						Dim bl As New Blend
-						bl.Factors = FBrush.PBlendFactors
-						bl.Positions = FBrush.PBlendPositions
-						ptb.Blend = bl
-					End If
-					Return ptb
-				Catch ex As Exception
-					Return Nothing
-				End Try
+				Dim ptb As New PathGradientBrush(TotalPath(False))
+				ptb.CenterColor = FBrush.PCenter
+				ptb.SurroundColors = FBrush.PSurround
+				ptb.FocusScales = New PointF(FBrush.PFocusX, FBrush.PFocusY)
+				ptb.CenterPoint = FromPercentage(_rect, FBrush.PCenterPoint)
+				If FBrush.PTriangular Then
+					ptb.SetBlendTriangularShape(FBrush.PTriFocus, FBrush.PTriScale)
+				ElseIf FBrush.PBell Then
+					ptb.SetSigmaBellShape(FBrush.PBellFocus, FBrush.PBellScale)
+				End If
+				If FBrush.PInterpolate Then
+					Dim ip As New ColorBlend
+					ip.Colors = FBrush.PInterColors
+					ip.Positions = FBrush.PInterPositions
+					ptb.InterpolationColors = ip
+				ElseIf FBrush.PBlend Then
+					Dim bl As New Blend
+					bl.Factors = FBrush.PBlendFactors
+					bl.Positions = FBrush.PBlendPositions
+					ptb.Blend = bl
+				End If
+				Return ptb
 			Case MyBrush.BrushType.Hatch
 				Return New HatchBrush(FBrush.HStyle, FBrush.HFore, FBrush.HBack)
 			Case MyBrush.BrushType.Texture
@@ -361,9 +353,7 @@ Public Class Shape
 					'img.RotateFlip(FBrush.TRotateFlip)
 					'g.DrawImage(img, rt)
 					img.Dispose()
-					If FBrush.TTransparency Then
-						bmp.MakeTransparent(FBrush.TColor)
-					End If
+					If FBrush.TTransparency Then bmp.MakeTransparent(FBrush.TColor)
 					Dim txb As New TextureBrush(bmp)
 					Dim mm As New Matrix
 					mm.Translate(_rect.X, _rect.Y)

@@ -341,10 +341,10 @@ Public Class MyTrackBar
 				Value += Increment
 				Invalidate()
 			Case Keys.Control Or Keys.Left, Keys.Control Or Keys.Down
-				Value = CInt(Value - Increment)
+				Value = CInt(Value) - CInt(Increment)
 				Invalidate()
 			Case Keys.Control Or Keys.Right, Keys.Control Or Keys.Up
-				Value = CInt(Value + Increment)
+				Value = CInt(Value) + CInt(Increment)
 				Invalidate()
 		End Select
 	End Sub

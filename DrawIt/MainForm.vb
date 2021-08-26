@@ -38,10 +38,11 @@ Public Class MainForm
 	Public Sub UpdateControls()
 		Dim cnv = CurrentCanvas()
 		MainCanvas = cnv
+		MainShape = Nothing
 		If Not IsNothing(cnv) Then
 			Dim shp As Shape = MainCanvas.MainSelected
 			MainShape = shp
-			If Not IsNothing(MainCanvas.MainSelected) Then
+			If Not IsNothing(shp) Then
 				'shape and brush
 				cb_Shape.SelectedItem = shp.MShape.SType.ToString
 				cb_Brush.SelectedItem = shp.FBrush.BType.ToString
@@ -134,11 +135,9 @@ Public Class MainForm
 				TBShrY.Value = shp.ShearY
 			Else
 				PB_Texture.Image = Nothing
-				MainShape = Nothing
 			End If
 		Else
 			PB_Texture.Image = Nothing
-			MainShape = Nothing
 		End If
 		UpdateBoundControls()
 	End Sub
@@ -1058,8 +1057,8 @@ Public Class MainForm
 
 #Region "Shape"
 	Private Sub bShape_Click(sender As Object, e As EventArgs) Handles bShape.Click
-		If Not IsNothing(MainShape) Then
-			Dim shp As Shape = MainShape
+		Dim shp As Shape = MainShape
+		If Not IsNothing(shp) Then
 			Select Case shp.MShape.SType
 				Case MyShape.ShapeStyle.Lines, MyShape.ShapeStyle.Polygon,
 					 MyShape.ShapeStyle.Curves, MyShape.ShapeStyle.ClosedCurve

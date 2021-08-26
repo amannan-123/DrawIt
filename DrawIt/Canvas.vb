@@ -802,10 +802,14 @@ Public Class Canvas
 		cloning = False
 		If Not d_mode Then MainForm.rSelect.Checked = True
 		Cursor = Cursors.Default
-		op = MOperations.None
+		If op <> MOperations.None Then
+			MainForm.UpdateControls()
+			op = MOperations.None
+		Else
+			MainForm.UpdateBoundControls()
+		End If
 		s_rect = Rectangle.Empty
 		Invalidate()
-		MainForm.UpdateBoundControls()
 	End Sub
 #End Region
 

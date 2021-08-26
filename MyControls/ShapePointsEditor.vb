@@ -26,9 +26,13 @@ Public Class ShapePointsEditor
 #End Region
 
 #Region "Globals"
-	Private m_down As Boolean = False
+	Private m_anc As Boolean = False
+	Private m_line As Boolean = False
+	Private s_ind As Integer = -1
+	Private pt1, pt2 As PointF
+	Private m_pt As PointF
 	Private rect As RectangleF
-	Private _lst As New List(Of MyPoint)
+	Private ReadOnly _lst As New List(Of MyPoint)
 	Private hgt As Integer = -1
 #End Region
 
@@ -107,7 +111,7 @@ Public Class ShapePointsEditor
 		Next
 	End Sub
 
-	Private Function PathInCursor(ept As Point) As Integer
+	Private Function PathInCursor(ept As PointF) As Integer
 		If _lst.Count < GetMin() Then Return -1
 		Dim pn As New Pen(Color.Black, 3)
 		If ShapeType = DrawType.Polygon Then
@@ -168,7 +172,7 @@ Public Class ShapePointsEditor
 		Return gp
 	End Function
 
-	Private Function PointInCursor(pt As Point) As Integer
+	Private Function PointInCursor(pt As PointF) As Integer
 		Dim ind As Integer = -1
 		For Each bl As MyPoint In _lst
 			If PointRegion(bl).IsVisible(pt) Then
@@ -195,11 +199,13 @@ Public Class ShapePointsEditor
 #Region "Mouse Events"
 	Private Sub ShapePointsEditor_MouseDown(sender As Object, e As MouseEventArgs) Handles MyBase.MouseDown
 		DeselectAll()
-		Dim curr As Integer = PointInCursor(e.Location)
-		Dim curl As Integer = PathInCursor(e.Location)
+		m_pt = e.Location
+		Dim curr As Integer = PointInCursor(m_pt)
+		Dim curl As Integer = PathInCursor(m_pt)
 		If curr > -1 Then
 			If e.Button = MouseButtons.Left Then
 				_lst(curr).Selected = True
+				m_anc = True
 			ElseIf e.Button = MouseButtons.Right Then
 				If _lst.Count > GetMin() Then
 					_lst.RemoveAt(curr)
@@ -207,12 +213,20 @@ Public Class ShapePointsEditor
 				End If
 			End If
 		ElseIf curl > -1 Then
-			If rect.Contains(e.Location) AndAlso e.Button = MouseButtons.Left Then
-				Dim bl As New MyPoint
-				bl.Point = ToPercentage(rect, e.Location)
-				bl.Selected = True
-				_lst.Insert(curl + 1, bl)
-				RaiseEvent PointsChanged(Me, New EventArgs)
+			If rect.Contains(e.Location) Then
+				If e.Button = MouseButtons.Left Then
+					Dim bl As New MyPoint
+					bl.Point = ToPercentage(rect, e.Location)
+					bl.Selected = True
+					_lst.Insert(curl + 1, bl)
+					m_anc = True
+					RaiseEvent PointsChanged(Me, New EventArgs)
+				ElseIf e.Button = MouseButtons.Right Then
+					m_line = True
+					s_ind = curl
+					pt1 = FromPercentage(rect, _lst(curl).Point)
+					pt2 = FromPercentage(rect, _lst((curl + 1) Mod _lst.Count).Point)
+				End If
 			End If
 		Else
 			If rect.Contains(e.Location) AndAlso e.Button = MouseButtons.Left Then
@@ -223,19 +237,34 @@ Public Class ShapePointsEditor
 				RaiseEvent PointsChanged(Me, New EventArgs)
 			End If
 		End If
-		m_down = True
 		Invalidate()
 	End Sub
 
 	Private Sub ShapePointsEditor_MouseMove(sender As Object, e As MouseEventArgs) Handles MyBase.MouseMove
-		If m_down Then
-			hgt = -1
+		hgt = -1
+		If m_anc Then
 			Cursor = Cursors.Hand
 			Dim sel As Integer = SelectedItem()
 			If sel = -1 Then Return
-			Dim bl As MyPoint = _lst(sel)
 			Dim pos = ToPercentage(rect, e.Location)
-			bl.Point = pos
+			If My.Computer.Keyboard.CtrlKeyDown Then pos = Point.Round(pos)
+			_lst(sel).Point = pos
+			RaiseEvent PointsChanged(Me, New EventArgs)
+		ElseIf m_line Then
+			Cursor = Cursors.Hand
+			Dim offset = New PointF(e.X - m_pt.X, e.Y - m_pt.Y)
+			Dim p1 = pt1
+			Dim p2 = pt2
+			p1.X += offset.X : p1.Y += offset.Y
+			p2.X += offset.X : p2.Y += offset.Y
+			Dim tp1 = ToPercentage(rect, p1)
+			Dim tp2 = ToPercentage(rect, p2)
+			If My.Computer.Keyboard.CtrlKeyDown Then
+				tp1 = Point.Round(tp1)
+				tp2 = Point.Round(tp2)
+			End If
+			_lst(s_ind).Point = tp1
+			_lst((s_ind + 1) Mod _lst.Count).Point = tp2
 			RaiseEvent PointsChanged(Me, New EventArgs)
 		Else
 			Dim curr = PointInCursor(e.Location)
@@ -251,19 +280,19 @@ Public Class ShapePointsEditor
 	End Sub
 
 	Private Sub ShapePointsEditor_MouseUp(sender As Object, e As MouseEventArgs) Handles MyBase.MouseUp
-		m_down = False
+		m_anc = False
+		m_line = False
+		s_ind = -1
 	End Sub
 #End Region
 
 #Region "Drawing"
 	Private Sub DrawPoint(g As Graphics, bl As MyPoint)
-		g.FillPath(New SolidBrush(Color.FromArgb(180, Color.Black)), PointRegion(bl))
-		g.DrawPath(Pens.Black, PointRegion(bl))
-		If bl.Selected Then
-			Dim b_rect As RectangleF = PointRegion(bl).GetBounds
-			Dim s_rect As New RectangleF(b_rect.X, b_rect.Bottom, b_rect.Width, 3)
-			g.FillEllipse(Brushes.Red, s_rect)
-		End If
+		Dim pth = PointRegion(bl)
+		Dim clr = Color.White
+		If bl.Selected Then clr = Color.Red
+		g.FillPath(New SolidBrush(Color.FromArgb(150, clr)), pth)
+		g.DrawPath(Pens.Black, pth)
 	End Sub
 
 	Private Sub ShapePointsEditor_Paint(sender As Object, e As PaintEventArgs) Handles MyBase.Paint
@@ -295,11 +324,13 @@ Public Class ShapePointsEditor
 		End If
 
 		If hgt > -1 Then
-			If ShapeType = DrawType.Lines Or ShapeType = DrawType.Polygon Then
-				g.DrawPath(Pens.Red, LineFromIndex(hgt))
-			Else
-				g.DrawPath(Pens.Red, CurveFromIndex(hgt))
-			End If
+			Using hpn As New Pen(Color.Red, 2)
+				If ShapeType = DrawType.Lines Or ShapeType = DrawType.Polygon Then
+					g.DrawPath(hpn, LineFromIndex(hgt))
+				Else
+					g.DrawPath(hpn, CurveFromIndex(hgt))
+				End If
+			End Using
 		End If
 
 		For Each pt As MyPoint In _lst
