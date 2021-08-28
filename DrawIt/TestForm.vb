@@ -43,7 +43,7 @@ Public Class TestForm
 		Return gp
 	End Function
 
-	Private Sub TestForm_Paint(sender As Object, e As PaintEventArgs) Handles MyBase.Paint
+	Private Sub TestForm_Paint(sender As Object, e As PaintEventArgs) 'Handles MyBase.Paint
 		Dim g As Graphics = e.Graphics
 		g.SmoothingMode = SmoothingMode.AntiAlias
 

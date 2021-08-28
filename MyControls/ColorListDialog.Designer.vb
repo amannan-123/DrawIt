@@ -54,10 +54,12 @@ Partial Class ColorListDialog
 		'lstColors
 		'
 		Me.lstColors.AutoScroll = True
+		Me.lstColors.BackColor = System.Drawing.Color.FromArgb(CType(CType(33, Byte), Integer), CType(CType(37, Byte), Integer), CType(CType(41, Byte), Integer))
+		Me.lstColors.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
 		Me.lstColors.ForeColor = System.Drawing.Color.White
+		Me.lstColors.ItemHeight = 25
 		Me.lstColors.Location = New System.Drawing.Point(12, 12)
 		Me.lstColors.Name = "lstColors"
-		Me.lstColors.SelectedIndex = -1
 		Me.lstColors.Size = New System.Drawing.Size(230, 166)
 		Me.lstColors.TabIndex = 8
 		'

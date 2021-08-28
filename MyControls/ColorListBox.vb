@@ -2,6 +2,8 @@
 Imports System.ComponentModel
 Imports System.Drawing
 Imports System.Drawing.Design
+Imports System.Drawing.Drawing2D
+Imports System.Drawing.Text
 Imports System.Windows.Forms
 Imports System.Windows.Forms.Design
 #End Region
@@ -75,6 +77,7 @@ Public Class ColorListBox
 	End Property
 
 	Private s_ind As Integer = -1
+	<DefaultValue(-1)>
 	Public Property SelectedIndex() As Integer
 		Get
 			If s_ind < 0 Or s_ind > _lst.Count - 1 Then Return -1
@@ -104,8 +107,8 @@ Public Class ColorListBox
 		End Get
 	End Property
 
-	Private s_col As Color = Color.DimGray
-	<DefaultValue(GetType(Color), "DimGray")>
+	Private s_col As Color = Color.FromArgb(85, 85, 85)
+	<DefaultValue(GetType(Color), "85,85,85")>
 	Public Property SelectedColor() As Color
 		Get
 			Return s_col
@@ -116,8 +119,8 @@ Public Class ColorListBox
 		End Set
 	End Property
 
-	Private h_col As Color = Color.Gray
-	<DefaultValue(GetType(Color), "Gray")>
+	Private h_col As Color = Color.FromArgb(47, 53, 58)
+	<DefaultValue(GetType(Color), "47,53,58")>
 	Public Property HoverColor() As Color
 		Get
 			Return h_col
@@ -128,8 +131,8 @@ Public Class ColorListBox
 		End Set
 	End Property
 
-	Private n_col As Color = Color.DarkGray
-	<DefaultValue(GetType(Color), "DarkGray")>
+	Private n_col As Color = Color.FromArgb(33, 37, 41)
+	<DefaultValue(GetType(Color), "33,37,41")>
 	Public Property NormalColor() As Color
 		Get
 			Return n_col
@@ -156,7 +159,7 @@ Public Class ColorListBox
 
 #Region "Private Functions"
 	Private Sub UpdateSize()
-		Dim i_height = Items.Count * ItemHeight
+		Dim i_height = (Items.Count * ItemHeight) + 1
 		If i_height > Height Then
 			MyVScrollBar1.Visible = True
 			MyVScrollBar1.Maximum = i_height - Height
@@ -175,7 +178,7 @@ Public Class ColorListBox
 	Private Function GetItemRect(i As Integer) As Rectangle
 		Dim y As Integer = i * ItemHeight
 		If MyVScrollBar1.Visible Then y -= MyVScrollBar1.Value
-		Dim i_width As Integer = If(MyVScrollBar1.Visible, Width - MyVScrollBar1.Width, Width)
+		Dim i_width As Integer = If(MyVScrollBar1.Visible, (Width - 1) - MyVScrollBar1.Width, Width - 1)
 		Return New Rectangle(0, y, i_width, ItemHeight)
 	End Function
 #End Region
@@ -238,6 +241,8 @@ Public Class ColorListBox
 #Region "Paint"
 	Private Sub ColorListBox_Paint(sender As Object, e As PaintEventArgs) Handles MyBase.Paint
 		Dim g As Graphics = e.Graphics
+		g.SmoothingMode = SmoothingMode.AntiAlias
+		g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit
 
 		If DesignMode Or DrawingMode = DrawMode.Default Then
 
@@ -245,15 +250,20 @@ Public Class ColorListBox
 				Dim rect As Rectangle = GetItemRect(i)
 				If i = SelectedIndex Then
 					g.FillRectangle(New SolidBrush(SelectedColor), rect)
+					Dim rd = rect
+					rd.Inflate(-1, -1)
+					g.DrawRectangle(New Pen(Color.White), rd)
 				ElseIf i = h_ind Then
 					g.FillRectangle(New SolidBrush(HoverColor), rect)
+					g.DrawLine(New Pen(Color.FromArgb(55, 59, 62)), rect.X, rect.Bottom - 1, rect.Right, rect.Bottom - 1)
 				Else
 					g.FillRectangle(New SolidBrush(NormalColor), rect)
+					g.DrawLine(New Pen(Color.FromArgb(55, 59, 62)), rect.X, rect.Bottom - 1, rect.Right, rect.Bottom - 1)
 				End If
 
 				Dim itemString As String = _lst(i).Name
 				Dim myBrush As New SolidBrush(_lst(i))
-				Dim c_rect As New Rectangle(rect.X + 2, rect.Y + 2, 20, rect.Height - 5)
+				Dim c_rect As New Rectangle(rect.X + 3, rect.Y + 3, rect.Height - 6, rect.Height - 6)
 
 				'Draw a Color Swatch
 				g.FillRectangle(myBrush, c_rect)

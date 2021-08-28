@@ -38,6 +38,7 @@ Partial Class ColorListBox
 		'ColorListBox
 		'
 		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None
+		Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(33, Byte), Integer), CType(CType(37, Byte), Integer), CType(CType(41, Byte), Integer))
 		Me.Controls.Add(Me.MyVScrollBar1)
 		Me.ForeColor = System.Drawing.Color.White
 		Me.Name = "ColorListBox"

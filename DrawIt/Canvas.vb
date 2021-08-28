@@ -948,7 +948,8 @@ Public Class Canvas
 	End Sub
 
 	Private Sub DrawShape(ig As Graphics, shp As Shape)
-		ig.PixelOffsetMode = PixelOffsetMode.Default
+
+		ig.PixelOffsetMode = PixelOffsetMode.HighSpeed
 		ig.RenderingOrigin = New Point(shp.BaseRect.Location.X,
 											  shp.BaseRect.Location.Y)
 		Using mm As New Matrix
@@ -989,7 +990,7 @@ Public Class Canvas
 					Using pth_brd As New GraphicsPath
 						pth_brd.AddRectangle(shp.BaseRect)
 						Dim pn_brd As New Pen(Brushes.Black) With {
-							.DashPattern = New Single() {2, 2, 2}
+							.DashPattern = New Single() {2, 2, 3}
 						}
 						ig.DrawPath(pn_brd, pth_brd)
 					End Using
@@ -1022,7 +1023,6 @@ Public Class Canvas
 											 ig.FillPath(br, gp)
 											 ig.DrawPath(pn, gp)
 										 End Sub)
-						_anchors.Clear()
 
 						'Draw Rotation Anchor Line
 						Dim pt1 As New PointF(shp.Top(False).GetBounds().X + (shp.Top(False).GetBounds().Width / 2),
@@ -1065,7 +1065,7 @@ Public Class Canvas
 
 					Case MOperations.Rotate
 						DrawAnchorEllipse(ig, shp.Rotate(False).GetBounds)
-						Dim dist As Single = shp.CenterPoint.Y - shp.BaseRect.Top
+						Dim dist As Single = shp.BaseRect.Height / 2
 						Dim rectt As New RectangleF(shp.CenterPoint, SizeF.Empty)
 						rectt.Inflate(dist, dist)
 						Using pnt As New Pen(Color.FromArgb(120, Color.Black), 5)
@@ -1078,13 +1078,14 @@ Public Class Canvas
 							Using sf As New StringFormat()
 								sf.Alignment = StringAlignment.Center
 								sf.LineAlignment = StringAlignment.Center
-								Dim fnt As New Font("Consolas", 15)
+								Dim fnt As New Font("Consolas", 13)
 								ig.DrawString(shp.Angle.ToString, fnt, Brushes.Black, shp.BaseRect, sf)
 								fnt.Dispose()
 							End Using
 						End If
 				End Select
 			Else
+				'Draw indicator for non-primary selected shapes
 				If shp.Moving = False Then
 					Dim rtt As Rectangle = Rectangle.Ceiling(shp.BaseRect)
 					Dim hbr As New HatchBrush(HatchStyle.DarkVertical, Color.White, Color.Black)
@@ -1099,6 +1100,7 @@ Public Class Canvas
 				End If
 			End If
 		End If
+
 	End Sub
 
 	Private Sub Canvas_Paint(sender As Object, e As PaintEventArgs) Handles MyBase.Paint
@@ -1116,10 +1118,9 @@ Public Class Canvas
 
 		If Not IsNothing(img) Then
 
-#Region "Drawing On Image"
 			Using ig As Graphics = Graphics.FromImage(img)
 
-				ig.SmoothingMode = SmoothingMode.AntiAlias
+				ig.SmoothingMode = SmoothingMode.HighQuality
 				ig.TextRenderingHint = TextRenderingHint.AntiAlias
 
 				'Drawing background
@@ -1129,7 +1130,6 @@ Public Class Canvas
 				shps.ForEach(Sub(shp) DrawShape(ig, shp))
 
 			End Using
-#End Region
 
 			'Draw image containing shapes
 			g.DrawImageUnscaled(img, 0, 0, Width, Height)
