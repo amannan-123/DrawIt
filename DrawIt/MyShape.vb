@@ -46,13 +46,13 @@ Public Class MyShape
 		Inverted
 	End Enum
 
-	Private ul_sz As Single = 5
-	Public Property ULSize() As Single
+	Private _crn As RRCorners = New RRCorners()
+	Public Property Corners() As RRCorners
 		Get
-			Return ul_sz
+			Return _crn
 		End Get
-		Set(value As Single)
-			ul_sz = value
+		Set(ByVal value As RRCorners)
+			_crn = value
 		End Set
 	End Property
 
@@ -66,16 +66,6 @@ Public Class MyShape
 		End Set
 	End Property
 
-	Private ur_sz As Single = 5
-	Public Property URSize() As Single
-		Get
-			Return ur_sz
-		End Get
-		Set(value As Single)
-			ur_sz = value
-		End Set
-	End Property
-
 	Private ur_tp As CornerType = CornerType.Normal
 	Public Property URType() As CornerType
 		Get
@@ -86,16 +76,6 @@ Public Class MyShape
 		End Set
 	End Property
 
-	Private bl_sz As Single = 5
-	Public Property BLSize() As Single
-		Get
-			Return bl_sz
-		End Get
-		Set(value As Single)
-			bl_sz = value
-		End Set
-	End Property
-
 	Private bl_tp As CornerType = CornerType.Normal
 	Public Property BLType() As CornerType
 		Get
@@ -103,16 +83,6 @@ Public Class MyShape
 		End Get
 		Set(value As CornerType)
 			bl_tp = value
-		End Set
-	End Property
-
-	Private br_sz As Single = 5
-	Public Property BRSize() As Single
-		Get
-			Return br_sz
-		End Get
-		Set(value As Single)
-			br_sz = value
 		End Set
 	End Property
 
@@ -256,8 +226,110 @@ Public Class MyShape
 		For Each pd As PropertyDescriptor In TypeDescriptor.GetProperties(GetType(MyShape))
 			pd.SetValue(_new, pd.GetValue(Me))
 		Next
+		If Not IsNothing(Corners) Then _new.Corners = Corners.Clone
 		Return _new
 	End Function
 #End Region
 
 End Class
+
+#Region "RRCorners"
+Public Class RRCorners
+
+#Region "Properties"
+	Private _t1 As Single = 25
+	Public Property T1() As Single
+		Get
+			Return _t1
+		End Get
+		Set(ByVal value As Single)
+			_t1 = value
+		End Set
+	End Property
+
+	Private _t2 As Single = 25
+	Public Property T2() As Single
+		Get
+			Return _t2
+		End Get
+		Set(ByVal value As Single)
+			_t2 = value
+		End Set
+	End Property
+
+	Private _r1 As Single = 25
+	Public Property R1() As Single
+		Get
+			Return _r1
+		End Get
+		Set(ByVal value As Single)
+			_r1 = value
+		End Set
+	End Property
+
+	Private _r2 As Single = 25
+	Public Property R2() As Single
+		Get
+			Return _r2
+		End Get
+		Set(ByVal value As Single)
+			_r2 = value
+		End Set
+	End Property
+
+	Private _b1 As Single = 25
+	Public Property B1() As Single
+		Get
+			Return _b1
+		End Get
+		Set(ByVal value As Single)
+			_b1 = value
+		End Set
+	End Property
+
+	Private _b2 As Single = 25
+	Public Property B2() As Single
+		Get
+			Return _b2
+		End Get
+		Set(ByVal value As Single)
+			_b2 = value
+		End Set
+	End Property
+
+	Private _l1 As Single = 25
+	Public Property L1() As Single
+		Get
+			Return _l1
+		End Get
+		Set(ByVal value As Single)
+			_l1 = value
+		End Set
+	End Property
+
+	Private _l2 As Single = 25
+	Public Property L2() As Single
+		Get
+			Return _l2
+		End Get
+		Set(ByVal value As Single)
+			_l2 = value
+		End Set
+	End Property
+#End Region
+
+#Region "Clone"
+	''' <summary>
+	''' Creates an exact copy of this <see cref="RRCorners"/> object.
+	''' </summary>
+	Public Function Clone() As RRCorners
+		Dim _new As New RRCorners
+		For Each pd As PropertyDescriptor In TypeDescriptor.GetProperties(GetType(RRCorners))
+			pd.SetValue(_new, pd.GetValue(Me))
+		Next
+		Return _new
+	End Function
+#End Region
+
+End Class
+#End Region

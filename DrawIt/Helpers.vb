@@ -24,78 +24,86 @@ Module Helpers
 #End Region
 
 #Region "Functions"
-	Public Function GetRoundedRectPath(BaseRect As RectangleF, UpperLeft As Single, ulc As MyShape.CornerType, UpperRight As Single, urc As MyShape.CornerType, LowerLeft As Single, llc As MyShape.CornerType, LowerRight As Single, lrc As MyShape.CornerType) As GraphicsPath
-
+	Public Function GetRoundedRectPath(rect As RectangleF, crn As RRCorners,
+									   ulc As MyShape.CornerType, urc As MyShape.CornerType,
+									   llc As MyShape.CornerType, lrc As MyShape.CornerType) As GraphicsPath
 		Dim ArcRect As RectangleF
+		Dim _t1 = FromPercentage(rect.X, rect.Width, crn.T1)
+		Dim _t2 = FromPercentage(rect.X, rect.Width, crn.T2)
+		Dim _r1 = FromPercentage(rect.Y, rect.Height, crn.R1)
+		Dim _r2 = FromPercentage(rect.Y, rect.Height, crn.R2)
+		Dim _b1 = FromPercentage(rect.X, rect.Width, crn.B1)
+		Dim _b2 = FromPercentage(rect.X, rect.Width, crn.B2)
+		Dim _l1 = FromPercentage(rect.Y, rect.Height, crn.L1)
+		Dim _l2 = FromPercentage(rect.Y, rect.Height, crn.L2)
 		Dim MyPath As New GraphicsPath()
 		With MyPath
 			' top left arc
-			If UpperLeft = 0 Then
-				.AddLine(BaseRect.X, BaseRect.Y, BaseRect.X, BaseRect.Y)
+			If _t1 = 0 Or _l1 = 0 Then
+				.AddLine(rect.X, rect.Y + _l1, rect.X + _t1, rect.Y)
 			Else
 				Select Case ulc
-					Case MyShape.CornerType.Normal
-						ArcRect = New RectangleF(BaseRect.Location,
-											New SizeF(UpperLeft * 2, UpperLeft * 2))
+					Case 0
+						ArcRect = New RectangleF(rect.Location,
+											New SizeF(_t1 * 2, _l1 * 2))
 						.AddArc(ArcRect, 180, 90)
-					Case MyShape.CornerType.Inverted
-						ArcRect = New RectangleF(BaseRect.X - UpperLeft, BaseRect.Y - UpperLeft,
-											UpperLeft * 2, UpperLeft * 2)
+					Case 1
+						ArcRect = New RectangleF(rect.X - _t1, rect.Y - _l1,
+											_t1 * 2, _l1 * 2)
 						.AddArc(ArcRect, 90, -90)
 				End Select
-
 			End If
 
 			' top right arc
-			If UpperRight = 0 Then
-				.AddLine(BaseRect.X + (UpperLeft), BaseRect.Y, BaseRect.Right - (UpperRight), BaseRect.Top)
+			If _t2 = 0 Or _r1 = 0 Then
+				.AddLine(rect.Right - _t2, rect.Y, rect.Right, rect.Y + _r1)
 			Else
 				Select Case urc
-					Case MyShape.CornerType.Normal
-						ArcRect = New RectangleF(BaseRect.Location,
-											New SizeF(UpperRight * 2, UpperRight * 2))
-						ArcRect.X = BaseRect.Right - (UpperRight * 2)
+					Case 0
+						ArcRect = New RectangleF(rect.Location,
+											New SizeF(_t2 * 2, _r1 * 2))
+						ArcRect.X = rect.Right - ArcRect.Width
 						.AddArc(ArcRect, 270, 90)
-					Case MyShape.CornerType.Inverted
-						ArcRect = New RectangleF(BaseRect.Right - UpperRight, BaseRect.Y - UpperRight,
-											UpperRight * 2, UpperRight * 2)
+					Case 1
+						ArcRect = New RectangleF(rect.Right - _t2, rect.Y - _r1,
+											_t2 * 2, _r1 * 2)
 						.AddArc(ArcRect, 180, -90)
 				End Select
 
 			End If
 
 			' bottom right arc
-			If LowerRight = 0 Then
-				.AddLine(BaseRect.Right, BaseRect.Top + (UpperRight), BaseRect.Right, BaseRect.Bottom - (LowerRight))
+			If _b2 = 0 Or _r2 = 0 Then
+				.AddLine(rect.Right, rect.Bottom - _r2, rect.Right - _b2, rect.Bottom)
 			Else
 				Select Case lrc
-					Case MyShape.CornerType.Normal
-						ArcRect = New RectangleF(BaseRect.Location,
-											New SizeF(LowerRight * 2, LowerRight * 2))
-						ArcRect.Y = BaseRect.Bottom - (LowerRight * 2)
-						ArcRect.X = BaseRect.Right - (LowerRight * 2)
+					Case 0
+						ArcRect = New RectangleF(rect.Location,
+											New SizeF(_b2 * 2, _r2 * 2))
+						ArcRect.X = rect.Right - ArcRect.Width
+						ArcRect.Y = rect.Bottom - ArcRect.Height
 						.AddArc(ArcRect, 0, 90)
-					Case MyShape.CornerType.Inverted
-						ArcRect = New RectangleF(BaseRect.Right - LowerRight, BaseRect.Bottom - LowerRight,
-											LowerRight * 2, LowerRight * 2)
+					Case 1
+						ArcRect = New RectangleF(rect.Right - _b2, rect.Bottom - _r2,
+											_b2 * 2, _r2 * 2)
 						.AddArc(ArcRect, 270, -90)
 				End Select
 
 			End If
 
 			' bottom left arc
-			If LowerLeft = 0 Then
-				.AddLine(BaseRect.Right - (LowerRight), BaseRect.Bottom, BaseRect.X - (LowerLeft), BaseRect.Bottom)
+			If _b1 = 0 Or _l2 = 0 Then
+				.AddLine(rect.X + _b1, rect.Bottom, rect.X, rect.Bottom - _l2)
 			Else
 				Select Case llc
-					Case MyShape.CornerType.Normal
-						ArcRect = New RectangleF(BaseRect.Location,
-											New SizeF(LowerLeft * 2, LowerLeft * 2))
-						ArcRect.Y = BaseRect.Bottom - (LowerLeft * 2)
+					Case 0
+						ArcRect = New RectangleF(rect.Location,
+											New SizeF(_b1 * 2, _l2 * 2))
+						ArcRect.Y = rect.Bottom - (_l2 * 2)
 						.AddArc(ArcRect, 90, 90)
-					Case MyShape.CornerType.Inverted
-						ArcRect = New RectangleF(BaseRect.X - LowerLeft, BaseRect.Bottom - LowerLeft,
-											LowerLeft * 2, LowerLeft * 2)
+					Case 1
+						ArcRect = New RectangleF(rect.X - _b1, rect.Bottom - _l2,
+											_b1 * 2, _l2 * 2)
 						.AddArc(ArcRect, 0, -90)
 				End Select
 
@@ -124,6 +132,14 @@ Module Helpers
 		Dim gp As New GraphicsPath
 		gp.AddCurve(aptf)
 		Return gp
+	End Function
+
+	Public Function ToPercentage(p1 As Single, p2 As Single, pt As Single) As Single
+		Return (pt - p1) * 100 / (p2 - p1)
+	End Function
+
+	Public Function FromPercentage(p1 As Single, p2 As Single, pt As Single) As Single
+		Return pt * (p2 - p1) / 100 + p1
 	End Function
 
 	Public Function ToPercentage(rect As RectangleF, pt As PointF) As PointF
@@ -169,7 +185,8 @@ Module Helpers
 		End Select
 	End Function
 
-	Public Function EditRotateAngle(snRotation As Single, dbAngle As Double, Optional _quantized As Boolean = False) As Single
+	Public Function EditRotateAngle(snRotation As Single, dbAngle As Double,
+									Optional _quantized As Boolean = False) As Single
 
 		' Get new angle and trim decimals
 		Dim snOut As Single = Int(snRotation + dbAngle)
@@ -194,8 +211,7 @@ Module Helpers
 
 	End Function
 
-	Private Function QuantizeRotation(snRotation As Single,
-snTarget As Single,
+	Private Function QuantizeRotation(snRotation As Single, snTarget As Single,
 									  ByRef bQuantized As Boolean) As Single
 
 		' Quantize angle
@@ -234,7 +250,8 @@ snTarget As Single,
 		End If
 	End Function
 
-	Public Function RotatePoint(pointToRotate As PointF, centerPoint As PointF, angleInDegrees As Double) As PointF
+	Public Function RotatePoint(pointToRotate As PointF, centerPoint As PointF,
+								angleInDegrees As Double) As PointF
 		Dim angleInRadians As Double = angleInDegrees * (Math.PI / 180)
 		Dim cosTheta As Double = Math.Cos(angleInRadians)
 		Dim sinTheta As Double = Math.Sin(angleInRadians)
@@ -242,7 +259,8 @@ snTarget As Single,
 								  .Y = CInt(sinTheta * (pointToRotate.X - centerPoint.X) + cosTheta * (pointToRotate.Y - centerPoint.Y) + centerPoint.Y)}
 	End Function
 
-	Public Function GetAngleBetweenTwoPointsWithFixedPoint(tPt1 As PointF, tPt2 As PointF, tPtFixed As PointF) As Single
+	Public Function GetAngleBetweenTwoPointsWithFixedPoint(tPt1 As PointF, tPt2 As PointF,
+														   tPtFixed As PointF) As Single
 		Dim snAngle1 As Single = Math.Atan2(tPt1.Y - tPtFixed.Y, tPt1.X - tPtFixed.X)
 		Dim snAngle2 As Single = Math.Atan2(tPt2.Y - tPtFixed.Y, tPt2.X - tPtFixed.X)
 		Return snAngle1 - snAngle2

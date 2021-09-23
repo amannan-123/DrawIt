@@ -547,7 +547,11 @@ Public Class MainForm
 			openDialog.Title = "Choose Image"
 			openDialog.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.bmp, *.gif, *.png) | *.jpg; *.jpeg; *.jpe; *.bmp; *.gif; *.png"
 			If openDialog.ShowDialog = DialogResult.OK Then
-				shp.FBrush.TImage = Image.FromFile(openDialog.FileName)
+				Dim img As Image
+				Using bmpTemp = New Bitmap(openDialog.FileName)
+					img = New Bitmap(bmpTemp)
+				End Using
+				shp.FBrush.TImage = img
 				PB_Texture.Image = shp.FBrush.TImage
 			End If
 			MainCanvas.Invalidate()
@@ -1439,7 +1443,11 @@ Public Class MainForm
 		openDialog.Title = "Choose Image"
 		openDialog.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.bmp, *.gif, *.png) | *.jpg; *.jpeg; *.jpe; *.bmp; *.gif; *.png"
 		If openDialog.ShowDialog = DialogResult.OK Then
-			set_PB.Image = Image.FromFile(openDialog.FileName)
+			Dim img As Image
+			Using bmpTemp = New Bitmap(openDialog.FileName)
+				img = New Bitmap(bmpTemp)
+			End Using
+			set_PB.Image = img
 		End If
 	End Sub
 

@@ -185,8 +185,8 @@ Public Class ColorListBox
 
 #Region "Resize"
 	Private Sub ColorList_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
-		If Height < 45 Then Height = 45
 		UpdateSize()
+		Invalidate()
 	End Sub
 
 	Private Sub ColorList_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -197,22 +197,26 @@ Public Class ColorListBox
 
 #Region "Keyboard"
 	Protected Overrides Function IsInputKey(keyData As Keys) As Boolean
+		'Because a Usercontrol ignores the arrows in the KeyDown Event
+		'and changes focus no matter what in the KeyUp Event
+		'This is needed to fix the KeyDown problem
 		Select Case keyData
-			Case Keys.Up, Keys.Down
+			Case Keys.Left, Keys.Right, Keys.Up, Keys.Down
 				Return True
 			Case Else
 				Return MyBase.IsInputKey(keyData)
 		End Select
 	End Function
 
-	Private Sub ColorList_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
-		Select Case e.KeyData
+	Protected Overrides Function ProcessCmdKey(ByRef msg As Message, keyData As Keys) As Boolean
+		Select Case keyData
 			Case Keys.Up
 				If SelectedIndex > 0 Then SelectedIndex -= 1
 			Case Keys.Down
 				If SelectedIndex < _lst.Count - 1 Then SelectedIndex += 1
 		End Select
-	End Sub
+		Return MyBase.ProcessCmdKey(msg, keyData)
+	End Function
 #End Region
 
 #Region "Mouse"
@@ -262,12 +266,14 @@ Public Class ColorListBox
 				End If
 
 				Dim itemString As String = _lst(i).Name
-				Dim myBrush As New SolidBrush(_lst(i))
-				Dim c_rect As New Rectangle(rect.X + 3, rect.Y + 3, rect.Height - 6, rect.Height - 6)
+				Dim curr_c = _lst(i)
+				Dim _pad = 3
+				Dim c_rect As New Rectangle(rect.X + 1, rect.Y + 1, rect.Height - 2, rect.Height - 2)
 
 				'Draw a Color Swatch
-				g.FillRectangle(myBrush, c_rect)
-				g.DrawRectangle(Pens.Black, c_rect)
+				g.DrawRectangle(New Pen(Color.White), c_rect)
+				c_rect.Inflate(-_pad, -_pad)
+				g.FillRectangle(New SolidBrush(curr_c), c_rect)
 
 				' Draw the text in the item.
 				Dim rt As New Rectangle(c_rect.Right, rect.Y, rect.Width - c_rect.Right, rect.Height)

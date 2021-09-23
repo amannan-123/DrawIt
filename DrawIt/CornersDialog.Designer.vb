@@ -22,171 +22,84 @@ Partial Class CornersDialog
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.T_TL = New MyControls.MyTrackBar()
-        Me.Label1 = New System.Windows.Forms.Label()
-        Me.C_TL = New System.Windows.Forms.ComboBox()
-        Me.T_TR = New MyControls.MyTrackBar()
-        Me.Label2 = New System.Windows.Forms.Label()
-        Me.C_TR = New System.Windows.Forms.ComboBox()
-        Me.T_BL = New MyControls.MyTrackBar()
-        Me.Label3 = New System.Windows.Forms.Label()
-        Me.C_BL = New System.Windows.Forms.ComboBox()
-        Me.T_BR = New MyControls.MyTrackBar()
-        Me.Label4 = New System.Windows.Forms.Label()
-        Me.C_BR = New System.Windows.Forms.ComboBox()
-        Me.SuspendLayout()
-        '
-        'T_TL
-        '
-        Me.T_TL.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
-        Me.T_TL.Factors = New Single() {0!, 1.0!}
-        Me.T_TL.Location = New System.Drawing.Point(12, 25)
-        Me.T_TL.Name = "T_TL"
-        Me.T_TL.Positions = New Single() {0!, 0.5!, 1.0!}
-        Me.T_TL.Size = New System.Drawing.Size(184, 20)
-        Me.T_TL.TabIndex = 0
-        '
-        'Label1
-        '
-        Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(9, 9)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(47, 13)
-        Me.Label1.TabIndex = 5
-        Me.Label1.Text = "TopLeft:"
-        '
-        'C_TL
-        '
-        Me.C_TL.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.C_TL.FormattingEnabled = True
-        Me.C_TL.Location = New System.Drawing.Point(202, 24)
-        Me.C_TL.Name = "C_TL"
-        Me.C_TL.Size = New System.Drawing.Size(101, 21)
-        Me.C_TL.TabIndex = 1
-        '
-        'T_TR
-        '
-        Me.T_TR.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
-        Me.T_TR.Factors = New Single() {0!, 1.0!}
-        Me.T_TR.Location = New System.Drawing.Point(12, 64)
-        Me.T_TR.Name = "T_TR"
-        Me.T_TR.Positions = New Single() {0!, 0.5!, 1.0!}
-        Me.T_TR.Size = New System.Drawing.Size(184, 20)
-        Me.T_TR.TabIndex = 2
-        '
-        'Label2
-        '
-        Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(9, 48)
-        Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(54, 13)
-        Me.Label2.TabIndex = 5
-        Me.Label2.Text = "TopRight:"
-        '
-        'C_TR
-        '
-        Me.C_TR.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.C_TR.FormattingEnabled = True
-        Me.C_TR.Location = New System.Drawing.Point(202, 63)
-        Me.C_TR.Name = "C_TR"
-        Me.C_TR.Size = New System.Drawing.Size(101, 21)
-        Me.C_TR.TabIndex = 3
-        '
-        'T_BL
-        '
-        Me.T_BL.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
-        Me.T_BL.Factors = New Single() {0!, 1.0!}
-        Me.T_BL.Location = New System.Drawing.Point(12, 103)
-        Me.T_BL.Name = "T_BL"
-        Me.T_BL.Positions = New Single() {0!, 0.5!, 1.0!}
-        Me.T_BL.Size = New System.Drawing.Size(184, 20)
-        Me.T_BL.TabIndex = 4
-        '
-        'Label3
-        '
-        Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(9, 87)
-        Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(58, 13)
-        Me.Label3.TabIndex = 5
-        Me.Label3.Text = "BottomLeft"
-        '
-        'C_BL
-        '
-        Me.C_BL.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.C_BL.FormattingEnabled = True
-        Me.C_BL.Location = New System.Drawing.Point(202, 102)
-        Me.C_BL.Name = "C_BL"
-        Me.C_BL.Size = New System.Drawing.Size(101, 21)
-        Me.C_BL.TabIndex = 5
-        '
-        'T_BR
-        '
-        Me.T_BR.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
-        Me.T_BR.Factors = New Single() {0!, 1.0!}
-        Me.T_BR.Location = New System.Drawing.Point(12, 142)
-        Me.T_BR.Name = "T_BR"
-        Me.T_BR.Positions = New Single() {0!, 0.5!, 1.0!}
-        Me.T_BR.Size = New System.Drawing.Size(184, 20)
-        Me.T_BR.TabIndex = 6
-        '
-        'Label4
-        '
-        Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(9, 126)
-        Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(68, 13)
-        Me.Label4.TabIndex = 5
-        Me.Label4.Text = "BottomRight:"
-        '
-        'C_BR
-        '
-        Me.C_BR.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.C_BR.FormattingEnabled = True
-        Me.C_BR.Location = New System.Drawing.Point(202, 141)
-        Me.C_BR.Name = "C_BR"
-        Me.C_BR.Size = New System.Drawing.Size(101, 21)
-        Me.C_BR.TabIndex = 7
-        '
-        'CornersDialog
-        '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
-        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(315, 176)
-        Me.Controls.Add(Me.C_BR)
-        Me.Controls.Add(Me.C_BL)
-        Me.Controls.Add(Me.C_TR)
-        Me.Controls.Add(Me.C_TL)
-        Me.Controls.Add(Me.Label4)
-        Me.Controls.Add(Me.Label3)
-        Me.Controls.Add(Me.T_BR)
-        Me.Controls.Add(Me.Label2)
-        Me.Controls.Add(Me.T_BL)
-        Me.Controls.Add(Me.Label1)
-        Me.Controls.Add(Me.T_TR)
-        Me.Controls.Add(Me.T_TL)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
-        Me.MaximizeBox = False
-        Me.MinimizeBox = False
-        Me.Name = "CornersDialog"
-        Me.ShowIcon = False
-        Me.ShowInTaskbar = False
-        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
-        Me.Text = "CornersDialog"
-        Me.ResumeLayout(False)
-        Me.PerformLayout()
+		Me.cbPreview = New System.Windows.Forms.CheckBox()
+		Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
+		Me.OK_Button = New System.Windows.Forms.Button()
+		Me.Cancel_Button = New System.Windows.Forms.Button()
+		Me.TableLayoutPanel1.SuspendLayout()
+		Me.SuspendLayout()
+		'
+		'cbPreview
+		'
+		Me.cbPreview.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+		Me.cbPreview.AutoSize = True
+		Me.cbPreview.Checked = True
+		Me.cbPreview.CheckState = System.Windows.Forms.CheckState.Checked
+		Me.cbPreview.Location = New System.Drawing.Point(12, 255)
+		Me.cbPreview.Name = "cbPreview"
+		Me.cbPreview.Size = New System.Drawing.Size(64, 17)
+		Me.cbPreview.TabIndex = 17
+		Me.cbPreview.Text = "Preview"
+		Me.cbPreview.UseVisualStyleBackColor = True
+		'
+		'TableLayoutPanel1
+		'
+		Me.TableLayoutPanel1.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.TableLayoutPanel1.ColumnCount = 2
+		Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+		Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+		Me.TableLayoutPanel1.Controls.Add(Me.OK_Button, 0, 0)
+		Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 1, 0)
+		Me.TableLayoutPanel1.Location = New System.Drawing.Point(94, 246)
+		Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
+		Me.TableLayoutPanel1.RowCount = 1
+		Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+		Me.TableLayoutPanel1.Size = New System.Drawing.Size(146, 26)
+		Me.TableLayoutPanel1.TabIndex = 18
+		'
+		'OK_Button
+		'
+		Me.OK_Button.Anchor = System.Windows.Forms.AnchorStyles.None
+		Me.OK_Button.Location = New System.Drawing.Point(3, 3)
+		Me.OK_Button.Name = "OK_Button"
+		Me.OK_Button.Size = New System.Drawing.Size(67, 20)
+		Me.OK_Button.TabIndex = 0
+		Me.OK_Button.Text = "OK"
+		'
+		'Cancel_Button
+		'
+		Me.Cancel_Button.Anchor = System.Windows.Forms.AnchorStyles.None
+		Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
+		Me.Cancel_Button.Location = New System.Drawing.Point(76, 3)
+		Me.Cancel_Button.Name = "Cancel_Button"
+		Me.Cancel_Button.Size = New System.Drawing.Size(67, 20)
+		Me.Cancel_Button.TabIndex = 1
+		Me.Cancel_Button.Text = "Cancel"
+		'
+		'CornersDialog
+		'
+		Me.AcceptButton = Me.OK_Button
+		Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+		Me.CancelButton = Me.Cancel_Button
+		Me.ClientSize = New System.Drawing.Size(252, 284)
+		Me.Controls.Add(Me.TableLayoutPanel1)
+		Me.Controls.Add(Me.cbPreview)
+		Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
+		Me.MaximizeBox = False
+		Me.MinimizeBox = False
+		Me.Name = "CornersDialog"
+		Me.ShowIcon = False
+		Me.ShowInTaskbar = False
+		Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
+		Me.Text = "CornersDialog"
+		Me.TableLayoutPanel1.ResumeLayout(False)
+		Me.ResumeLayout(False)
+		Me.PerformLayout()
 
-    End Sub
-    Friend WithEvents T_TL As MyControls.MyTrackBar
-    Friend WithEvents Label1 As Label
-    Friend WithEvents C_TL As ComboBox
-    Friend WithEvents T_TR As MyControls.MyTrackBar
-    Friend WithEvents Label2 As Label
-    Friend WithEvents C_TR As ComboBox
-    Friend WithEvents T_BL As MyControls.MyTrackBar
-    Friend WithEvents Label3 As Label
-    Friend WithEvents C_BL As ComboBox
-    Friend WithEvents T_BR As MyControls.MyTrackBar
-    Friend WithEvents Label4 As Label
-    Friend WithEvents C_BR As ComboBox
+	End Sub
+	Friend WithEvents cbPreview As CheckBox
+	Friend WithEvents TableLayoutPanel1 As TableLayoutPanel
+	Friend WithEvents OK_Button As Button
+	Friend WithEvents Cancel_Button As Button
 End Class

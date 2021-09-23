@@ -29,6 +29,7 @@ Partial Class ColorListBox
 		'
 		Me.MyVScrollBar1.Dock = System.Windows.Forms.DockStyle.Right
 		Me.MyVScrollBar1.Location = New System.Drawing.Point(135, 0)
+		Me.MyVScrollBar1.MinimumSize = New System.Drawing.Size(0, 45)
 		Me.MyVScrollBar1.Name = "MyVScrollBar1"
 		Me.MyVScrollBar1.Size = New System.Drawing.Size(15, 150)
 		Me.MyVScrollBar1.SmallChange = 5

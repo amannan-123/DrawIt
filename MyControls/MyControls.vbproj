@@ -168,6 +168,12 @@
     <Compile Include="PointSelector.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="CornersEditor.Designer.vb">
+      <DependentUpon>CornersEditor.vb</DependentUpon>
+    </Compile>
+    <Compile Include="CornersEditor.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="ShapePointsEditor.Designer.vb">
       <DependentUpon>ShapePointsEditor.vb</DependentUpon>
     </Compile>
@@ -220,6 +226,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PointSelector.resx">
       <DependentUpon>PointSelector.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CornersEditor.resx">
+      <DependentUpon>CornersEditor.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ShapePointsEditor.resx">
       <DependentUpon>ShapePointsEditor.vb</DependentUpon>

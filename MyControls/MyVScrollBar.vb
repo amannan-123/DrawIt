@@ -291,10 +291,13 @@ Public Class MyVScrollBar
 	End Sub
 
 	Private Sub MyVScrollBar_MouseWheel(sender As Object, e As MouseEventArgs) Handles Me.MouseWheel
+		Dim chg = SmallChange
+		If My.Computer.Keyboard.ShiftKeyDown Then chg = LargeChange
+
 		If e.Delta > 0 Then
-			Value -= SmallChange
+			Value -= chg
 		Else
-			Value += SmallChange
+			Value += chg
 		End If
 	End Sub
 #End Region

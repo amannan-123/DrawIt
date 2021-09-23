@@ -422,10 +422,9 @@ Public Class Shape
 				Case MyShape.ShapeStyle.Rectangle
 					gp.AddRectangle(rt)
 				Case MyShape.ShapeStyle.RoundedRectangle
-					gp = GetRoundedRectPath(rt, MShape.ULSize, MShape.ULType,
-										MShape.URSize, MShape.URType,
-										MShape.BLSize, MShape.BLType,
-										MShape.BRSize, MShape.BRType)
+					gp = GetRoundedRectPath(rt, MShape.Corners,
+											MShape.ULType, MShape.URType,
+											MShape.BLType, MShape.BRType)
 				Case MyShape.ShapeStyle.Ellipse
 					gp.AddEllipse(rt)
 				Case MyShape.ShapeStyle.Triangle

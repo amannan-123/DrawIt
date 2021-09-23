@@ -47,19 +47,6 @@ Public Class TestForm
 		Dim g As Graphics = e.Graphics
 		g.SmoothingMode = SmoothingMode.AntiAlias
 
-		Dim mm As New Matrix
-		mm.Shear(0.5, 0)
-
-		Dim rect As New Rectangle(50, 50, 200, 200)
-		Dim pth As New GraphicsPath()
-		pth.AddRectangle(rect)
-		pth.Transform(mm)
-		Dim pbr As New PathGradientBrush(pth)
-		pbr.CenterColor = Color.White
-		pbr.SurroundColors = {Color.Black}
-		pbr.FocusScales = New PointF(0.5, 0)
-		g.FillPath(pbr, pth)
-
 		'Dim c1 As Color = Color.SteelBlue
 		'Dim c2 As Color = Color.HotPink
 
