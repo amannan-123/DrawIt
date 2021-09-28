@@ -26,6 +26,7 @@ Partial Class CornersDialog
 		Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
 		Me.OK_Button = New System.Windows.Forms.Button()
 		Me.Cancel_Button = New System.Windows.Forms.Button()
+		Me.CEditor = New MyControls.CornersEditor()
 		Me.TableLayoutPanel1.SuspendLayout()
 		Me.SuspendLayout()
 		'
@@ -38,7 +39,7 @@ Partial Class CornersDialog
 		Me.cbPreview.Location = New System.Drawing.Point(12, 255)
 		Me.cbPreview.Name = "cbPreview"
 		Me.cbPreview.Size = New System.Drawing.Size(64, 17)
-		Me.cbPreview.TabIndex = 17
+		Me.cbPreview.TabIndex = 1
 		Me.cbPreview.Text = "Preview"
 		Me.cbPreview.UseVisualStyleBackColor = True
 		'
@@ -55,7 +56,7 @@ Partial Class CornersDialog
 		Me.TableLayoutPanel1.RowCount = 1
 		Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
 		Me.TableLayoutPanel1.Size = New System.Drawing.Size(146, 26)
-		Me.TableLayoutPanel1.TabIndex = 18
+		Me.TableLayoutPanel1.TabIndex = 2
 		'
 		'OK_Button
 		'
@@ -76,6 +77,22 @@ Partial Class CornersDialog
 		Me.Cancel_Button.TabIndex = 1
 		Me.Cancel_Button.Text = "Cancel"
 		'
+		'CEditor
+		'
+		Me.CEditor.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+			Or System.Windows.Forms.AnchorStyles.Left) _
+			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.CEditor.BackColor = System.Drawing.Color.White
+		Me.CEditor.BLReversed = False
+		Me.CEditor.BRReversed = False
+		Me.CEditor.Corners = New Single() {25.0!, 75.0!, 25.0!, 75.0!, 25.0!, 75.0!, 25.0!, 75.0!}
+		Me.CEditor.Location = New System.Drawing.Point(12, 12)
+		Me.CEditor.Name = "CEditor"
+		Me.CEditor.Size = New System.Drawing.Size(228, 228)
+		Me.CEditor.TabIndex = 0
+		Me.CEditor.ULReversed = False
+		Me.CEditor.URReversed = False
+		'
 		'CornersDialog
 		'
 		Me.AcceptButton = Me.OK_Button
@@ -83,6 +100,7 @@ Partial Class CornersDialog
 		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
 		Me.CancelButton = Me.Cancel_Button
 		Me.ClientSize = New System.Drawing.Size(252, 284)
+		Me.Controls.Add(Me.CEditor)
 		Me.Controls.Add(Me.TableLayoutPanel1)
 		Me.Controls.Add(Me.cbPreview)
 		Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
@@ -102,4 +120,5 @@ Partial Class CornersDialog
 	Friend WithEvents TableLayoutPanel1 As TableLayoutPanel
 	Friend WithEvents OK_Button As Button
 	Friend WithEvents Cancel_Button As Button
+	Friend WithEvents CEditor As MyControls.CornersEditor
 End Class

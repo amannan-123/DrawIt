@@ -234,6 +234,7 @@ Public Class MyShape
 End Class
 
 #Region "RRCorners"
+<Serializable>
 Public Class RRCorners
 
 #Region "Properties"
@@ -316,6 +317,29 @@ Public Class RRCorners
 			_l2 = value
 		End Set
 	End Property
+#End Region
+
+#Region "Helpers"
+	Shared Function FromArray(arr As Single()) As RRCorners
+		If arr.Length < 8 Then Return Nothing
+		Dim crr As New RRCorners
+		crr.T1 = arr(0)
+		crr.T2 = 100 - arr(1)
+		crr.R1 = arr(2)
+		crr.R2 = 100 - arr(3)
+		crr.B1 = arr(4)
+		crr.B2 = 100 - arr(5)
+		crr.L1 = arr(6)
+		crr.L2 = 100 - arr(7)
+		Return crr
+	End Function
+
+	Public Function ToArray() As Single()
+		Return New Single() {T1, 100 - T2,
+							 R1, 100 - R2,
+							 B1, 100 - B2,
+							 L1, 100 - L2}
+	End Function
 #End Region
 
 #Region "Clone"

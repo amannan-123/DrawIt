@@ -43,7 +43,7 @@ Partial Class TestForm
 		Me.CornersEditor1.BackColor = System.Drawing.Color.White
 		Me.CornersEditor1.BLReversed = False
 		Me.CornersEditor1.BRReversed = False
-		Me.CornersEditor1.Corners = New Single() {50.0!, 50.0!, 50.0!, 50.0!, 50.0!, 50.0!, 50.0!, 50.0!}
+		Me.CornersEditor1.Corners = New Single() {5.0!, 50.0!, 5.0!, 50.0!, 5.0!, 50.0!, 5.0!, 50.0!}
 		Me.CornersEditor1.Location = New System.Drawing.Point(388, 12)
 		Me.CornersEditor1.Name = "CornersEditor1"
 		Me.CornersEditor1.Size = New System.Drawing.Size(283, 283)

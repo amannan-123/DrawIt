@@ -2563,8 +2563,8 @@ Partial Class MainForm
 		Me.TBShrY.Increment = 0.1!
 		Me.TBShrY.Location = New System.Drawing.Point(58, 64)
 		Me.TBShrY.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
-		Me.TBShrY.Maximum = 1.0!
-		Me.TBShrY.Minimum = -1.0!
+		Me.TBShrY.Maximum = 0.99!
+		Me.TBShrY.Minimum = -0.99!
 		Me.TBShrY.Name = "TBShrY"
 		Me.TBShrY.Positions = New Single() {0!, 0.5!, 1.0!}
 		Me.TBShrY.Size = New System.Drawing.Size(188, 20)
@@ -2592,8 +2592,8 @@ Partial Class MainForm
 		Me.TBShrX.Increment = 0.1!
 		Me.TBShrX.Location = New System.Drawing.Point(58, 34)
 		Me.TBShrX.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
-		Me.TBShrX.Maximum = 1.0!
-		Me.TBShrX.Minimum = -1.0!
+		Me.TBShrX.Maximum = 0.99!
+		Me.TBShrX.Minimum = -0.99!
 		Me.TBShrX.Name = "TBShrX"
 		Me.TBShrX.Positions = New Single() {0!, 0.5!, 1.0!}
 		Me.TBShrX.Size = New System.Drawing.Size(188, 20)

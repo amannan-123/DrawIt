@@ -84,12 +84,7 @@ Public Class PointsEditor
 					shp.MShape.CurvePoints = PEditor.Points
 			End Select
 		Else
-			Select Case shp.MShape.SType
-				Case MyShape.ShapeStyle.Polygon, MyShape.ShapeStyle.Lines
-					shp.MShape.PolygonPoints = old_p
-				Case MyShape.ShapeStyle.Curves, MyShape.ShapeStyle.ClosedCurve
-					shp.MShape.CurvePoints = old_p
-			End Select
+			RestoreOld()
 		End If
 		If Not IsNothing(canvas) Then canvas.Invalidate()
 	End Sub
@@ -103,10 +98,7 @@ Public Class PointsEditor
 					shp.MShape.Tension = TB_Tension.Value
 			End Select
 		Else
-			Select Case shp.MShape.SType
-				Case MyShape.ShapeStyle.Curves, MyShape.ShapeStyle.ClosedCurve
-					shp.MShape.Tension = old_t
-			End Select
+			RestoreOld()
 		End If
 		If Not IsNothing(canvas) Then canvas.Invalidate()
 	End Sub
