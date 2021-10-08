@@ -194,7 +194,7 @@ Public Class CornersEditor
 					If x_pt < 0 Or x_pt > 100 Then Return
 					If x_pt <= _lst(1) Then
 						_lst(0) = x_pt
-						If My.Computer.Keyboard.ShiftKeyDown Then
+						If My.Computer.Keyboard.AltKeyDown Then
 							_lst(6) = x_pt
 							If _lst(7) < _lst(6) Then _lst(7) = _lst(6)
 						End If
@@ -203,7 +203,7 @@ Public Class CornersEditor
 					If x_pt < 0 Or x_pt > 100 Then Return
 					If x_pt >= _lst(0) Then
 						_lst(1) = x_pt
-						If My.Computer.Keyboard.ShiftKeyDown Then
+						If My.Computer.Keyboard.AltKeyDown Then
 							_lst(2) = 100 - x_pt
 							If _lst(3) < _lst(2) Then _lst(3) = _lst(2)
 						End If
@@ -212,7 +212,7 @@ Public Class CornersEditor
 					If y_pt < 0 Or y_pt > 100 Then Return
 					If y_pt <= _lst(3) Then
 						_lst(2) = y_pt
-						If My.Computer.Keyboard.ShiftKeyDown Then
+						If My.Computer.Keyboard.AltKeyDown Then
 							_lst(1) = 100 - y_pt
 							If _lst(0) > _lst(1) Then _lst(0) = _lst(1)
 						End If
@@ -221,7 +221,7 @@ Public Class CornersEditor
 					If y_pt < 0 Or y_pt > 100 Then Return
 					If y_pt >= _lst(2) Then
 						_lst(3) = y_pt
-						If My.Computer.Keyboard.ShiftKeyDown Then
+						If My.Computer.Keyboard.AltKeyDown Then
 							_lst(5) = y_pt
 							If _lst(4) > _lst(5) Then _lst(4) = _lst(5)
 						End If
@@ -230,7 +230,7 @@ Public Class CornersEditor
 					If x_pt < 0 Or x_pt > 100 Then Return
 					If x_pt <= _lst(5) Then
 						_lst(4) = x_pt
-						If My.Computer.Keyboard.ShiftKeyDown Then
+						If My.Computer.Keyboard.AltKeyDown Then
 							_lst(7) = 100 - x_pt
 							If _lst(6) > _lst(7) Then _lst(6) = _lst(7)
 						End If
@@ -239,7 +239,7 @@ Public Class CornersEditor
 					If x_pt < 0 Or x_pt > 100 Then Return
 					If x_pt >= _lst(4) Then
 						_lst(5) = x_pt
-						If My.Computer.Keyboard.ShiftKeyDown Then
+						If My.Computer.Keyboard.AltKeyDown Then
 							_lst(3) = x_pt
 							If _lst(2) > _lst(3) Then _lst(2) = _lst(3)
 						End If
@@ -248,7 +248,7 @@ Public Class CornersEditor
 					If y_pt < 0 Or y_pt > 100 Then Return
 					If y_pt <= _lst(7) Then
 						_lst(6) = y_pt
-						If My.Computer.Keyboard.ShiftKeyDown Then
+						If My.Computer.Keyboard.AltKeyDown Then
 							_lst(0) = y_pt
 							If _lst(1) < _lst(0) Then _lst(1) = _lst(0)
 						End If
@@ -257,7 +257,7 @@ Public Class CornersEditor
 					If y_pt < 0 Or y_pt > 100 Then Return
 					If y_pt >= _lst(6) Then
 						_lst(7) = y_pt
-						If My.Computer.Keyboard.ShiftKeyDown Then
+						If My.Computer.Keyboard.AltKeyDown Then
 							_lst(4) = 100 - y_pt
 							If _lst(5) < _lst(4) Then _lst(5) = _lst(4)
 						End If
@@ -448,88 +448,88 @@ Public Class CornersEditor
 
 	Private Sub CornersEditor_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
 		If s_cn > -1 Then
-			Dim _val = _lst(s_cn)
-			Select Case e.KeyData
+			Select Case e.KeyCode
 				Case Keys.Left, Keys.Up
-					_val -= 1
+					IncrementSelected(-1)
 				Case Keys.Right, Keys.Down
-					_val += 1
-			End Select
-			If e.Modifiers = Keys.Control Then _val = CInt(_val)
-			If _val < 0 Or _val > 100 Then Return
-			Select Case s_cn
-				Case 0
-					If _val <= _lst(1) Then
-						_lst(0) = _val
-						If e.Modifiers = Keys.Alt Then
-							_lst(6) = _val
-							If _lst(7) < _lst(6) Then _lst(7) = _lst(6)
-						End If
-					End If
-				Case 1
-					If _val >= _lst(0) Then
-						_lst(1) = _val
-						If e.Modifiers = Keys.Alt Then
-							_lst(2) = 100 - _val
-							If _lst(3) < _lst(2) Then _lst(3) = _lst(2)
-						End If
-					End If
-				Case 2
-					If _val <= _lst(3) Then
-						_lst(2) = _val
-						If e.Modifiers = Keys.Alt Then
-							_lst(1) = 100 - _val
-							If _lst(0) > _lst(1) Then _lst(0) = _lst(1)
-						End If
-					End If
-				Case 3
-					If _val >= _lst(2) Then
-						_lst(3) = _val
-						If e.Modifiers = Keys.Alt Then
-							_lst(5) = _val
-							If _lst(4) > _lst(5) Then _lst(4) = _lst(5)
-						End If
-					End If
-				Case 4
-					If _val <= _lst(5) Then
-						_lst(4) = _val
-						If e.Modifiers = Keys.Alt Then
-							_lst(7) = 100 - _val
-							If _lst(6) > _lst(7) Then _lst(6) = _lst(7)
-						End If
-					End If
-				Case 5
-					If _val >= _lst(4) Then
-						_lst(5) = _val
-						If e.Modifiers = Keys.Alt Then
-							_lst(3) = _val
-							If _lst(2) > _lst(3) Then _lst(2) = _lst(3)
-						End If
-					End If
-				Case 6
-					If _val <= _lst(7) Then
-						_lst(6) = _val
-						If e.Modifiers = Keys.Alt Then
-							_lst(0) = _val
-							If _lst(1) < _lst(0) Then _lst(1) = _lst(0)
-						End If
-					End If
-				Case 7
-					If _val >= _lst(6) Then
-						_lst(7) = _val
-						If e.Modifiers = Keys.Alt Then
-							_lst(4) = 100 - _val
-							If _lst(5) < _lst(4) Then _lst(5) = _lst(4)
-						End If
-					End If
-			End Select
-			Select Case e.KeyData
-				Case e.KeyData Or Keys.Left, e.KeyData Or Keys.Up,
-					e.KeyData Or Keys.Right, e.KeyData Or Keys.Down
-					RaiseEvent CornersChanged(Me, New EventArgs)
-					Invalidate()
+					IncrementSelected(1)
 			End Select
 		End If
+	End Sub
+
+	Private Sub IncrementSelected(_inc As Integer)
+		Dim _val = _lst(s_cn)
+		_val += _inc
+		If (Control.ModifierKeys And Keys.Control) = Keys.Control Then _val = CInt(_val)
+		If _val < 0 Or _val > 100 Then Return
+		Select Case s_cn
+			Case 0
+				If _val <= _lst(1) Then
+					_lst(0) = _val
+					If (Control.ModifierKeys And Keys.Alt) = Keys.Alt Then
+						_lst(6) = _val
+						If _lst(7) < _lst(6) Then _lst(7) = _lst(6)
+					End If
+				End If
+			Case 1
+				If _val >= _lst(0) Then
+					_lst(1) = _val
+					If (Control.ModifierKeys And Keys.Alt) = Keys.Alt Then
+						_lst(2) = 100 - _val
+						If _lst(3) < _lst(2) Then _lst(3) = _lst(2)
+					End If
+				End If
+			Case 2
+				If _val <= _lst(3) Then
+					_lst(2) = _val
+					If (Control.ModifierKeys And Keys.Alt) = Keys.Alt Then
+						_lst(1) = 100 - _val
+						If _lst(0) > _lst(1) Then _lst(0) = _lst(1)
+					End If
+				End If
+			Case 3
+				If _val >= _lst(2) Then
+					_lst(3) = _val
+					If (Control.ModifierKeys And Keys.Alt) = Keys.Alt Then
+						_lst(5) = _val
+						If _lst(4) > _lst(5) Then _lst(4) = _lst(5)
+					End If
+				End If
+			Case 4
+				If _val <= _lst(5) Then
+					_lst(4) = _val
+					If (Control.ModifierKeys And Keys.Alt) = Keys.Alt Then
+						_lst(7) = 100 - _val
+						If _lst(6) > _lst(7) Then _lst(6) = _lst(7)
+					End If
+				End If
+			Case 5
+				If _val >= _lst(4) Then
+					_lst(5) = _val
+					If (Control.ModifierKeys And Keys.Alt) = Keys.Alt Then
+						_lst(3) = _val
+						If _lst(2) > _lst(3) Then _lst(2) = _lst(3)
+					End If
+				End If
+			Case 6
+				If _val <= _lst(7) Then
+					_lst(6) = _val
+					If (Control.ModifierKeys And Keys.Alt) = Keys.Alt Then
+						_lst(0) = _val
+						If _lst(1) < _lst(0) Then _lst(1) = _lst(0)
+					End If
+				End If
+			Case 7
+				If _val >= _lst(6) Then
+					_lst(7) = _val
+					If (Control.ModifierKeys And Keys.Alt) = Keys.Alt Then
+						_lst(4) = 100 - _val
+						If _lst(5) < _lst(4) Then _lst(5) = _lst(4)
+					End If
+				End If
+		End Select
+		RaiseEvent CornersChanged(Me, New EventArgs)
+		Invalidate()
 	End Sub
 #End Region
 

@@ -558,9 +558,11 @@ Public Class Canvas
 			SetPrimary()
 		End If
 
+		Dim selc = SelectedIndices()
+
 		'highlight shape
 		If HighlightShapes AndAlso op = MOperations.None AndAlso
-		   MainForm.rSelect.Checked AndAlso shps.Count > 0 Then
+		   MainForm.rSelect.Checked AndAlso shps.Count > selc.Count Then
 			Dim curr As Integer = ShapeInCursor(e.Location)
 			If curr > -1 Then
 				If shps(curr).Selected = False Then
@@ -690,7 +692,7 @@ Public Class Canvas
 			Case MOperations.Move
 				If My.Computer.Keyboard.CtrlKeyDown AndAlso cloned = False Then
 					old_sl.Clear()
-					For Each i As Integer In SelectedIndices()
+					For Each i As Integer In selc
 						old_sl.Add(i)
 					Next
 					CloneSelected()
@@ -699,7 +701,7 @@ Public Class Canvas
 				End If
 				If cloning Then
 					If My.Computer.Keyboard.CtrlKeyDown = False Then
-						Dim _lst = SelectedIndices()
+						Dim _lst = selc
 						For i As Integer = 0 To old_sl.Count - 1
 							Dim ss As Shape = shps(_lst(i))
 							shps(old_sl(i)).BaseRect = ss.BaseRect
@@ -723,10 +725,13 @@ Public Class Canvas
 						Dim dX = Math.Abs(iXMove)
 						Dim dY = Math.Abs(iYMove)
 						If dX > dY Then
+							'Only horizontal
 							dRc.Offset(iXMove, 0)
 						ElseIf dY > dX Then
+							'Only vertical
 							dRc.Offset(0, iYMove)
 						Else
+							'Diagonal (to be fixed)
 							Dim iinc = Math.Max(iXMove, iYMove)
 							dRc.Offset(iinc, iinc)
 						End If
