@@ -509,8 +509,12 @@ Public Class Shape
 			If MShape.IsClosed Then gp.CloseFigure()
 
 			'flip
-			'Dim flipXMatrix = New Matrix(-1, 0, 0, 1, BaseRect.Width, 0)
-			'Dim flipYMatrix = New Matrix(1, 0, 0, -1, 0, BaseRect.Height)
+			'Dim flipXMatrix = New Matrix(-1, 0,
+			'							 0, 1,
+			'							 BaseRect.Width, 0)
+			'Dim flipYMatrix = New Matrix(1, 0,
+			'							 0, -1,
+			'							 0, BaseRect.Height)
 			'Dim transformMatrix = New Matrix()
 			'transformMatrix.Multiply(flipXMatrix)
 			'transformMatrix.Multiply(flipYMatrix)

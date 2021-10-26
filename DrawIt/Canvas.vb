@@ -38,7 +38,75 @@ Public Class Canvas
 	End Sub
 #End Region
 
-#Region "Enum"
+#Region "Structs & Enums"
+	Private Structure HoverInfo
+
+		Public Sub New(ind As Integer, tp As Integer)
+			shp_index = ind
+			h_type = tp
+		End Sub
+
+		Private shp_index As Integer
+		Public Property ShapeIndex() As Integer
+			Get
+				Return shp_index
+			End Get
+			Set(ByVal value As Integer)
+				shp_index = value
+			End Set
+		End Property
+
+		Private h_type As Integer
+		Public Property HoverType() As Integer
+			Get
+				Return h_type
+			End Get
+			Set(ByVal value As Integer)
+				h_type = value
+			End Set
+		End Property
+
+	End Structure
+
+	Private Structure DrawModeInfo
+
+		Public Sub New(mode As Boolean)
+			d_mode = mode
+			_pts = New List(Of PointF)
+		End Sub
+
+		Private d_mode As Boolean
+		Public Property DrawMode() As Boolean
+			Get
+				Return d_mode
+			End Get
+			Set(ByVal value As Boolean)
+				d_mode = value
+			End Set
+		End Property
+
+		Private _pts As List(Of PointF)
+		Public Property Points() As List(Of PointF)
+			Get
+				Return _pts
+			End Get
+			Set(ByVal value As List(Of PointF))
+				_pts = value
+			End Set
+		End Property
+
+		Private d_shape As DShape
+		Public Property ShapeType As DShape
+			Get
+				Return d_shape
+			End Get
+			Set(ByVal value As DShape)
+				d_shape = value
+			End Set
+		End Property
+
+	End Structure
+
 	Enum SelectOrder
 		AboveFirst
 		BelowFirst
@@ -59,17 +127,14 @@ Public Class Canvas
 	Private cloning As Boolean = False
 	Private up_fix As Boolean = True
 	Private ReadOnly old_sl As New List(Of Integer)
-	Private ht_shp As Integer = -1
-	Private htype As Integer = 0
 	Private op As MOperations = MOperations.None
 	Private m_pt As Point
 	Private m_cnt As PointF
 	Private ReadOnly m_rect As New List(Of RectangleF)
 	Private m_ang As Single
 	Private s_rect As New RectangleF
-	Private d_shape As DShape
-	Private d_mode As Boolean = False
-	Private ReadOnly t_pts As New List(Of PointF)
+	Private h_info As New HoverInfo(-1, 0)
+	Private d_info As New DrawModeInfo(False)
 #End Region
 
 #Region "Properties"
@@ -252,7 +317,7 @@ Public Class Canvas
 
 #Region "Functions"
 	Private Function DModeMin() As Integer
-		Select Case d_shape
+		Select Case d_info.ShapeType
 			Case DShape.Polygon, DShape.Curves, DShape.ClosedCurve
 				Return 3
 			Case DShape.Lines
@@ -264,7 +329,7 @@ Public Class Canvas
 
 	Private Function DPPath(ind As Integer) As GraphicsPath
 		If ind < 0 Then Return Nothing
-		Dim rt As New RectangleF(t_pts(ind), SizeF.Empty)
+		Dim rt As New RectangleF(d_info.Points(ind), SizeF.Empty)
 		rt.Inflate(5, 5)
 		Dim pth As New GraphicsPath()
 		pth.AddEllipse(rt)
@@ -272,7 +337,7 @@ Public Class Canvas
 	End Function
 
 	Private Function DPInCursor(ept As Point) As Integer
-		For i As Integer = t_pts.Count - 1 To 0 Step -1
+		For i As Integer = d_info.Points.Count - 1 To 0 Step -1
 			If DPPath(i).IsVisible(ept) Then
 				Return i
 			End If
@@ -395,7 +460,7 @@ Public Class Canvas
 
 #Region "Mouse Events"
 	Private Sub Canvas_MouseDown(sender As Object, e As MouseEventArgs) Handles MyBase.MouseDown
-		ht_shp = -1
+		h_info.ShapeIndex = -1
 		m_pt = e.Location
 
 		Dim curr As Integer = ShapeInCursor(e.Location)
@@ -410,48 +475,48 @@ Public Class Canvas
 					 MyShape.ShapeStyle.Polygon,
 					 MyShape.ShapeStyle.Curves,
 					 MyShape.ShapeStyle.ClosedCurve
-					d_shape = sty
+					d_info.ShapeType = sty
 					If e.Button = MouseButtons.Right Then
-						d_mode = True
+						d_info.DrawMode = True
 						If My.Computer.Keyboard.AltKeyDown Then
-							If t_pts.Count > 0 Then
+							If d_info.Points.Count > 0 Then
 								Dim ind = DPInCursor(e.Location)
-								If ind > -1 Then t_pts.RemoveAt(ind)
+								If ind > -1 Then d_info.Points.RemoveAt(ind)
 							End If
 						Else
 							Dim n_pt As Point = e.Location
 							If My.Computer.Keyboard.CtrlKeyDown Then
-								If t_pts.Count > 0 Then n_pt.X = t_pts.Last().X
+								If d_info.Points.Count > 0 Then n_pt.X = d_info.Points.Last().X
 							ElseIf My.Computer.Keyboard.ShiftKeyDown Then
-								If t_pts.Count > 0 Then n_pt.Y = t_pts.Last().Y
+								If d_info.Points.Count > 0 Then n_pt.Y = d_info.Points.Last().Y
 							End If
-							t_pts.Add(n_pt)
+							d_info.Points.Add(n_pt)
 						End If
 					ElseIf e.Button = MouseButtons.Left Then
-						If t_pts.Count >= DModeMin() Then
+						If d_info.Points.Count >= DModeMin() Then
 							Dim _min As PointF
 							Dim _max As PointF
-							_min.X = t_pts.Min(Function(pt As PointF) pt.X)
-							_min.Y = t_pts.Min(Function(pt As PointF) pt.Y)
-							_max.X = t_pts.Max(Function(pt As PointF) pt.X)
-							_max.Y = t_pts.Max(Function(pt As PointF) pt.Y)
+							_min.X = d_info.Points.Min(Function(pt As PointF) pt.X)
+							_min.Y = d_info.Points.Min(Function(pt As PointF) pt.Y)
+							_max.X = d_info.Points.Max(Function(pt As PointF) pt.X)
+							_max.Y = d_info.Points.Max(Function(pt As PointF) pt.Y)
 							If _min.X = _max.X Then _max.X += 1
 							If _min.Y = _max.Y Then _max.Y += 1
 							Dim sshp As New Shape(_min, sty, bty)
 							Dim rectf As New RectangleF(_min, New SizeF(_max.X - _min.X, _max.Y - _min.Y))
 							sshp.BaseRect = rectf
 							Dim l_perc = New List(Of PointF)
-							t_pts.ForEach(Sub(x) l_perc.Add(ToPercentage(rectf, x)))
-							If d_shape = 4 Or d_shape = 5 Then
+							d_info.Points.ForEach(Sub(x) l_perc.Add(ToPercentage(rectf, x)))
+							If d_info.ShapeType = 4 Or d_info.ShapeType = 5 Then
 								sshp.MShape.PolygonPoints = l_perc.ToArray()
 							Else
 								sshp.MShape.CurvePoints = l_perc.ToArray()
 							End If
 							shps.Add(sshp)
-							d_mode = False
-							t_pts.Clear()
+							d_info.DrawMode = False
+							d_info.Points.Clear()
 						Else
-							If Not d_mode Then
+							If Not d_info.DrawMode Then
 								shp = New Shape(m_pt, sty, bty)
 								shp.Selected = True
 								shps.Add(shp)
@@ -568,18 +633,18 @@ Public Class Canvas
 				If shps(curr).Selected = False Then
 					If Not IsNothing(shps(curr).BorderPath) AndAlso
 					Not IsNothing(shps(curr).SelectionPath) Then
-						ht_shp = curr
+						h_info.ShapeIndex = curr
 						If shps(curr).BorderPath.IsVisible(e.Location) Then
-							htype = 1
+							h_info.HoverType = 1
 						ElseIf shps(curr).SelectionPath.IsVisible(e.Location) Then
-							htype = 0
+							h_info.HoverType = 0
 						End If
 					End If
 				Else
-					ht_shp = -1
+					h_info.ShapeIndex = -1
 				End If
 			Else
-				ht_shp = -1
+				h_info.ShapeIndex = -1
 			End If
 			Invalidate()
 		End If
@@ -805,7 +870,7 @@ Public Class Canvas
 		SetPrimary()
 		cloned = False
 		cloning = False
-		If Not d_mode Then MainForm.rSelect.Checked = True
+		If Not d_info.DrawMode Then MainForm.rSelect.Checked = True
 		Cursor = Cursors.Default
 		If op <> MOperations.None Then
 			MainForm.UpdateControls()
@@ -1141,30 +1206,30 @@ Public Class Canvas
 		End If
 
 		'Draw mode
-		If d_mode Then
-			For i As Integer = 0 To t_pts.Count - 1
+		If d_info.DrawMode Then
+			For i As Integer = 0 To d_info.Points.Count - 1
 				g.FillPath(New SolidBrush(Color.FromArgb(180, Color.Black)),
 						   DPPath(i))
 			Next
-			If t_pts.Count >= DModeMin() Then
-				Select Case d_shape
+			If d_info.Points.Count >= DModeMin() Then
+				Select Case d_info.ShapeType
 					Case DShape.Lines
-						g.DrawLines(Pens.Black, t_pts.ToArray())
+						g.DrawLines(Pens.Black, d_info.Points.ToArray())
 					Case DShape.Polygon
-						g.DrawPolygon(Pens.Black, t_pts.ToArray())
+						g.DrawPolygon(Pens.Black, d_info.Points.ToArray())
 					Case DShape.Curves
-						g.DrawCurve(Pens.Black, t_pts.ToArray())
+						g.DrawCurve(Pens.Black, d_info.Points.ToArray())
 					Case DShape.ClosedCurve
-						g.DrawClosedCurve(Pens.Black, t_pts.ToArray())
+						g.DrawClosedCurve(Pens.Black, d_info.Points.ToArray())
 				End Select
 			End If
 		End If
 
 		'Draw Highlighted Shape
-		If ht_shp > -1 And shps.Count >= ht_shp + 1 Then
+		If h_info.ShapeIndex > -1 And shps.Count >= h_info.ShapeIndex + 1 Then
 			Using pn As New Pen(hg_pth)
-				If htype = 1 Then pn.Color = hg_brd
-				g.DrawPath(pn, shps(ht_shp).TotalPath())
+				If h_info.HoverType = 1 Then pn.Color = hg_brd
+				g.DrawPath(pn, shps(h_info.ShapeIndex).TotalPath())
 			End Using
 		End If
 
