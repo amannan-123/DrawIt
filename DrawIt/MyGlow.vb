@@ -1,7 +1,9 @@
 ﻿Imports System.ComponentModel
+Imports System.Runtime.CompilerServices
 
 <Serializable>
 Public Class MyGlow
+	Implements INotifyPropertyChanged, ICloneable
 
 #Region "Enum"
 	Public Enum GlowStyle
@@ -17,6 +19,14 @@ Public Class MyGlow
 
 #End Region
 
+#Region "Event"
+	Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
+
+	Private Sub NotifyPropertyChanged(<CallerMemberName> Optional propertyName As String = "")
+		RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
+	End Sub
+#End Region
+
 #Region "Properties"
 	Private _enabled As Boolean = False
 	Public Property Enabled() As Boolean
@@ -24,7 +34,10 @@ Public Class MyGlow
 			Return _enabled
 		End Get
 		Set(value As Boolean)
-			_enabled = value
+			If Not value = _enabled Then
+				_enabled = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -34,7 +47,10 @@ Public Class MyGlow
 			Return _style
 		End Get
 		Set(value As GlowStyle)
-			_style = value
+			If Not value = _style Then
+				_style = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -44,7 +60,10 @@ Public Class MyGlow
 			Return _clip
 		End Get
 		Set(value As Clip)
-			_clip = value
+			If Not value = _clip Then
+				_clip = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -54,7 +73,10 @@ Public Class MyGlow
 			Return _before
 		End Get
 		Set(value As Boolean)
-			_before = value
+			If Not value = _before Then
+				_before = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -64,7 +86,10 @@ Public Class MyGlow
 			Return _glow
 		End Get
 		Set(value As Integer)
-			_glow = value
+			If Not value = _glow Then
+				_glow = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -74,7 +99,10 @@ Public Class MyGlow
 			Return _feather
 		End Get
 		Set(value As Integer)
-			_feather = value
+			If Not value = _feather Then
+				_feather = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -84,7 +112,10 @@ Public Class MyGlow
 			Return _clr
 		End Get
 		Set(value As Color)
-			_clr = value
+			If Not value = _clr Then
+				_clr = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 #End Region
@@ -93,7 +124,7 @@ Public Class MyGlow
 	''' <summary>
 	''' Creates an exact copy of this <see cref="MyGlow"/> object.
 	''' </summary>
-	Public Function Clone() As MyGlow
+	Public Function Clone() As Object Implements ICloneable.Clone
 		Dim _new As New MyGlow
 		For Each pd As PropertyDescriptor In TypeDescriptor.GetProperties(GetType(MyGlow))
 			pd.SetValue(_new, pd.GetValue(Me))

@@ -254,7 +254,7 @@ Public Class MainForm
 	Private Sub cb_Shape_DrawItem(sender As Object, e As DrawItemEventArgs) Handles cb_Shape.DrawItem
 		If e.Index < 0 Then Return
 
-		e.Graphics.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
+		e.Graphics.SmoothingMode = SmoothingMode.AntiAlias
 
 		Dim TheBox As ComboBox = CType(sender, ComboBox)
 		Dim itemString As String = CType(TheBox.Items(e.Index), String)
@@ -271,7 +271,7 @@ Public Class MainForm
 		End If
 
 		Dim rect As New Rectangle(e.Bounds.X + 3, e.Bounds.Y + 1, 20, e.Bounds.Height - 3)
-		Dim shp As New Shape
+		Dim shp As New Shape(False)
 		shp.BaseRect = rect
 		shp.MShape.SType = [Enum].Parse(GetType(MyShape.ShapeStyle), itemString)
 		shp.DPen.PBrush.SolidColor = Color.Black
@@ -280,9 +280,11 @@ Public Class MainForm
 		shp.MShape.FontSize = 9
 		shp.MShape.Spirals = 3
 
+		shp.UpdatePath()
+
 		Select Case shp.MShape.SType
 			Case MyShape.ShapeStyle.Text
-				e.Graphics.FillPath(shp.CreateBrush, shp.TotalPath)
+				e.Graphics.FillPath(shp.FillBrush, shp.TotalPath)
 			Case Else
 				e.Graphics.DrawPath(shp.CreatePen, shp.TotalPath)
 		End Select
@@ -311,7 +313,7 @@ Public Class MainForm
 		End If
 
 		Dim rect As New Rectangle(e.Bounds.X + 3, e.Bounds.Y + 1, 20, e.Bounds.Height - 3)
-		Dim shp As New Shape
+		Dim shp As New Shape(False)
 		shp.BaseRect = rect
 		shp.FBrush.BType = [Enum].Parse(GetType(MyBrush.BrushType), itemString)
 		shp.DPen.PBrush.SolidColor = Color.Black
@@ -322,22 +324,26 @@ Public Class MainForm
 			Case MyBrush.BrushType.Texture
 				e.Graphics.FillRectangle(Brushes.White, rect)
 				Dim r1 As New Rectangle(rect.X, rect.Y + 4, rect.Width / 2, rect.Height - 4)
-				Dim s1 As New Shape
+				Dim s1 As New Shape(False)
 				s1.BaseRect = r1
 				s1.MShape.SType = MyShape.ShapeStyle.Triangle
+				s1.UpdatePath()
 				e.Graphics.FillPath(Brushes.Brown, s1.TotalPath)
 				Dim r2 As Rectangle = r1
 				r2.X += 7 : r2.Y += 3 : r2.Width -= 1 : r2.Height -= 3
 				s1.BaseRect = r2
+				s1.UpdatePath()
 				e.Graphics.FillPath(Brushes.Brown, s1.TotalPath)
 				Dim r3 As New Rectangle(rect.Right - 7, rect.Y + 2, 5, 5)
 				s1.BaseRect = r3
 				s1.MShape.SType = MyShape.ShapeStyle.Ellipse
+				s1.UpdatePath()
 				e.Graphics.FillPath(Brushes.DarkOrange, s1.TotalPath)
 				e.Graphics.DrawPath(shp.CreatePen, shp.TotalPath)
 			Case Else
 				e.Graphics.RenderingOrigin = rect.Location
-				e.Graphics.FillPath(shp.CreateBrush, shp.TotalPath)
+				shp.UpdateBrush()
+				e.Graphics.FillPath(shp.FillBrush, shp.TotalPath)
 				e.Graphics.DrawPath(shp.CreatePen, shp.TotalPath)
 		End Select
 
@@ -1380,9 +1386,10 @@ Public Class MainForm
 			cn.baseCanvas.BackColor = Color.Transparent
 			cn.baseCanvas.MainForm = Me
 			cn.Dock = DockStyle.Fill
-			If Not IsNothing(cn.baseCanvas.LoadProject(str)) Then
+			Dim op = cn.baseCanvas.LoadProject(str)
+			If Not IsNothing(op) Then
 				cn.Dispose()
-				'Handle exception here
+				MessageBox.Show(op.Message)
 				Continue For
 			End If
 			cn.Text = Path.GetFileNameWithoutExtension(str)
@@ -1414,15 +1421,17 @@ Public Class MainForm
 			Dim inf As New FileInfo(saveDialog.FileName)
 			Select Case inf.Extension.ToLower
 				Case ".bin", ".soap"
-					If Not IsNothing(cn.SaveProject(saveDialog.FileName)) Then
-						'Handle exception here
+					Dim op = cn.SaveProject(saveDialog.FileName)
+					If Not IsNothing(op) Then
+						MessageBox.Show(op.Message)
 					End If
 				Case ".png"
-					If Not IsNothing(cn.SaveImage(saveDialog.FileName)) Then
-						'Handle exception here
+					Dim op = cn.SaveImage(saveDialog.FileName)
+					If Not IsNothing(op) Then
+						MessageBox.Show(op.Message)
 					End If
 				Case Else
-
+					MessageBox.Show("Invalid Type!")
 			End Select
 		End If
 	End Sub

@@ -1,8 +1,18 @@
 ﻿Imports System.ComponentModel
 Imports System.Drawing.Drawing2D
+Imports System.Runtime.CompilerServices
 
 <Serializable>
 Public Class MyBrush
+	Implements INotifyPropertyChanged, ICloneable
+
+#Region "Event"
+	Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
+
+	Private Sub NotifyPropertyChanged(<CallerMemberName> Optional propertyName As String = "")
+		RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
+	End Sub
+#End Region
 
 #Region "Type"
 	Public Enum BrushType
@@ -19,7 +29,10 @@ Public Class MyBrush
 			Return sty
 		End Get
 		Set(value As BrushType)
-			sty = value
+			If Not value = sty Then
+				sty = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 #End Region
@@ -31,7 +44,10 @@ Public Class MyBrush
 			Return _sld
 		End Get
 		Set(value As Color)
-			_sld = value
+			If Not value = _sld Then
+				_sld = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 #End Region
@@ -43,7 +59,10 @@ Public Class MyBrush
 			Return _lg1
 		End Get
 		Set(value As Color)
-			_lg1 = value
+			If Not value = _lg1 Then
+				_lg1 = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -53,7 +72,10 @@ Public Class MyBrush
 			Return _lg2
 		End Get
 		Set(value As Color)
-			_lg2 = value
+			If Not value = _lg2 Then
+				_lg2 = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -63,7 +85,10 @@ Public Class MyBrush
 			Return l_angle
 		End Get
 		Set(value As Integer)
-			l_angle = value
+			If Not value = l_angle Then
+				l_angle = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -73,7 +98,10 @@ Public Class MyBrush
 			Return _gamma
 		End Get
 		Set(value As Boolean)
-			_gamma = value
+			If Not value = _gamma Then
+				_gamma = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -83,8 +111,11 @@ Public Class MyBrush
 			Return _tri
 		End Get
 		Set(value As Boolean)
-			If value Then LBell = False
-			_tri = value
+			If Not value = _tri Then
+				If value Then LBell = False
+				_tri = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -94,7 +125,10 @@ Public Class MyBrush
 			Return tri_f
 		End Get
 		Set(value As Single)
-			tri_f = value
+			If Not value = tri_f Then
+				tri_f = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -104,7 +138,10 @@ Public Class MyBrush
 			Return tri_s
 		End Get
 		Set(value As Single)
-			tri_s = value
+			If Not value = tri_s Then
+				tri_s = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -114,8 +151,11 @@ Public Class MyBrush
 			Return _bell
 		End Get
 		Set(value As Boolean)
-			If value Then LTriangular = False
-			_bell = value
+			If Not value = _bell Then
+				If value Then LTriangular = False
+				_bell = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -125,7 +165,10 @@ Public Class MyBrush
 			Return bell_f
 		End Get
 		Set(value As Single)
-			bell_f = value
+			If Not value = bell_f Then
+				bell_f = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -135,7 +178,10 @@ Public Class MyBrush
 			Return bell_s
 		End Get
 		Set(value As Single)
-			bell_s = value
+			If Not value = bell_s Then
+				bell_s = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -145,8 +191,11 @@ Public Class MyBrush
 			Return l_inter
 		End Get
 		Set(value As Boolean)
-			If value Then LBlend = False
-			l_inter = value
+			If Not value = l_inter Then
+				If value Then LBlend = False
+				l_inter = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -156,7 +205,10 @@ Public Class MyBrush
 			Return l_intcol
 		End Get
 		Set(value As Color())
-			l_intcol = value
+			If Not value.SequenceEqual(l_intcol) Then
+				l_intcol = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -166,7 +218,10 @@ Public Class MyBrush
 			Return l_intpol
 		End Get
 		Set(value As Single())
-			l_intpol = value
+			If Not value.SequenceEqual(l_intpol) Then
+				l_intpol = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -176,8 +231,11 @@ Public Class MyBrush
 			Return l_blend
 		End Get
 		Set(value As Boolean)
-			If value Then LInterpolate = False
-			l_blend = value
+			If Not value = l_blend Then
+				If value Then LInterpolate = False
+				l_blend = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -187,7 +245,10 @@ Public Class MyBrush
 			Return l_bldfac
 		End Get
 		Set(value As Single())
-			l_bldfac = value
+			If Not value.SequenceEqual(l_bldfac) Then
+				l_bldfac = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -197,7 +258,10 @@ Public Class MyBrush
 			Return l_bldpos
 		End Get
 		Set(value As Single())
-			l_bldpos = value
+			If Not value.SequenceEqual(l_bldpos) Then
+				l_bldpos = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 #End Region
@@ -209,7 +273,10 @@ Public Class MyBrush
 			Return _pg1
 		End Get
 		Set(value As Color)
-			_pg1 = value
+			If Not value = _pg1 Then
+				_pg1 = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -219,7 +286,10 @@ Public Class MyBrush
 			Return _pg2
 		End Get
 		Set(value As Color())
-			_pg2 = value
+			If Not value.SequenceEqual(_pg2) Then
+				_pg2 = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -229,7 +299,10 @@ Public Class MyBrush
 			Return p_cent
 		End Get
 		Set(value As PointF)
-			p_cent = value
+			If Not value = p_cent Then
+				p_cent = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -239,7 +312,10 @@ Public Class MyBrush
 			Return pfoc_x
 		End Get
 		Set(value As Single)
-			pfoc_x = value
+			If Not value = pfoc_x Then
+				pfoc_x = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -249,7 +325,10 @@ Public Class MyBrush
 			Return pfoc_y
 		End Get
 		Set(value As Single)
-			pfoc_y = value
+			If Not value = pfoc_y Then
+				pfoc_y = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -259,8 +338,11 @@ Public Class MyBrush
 			Return p_tri
 		End Get
 		Set(value As Boolean)
-			If value Then PBell = False
-			p_tri = value
+			If Not value = p_tri Then
+				If value Then PBell = False
+				p_tri = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -270,7 +352,10 @@ Public Class MyBrush
 			Return ptri_f
 		End Get
 		Set(value As Single)
-			ptri_f = value
+			If Not value = ptri_f Then
+				ptri_f = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -280,7 +365,10 @@ Public Class MyBrush
 			Return ptri_s
 		End Get
 		Set(value As Single)
-			ptri_s = value
+			If Not value = ptri_s Then
+				ptri_s = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -290,8 +378,11 @@ Public Class MyBrush
 			Return p_bell
 		End Get
 		Set(value As Boolean)
-			If value Then PTriangular = False
-			p_bell = value
+			If Not value = p_bell Then
+				If value Then PTriangular = False
+				p_bell = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -301,7 +392,10 @@ Public Class MyBrush
 			Return pbell_f
 		End Get
 		Set(value As Single)
-			pbell_f = value
+			If Not value = pfoc_x Then
+				pbell_f = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -311,7 +405,10 @@ Public Class MyBrush
 			Return pbell_s
 		End Get
 		Set(value As Single)
-			pbell_s = value
+			If Not value = pfoc_x Then
+				pbell_s = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -321,8 +418,11 @@ Public Class MyBrush
 			Return p_inter
 		End Get
 		Set(value As Boolean)
-			If value Then PBlend = False
-			p_inter = value
+			If Not value = p_inter Then
+				If value Then PBlend = False
+				p_inter = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -332,7 +432,10 @@ Public Class MyBrush
 			Return p_intcol
 		End Get
 		Set(value As Color())
-			p_intcol = value
+			If Not value.SequenceEqual(p_intcol) Then
+				p_intcol = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -342,7 +445,10 @@ Public Class MyBrush
 			Return p_intpol
 		End Get
 		Set(value As Single())
-			p_intpol = value
+			If Not value.SequenceEqual(p_intpol) Then
+				p_intpol = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -352,8 +458,11 @@ Public Class MyBrush
 			Return p_blend
 		End Get
 		Set(value As Boolean)
-			If value Then PInterpolate = False
-			p_blend = value
+			If Not value = p_blend Then
+				If value Then PInterpolate = False
+				p_blend = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -363,7 +472,10 @@ Public Class MyBrush
 			Return p_bldfac
 		End Get
 		Set(value As Single())
-			p_bldfac = value
+			If Not value.SequenceEqual(p_bldfac) Then
+				p_bldfac = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -373,7 +485,10 @@ Public Class MyBrush
 			Return p_bldpos
 		End Get
 		Set(value As Single())
-			p_bldpos = value
+			If Not value.SequenceEqual(p_bldpos) Then
+				p_bldpos = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 #End Region
@@ -385,7 +500,10 @@ Public Class MyBrush
 			Return _hb1
 		End Get
 		Set(value As Color)
-			_hb1 = value
+			If Not value = _hb1 Then
+				_hb1 = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -395,7 +513,10 @@ Public Class MyBrush
 			Return _hb2
 		End Get
 		Set(value As Color)
-			_hb2 = value
+			If Not value = _hb2 Then
+				_hb2 = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -405,7 +526,10 @@ Public Class MyBrush
 			Return _hst
 		End Get
 		Set(value As HatchStyle)
-			_hst = value
+			If Not value = _hst Then
+				_hst = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 #End Region
@@ -418,6 +542,7 @@ Public Class MyBrush
 		End Get
 		Set(value As Image)
 			t_img = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 
@@ -427,7 +552,10 @@ Public Class MyBrush
 			Return t_trn
 		End Get
 		Set(value As Boolean)
-			t_trn = value
+			If Not value = t_trn Then
+				t_trn = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -437,7 +565,10 @@ Public Class MyBrush
 			Return t_col
 		End Get
 		Set(value As Color)
-			t_col = value
+			If Not value = t_col Then
+				t_col = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -447,7 +578,10 @@ Public Class MyBrush
 			Return t_rot
 		End Get
 		Set(value As RotateFlipType)
-			t_rot = value
+			If Not value = t_rot Then
+				t_rot = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 #End Region
@@ -456,7 +590,7 @@ Public Class MyBrush
 	''' <summary>
 	''' Creates an exact copy of this <see cref="MyBrush"/> object.
 	''' </summary>
-	Public Function Clone() As MyBrush
+	Public Function Clone() As Object Implements ICloneable.Clone
 		Dim _new As New MyBrush
 		For Each pd As PropertyDescriptor In TypeDescriptor.GetProperties(GetType(MyBrush))
 			pd.SetValue(_new, pd.GetValue(Me))

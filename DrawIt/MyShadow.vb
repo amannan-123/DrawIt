@@ -1,7 +1,17 @@
 ﻿Imports System.ComponentModel
+Imports System.Runtime.CompilerServices
 
 <Serializable>
 Public Class MyShadow
+	Implements INotifyPropertyChanged, ICloneable
+
+#Region "Event"
+	Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
+
+	Private Sub NotifyPropertyChanged(<CallerMemberName> Optional propertyName As String = "")
+		RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
+	End Sub
+#End Region
 
 #Region "Properties"
 	Private _enabled As Boolean = False
@@ -10,7 +20,10 @@ Public Class MyShadow
 			Return _enabled
 		End Get
 		Set(value As Boolean)
-			_enabled = value
+			If Not value = _enabled Then
+				_enabled = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -20,7 +33,10 @@ Public Class MyShadow
 			Return _off
 		End Get
 		Set(value As Point)
-			_off = value
+			If Not value = _off Then
+				_off = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -30,7 +46,10 @@ Public Class MyShadow
 			Return _fill
 		End Get
 		Set(value As Boolean)
-			_fill = value
+			If Not value = _fill Then
+				_fill = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -40,7 +59,10 @@ Public Class MyShadow
 			Return _clip
 		End Get
 		Set(value As Boolean)
-			_clip = value
+			If Not value = _clip Then
+				_clip = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -50,7 +72,10 @@ Public Class MyShadow
 			Return _blur
 		End Get
 		Set(value As Integer)
-			_blur = value
+			If Not value = _blur Then
+				_blur = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -60,7 +85,10 @@ Public Class MyShadow
 			Return _feather
 		End Get
 		Set(value As Integer)
-			_feather = value
+			If Not value = _feather Then
+				_feather = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 
@@ -70,7 +98,10 @@ Public Class MyShadow
 			Return _clr
 		End Get
 		Set(value As Color)
-			_clr = value
+			If Not value = _clr Then
+				_clr = value
+				NotifyPropertyChanged()
+			End If
 		End Set
 	End Property
 #End Region
@@ -79,7 +110,7 @@ Public Class MyShadow
 	''' <summary>
 	''' Creates an exact copy of this <see cref="MyShadow"/> object.
 	''' </summary>
-	Public Function Clone() As MyShadow
+	Public Function Clone() As Object Implements ICloneable.Clone
 		Dim _new As New MyShadow
 		For Each pd As PropertyDescriptor In TypeDescriptor.GetProperties(GetType(MyShadow))
 			pd.SetValue(_new, pd.GetValue(Me))

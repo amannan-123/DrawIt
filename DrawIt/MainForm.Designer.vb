@@ -1647,7 +1647,7 @@ Partial Class MainForm
 		Me.CE_H2.Location = New System.Drawing.Point(69, 37)
 		Me.CE_H2.MyText = "ChooseColor"
 		Me.CE_H2.Name = "CE_H2"
-		Me.CE_H2.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
+		Me.CE_H2.SelectedColor = System.Drawing.Color.White
 		Me.CE_H2.Size = New System.Drawing.Size(186, 25)
 		Me.CE_H2.TabIndex = 1
 		'
@@ -1657,7 +1657,7 @@ Partial Class MainForm
 		Me.CE_H1.Location = New System.Drawing.Point(69, 6)
 		Me.CE_H1.MyText = "ChooseColor"
 		Me.CE_H1.Name = "CE_H1"
-		Me.CE_H1.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
+		Me.CE_H1.SelectedColor = System.Drawing.Color.Black
 		Me.CE_H1.Size = New System.Drawing.Size(186, 25)
 		Me.CE_H1.TabIndex = 0
 		'
@@ -1774,7 +1774,7 @@ Partial Class MainForm
 		Me.CE_Trans.Location = New System.Drawing.Point(71, 318)
 		Me.CE_Trans.MyText = "ChooseColor"
 		Me.CE_Trans.Name = "CE_Trans"
-		Me.CE_Trans.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
+		Me.CE_Trans.SelectedColor = System.Drawing.Color.White
 		Me.CE_Trans.Size = New System.Drawing.Size(185, 25)
 		Me.CE_Trans.TabIndex = 3
 		'
@@ -2350,7 +2350,7 @@ Partial Class MainForm
 		Me.CE_Glow.Location = New System.Drawing.Point(70, 29)
 		Me.CE_Glow.MyText = "ChooseColor"
 		Me.CE_Glow.Name = "CE_Glow"
-		Me.CE_Glow.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
+		Me.CE_Glow.SelectedColor = System.Drawing.Color.Red
 		Me.CE_Glow.Size = New System.Drawing.Size(186, 25)
 		Me.CE_Glow.TabIndex = 1
 		'
@@ -2379,6 +2379,7 @@ Partial Class MainForm
 		Me.PS_Shadow.BordersColor = System.Drawing.Color.White
 		Me.PS_Shadow.Font = New System.Drawing.Font("Consolas", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
 		Me.PS_Shadow.Location = New System.Drawing.Point(6, 174)
+		Me.PS_Shadow.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
 		Me.PS_Shadow.Maximum = New System.Drawing.Point(50, 50)
 		Me.PS_Shadow.Minimum = New System.Drawing.Point(-50, -50)
 		Me.PS_Shadow.Name = "PS_Shadow"

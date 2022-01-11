@@ -297,6 +297,7 @@ Public Class Canvas
 				Case Else
 					Return New InvalidDataException("File type not supported!")
 			End Select
+			shps.ForEach(Sub(x) x.ReloadCachedObjects())
 			Invalidate()
 			Return Nothing
 		Catch ex As Exception
@@ -403,6 +404,7 @@ Public Class Canvas
 		Next
 		DeselectAll()
 		For Each sh As Shape In lst_sl
+			sh.ReloadCachedObjects()
 			shps.Add(sh)
 		Next
 		Invalidate()
@@ -421,9 +423,8 @@ Public Class Canvas
 			lst_sl.Add(shps(i).Clone)
 		Next
 		DeleteSelected()
-		If lst_sl.Count > 0 Then
-			shps.InsertRange(0, lst_sl)
-		End If
+		lst_sl.ForEach(Sub(x) x.ReloadCachedObjects())
+		If lst_sl.Count > 0 Then shps.InsertRange(0, lst_sl)
 		Invalidate()
 	End Sub
 
@@ -433,9 +434,8 @@ Public Class Canvas
 			lst_sl.Add(shps(i).Clone)
 		Next
 		DeleteSelected()
-		If lst_sl.Count > 0 Then
-			shps.AddRange(lst_sl)
-		End If
+		lst_sl.ForEach(Sub(x) x.ReloadCachedObjects())
+		If lst_sl.Count > 0 Then shps.AddRange(lst_sl)
 		Invalidate()
 	End Sub
 
@@ -977,7 +977,7 @@ Public Class Canvas
 		End If
 		For i As Integer = 1 To shp.Glow.Glow Step 2
 			Dim aGlow As Integer = shp.Glow.Feather - ((shp.Glow.Feather / shp.Glow.Glow) * i)
-			Using pen As Pen = New Pen(Color.FromArgb(aGlow, shp.Glow.GlowColor), i) With
+			Using pen As New Pen(Color.FromArgb(aGlow, shp.Glow.GlowColor), i) With
 				{.LineJoin = LineJoin.Round, .StartCap = shp.DPen.PStartCap, .EndCap = shp.DPen.PEndCap}
 				g.DrawPath(pen, pth)
 			End Using
@@ -1003,7 +1003,7 @@ Public Class Canvas
 
 		Dim x As Integer = 6
 		For i As Integer = 1 To x
-			Using pen As Pen = New Pen(Color.FromArgb(
+			Using pen As New Pen(Color.FromArgb(
 									   shp.Shadow.Feather - ((shp.Shadow.Feather / x) * i), shp.Shadow.ShadowColor),
 									   i * (shp.Shadow.Blur)) With
 				 {.LineJoin = LineJoin.Round, .StartCap = shp.DPen.PStartCap, .EndCap = shp.DPen.PEndCap}
@@ -1032,13 +1032,12 @@ Public Class Canvas
 
 		'Fill and Draw Shape
 		Dim pth As GraphicsPath = shp.TotalPath(False)
-		Dim fbr As Brush = shp.CreateBrush
+		Dim fbr As Brush = shp.FillBrush
 		Dim dpn As Pen = shp.CreatePen
 		If Not IsNothing(pth) Then
 			If Not IsNothing(fbr) Then
 				ig.RenderingOrigin = Point.Ceiling(pth.GetBounds.Location)
 				ig.FillPath(fbr, pth)
-				fbr.Dispose()
 			End If
 			If Not IsNothing(dpn) Then
 				Using ppth As GraphicsPath = pth.Clone
@@ -1445,7 +1444,7 @@ Public Class Canvas
 			Case Keys.Control Or Keys.X
 				Dim _lst As New List(Of Shape)
 				For Each i As Integer In SelectedIndices()
-					_lst.Add(shps(i))
+					_lst.Add(shps(i).Clone)
 				Next
 				DeleteSelected()
 				My.Computer.Clipboard.SetData("DrawIt-Shapes", _lst)
@@ -1455,6 +1454,7 @@ Public Class Canvas
 				_lst = My.Computer.Clipboard.GetData("DrawIt-Shapes")
 				If IsNothing(_lst) Then Return
 				For Each shp As Shape In _lst
+					shp.ReloadCachedObjects()
 					shps.Add(shp)
 				Next
 				SetPrimary()

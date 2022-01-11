@@ -1,7 +1,28 @@
 ﻿Imports System.ComponentModel
+Imports System.Runtime.CompilerServices
 
 <Serializable>
 Public Class MyShape
+	Implements INotifyPropertyChanged, ICloneable
+
+#Region "New"
+	Sub New()
+		AddHandler Corners.PropertyChanged, AddressOf NPC
+	End Sub
+
+	Private Sub NPC(sender As Object, e As PropertyChangedEventArgs)
+		NotifyPropertyChanged()
+	End Sub
+#End Region
+
+#Region "Event"
+	Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
+
+	Private Sub NotifyPropertyChanged(<CallerMemberName> Optional propertyName As String = "")
+		RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
+	End Sub
+
+#End Region
 
 #Region "Type"
 	Public Enum ShapeStyle
@@ -26,6 +47,7 @@ Public Class MyShape
 		End Get
 		Set(value As ShapeStyle)
 			s_type = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 
@@ -36,6 +58,7 @@ Public Class MyShape
 		End Get
 		Set(value As Boolean)
 			_cls = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 #End Region
@@ -53,6 +76,7 @@ Public Class MyShape
 		End Get
 		Set(ByVal value As RRCorners)
 			_crn = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 
@@ -63,6 +87,7 @@ Public Class MyShape
 		End Get
 		Set(value As CornerType)
 			ul_tp = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 
@@ -73,6 +98,7 @@ Public Class MyShape
 		End Get
 		Set(value As CornerType)
 			ur_tp = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 
@@ -83,6 +109,7 @@ Public Class MyShape
 		End Get
 		Set(value As CornerType)
 			bl_tp = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 
@@ -93,6 +120,7 @@ Public Class MyShape
 		End Get
 		Set(value As CornerType)
 			br_tp = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 #End Region
@@ -105,6 +133,7 @@ Public Class MyShape
 		End Get
 		Set(value As PointF())
 			pol_pt = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 #End Region
@@ -117,6 +146,7 @@ Public Class MyShape
 		End Get
 		Set(value As PointF())
 			cur_pt = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 
@@ -127,6 +157,7 @@ Public Class MyShape
 		End Get
 		Set(value As Single)
 			cur_t = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 #End Region
@@ -139,6 +170,7 @@ Public Class MyShape
 		End Get
 		Set(value As Integer)
 			_spirals = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 #End Region
@@ -151,6 +183,7 @@ Public Class MyShape
 		End Get
 		Set(value As Single)
 			st_and = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 
@@ -161,6 +194,7 @@ Public Class MyShape
 		End Get
 		Set(value As Single)
 			end_and = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 #End Region
@@ -173,6 +207,7 @@ Public Class MyShape
 		End Get
 		Set(value As String)
 			f_name = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 
@@ -183,6 +218,7 @@ Public Class MyShape
 		End Get
 		Set(value As Single)
 			f_size = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 
@@ -193,6 +229,7 @@ Public Class MyShape
 		End Get
 		Set(value As FontStyle)
 			f_style = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 
@@ -203,6 +240,7 @@ Public Class MyShape
 		End Get
 		Set(value As String)
 			_txt = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 
@@ -213,6 +251,7 @@ Public Class MyShape
 		End Get
 		Set(value As ContentAlignment)
 			txt_al = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 #End Region
@@ -221,7 +260,7 @@ Public Class MyShape
 	''' <summary>
 	''' Creates an exact copy of this <see cref="MyShape"/> object.
 	''' </summary>
-	Public Function Clone() As MyShape
+	Public Function Clone() As Object Implements ICloneable.Clone
 		Dim _new As New MyShape
 		For Each pd As PropertyDescriptor In TypeDescriptor.GetProperties(GetType(MyShape))
 			pd.SetValue(_new, pd.GetValue(Me))
@@ -236,6 +275,16 @@ End Class
 #Region "RRCorners"
 <Serializable>
 Public Class RRCorners
+	Implements INotifyPropertyChanged, ICloneable
+
+#Region "Event"
+	Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
+
+	Private Sub NotifyPropertyChanged(<CallerMemberName> Optional propertyName As String = "")
+		RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
+	End Sub
+
+#End Region
 
 #Region "Properties"
 	Private _t1 As Single = 25
@@ -245,6 +294,7 @@ Public Class RRCorners
 		End Get
 		Set(ByVal value As Single)
 			_t1 = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 
@@ -255,6 +305,7 @@ Public Class RRCorners
 		End Get
 		Set(ByVal value As Single)
 			_t2 = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 
@@ -265,6 +316,7 @@ Public Class RRCorners
 		End Get
 		Set(ByVal value As Single)
 			_r1 = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 
@@ -275,6 +327,7 @@ Public Class RRCorners
 		End Get
 		Set(ByVal value As Single)
 			_r2 = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 
@@ -285,6 +338,7 @@ Public Class RRCorners
 		End Get
 		Set(ByVal value As Single)
 			_b1 = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 
@@ -295,6 +349,7 @@ Public Class RRCorners
 		End Get
 		Set(ByVal value As Single)
 			_b2 = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 
@@ -305,6 +360,7 @@ Public Class RRCorners
 		End Get
 		Set(ByVal value As Single)
 			_l1 = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 
@@ -315,6 +371,7 @@ Public Class RRCorners
 		End Get
 		Set(ByVal value As Single)
 			_l2 = value
+			NotifyPropertyChanged()
 		End Set
 	End Property
 #End Region
@@ -346,7 +403,7 @@ Public Class RRCorners
 	''' <summary>
 	''' Creates an exact copy of this <see cref="RRCorners"/> object.
 	''' </summary>
-	Public Function Clone() As RRCorners
+	Public Function Clone() As Object Implements ICloneable.Clone
 		Dim _new As New RRCorners
 		For Each pd As PropertyDescriptor In TypeDescriptor.GetProperties(GetType(RRCorners))
 			pd.SetValue(_new, pd.GetValue(Me))
