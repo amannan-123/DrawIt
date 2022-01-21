@@ -6,10 +6,26 @@ Imports MyControls
 
 Public Class MainForm
 
-#Region "Property"
-	Public Property MainShape() As Shape = Nothing
+#Region "Properties"
+	Enum Operations
+		Draw
+		[Select]
+	End Enum
 
-	Public Property MainCanvas() As Canvas = Nothing
+	Private Property MainShape() As Shape = Nothing
+
+	Private Property MainCanvas() As Canvas = Nothing
+
+	Public ReadOnly Property Operation() As Operations
+		Get
+			If rDraw.Checked Then
+				Return Operations.Draw
+			Else
+				Return Operations.Select
+			End If
+		End Get
+	End Property
+
 #End Region
 
 #Region "TabPageRelated"

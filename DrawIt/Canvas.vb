@@ -123,15 +123,15 @@ Public Class Canvas
 #Region "Globals"
 	Private img As Bitmap
 	Private shps As New List(Of Shape)
+	Private op As MOperations = MOperations.None
 	Private cloned As Boolean = False
 	Private cloning As Boolean = False
 	Private up_fix As Boolean = True
-	Private ReadOnly old_sl As New List(Of Integer)
-	Private op As MOperations = MOperations.None
-	Private m_pt As Point
+	Private md_pt As Point
 	Private m_cnt As PointF
-	Private ReadOnly m_rect As New List(Of RectangleF)
 	Private m_ang As Single
+	Private ReadOnly old_sl As New List(Of Integer)
+	Private ReadOnly m_rect As New List(Of RectangleF)
 	Private s_rect As New RectangleF
 	Private h_info As New HoverInfo(-1, 0)
 	Private d_info As New DrawModeInfo(False)
@@ -232,7 +232,7 @@ Public Class Canvas
 	End Property
 #End Region
 
-#Region "From Resize"
+#Region "Form Resize"
 	Private _fres As Boolean = False
 	Public Property FResizing() As Boolean
 		Get
@@ -459,14 +459,12 @@ Public Class Canvas
 #End Region
 
 #Region "Mouse Events"
-	Private Sub Canvas_MouseDown(sender As Object, e As MouseEventArgs) Handles MyBase.MouseDown
-		h_info.ShapeIndex = -1
-		m_pt = e.Location
 
-		Dim curr As Integer = ShapeInCursor(e.Location)
-		Dim shp As Shape = Nothing
+#Region "Draw"
+	Private Sub CanvasDraw_MouseDown(sender As Object, e As MouseEventArgs) Handles MyBase.MouseDown
+		If MainForm.Operation = MainForm.Operations.Draw Then
+			md_pt = e.Location
 
-		If MainForm.rDraw.Checked Then
 			DeselectAll()
 			Dim sty As MyShape.ShapeStyle = [Enum].Parse(GetType(MyShape.ShapeStyle), MainForm.cb_Shape.SelectedItem)
 			Dim bty As MyBrush.BrushType = [Enum].Parse(GetType(MyBrush.BrushType), MainForm.cb_Brush.SelectedItem)
@@ -517,20 +515,68 @@ Public Class Canvas
 							d_info.Points.Clear()
 						Else
 							If Not d_info.DrawMode Then
-								shp = New Shape(m_pt, sty, bty)
-								shp.Selected = True
-								shps.Add(shp)
+								Dim shp_n = New Shape(e.Location, sty, bty)
+								shp_n.Selected = True
+								shps.Add(shp_n)
 								op = MOperations.Draw
 							End If
 						End If
 					End If
+					Invalidate()
 				Case Else
-					shp = New Shape(m_pt, sty, bty)
-					shp.Selected = True
-					shps.Add(shp)
+					Dim shp_n = New Shape(md_pt, sty, bty)
+					shp_n.Selected = True
+					shps.Add(shp_n)
 					op = MOperations.Draw
 			End Select
-		ElseIf MainForm.rSelect.Checked Then
+		End If
+	End Sub
+
+	Private Sub CanvasDraw_MouseMove(sender As Object, e As MouseEventArgs) Handles MyBase.MouseMove
+		If MainForm.Operation = MainForm.Operations.Draw Then
+			Cursor = Cursors.Cross
+			If op = MOperations.Draw Then
+				Dim rtd As New RectangleF(Math.Min(e.X, md_pt.X),
+								   Math.Min(e.Y, md_pt.Y),
+								   Math.Abs(e.X - md_pt.X),
+								   Math.Abs(e.Y - md_pt.Y))
+				If My.Computer.Keyboard.ShiftKeyDown Then
+					Dim mxx As Integer = Math.Max(rtd.Width, rtd.Height)
+					rtd.Width = mxx
+					rtd.Height = mxx
+					If (e.X < md_pt.X And e.Y < md_pt.Y) Or (e.X > md_pt.X And e.Y < md_pt.Y) Then
+						rtd.Y = md_pt.Y - rtd.Height
+					End If
+					If (e.X < md_pt.X And e.Y < md_pt.Y) Or (e.X < md_pt.X And e.Y > md_pt.Y) Then
+						rtd.X = md_pt.X - rtd.Width
+					End If
+				End If
+				Dim shp_d As Shape = MainSelected()
+				shp_d.BaseRect = rtd
+				Invalidate()
+				MainForm.UpdateBoundControls()
+			End If
+		End If
+	End Sub
+
+	Private Sub CanvasDraw_MouseUp(sender As Object, e As MouseEventArgs) Handles MyBase.MouseUp
+		If MainForm.Operation = MainForm.Operations.Draw Then
+			If Not d_info.DrawMode Then MainForm.rSelect.Checked = True
+			op = MOperations.None
+		End If
+	End Sub
+
+#End Region
+
+#Region "Select"
+	Private Sub CanvasSelect_MouseDown(sender As Object, e As MouseEventArgs) Handles MyBase.MouseDown
+		If MainForm.Operation = MainForm.Operations.Select Then
+
+			md_pt = e.Location
+
+			h_info.ShapeIndex = -1
+
+			Dim curr As Integer = ShapeInCursor(e.Location)
 			If curr > -1 Then
 				If Not shps(curr).Selected Then
 					If My.Computer.Keyboard.CtrlKeyDown Then
@@ -546,115 +592,113 @@ Public Class Canvas
 				s_rect.Location = e.Location
 				Return
 			End If
-		End If
 
-		shp = MainSelected()
+			Dim shp = MainSelected()
 
-		If Not IsNothing(shp) AndAlso MainForm.rDraw.Checked = False Then
-			m_ang = shp.Angle
-			m_rect.Clear()
-			m_cnt = New PointF(shp.BaseRect.X + (shp.BaseRect.Width / 2),
+			If Not IsNothing(shp) Then
+				m_ang = shp.Angle
+				m_rect.Clear()
+				m_cnt = New PointF(shp.BaseRect.X + (shp.BaseRect.Width / 2),
 							 shp.BaseRect.Y + (shp.BaseRect.Height / 2))
-			shp.CenterPoint = m_cnt
+				shp.CenterPoint = m_cnt
 
-			Dim m_path As New Region(Rectangle.Empty)
-			Dim s_inds = SelectedIndices()
+				Dim m_path As New Region(Rectangle.Empty)
+				Dim s_inds = SelectedIndices()
 
-			For Each ind As Integer In s_inds
-				Dim ss As Shape = shps(ind)
-				m_path.Union(ss.Region)
-				m_rect.Add(ss.BaseRect)
-			Next
-
-			If shp.FBrush.BType = MyBrush.BrushType.PathGradient AndAlso shp.Centering.IsVisible(e.Location) Then
-				If e.Button = MouseButtons.Left Then
-					op = MOperations.Centering
-				ElseIf e.Button = MouseButtons.Right Then
-					shp.FBrush.PCenterPoint = New PointF(50, 50)
-				End If
-			ElseIf shp.TopLeft.IsVisible(e.Location) Then
-				op = MOperations.TopLeft
-			ElseIf shp.Top.IsVisible(e.Location) Then
-				op = MOperations.Top
-			ElseIf shp.TopRight.IsVisible(e.Location) Then
-				op = MOperations.TopRight
-			ElseIf shp.Left.IsVisible(e.Location) Then
-				op = MOperations.Left
-			ElseIf shp.Right.IsVisible(e.Location) Then
-				op = MOperations.Right
-			ElseIf shp.BottomLeft.IsVisible(e.Location) Then
-				op = MOperations.BottomLeft
-			ElseIf shp.Bottom.IsVisible(e.Location) Then
-				op = MOperations.Bottom
-			ElseIf shp.BottomRight.IsVisible(e.Location) Then
-				op = MOperations.BottomRight
-			ElseIf shp.Rotate.IsVisible(e.Location) Then
-				op = MOperations.Rotate
-			ElseIf m_path.IsVisible(e.Location) Then
-				op = MOperations.Move
-				Cursor = Cursors.SizeAll
-				For Each i As Integer In s_inds
-					shps(i).Moving = True
+				For Each ind As Integer In s_inds
+					Dim ss As Shape = shps(ind)
+					m_path.Union(ss.Region)
+					m_rect.Add(ss.BaseRect)
 				Next
+
+				If shp.FBrush.BType = MyBrush.BrushType.PathGradient AndAlso shp.Centering.IsVisible(e.Location) Then
+					If e.Button = MouseButtons.Left Then
+						op = MOperations.Centering
+					ElseIf e.Button = MouseButtons.Right Then
+						shp.FBrush.PCenterPoint = New PointF(50, 50)
+					End If
+				ElseIf shp.TopLeft.IsVisible(e.Location) Then
+					op = MOperations.TopLeft
+				ElseIf shp.Top.IsVisible(e.Location) Then
+					op = MOperations.Top
+				ElseIf shp.TopRight.IsVisible(e.Location) Then
+					op = MOperations.TopRight
+				ElseIf shp.Left.IsVisible(e.Location) Then
+					op = MOperations.Left
+				ElseIf shp.Right.IsVisible(e.Location) Then
+					op = MOperations.Right
+				ElseIf shp.BottomLeft.IsVisible(e.Location) Then
+					op = MOperations.BottomLeft
+				ElseIf shp.Bottom.IsVisible(e.Location) Then
+					op = MOperations.Bottom
+				ElseIf shp.BottomRight.IsVisible(e.Location) Then
+					op = MOperations.BottomRight
+				ElseIf shp.Rotate.IsVisible(e.Location) Then
+					op = MOperations.Rotate
+				ElseIf m_path.IsVisible(e.Location) Then
+					op = MOperations.Move
+					Cursor = Cursors.SizeAll
+					s_inds.ForEach(Sub(i) shps(i).Moving = True)
+				End If
+				m_path.Dispose()
 			End If
-			m_path.Dispose()
+
+			SetPrimary()
+			MainForm.UpdateControls()
+			Invalidate()
 		End If
-		SetPrimary()
-		MainForm.UpdateControls()
-		Invalidate()
 	End Sub
 
-	Private Sub Canvas_MouseMove(sender As Object, e As MouseEventArgs) Handles MyBase.MouseMove
-		If op = MOperations.Selection Then
-			s_rect = New Rectangle(Math.Min(e.X, m_pt.X),
-								   Math.Min(e.Y, m_pt.Y),
-								   Math.Abs(e.X - m_pt.X),
-								   Math.Abs(e.Y - m_pt.Y))
-			If My.Computer.Keyboard.CtrlKeyDown = False Then DeselectAll()
-			For Each ss As Shape In shps
-				If ss.Selected = False AndAlso Not IsNothing(ss.BorderPath) AndAlso
-				   Not IsNothing(ss.SelectionPath(False)) Then
-					Dim b_rg As New Region(ss.BorderPath)
-					If ss.SelectionPath(False).IsVisible(s_rect) Or b_rg.IsVisible(s_rect) Then
-						ss.Selected = True
-					End If
-				End If
-			Next
-			SetPrimary()
-		End If
+	Private Sub CanvasSelect_MouseMove(sender As Object, e As MouseEventArgs) Handles MyBase.MouseMove
+		If MainForm.Operation = MainForm.Operations.Select Then
 
-		Dim selc = SelectedIndices()
-
-		'highlight shape
-		If HighlightShapes AndAlso op = MOperations.None AndAlso
-		   MainForm.rSelect.Checked AndAlso shps.Count > selc.Count Then
-			Dim curr As Integer = ShapeInCursor(e.Location)
-			If curr > -1 Then
-				If shps(curr).Selected = False Then
-					If Not IsNothing(shps(curr).BorderPath) AndAlso
-					Not IsNothing(shps(curr).SelectionPath) Then
-						h_info.ShapeIndex = curr
-						If shps(curr).BorderPath.IsVisible(e.Location) Then
-							h_info.HoverType = 1
-						ElseIf shps(curr).SelectionPath.IsVisible(e.Location) Then
-							h_info.HoverType = 0
+			If op = MOperations.Selection Then
+				s_rect = New Rectangle(Math.Min(e.X, md_pt.X),
+									   Math.Min(e.Y, md_pt.Y),
+									   Math.Abs(e.X - md_pt.X),
+									   Math.Abs(e.Y - md_pt.Y))
+				If My.Computer.Keyboard.CtrlKeyDown = False Then DeselectAll()
+				For Each ss As Shape In shps
+					If ss.Selected = False AndAlso Not IsNothing(ss.BorderPath) AndAlso
+					   Not IsNothing(ss.SelectionPath(False)) Then
+						Dim b_rg As New Region(ss.BorderPath)
+						If ss.SelectionPath(False).IsVisible(s_rect) Or b_rg.IsVisible(s_rect) Then
+							ss.Selected = True
 						End If
+					End If
+				Next
+				SetPrimary()
+			End If
+
+			Dim selc = SelectedIndices()
+
+			'highlight shape
+			If HighlightShapes AndAlso op = MOperations.None AndAlso
+			   shps.Count > selc.Count Then
+				Dim curr As Integer = ShapeInCursor(e.Location)
+				If curr > -1 Then
+					If shps(curr).Selected = False Then
+						If Not IsNothing(shps(curr).BorderPath) AndAlso
+						Not IsNothing(shps(curr).SelectionPath) Then
+							h_info.ShapeIndex = curr
+							If shps(curr).BorderPath.IsVisible(e.Location) Then
+								h_info.HoverType = 1
+							ElseIf shps(curr).SelectionPath.IsVisible(e.Location) Then
+								h_info.HoverType = 0
+							End If
+						End If
+					Else
+						h_info.ShapeIndex = -1
 					End If
 				Else
 					h_info.ShapeIndex = -1
 				End If
-			Else
-				h_info.ShapeIndex = -1
+				Invalidate()
 			End If
-			Invalidate()
-		End If
 
-		Dim shp As Shape = MainSelected()
+			Dim shp As Shape = MainSelected()
 
-		'set cursors
-		If MainForm.rDraw.Checked Then
-			Cursor = Cursors.Cross
-		Else
+			'set cursors
 			If Not IsNothing(shp) AndAlso op = MOperations.None Then
 				If shp.FBrush.BType = MyBrush.BrushType.PathGradient AndAlso shp.Centering.IsVisible(e.Location) Then
 					Cursor = Cursors.Hand
@@ -682,205 +726,195 @@ Public Class Canvas
 			Else
 				If op = MOperations.None Then Cursor = Cursors.Arrow
 			End If
-		End If
 
-		'create and initialize variables
-		Dim tDest As PointF = e.Location
-		Dim tPt As PointF
-		Dim tRc, oRc As RectangleF
-		If Not IsNothing(shp) Then
-			If shp.Angle Then tDest = RotatePoint(tDest, m_pt, -shp.Angle)
-			tPt = New PointF((tDest.X - m_pt.X), (tDest.Y - m_pt.Y))
-			If m_rect.Count > 0 Then
-				If _ord = SelectOrder.AboveFirst Then
-					tRc = m_rect.Last
-				Else
-					tRc = m_rect.First
-				End If
-			End If
-			oRc = tRc
-		End If
-
-		Select Case op
-			Case MOperations.Centering
-				Dim npt As PointF = RotatePoint(e.Location, shp.CenterPoint, -shp.Angle)
-				shp.FBrush.PCenterPoint = ToPercentage(shp.BaseRect, npt)
-			Case MOperations.Draw
-				Dim rtd As New RectangleF(Math.Min(e.X, m_pt.X),
-								   Math.Min(e.Y, m_pt.Y),
-								   Math.Abs(e.X - m_pt.X),
-								   Math.Abs(e.Y - m_pt.Y))
-				If My.Computer.Keyboard.ShiftKeyDown Then
-					Dim mxx As Integer = Math.Max(rtd.Width, rtd.Height)
-					rtd.Width = mxx
-					rtd.Height = mxx
-					If (e.X < m_pt.X And e.Y < m_pt.Y) Or (e.X > m_pt.X And e.Y < m_pt.Y) Then
-						rtd.Y = m_pt.Y - rtd.Height
-					End If
-					If (e.X < m_pt.X And e.Y < m_pt.Y) Or (e.X < m_pt.X And e.Y > m_pt.Y) Then
-						rtd.X = m_pt.X - rtd.Width
-					End If
-				End If
-				shp.BaseRect = rtd
-			Case MOperations.TopLeft
-				tRc.X += tPt.X
-				tRc.Width -= tPt.X
-				tRc.Y += tPt.Y
-				tRc.Height -= tPt.Y
-			Case MOperations.Top
-				tRc.Y += tPt.Y
-				tRc.Height -= tPt.Y
-			Case MOperations.TopRight
-				tRc.Width += tPt.X
-				tRc.Y += tPt.Y
-				tRc.Height -= tPt.Y
-			Case MOperations.Left
-				tRc.X += tPt.X
-				tRc.Width -= tPt.X
-			Case MOperations.Right
-				tRc.Width += tPt.X
-			Case MOperations.BottomLeft
-				tRc.X += tPt.X
-				tRc.Width -= tPt.X
-				tRc.Height += tPt.Y
-			Case MOperations.Bottom
-				tRc.Height += tPt.Y
-			Case MOperations.BottomRight
-				tRc.Width += tPt.X
-				tRc.Height += tPt.Y
-			Case MOperations.Rotate
-				Dim snAngle As Single = GetAngleBetweenTwoPointsWithFixedPoint(m_pt, e.Location, m_cnt)
-				snAngle = -snAngle * 180.0# / Math.PI
-				Dim qt As Boolean = False
-				If e.Button = MouseButtons.Left Then qt = True
-				shp.Angle = EditRotateAngle(m_ang, snAngle, qt)
-			Case MOperations.Move
-				If My.Computer.Keyboard.CtrlKeyDown AndAlso cloned = False Then
-					old_sl.Clear()
-					For Each i As Integer In selc
-						old_sl.Add(i)
-					Next
-					CloneSelected()
-					cloned = True
-					cloning = True
-				End If
-				If cloning Then
-					If My.Computer.Keyboard.CtrlKeyDown = False Then
-						Dim _lst = selc
-						For i As Integer = 0 To old_sl.Count - 1
-							Dim ss As Shape = shps(_lst(i))
-							shps(old_sl(i)).BaseRect = ss.BaseRect
-							shps(old_sl(i)).Selected = False
-							shps(old_sl(i)).Moving = False
-						Next
-						DeleteSelected()
-						For i As Integer = 0 To old_sl.Count - 1
-							shps(old_sl(i)).Selected = True
-							shps(old_sl(i)).Moving = True
-						Next
-						cloned = False
-					End If
-				End If
-				Dim iXMove, iYMove As Single
-				iXMove = e.Location.X - m_pt.X
-				iYMove = e.Location.Y - m_pt.Y
-				For i As Integer = 0 To m_rect.Count - 1
-					Dim dRc As RectangleF = m_rect(i)
-					If My.Computer.Keyboard.ShiftKeyDown Then
-						Dim dX = Math.Abs(iXMove)
-						Dim dY = Math.Abs(iYMove)
-						If dX > dY Then
-							'Only horizontal
-							dRc.Offset(iXMove, 0)
-						ElseIf dY > dX Then
-							'Only vertical
-							dRc.Offset(0, iYMove)
-						Else
-							'Diagonal (to be fixed)
-							Dim iinc = Math.Max(iXMove, iYMove)
-							dRc.Offset(iinc, iinc)
-						End If
+			'create and initialize variables
+			Dim tDest As PointF = e.Location
+			Dim tPt As PointF
+			Dim tRc, oRc As RectangleF
+			If Not IsNothing(shp) Then
+				If shp.Angle Then tDest = RotatePoint(tDest, md_pt, -shp.Angle)
+				tPt = New PointF((tDest.X - md_pt.X), (tDest.Y - md_pt.Y))
+				If m_rect.Count > 0 Then
+					If _ord = SelectOrder.AboveFirst Then
+						tRc = m_rect.Last
 					Else
-						dRc.Offset(iXMove, iYMove)
+						tRc = m_rect.First
 					End If
-					Dim ss As Shape = shps(SelectedIndices()(i))
-					ss.BaseRect = dRc
-					ss.CenterPoint = New PointF(ss.BaseRect.X + (ss.BaseRect.Width / 2), ss.BaseRect.Y + (ss.BaseRect.Height / 2))
-				Next
-		End Select
+				End If
+				oRc = tRc
+			End If
 
-		'finalize resize operation
-		If op >= MOperations.TopLeft AndAlso op <= MOperations.BottomRight Then
-			If My.Computer.Keyboard.ShiftKeyDown Then
-				Dim rtd As RectangleF = tRc
-				Dim asp As Single = oRc.Width / oRc.Height
-				Select Case op
-					Case MOperations.TopLeft, MOperations.TopRight,
-						 MOperations.BottomLeft, MOperations.BottomRight
-						If oRc.Width > oRc.Height Then
-							rtd.Height = rtd.Width / asp
-						ElseIf oRc.Width < oRc.Height Then
-							rtd.Width = rtd.Height * asp
-						Else
-							Dim mxx As Integer = Math.Max(rtd.Width, rtd.Height)
-							rtd.Width = mxx
-							rtd.Height = mxx
+			Select Case op
+				Case MOperations.Centering
+					Dim npt As PointF = RotatePoint(e.Location, shp.CenterPoint, -shp.Angle)
+					shp.FBrush.PCenterPoint = ToPercentage(shp.BaseRect, npt)
+				Case MOperations.Draw
+
+				Case MOperations.TopLeft
+					tRc.X += tPt.X
+					tRc.Width -= tPt.X
+					tRc.Y += tPt.Y
+					tRc.Height -= tPt.Y
+				Case MOperations.Top
+					tRc.Y += tPt.Y
+					tRc.Height -= tPt.Y
+				Case MOperations.TopRight
+					tRc.Width += tPt.X
+					tRc.Y += tPt.Y
+					tRc.Height -= tPt.Y
+				Case MOperations.Left
+					tRc.X += tPt.X
+					tRc.Width -= tPt.X
+				Case MOperations.Right
+					tRc.Width += tPt.X
+				Case MOperations.BottomLeft
+					tRc.X += tPt.X
+					tRc.Width -= tPt.X
+					tRc.Height += tPt.Y
+				Case MOperations.Bottom
+					tRc.Height += tPt.Y
+				Case MOperations.BottomRight
+					tRc.Width += tPt.X
+					tRc.Height += tPt.Y
+				Case MOperations.Rotate
+					Dim snAngle As Single = GetAngleBetweenTwoPointsWithFixedPoint(md_pt, e.Location, m_cnt)
+					snAngle = -snAngle * 180.0# / Math.PI
+					Dim qt As Boolean = False
+					If e.Button = MouseButtons.Left Then qt = True
+					shp.Angle = EditRotateAngle(m_ang, snAngle, qt)
+				Case MOperations.Move
+					If My.Computer.Keyboard.CtrlKeyDown AndAlso cloned = False Then
+						old_sl.Clear()
+						For Each i As Integer In selc
+							old_sl.Add(i)
+						Next
+						CloneSelected()
+						cloned = True
+						cloning = True
+					End If
+					If cloning Then
+						If My.Computer.Keyboard.CtrlKeyDown = False Then
+							Dim _lst = selc
+							For i As Integer = 0 To old_sl.Count - 1
+								Dim ss As Shape = shps(_lst(i))
+								shps(old_sl(i)).BaseRect = ss.BaseRect
+								shps(old_sl(i)).Selected = False
+								shps(old_sl(i)).Moving = False
+							Next
+							DeleteSelected()
+							For i As Integer = 0 To old_sl.Count - 1
+								shps(old_sl(i)).Selected = True
+								shps(old_sl(i)).Moving = True
+							Next
+							cloned = False
 						End If
-					Case MOperations.Top, MOperations.Bottom
-						rtd.Width = rtd.Height * asp
-					Case MOperations.Left, MOperations.Right
-						rtd.Height = rtd.Width / asp
-				End Select
-				If op = MOperations.TopLeft Or op = MOperations.TopRight Then
-					rtd.Y = oRc.Bottom - rtd.Height
-				End If
-				If op = MOperations.TopLeft Or op = MOperations.BottomLeft Then
-					rtd.X = oRc.Right - rtd.Width
-				End If
-				tRc = rtd
-			End If
-			If tRc.Width <= 0 Then Return
-			If tRc.Height <= 0 Then Return
-			shp.BaseRect = tRc
-		End If
+					End If
+					Dim iXMove, iYMove As Single
+					iXMove = e.Location.X - md_pt.X
+					iYMove = e.Location.Y - md_pt.Y
+					For i As Integer = 0 To m_rect.Count - 1
+						Dim dRc As RectangleF = m_rect(i)
+						If My.Computer.Keyboard.ShiftKeyDown Then
+							Dim dX = Math.Abs(iXMove)
+							Dim dY = Math.Abs(iYMove)
+							If dX > dY Then
+								'Only horizontal
+								dRc.Offset(iXMove, 0)
+							ElseIf dY > dX Then
+								'Only vertical
+								dRc.Offset(0, iYMove)
+							Else
+								'Diagonal (to be fixed)
+								Dim iinc = Math.Max(iXMove, iYMove)
+								dRc.Offset(iinc, iinc)
+							End If
+						Else
+							dRc.Offset(iXMove, iYMove)
+						End If
+						Dim ss As Shape = shps(SelectedIndices()(i))
+						ss.BaseRect = dRc
+						ss.CenterPoint = New PointF(ss.BaseRect.X + (ss.BaseRect.Width / 2), ss.BaseRect.Y + (ss.BaseRect.Height / 2))
+					Next
+			End Select
 
-		If op <> MOperations.None Then
+			'finalize resize operation
+			If op >= MOperations.TopLeft AndAlso op <= MOperations.BottomRight Then
+				If My.Computer.Keyboard.ShiftKeyDown Then
+					Dim rtd As RectangleF = tRc
+					Dim asp As Single = oRc.Width / oRc.Height
+					Select Case op
+						Case MOperations.TopLeft, MOperations.TopRight,
+							 MOperations.BottomLeft, MOperations.BottomRight
+							If oRc.Width > oRc.Height Then
+								rtd.Height = rtd.Width / asp
+							ElseIf oRc.Width < oRc.Height Then
+								rtd.Width = rtd.Height * asp
+							Else
+								Dim mxx As Integer = Math.Max(rtd.Width, rtd.Height)
+								rtd.Width = mxx
+								rtd.Height = mxx
+							End If
+						Case MOperations.Top, MOperations.Bottom
+							rtd.Width = rtd.Height * asp
+						Case MOperations.Left, MOperations.Right
+							rtd.Height = rtd.Width / asp
+					End Select
+					If op = MOperations.TopLeft Or op = MOperations.TopRight Then
+						rtd.Y = oRc.Bottom - rtd.Height
+					End If
+					If op = MOperations.TopLeft Or op = MOperations.BottomLeft Then
+						rtd.X = oRc.Right - rtd.Width
+					End If
+					tRc = rtd
+				End If
+				If tRc.Width <= 0 Then Return
+				If tRc.Height <= 0 Then Return
+				shp.BaseRect = tRc
+			End If
+
+			If op <> MOperations.None Then
+				Invalidate()
+				MainForm.UpdateBoundControls()
+			End If
+
+		End If
+	End Sub
+
+	Private Sub CanvasSelect_MouseUp(sender As Object, e As MouseEventArgs) Handles MyBase.MouseUp
+		If MainForm.Operation = MainForm.Operations.Select Then
+
+			If My.Computer.Keyboard.CtrlKeyDown AndAlso e.Location = md_pt AndAlso up_fix Then
+				Dim curr As Integer = ShapeInCursor(e.Location)
+				If curr > -1 Then
+					Dim ss = shps(curr)
+					ss.Selected = Not ss.Selected
+				End If
+			End If
+
+			'if rotated shape is resized then adjust its coordinates
+			If op >= MOperations.TopLeft AndAlso op <= MOperations.BottomRight Then
+				Dim shp As Shape = MainSelected()
+				If Not IsNothing(shp) Then FinalizeResize(shp)
+			End If
+
+			up_fix = True
+			shps.ForEach(Sub(x) x.Moving = False)
+			SetPrimary()
+			cloned = False
+			cloning = False
+			If op <> MOperations.None Then
+				MainForm.UpdateControls()
+				op = MOperations.None
+			Else
+				MainForm.UpdateBoundControls()
+			End If
+			s_rect = Rectangle.Empty
 			Invalidate()
-			MainForm.UpdateBoundControls()
 		End If
 	End Sub
 
-	Private Sub Canvas_MouseUp(sender As Object, e As MouseEventArgs) Handles MyBase.MouseUp
-		If My.Computer.Keyboard.CtrlKeyDown AndAlso e.Location = m_pt AndAlso up_fix Then
-			Dim curr As Integer = ShapeInCursor(e.Location)
-			If curr > -1 Then
-				Dim ss = shps(curr)
-				ss.Selected = Not ss.Selected
-			End If
-		End If
+#End Region
 
-		'if rotated shape is resized then adjust its coordinates
-		If op >= MOperations.TopLeft AndAlso op <= MOperations.BottomRight Then
-			Dim shp As Shape = MainSelected()
-			If Not IsNothing(shp) Then FinalizeResize(shp)
-		End If
-
-		up_fix = True
-		shps.ForEach(Sub(x) x.Moving = False)
-		SetPrimary()
-		cloned = False
-		cloning = False
-		If Not d_info.DrawMode Then MainForm.rSelect.Checked = True
-		Cursor = Cursors.Default
-		If op <> MOperations.None Then
-			MainForm.UpdateControls()
-			op = MOperations.None
-		Else
-			MainForm.UpdateBoundControls()
-		End If
-		s_rect = Rectangle.Empty
-		Invalidate()
-	End Sub
 #End Region
 
 #Region "Paint Event"
