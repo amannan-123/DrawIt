@@ -1,6 +1,4 @@
-﻿Imports System.Windows.Forms
-
-Public Class AnglesDialog
+﻿Public Class AnglesDialog
 
 	Private shp As Shape = Nothing
 	Private canvas As Canvas = Nothing

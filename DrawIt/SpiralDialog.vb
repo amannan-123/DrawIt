@@ -1,6 +1,4 @@
-﻿Imports System.Windows.Forms
-
-Public Class SpiralDialog
+﻿Public Class SpiralDialog
 
 	Private shp As Shape = Nothing
 	Private canvas As Canvas = Nothing

@@ -1,7 +1,4 @@
-﻿Imports System.Drawing.Drawing2D
-Imports System.Windows.Forms
-
-Public Class CornersDialog
+﻿Public Class CornersDialog
 
 	Private shp As Shape = Nothing
 	Private canvas As Canvas = Nothing

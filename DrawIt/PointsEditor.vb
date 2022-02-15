@@ -1,6 +1,4 @@
-﻿Imports System.Windows.Forms
-
-Public Class PointsEditor
+﻿Public Class PointsEditor
 
 	Private shp As Shape = Nothing
 	Private canvas As Canvas = Nothing

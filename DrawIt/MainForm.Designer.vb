@@ -211,12 +211,12 @@ Partial Class MainForm
 		Me.pCanvas = New MyControls.MyPanel()
 		Me.tCanvas = New MyControls.MyTabControl()
 		Me.TabPage1 = New System.Windows.Forms.TabPage()
+		Me.CanvasControl1 = New DrawIt.CanvasControl()
 		Me.pShear = New MyControls.MovablePanel()
 		Me.TBShrY = New MyControls.MyTrackBar()
 		Me.Label62 = New System.Windows.Forms.Label()
 		Me.TBShrX = New MyControls.MyTrackBar()
 		Me.Label61 = New System.Windows.Forms.Label()
-		Me.CanvasControl1 = New DrawIt.CanvasControl()
 		Me.pSettings.SuspendLayout()
 		CType(Me.set_PB, System.ComponentModel.ISupportInitialize).BeginInit()
 		CType(Me.set_H, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -2536,6 +2536,16 @@ Partial Class MainForm
 		Me.TabPage1.TabIndex = 0
 		Me.TabPage1.Text = "Canvas1"
 		'
+		'CanvasControl1
+		'
+		Me.CanvasControl1.AutoScroll = True
+		Me.CanvasControl1.Dock = System.Windows.Forms.DockStyle.Fill
+		Me.CanvasControl1.Location = New System.Drawing.Point(0, 0)
+		Me.CanvasControl1.Margin = New System.Windows.Forms.Padding(0)
+		Me.CanvasControl1.Name = "CanvasControl1"
+		Me.CanvasControl1.Size = New System.Drawing.Size(1032, 581)
+		Me.CanvasControl1.TabIndex = 0
+		'
 		'pShear
 		'
 		Me.pShear.BackColor = System.Drawing.Color.FromArgb(CType(CType(70, Byte), Integer), CType(CType(70, Byte), Integer), CType(CType(70, Byte), Integer))
@@ -2611,16 +2621,6 @@ Partial Class MainForm
 		Me.Label61.Size = New System.Drawing.Size(48, 13)
 		Me.Label61.TabIndex = 0
 		Me.Label61.Text = "Shear X:"
-		'
-		'CanvasControl1
-		'
-		Me.CanvasControl1.AutoScroll = True
-		Me.CanvasControl1.Dock = System.Windows.Forms.DockStyle.Fill
-		Me.CanvasControl1.Location = New System.Drawing.Point(0, 0)
-		Me.CanvasControl1.Margin = New System.Windows.Forms.Padding(0)
-		Me.CanvasControl1.Name = "CanvasControl1"
-		Me.CanvasControl1.Size = New System.Drawing.Size(1032, 581)
-		Me.CanvasControl1.TabIndex = 0
 		'
 		'MainForm
 		'

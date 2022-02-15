@@ -41,9 +41,9 @@ Public Class Canvas
 #Region "Structs & Enums"
 	Private Structure HoverInfo
 
-		Public Sub New(ind As Integer, tp As Integer)
+		Public Sub New(ind As Integer, type As Integer)
 			shp_index = ind
-			h_type = tp
+			h_type = type
 		End Sub
 
 		Private shp_index As Integer
@@ -124,6 +124,8 @@ Public Class Canvas
 	Private img As Bitmap
 	Private shps As New List(Of Shape)
 	Private op As MOperations = MOperations.None
+	Private focus_clr As Color = Color.Silver
+	'selection
 	Private cloned As Boolean = False
 	Private cloning As Boolean = False
 	Private up_fix As Boolean = True
@@ -134,7 +136,9 @@ Public Class Canvas
 	Private ReadOnly m_rect As New List(Of RectangleF)
 	Private s_rect As New RectangleF
 	Private h_info As New HoverInfo(-1, 0)
+	'drawing
 	Private d_info As New DrawModeInfo(False)
+	Private curr_loc As Point = Point.Empty
 #End Region
 
 #Region "Properties"
@@ -297,7 +301,10 @@ Public Class Canvas
 				Case Else
 					Return New InvalidDataException("File type not supported!")
 			End Select
-			shps.ForEach(Sub(x) x.ReloadCachedObjects())
+			shps.ForEach(Sub(x)
+							 x.BindEvents()
+							 x.ReloadCachedObjects()
+						 End Sub)
 			Invalidate()
 			Return Nothing
 		Catch ex As Exception
@@ -317,6 +324,12 @@ Public Class Canvas
 #End Region
 
 #Region "Functions"
+	Public Sub ClearDrawingData()
+		d_info.DrawMode = False
+		d_info.Points.Clear()
+		curr_loc = Point.Empty
+	End Sub
+
 	Private Function DModeMin() As Integer
 		Select Case d_info.ShapeType
 			Case DShape.Polygon, DShape.Curves, DShape.ClosedCurve
@@ -489,6 +502,7 @@ Public Class Canvas
 								If d_info.Points.Count > 0 Then n_pt.Y = d_info.Points.Last().Y
 							End If
 							d_info.Points.Add(n_pt)
+							curr_loc = n_pt
 						End If
 					ElseIf e.Button = MouseButtons.Left Then
 						If d_info.Points.Count >= DModeMin() Then
@@ -511,14 +525,15 @@ Public Class Canvas
 								sshp.MShape.CurvePoints = l_perc.ToArray()
 							End If
 							shps.Add(sshp)
-							d_info.DrawMode = False
-							d_info.Points.Clear()
+							ClearDrawingData()
+							MainForm.UpdateControls()
 						Else
 							If Not d_info.DrawMode Then
 								Dim shp_n = New Shape(e.Location, sty, bty)
 								shp_n.Selected = True
 								shps.Add(shp_n)
 								op = MOperations.Draw
+								MainForm.UpdateControls()
 							End If
 						End If
 					End If
@@ -528,6 +543,7 @@ Public Class Canvas
 					shp_n.Selected = True
 					shps.Add(shp_n)
 					op = MOperations.Draw
+					MainForm.UpdateControls()
 			End Select
 		End If
 	End Sub
@@ -540,21 +556,33 @@ Public Class Canvas
 								   Math.Min(e.Y, md_pt.Y),
 								   Math.Abs(e.X - md_pt.X),
 								   Math.Abs(e.Y - md_pt.Y))
-				If My.Computer.Keyboard.ShiftKeyDown Then
+				If My.Computer.Keyboard.ShiftKeyDown Then 'make width and height equal
 					Dim mxx As Integer = Math.Max(rtd.Width, rtd.Height)
 					rtd.Width = mxx
 					rtd.Height = mxx
-					If (e.X < md_pt.X And e.Y < md_pt.Y) Or (e.X > md_pt.X And e.Y < md_pt.Y) Then
-						rtd.Y = md_pt.Y - rtd.Height
-					End If
-					If (e.X < md_pt.X And e.Y < md_pt.Y) Or (e.X < md_pt.X And e.Y > md_pt.Y) Then
-						rtd.X = md_pt.X - rtd.Width
-					End If
+					If e.Y <= md_pt.Y Then rtd.Y = md_pt.Y - rtd.Height
+					If e.X <= md_pt.X Then rtd.X = md_pt.X - rtd.Width
+				End If
+				If My.Computer.Keyboard.CtrlKeyDown Then 'use mouse down point as center
+					If e.X > md_pt.X Then rtd.X -= rtd.Width
+					If e.Y > md_pt.Y Then rtd.Y -= rtd.Height
+					rtd.Width *= 2
+					rtd.Height *= 2
 				End If
 				Dim shp_d As Shape = MainSelected()
 				shp_d.BaseRect = rtd
 				Invalidate()
 				MainForm.UpdateBoundControls()
+			End If
+			If d_info.DrawMode And d_info.Points.Count > 0 Then
+				Dim n_pt As Point = e.Location
+				If My.Computer.Keyboard.CtrlKeyDown Then
+					n_pt.X = d_info.Points.Last().X
+				ElseIf My.Computer.Keyboard.ShiftKeyDown Then
+					n_pt.Y = d_info.Points.Last().Y
+				End If
+				curr_loc = n_pt
+				Invalidate()
 			End If
 		End If
 	End Sub
@@ -566,9 +594,16 @@ Public Class Canvas
 		End If
 	End Sub
 
+	Private Sub CanvasDraw_MouseLeave(sender As Object, e As EventArgs) Handles MyBase.MouseLeave
+		If MainForm.Operation = MainForm.Operations.Draw Then
+			curr_loc = Point.Empty
+			Invalidate()
+		End If
+	End Sub
+
 #End Region
 
-#Region "Select"
+#Region "Select & Resize"
 	Private Sub CanvasSelect_MouseDown(sender As Object, e As MouseEventArgs) Handles MyBase.MouseDown
 		If MainForm.Operation = MainForm.Operations.Select Then
 
@@ -744,38 +779,71 @@ Public Class Canvas
 				oRc = tRc
 			End If
 
+			'operations
 			Select Case op
 				Case MOperations.Centering
 					Dim npt As PointF = RotatePoint(e.Location, shp.CenterPoint, -shp.Angle)
 					shp.FBrush.PCenterPoint = ToPercentage(shp.BaseRect, npt)
-				Case MOperations.Draw
-
 				Case MOperations.TopLeft
 					tRc.X += tPt.X
 					tRc.Width -= tPt.X
 					tRc.Y += tPt.Y
 					tRc.Height -= tPt.Y
+					If My.Computer.Keyboard.CtrlKeyDown Then
+						tRc.Height -= tPt.Y
+						tRc.Width -= tPt.X
+					End If
 				Case MOperations.Top
 					tRc.Y += tPt.Y
 					tRc.Height -= tPt.Y
+					If My.Computer.Keyboard.CtrlKeyDown Then
+						tRc.Height -= tPt.Y
+					End If
 				Case MOperations.TopRight
 					tRc.Width += tPt.X
 					tRc.Y += tPt.Y
 					tRc.Height -= tPt.Y
+					If My.Computer.Keyboard.CtrlKeyDown Then
+						tRc.Height -= tPt.Y
+						tRc.X -= tPt.X
+						tRc.Width += tPt.X
+					End If
 				Case MOperations.Left
 					tRc.X += tPt.X
 					tRc.Width -= tPt.X
+					If My.Computer.Keyboard.CtrlKeyDown Then
+						tRc.Width -= tPt.X
+					End If
 				Case MOperations.Right
 					tRc.Width += tPt.X
+					If My.Computer.Keyboard.CtrlKeyDown Then
+						tRc.X -= tPt.X
+						tRc.Width += tPt.X
+					End If
 				Case MOperations.BottomLeft
 					tRc.X += tPt.X
 					tRc.Width -= tPt.X
 					tRc.Height += tPt.Y
+					If My.Computer.Keyboard.CtrlKeyDown Then
+						tRc.Width -= tPt.X
+						tRc.Y -= tPt.Y
+						tRc.Height += tPt.Y
+					End If
 				Case MOperations.Bottom
 					tRc.Height += tPt.Y
+					If My.Computer.Keyboard.CtrlKeyDown Then
+						tRc.Y -= tPt.Y
+						tRc.Height += tPt.Y
+					End If
 				Case MOperations.BottomRight
 					tRc.Width += tPt.X
 					tRc.Height += tPt.Y
+					If My.Computer.Keyboard.CtrlKeyDown Then
+						tRc.X -= tPt.X
+						tRc.Width += tPt.X
+						tRc.Y -= tPt.Y
+						tRc.Height += tPt.Y
+					End If
 				Case MOperations.Rotate
 					Dim snAngle As Single = GetAngleBetweenTwoPointsWithFixedPoint(md_pt, e.Location, m_cnt)
 					snAngle = -snAngle * 180.0# / Math.PI
@@ -785,15 +853,13 @@ Public Class Canvas
 				Case MOperations.Move
 					If My.Computer.Keyboard.CtrlKeyDown AndAlso cloned = False Then
 						old_sl.Clear()
-						For Each i As Integer In selc
-							old_sl.Add(i)
-						Next
+						selc.ForEach(Sub(i) old_sl.Add(i))
 						CloneSelected()
 						cloned = True
 						cloning = True
 					End If
 					If cloning Then
-						If My.Computer.Keyboard.CtrlKeyDown = False Then
+						If Not My.Computer.Keyboard.CtrlKeyDown Then
 							Dim _lst = selc
 							For i As Integer = 0 To old_sl.Count - 1
 								Dim ss As Shape = shps(_lst(i))
@@ -837,7 +903,7 @@ Public Class Canvas
 					Next
 			End Select
 
-			'finalize resize operation
+			'fix aspect ratio and finalize resize operation
 			If op >= MOperations.TopLeft AndAlso op <= MOperations.BottomRight Then
 				If My.Computer.Keyboard.ShiftKeyDown Then
 					Dim rtd As RectangleF = tRc
@@ -1196,10 +1262,10 @@ Public Class Canvas
 						Case 0, 90, 180, 270, 360
 							hbr = New HatchBrush(HatchStyle.DarkDownwardDiagonal, Color.White, Color.Black)
 					End Select
-					Dim pns = New Pen(hbr, 5)
-					ig.DrawRectangle(pns, rtt)
+					Using pns = New Pen(hbr, 5)
+						ig.DrawRectangle(pns, rtt)
+					End Using
 					hbr.Dispose()
-					pns.Dispose()
 				End If
 			End If
 		End If
@@ -1212,13 +1278,14 @@ Public Class Canvas
 
 		'Draw background of canvas
 		If BackColor.A < 255 Then
-			Using bk As New HatchBrush(HatchStyle.LargeCheckerBoard, Color.White, Color.Silver)
+			Using bk As New HatchBrush(HatchStyle.LargeCheckerBoard, Color.White, focus_clr)
 				g.FillRectangle(bk, ClientRectangle)
 			End Using
 		End If
 
 		SetImageSize()
 
+		'Draw shapes
 		If Not IsNothing(img) Then
 
 			Using ig As Graphics = Graphics.FromImage(img)
@@ -1244,22 +1311,32 @@ Public Class Canvas
 				g.FillPath(New SolidBrush(Color.FromArgb(180, Color.Black)),
 						   DPPath(i))
 			Next
-			If d_info.Points.Count >= DModeMin() Then
+
+			Dim d_lim As Integer = DModeMin()
+			If Not curr_loc = Point.Empty Then d_lim -= 1
+
+			If d_info.Points.Count >= d_lim Then
+				Dim d_pts As New List(Of PointF)
+				d_pts = d_info.Points.Union(d_info.Points).ToList
+				If Not curr_loc = Point.Empty Then d_pts.Add(curr_loc)
+				Dim d_pen As New Pen(Color.Black)
+				If d_info.Points.Count < DModeMin() Then d_pen.DashPattern = New Single() {8, 4}
 				Select Case d_info.ShapeType
 					Case DShape.Lines
-						g.DrawLines(Pens.Black, d_info.Points.ToArray())
+						g.DrawLines(d_pen, d_pts.ToArray)
 					Case DShape.Polygon
-						g.DrawPolygon(Pens.Black, d_info.Points.ToArray())
+						g.DrawPolygon(d_pen, d_pts.ToArray)
 					Case DShape.Curves
-						g.DrawCurve(Pens.Black, d_info.Points.ToArray())
+						g.DrawCurve(d_pen, d_pts.ToArray)
 					Case DShape.ClosedCurve
-						g.DrawClosedCurve(Pens.Black, d_info.Points.ToArray())
+						g.DrawClosedCurve(d_pen, d_pts.ToArray)
 				End Select
+				d_pen.Dispose()
 			End If
 		End If
 
 		'Draw Highlighted Shape
-		If h_info.ShapeIndex > -1 And shps.Count >= h_info.ShapeIndex + 1 Then
+		If h_info.ShapeIndex > -1 And h_info.ShapeIndex < shps.Count Then
 			Using pn As New Pen(hg_pth)
 				If h_info.HoverType = 1 Then pn.Color = hg_brd
 				g.DrawPath(pn, shps(h_info.ShapeIndex).TotalPath())
@@ -1288,7 +1365,7 @@ Public Class Canvas
 		If FResizing AndAlso Docked Then DrawControlSize(g)
 
 		'Force Garbage Collection
-		If Not IsDesignMode() Then GC.Collect()
+		'If Not IsDesignMode() Then GC.Collect()
 
 	End Sub
 
@@ -1513,6 +1590,20 @@ Public Class Canvas
 				Invalidate()
 		End Select
 	End Sub
+
+#End Region
+
+#Region "Focus"
+	Private Sub Canvas_Enter(sender As Object, e As EventArgs) Handles MyBase.Enter
+		focus_clr = Color.Silver
+		Invalidate()
+	End Sub
+
+	Private Sub Canvas_Leave(sender As Object, e As EventArgs) Handles MyBase.Leave
+		focus_clr = Color.LightGray
+		Invalidate()
+	End Sub
+
 #End Region
 
 End Class

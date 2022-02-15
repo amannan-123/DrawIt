@@ -300,6 +300,7 @@ Public Class MainForm
 
 		Select Case shp.MShape.SType
 			Case MyShape.ShapeStyle.Text
+				shp.UpdateBrush()
 				e.Graphics.FillPath(shp.FillBrush, shp.TotalPath)
 			Case Else
 				e.Graphics.DrawPath(shp.CreatePen, shp.TotalPath)
@@ -882,6 +883,16 @@ Public Class MainForm
 			shp.FBrush.PBlendFactors = P_BEditor.Factors
 			shp.FBrush.PBlendPositions = P_BEditor.Positions
 			MainCanvas.Invalidate()
+		End If
+	End Sub
+#End Region
+
+#Region "Operation"
+	Private Sub rDraw_CheckedChanged(sender As Object, e As EventArgs) Handles rSelect.CheckedChanged, rDraw.CheckedChanged
+		Dim cn = MainCanvas()
+		If Not IsNothing(cn) Then
+			cn.ClearDrawingData()
+			cn.Invalidate()
 		End If
 	End Sub
 #End Region
@@ -1547,6 +1558,7 @@ Public Class MainForm
 			OpenFiles(args)
 		End If
 	End Sub
+
 #End Region
 
 End Class
