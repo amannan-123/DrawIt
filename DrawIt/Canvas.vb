@@ -4,7 +4,6 @@ Imports System.Drawing.Drawing2D
 Imports System.Drawing.Text
 Imports System.IO
 Imports System.Runtime.Serialization.Formatters.Binary
-Imports System.Runtime.Serialization.Formatters.Soap
 #End Region
 
 Public Class Canvas
@@ -268,11 +267,11 @@ Public Class Canvas
 					formatter.Serialize(stream, shps)
 					stream.Close()
 				Case ".soap"
-					Dim lss As New ArrayList(shps)
-					Dim stream As FileStream = File.Create(_loc)
-					Dim formatter As New SoapFormatter()
-					formatter.Serialize(stream, lss)
-					stream.Close()
+					'Dim lss As New ArrayList(shps)
+					'Dim stream As FileStream = File.Create(_loc)
+					'Dim formatter As New SoapFormatter()
+					'formatter.Serialize(stream, lss)
+					'stream.Close()
 				Case Else
 					Return New InvalidDataException("File type not supported!")
 			End Select
@@ -292,12 +291,12 @@ Public Class Canvas
 					shps = formatter.Deserialize(stream)
 					stream.Close()
 				Case ".soap"
-					Dim stream As FileStream = File.Open(_loc, FileMode.Open)
-					Dim formatter As New SoapFormatter()
-					Dim lss As ArrayList = formatter.Deserialize(stream)
-					Dim result As IEnumerable(Of Shape) = lss.Cast(Of Shape)()
-					shps = result.ToList
-					stream.Close()
+					'Dim stream As FileStream = File.Open(_loc, FileMode.Open)
+					'Dim formatter As New SoapFormatter()
+					'Dim lss As ArrayList = formatter.Deserialize(stream)
+					'Dim result As IEnumerable(Of Shape) = lss.Cast(Of Shape)()
+					'shps = result.ToList
+					'stream.Close()
 				Case Else
 					Return New InvalidDataException("File type not supported!")
 			End Select
@@ -1117,6 +1116,38 @@ Public Class Canvas
 
 	End Sub
 
+	Private Sub DrawPathPoint(g As Graphics, pth As GraphicsPath)
+		For i As Integer = 0 To pth.PointCount - 1
+			Dim _point = pth.PathData.Points(i)
+			Dim _type = pth.PathData.Types(i)
+			Dim clr As Color = Color.FromArgb(150, Color.Red)
+			Select Case _type
+				Case 1, 129
+					clr = Color.FromArgb(150, Color.Red)
+				Case 3, 131
+					clr = Color.FromArgb(150, Color.Blue)
+			End Select
+
+			Dim ptrect = New RectangleF(_point, SizeF.Empty)
+			ptrect.Inflate(10, 10)
+			Dim ptpath = New GraphicsPath()
+			ptpath.AddEllipse(ptrect)
+			Dim brsh As New SolidBrush(clr)
+			g.FillPath(brsh, ptpath)
+
+			ptrect.Inflate(50, 50)
+
+			Using sf As New StringFormat()
+				sf.Alignment = StringAlignment.Center
+				sf.LineAlignment = StringAlignment.Center
+				Dim fnt As New Font("Segoe UI", 10, FontStyle.Bold)
+				g.DrawString(_type.ToString, fnt, Brushes.Black, ptrect, sf)
+				fnt.Dispose()
+			End Using
+
+		Next
+	End Sub
+
 	Private Sub DrawShape(ig As Graphics, shp As Shape)
 
 		ig.PixelOffsetMode = PixelOffsetMode.HighSpeed
@@ -1135,6 +1166,7 @@ Public Class Canvas
 		Dim fbr As Brush = shp.FillBrush
 		Dim dpn As Pen = shp.CreatePen
 		If Not IsNothing(pth) Then
+			DrawPathPoint(ig, pth)
 			If Not IsNothing(fbr) Then
 				ig.RenderingOrigin = Point.Ceiling(pth.GetBounds.Location)
 				ig.FillPath(fbr, pth)

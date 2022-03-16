@@ -287,7 +287,7 @@ Public Class MainForm
 		End If
 
 		Dim rect As New Rectangle(e.Bounds.X + 3, e.Bounds.Y + 1, 20, e.Bounds.Height - 3)
-		Dim shp As New Shape(False)
+		Dim shp As New Shape()
 		shp.BaseRect = rect
 		shp.MShape.SType = [Enum].Parse(GetType(MyShape.ShapeStyle), itemString)
 		shp.DPen.PBrush.SolidColor = Color.Black
@@ -303,6 +303,8 @@ Public Class MainForm
 				shp.UpdateBrush()
 				e.Graphics.FillPath(shp.FillBrush, shp.TotalPath)
 			Case Else
+				shp.UpdateSelectionPen()
+				shp.UpdatePenBrush()
 				e.Graphics.DrawPath(shp.CreatePen, shp.TotalPath)
 		End Select
 
@@ -330,7 +332,7 @@ Public Class MainForm
 		End If
 
 		Dim rect As New Rectangle(e.Bounds.X + 3, e.Bounds.Y + 1, 20, e.Bounds.Height - 3)
-		Dim shp As New Shape(False)
+		Dim shp As New Shape()
 		shp.BaseRect = rect
 		shp.FBrush.BType = [Enum].Parse(GetType(MyBrush.BrushType), itemString)
 		shp.DPen.PBrush.SolidColor = Color.Black
@@ -341,7 +343,7 @@ Public Class MainForm
 			Case MyBrush.BrushType.Texture
 				e.Graphics.FillRectangle(Brushes.White, rect)
 				Dim r1 As New Rectangle(rect.X, rect.Y + 4, rect.Width / 2, rect.Height - 4)
-				Dim s1 As New Shape(False)
+				Dim s1 As New Shape()
 				s1.BaseRect = r1
 				s1.MShape.SType = MyShape.ShapeStyle.Triangle
 				s1.UpdatePath()
@@ -361,6 +363,8 @@ Public Class MainForm
 				e.Graphics.RenderingOrigin = rect.Location
 				shp.UpdateBrush()
 				e.Graphics.FillPath(shp.FillBrush, shp.TotalPath)
+				shp.UpdateSelectionPen()
+				shp.UpdatePenBrush()
 				e.Graphics.DrawPath(shp.CreatePen, shp.TotalPath)
 		End Select
 

@@ -23,11 +23,11 @@ Partial Class MyPanel
 	<System.Diagnostics.DebuggerStepThrough()> _
 	Private Sub InitializeComponent()
         Me.SuspendLayout()
-        '
-        'MyPanel
-        '
-        Me.ResumeLayout(False)
+		'
+		'MyPanel
+		'
+		Me.ResumeLayout(False)
 
-    End Sub
+	End Sub
 
 End Class

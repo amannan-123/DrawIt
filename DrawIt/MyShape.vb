@@ -51,16 +51,6 @@ Public Class MyShape
 		End Set
 	End Property
 
-	Private _cls As Boolean = False
-	Public Property IsClosed() As Boolean
-		Get
-			Return _cls
-		End Get
-		Set(value As Boolean)
-			_cls = value
-			NotifyPropertyChanged()
-		End Set
-	End Property
 #End Region
 
 #Region "RoundedRect"

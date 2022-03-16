@@ -27,7 +27,7 @@ Partial Class MyTrackBar
         'MyTrackBar
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
-        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None
         Me.Name = "MyTrackBar"
         Me.Size = New System.Drawing.Size(150, 20)
         Me.ResumeLayout(False)

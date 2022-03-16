@@ -26,8 +26,7 @@ Public Class Shape
 		UpdateBrush()
 	End Sub
 
-	Sub New(Optional addEvents = True)
-		If addEvents Then BindEvents()
+	Sub New()
 		ReloadCachedObjects()
 	End Sub
 
@@ -120,7 +119,6 @@ Public Class Shape
 		End Get
 		Set(value As Single)
 			shear_x = value
-			ReloadCachedObjects()
 		End Set
 	End Property
 
@@ -131,7 +129,6 @@ Public Class Shape
 		End Get
 		Set(value As Single)
 			shear_y = value
-			ReloadCachedObjects()
 		End Set
 	End Property
 
@@ -222,7 +219,7 @@ Public Class Shape
 	''' </summary>
 	Public Function BorderPath() As GraphicsPath
 		Dim gp As GraphicsPath = TotalPath()
-		If Not IsNothing(gp) Then
+		If Not IsNothing(gp) AndAlso Not IsNothing(SelectionPen) Then
 			gp.Widen(SelectionPen)
 			Return gp
 		End If
@@ -324,15 +321,13 @@ Public Class Shape
 				End If
 				If DPen.PBrush.LInterpolate Then
 					Dim ip As New ColorBlend
-					ip.Colors = DPen.PBrush.LInterColors
-					ip.Positions = DPen.PBrush.LInterPositions
-					lgb.InterpolationColors = ip
-				End If
-				If DPen.PBrush.LBlend Then
-					Dim bl As New Blend
-					bl.Factors = DPen.PBrush.LBlendFactors
-					bl.Positions = DPen.PBrush.LBlendPositions
-					lgb.Blend = bl
+					If DPen.PBrush.LInterColors.Length = DPen.PBrush.LInterPositions.Length Then
+						ip.Colors = DPen.PBrush.LInterColors
+						ip.Positions = DPen.PBrush.LInterPositions
+						lgb.InterpolationColors = ip
+					Else
+						_pb = Nothing
+					End If
 				End If
 				_pb = lgb
 			Case MyBrush.BrushType.PathGradient
@@ -369,6 +364,10 @@ Public Class Shape
 			Case MyBrush.BrushType.Solid
 				_cb = New SolidBrush(FBrush.SolidColor)
 			Case MyBrush.BrushType.LinearGradient
+				If IsNothing(TotalPath(False)) Then
+					_cb = Nothing
+					Return
+				End If
 				Dim r2 As RectangleF = TotalPath(False).GetBounds
 				r2.Inflate(1, 1)
 				If r2.Width < 1 Or r2.Height < 1 Then
@@ -470,7 +469,6 @@ Public Class Shape
 	Public Function SelectionPath(Optional _anc As Boolean = True) As Region
 		Dim gp As GraphicsPath = TotalPath()
 		If IsNothing(gp) Then Return Nothing
-		'If Not MShape.IsClosed Then gp.Widen(SelectionPen)
 		If Not IsNothing(gp) Then
 			Dim rg As New Region(gp)
 			If Primary AndAlso _anc Then
@@ -520,6 +518,12 @@ Public Class Shape
 	''' Updates <see cref="TotalPath(Boolean, Boolean, Boolean)"/>.
 	''' </summary>
 	Public Sub UpdatePath()
+
+		If _rect.Width < 1 Or _rect.Height < 1 Then
+			_pth = Nothing
+			Return
+		End If
+
 		Dim gp As New GraphicsPath()
 
 		Dim rt As New RectangleF(0, 0, _rect.Width, _rect.Height)
@@ -591,7 +595,8 @@ Public Class Shape
 					_pth = Nothing
 					Return
 				End If
-				Dim sf As New StringFormat(StringFormatFlags.NoClip)
+				Dim sf As New StringFormat()
+				'sf.FormatFlags = StringFormatFlags.NoWrap
 				sf.Trimming = StringTrimming.EllipsisCharacter
 				Select Case MShape.TextAlignment
 					Case ContentAlignment.TopLeft
@@ -626,7 +631,6 @@ Public Class Shape
 				gp.AddString(MShape.Text, fl, MShape.FontStyle,
 						 MShape.FontSize * 1.34, rt, sf)
 		End Select
-		If MShape.IsClosed Then gp.CloseFigure()
 
 		'flip
 		'Dim flipXMatrix = New Matrix(-1, 0,
@@ -641,13 +645,13 @@ Public Class Shape
 		'gp.Transform(transformMatrix)
 
 		'warp
+		'rt = gp.GetBounds
 		'Dim points = New PointF() {
-		'    New PointF(rt.X + (rt.Width / 4), rt.Y),
-		'    New PointF(rt.Right - (rt.Width / 4), rt.Y),
-		'    New PointF(rt.X, rt.Bottom),
-		'    New PointF(rt.Right, rt.Bottom)}
+		'	New PointF(rt.X + (rt.Width / 4), rt.Y),
+		'	New PointF(rt.Right - (rt.Width / 4), rt.Y),
+		'	New PointF(rt.X, rt.Bottom),
+		'	New PointF(rt.Right, rt.Bottom)}
 		'gp.Warp(points, rt)
-
 
 		_pth = gp
 	End Sub
