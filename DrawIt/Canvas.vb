@@ -4,6 +4,9 @@ Imports System.Drawing.Drawing2D
 Imports System.Drawing.Text
 Imports System.IO
 Imports System.Runtime.Serialization.Formatters.Binary
+Imports System.Text.Json
+Imports System.Text.Json.Serialization
+Imports JSONHelpers
 #End Region
 
 Public Class Canvas
@@ -266,19 +269,26 @@ Public Class Canvas
 					Dim formatter As New BinaryFormatter()
 					formatter.Serialize(stream, shps)
 					stream.Close()
-				Case ".soap"
-					'Dim lss As New ArrayList(shps)
-					'Dim stream As FileStream = File.Create(_loc)
-					'Dim formatter As New SoapFormatter()
-					'formatter.Serialize(stream, lss)
-					'stream.Close()
+				Case ".json"
+					Dim stream As FileStream = File.Create(_loc)
+					stream.Close()
+					Dim options = New JsonSerializerOptions With
+									{
+										.UnknownTypeHandling = JsonUnknownTypeHandling.JsonElement,
+										.IgnoreReadOnlyProperties = True,
+										.WriteIndented = True
+									}
+					options.Converters.Add(New JsonStringEnumConverter())
+					options.Converters.Add(New JSONColorConverter())
+					Dim jsonString = JsonSerializer.Serialize(shps, options)
+					File.WriteAllText(_loc, jsonString)
 				Case Else
 					Return New InvalidDataException("File type not supported!")
 			End Select
-			Return Nothing
 		Catch ex As Exception
 			Return ex
 		End Try
+		Return Nothing
 	End Function
 
 	Public Function LoadProject(_loc As String) As Exception
@@ -290,25 +300,26 @@ Public Class Canvas
 					Dim formatter As New BinaryFormatter()
 					shps = formatter.Deserialize(stream)
 					stream.Close()
-				Case ".soap"
-					'Dim stream As FileStream = File.Open(_loc, FileMode.Open)
-					'Dim formatter As New SoapFormatter()
-					'Dim lss As ArrayList = formatter.Deserialize(stream)
-					'Dim result As IEnumerable(Of Shape) = lss.Cast(Of Shape)()
-					'shps = result.ToList
-					'stream.Close()
+				Case ".json"
+					Dim jsonString = File.ReadAllText(_loc)
+					Dim options = New JsonSerializerOptions()
+					options.Converters.Add(New JsonStringEnumConverter())
+					options.Converters.Add(New JSONColorConverter())
+					Dim data = JsonSerializer.Deserialize(Of List(Of Shape))(jsonString, options)
+					shps = data
 				Case Else
 					Return New InvalidDataException("File type not supported!")
 			End Select
+		Catch ex As Exception
+			Return ex
+		Finally
 			shps.ForEach(Sub(x)
 							 x.BindEvents()
 							 x.ReloadCachedObjects()
 						 End Sub)
 			Invalidate()
-			Return Nothing
-		Catch ex As Exception
-			Return ex
 		End Try
+		Return Nothing
 	End Function
 
 	Public Function SaveImage(_loc As String) As Exception
@@ -1166,7 +1177,7 @@ Public Class Canvas
 		Dim fbr As Brush = shp.FillBrush
 		Dim dpn As Pen = shp.CreatePen
 		If Not IsNothing(pth) Then
-			DrawPathPoint(ig, pth)
+			'DrawPathPoint(ig, pth)
 			If Not IsNothing(fbr) Then
 				ig.RenderingOrigin = Point.Ceiling(pth.GetBounds.Location)
 				ig.FillPath(fbr, pth)

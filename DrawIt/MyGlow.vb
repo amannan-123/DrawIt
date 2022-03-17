@@ -20,6 +20,7 @@ Public Class MyGlow
 #End Region
 
 #Region "Event"
+	<NonSerialized>
 	Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
 
 	Private Sub NotifyPropertyChanged(<CallerMemberName> Optional propertyName As String = "")

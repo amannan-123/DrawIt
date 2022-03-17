@@ -16,6 +16,7 @@ Public Class MyShape
 #End Region
 
 #Region "Event"
+	<NonSerialized>
 	Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
 
 	Private Sub NotifyPropertyChanged(<CallerMemberName> Optional propertyName As String = "")
@@ -268,6 +269,7 @@ Public Class RRCorners
 	Implements INotifyPropertyChanged, ICloneable
 
 #Region "Event"
+	<NonSerialized>
 	Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
 
 	Private Sub NotifyPropertyChanged(<CallerMemberName> Optional propertyName As String = "")

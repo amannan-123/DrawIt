@@ -19,6 +19,7 @@ Public Class MyPen
 #End Region
 
 #Region "Event"
+	<NonSerialized>
 	Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
 
 	Private Sub NotifyPropertyChanged(<CallerMemberName> Optional propertyName As String = "")
@@ -34,7 +35,7 @@ Public Class MyPen
 			Return _br
 		End Get
 		Set(value As MyBrush)
-			If value.Equals(_br) Then
+			If Not value.Equals(_br) Then
 				_br = value
 				NotifyPropertyChanged()
 			End If

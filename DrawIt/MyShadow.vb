@@ -6,6 +6,7 @@ Public Class MyShadow
 	Implements INotifyPropertyChanged, ICloneable
 
 #Region "Event"
+	<NonSerialized>
 	Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
 
 	Private Sub NotifyPropertyChanged(<CallerMemberName> Optional propertyName As String = "")
@@ -107,6 +108,7 @@ Public Class MyShadow
 #End Region
 
 #Region "Clone"
+
 	''' <summary>
 	''' Creates an exact copy of this <see cref="MyShadow"/> object.
 	''' </summary>

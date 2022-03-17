@@ -8,6 +8,7 @@ Public Class Shape
 	Public Sub BindEvents()
 		AddHandler FBrush.PropertyChanged, AddressOf BrushChanged
 		AddHandler DPen.PropertyChanged, AddressOf PenChanged
+		AddHandler DPen.PBrush.PropertyChanged, AddressOf PenChanged
 		AddHandler MShape.PropertyChanged, AddressOf ShapeChanged
 	End Sub
 

@@ -7,6 +7,7 @@ Public Class MyBrush
 	Implements INotifyPropertyChanged, ICloneable
 
 #Region "Event"
+	<NonSerialized>
 	Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
 
 	Private Sub NotifyPropertyChanged(<CallerMemberName> Optional propertyName As String = "")

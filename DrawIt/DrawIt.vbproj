@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\JSONHelpers\JSONHelpers.csproj" />
     <ProjectReference Include="..\MyControls\MyControls.vbproj" />
   </ItemGroup>
 

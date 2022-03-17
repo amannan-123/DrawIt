@@ -1435,7 +1435,7 @@ Public Class MainForm
 	Private Sub btOpen_Click(sender As Object, e As EventArgs) Handles btOpen.Click
 		openDialog.Multiselect = True
 		openDialog.Title = "Choose Project File"
-		openDialog.Filter = "Binary File (*.bin)|*.bin|SOAP File (*.soap)|*.soap"
+		openDialog.Filter = "Binary File (*.bin)|*.bin|JSON File (*.json)|*.json"
 		If openDialog.ShowDialog = DialogResult.OK Then
 			OpenFiles(openDialog.FileNames)
 		End If
@@ -1445,13 +1445,13 @@ Public Class MainForm
 		Dim cn = MainCanvas()
 		If IsNothing(cn) Then Return
 		saveDialog.Title = "Save As"
-		saveDialog.Filter = "Binary File (*.bin)|*.bin|Image File (*.png)|*.png|SOAP File (*.soap)|*.soap"
-		saveDialog.DefaultExt = "*.dif"
+		saveDialog.Filter = "Binary File (*.bin)|*.bin|Image File (*.png)|*.png|JSON File (*.json)|*.json"
+		saveDialog.DefaultExt = "*.bin"
 		saveDialog.FileName = cn.Text
 		If saveDialog.ShowDialog = DialogResult.OK Then
 			Dim inf As New FileInfo(saveDialog.FileName)
 			Select Case inf.Extension.ToLower
-				Case ".bin", ".soap"
+				Case ".bin", ".json"
 					Dim op = cn.SaveProject(saveDialog.FileName)
 					If Not IsNothing(op) Then
 						MessageBox.Show(op.Message)
