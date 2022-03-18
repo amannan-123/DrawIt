@@ -141,6 +141,7 @@ Public Class Canvas
 	'drawing
 	Private d_info As New DrawModeInfo(False)
 	Private curr_loc As Point = Point.Empty
+	Private redraw_img As Boolean = True
 #End Region
 
 #Region "Properties"
@@ -696,6 +697,7 @@ Public Class Canvas
 
 	Private Sub CanvasSelect_MouseMove(sender As Object, e As MouseEventArgs) Handles MyBase.MouseMove
 		If MainForm.Operation = MainForm.Operations.Select Then
+			redraw_img = True
 
 			If op = MOperations.Selection Then
 				s_rect = New Rectangle(Math.Min(e.X, md_pt.X),
@@ -720,6 +722,7 @@ Public Class Canvas
 			'highlight shape
 			If HighlightShapes AndAlso op = MOperations.None AndAlso
 			   shps.Count > selc.Count Then
+				redraw_img = False
 				Dim curr As Integer = ShapeInCursor(e.Location)
 				If curr > -1 Then
 					If shps(curr).Selected = False Then
@@ -739,6 +742,8 @@ Public Class Canvas
 					h_info.ShapeIndex = -1
 				End If
 				Invalidate()
+				Application.DoEvents()
+				redraw_img = True
 			End If
 
 			Dim shp As Shape = MainSelected()
@@ -1326,10 +1331,10 @@ Public Class Canvas
 			End Using
 		End If
 
-		SetImageSize()
-
 		'Draw shapes
-		If Not IsNothing(img) Then
+		If redraw_img Then
+
+			SetImageSize()
 
 			Using ig As Graphics = Graphics.FromImage(img)
 
@@ -1344,9 +1349,14 @@ Public Class Canvas
 
 			End Using
 
+		End If
+
+		If Not IsNothing(img) Then
 			'Draw image containing shapes
 			g.DrawImageUnscaled(img, 0, 0, Width, Height)
 		End If
+
+
 
 		'Draw mode
 		If d_info.DrawMode Then
