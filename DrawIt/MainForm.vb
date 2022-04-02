@@ -1409,6 +1409,7 @@ Public Class MainForm
 		tp.Controls.Add(cn)
 		tCanvas.TabPages.Add(tp)
 		tCanvas.SelectedTab = tp
+		MainCanvas = CurrentCanvas()
 	End Sub
 
 	Public Sub OpenFiles(paths As String())

@@ -462,11 +462,11 @@ Partial Class MainForm
 		Me.set_r2.AutoSize = True
 		Me.set_r2.BackColor = System.Drawing.Color.Transparent
 		Me.set_r2.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-		Me.set_r2.Location = New System.Drawing.Point(130, 267)
+		Me.set_r2.Location = New System.Drawing.Point(122, 267)
 		Me.set_r2.Name = "set_r2"
 		Me.set_r2.Size = New System.Drawing.Size(60, 17)
 		Me.set_r2.TabIndex = 4
-		Me.set_r2.Text = "Manual"
+		Me.set_r2.Text = "Custom"
 		Me.set_r2.UseVisualStyleBackColor = False
 		'
 		'set_r1
@@ -476,12 +476,12 @@ Partial Class MainForm
 		Me.set_r1.BackColor = System.Drawing.Color.Transparent
 		Me.set_r1.Checked = True
 		Me.set_r1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-		Me.set_r1.Location = New System.Drawing.Point(63, 267)
+		Me.set_r1.Location = New System.Drawing.Point(69, 267)
 		Me.set_r1.Name = "set_r1"
-		Me.set_r1.Size = New System.Drawing.Size(61, 17)
+		Me.set_r1.Size = New System.Drawing.Size(47, 17)
 		Me.set_r1.TabIndex = 3
 		Me.set_r1.TabStop = True
-		Me.set_r1.Text = "Auto Fit"
+		Me.set_r1.Text = "Auto"
 		Me.set_r1.UseVisualStyleBackColor = False
 		'
 		'Label51

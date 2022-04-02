@@ -21,6 +21,7 @@ Public Class Canvas
 		SetStyle(ControlStyles.AllPaintingInWmPaint, True)
 		SetStyle(ControlStyles.OptimizedDoubleBuffer, True)
 		SetStyle(ControlStyles.SupportsTransparentBackColor, True)
+		SetStyle(ControlStyles.ResizeRedraw, True)
 		SetStyle(ControlStyles.UserMouse, True)
 		SetStyle(ControlStyles.UserPaint, True)
 	End Sub
@@ -34,6 +35,7 @@ Public Class Canvas
 		SetStyle(ControlStyles.AllPaintingInWmPaint, True)
 		SetStyle(ControlStyles.OptimizedDoubleBuffer, True)
 		SetStyle(ControlStyles.SupportsTransparentBackColor, True)
+		SetStyle(ControlStyles.ResizeRedraw, True)
 		SetStyle(ControlStyles.UserMouse, True)
 		SetStyle(ControlStyles.UserPaint, True)
 		_frm = frm
@@ -123,7 +125,6 @@ Public Class Canvas
 #End Region
 
 #Region "Globals"
-	Private img As Bitmap
 	Private shps As New List(Of Shape)
 	Private op As MOperations = MOperations.None
 	Private focus_clr As Color = Color.Silver
@@ -141,7 +142,7 @@ Public Class Canvas
 	'drawing
 	Private d_info As New DrawModeInfo(False)
 	Private curr_loc As Point = Point.Empty
-	Private redraw_img As Boolean = True
+	Private redraw_shapes As Boolean = True
 #End Region
 
 #Region "Properties"
@@ -326,7 +327,12 @@ Public Class Canvas
 	Public Function SaveImage(_loc As String) As Exception
 		Try
 			If File.Exists(_loc) Then File.Delete(_loc)
-			img.Save(_loc)
+			Dim img As Bitmap = CreateImage()
+			If Not IsNothing(img) Then
+				img.Save(_loc)
+			Else
+				Return New Exception("Cannot create image.")
+			End If
 			Return Nothing
 		Catch ex As Exception
 			Return ex
@@ -697,7 +703,7 @@ Public Class Canvas
 
 	Private Sub CanvasSelect_MouseMove(sender As Object, e As MouseEventArgs) Handles MyBase.MouseMove
 		If MainForm.Operation = MainForm.Operations.Select Then
-			redraw_img = True
+			redraw_shapes = True
 
 			If op = MOperations.Selection Then
 				s_rect = New Rectangle(Math.Min(e.X, md_pt.X),
@@ -722,7 +728,7 @@ Public Class Canvas
 			'highlight shape
 			If HighlightShapes AndAlso op = MOperations.None AndAlso
 			   shps.Count > selc.Count Then
-				redraw_img = False
+				redraw_shapes = False
 				Dim curr As Integer = ShapeInCursor(e.Location)
 				If curr > -1 Then
 					If shps(curr).Selected = False Then
@@ -742,8 +748,8 @@ Public Class Canvas
 					h_info.ShapeIndex = -1
 				End If
 				Invalidate()
-				Application.DoEvents()
-				redraw_img = True
+				Update()
+				redraw_shapes = True
 			End If
 
 			Dim shp As Shape = MainSelected()
@@ -954,7 +960,7 @@ Public Class Canvas
 			End If
 
 			If op <> MOperations.None Then
-				Invalidate()
+				Invalidate(DisplayRectangle)
 				MainForm.UpdateBoundControls()
 			End If
 
@@ -1064,16 +1070,6 @@ Public Class Canvas
 		g.DrawEllipse(Pens.Black, rect)
 	End Sub
 
-	Private Sub SetImageSize()
-		If Not IsNothing(MainForm) AndAlso Not MainForm.WindowState = FormWindowState.Minimized Then
-			If Not IsNothing(BackgroundImage) Then
-				img = New Bitmap(BackgroundImage, Width, Height)
-			Else
-				img = New Bitmap(Width, Height)
-			End If
-		End If
-	End Sub
-
 	Private Sub CreateGlow(g As Graphics, shp As Shape)
 		Dim pth As GraphicsPath = shp.TotalPath(False)
 		If IsNothing(pth) Then Return
@@ -1164,7 +1160,12 @@ Public Class Canvas
 		Next
 	End Sub
 
-	Private Sub DrawShape(ig As Graphics, shp As Shape)
+	Private Sub DrawShape(ig As Graphics, shp As Shape, Optional _oncanvas As Boolean = True)
+		Dim pth As GraphicsPath = shp.TotalPath(False)
+
+		If IsNothing(pth) Then Return
+
+		If Not ig.IsVisible(pth.GetBounds) Then Return
 
 		ig.PixelOffsetMode = PixelOffsetMode.HighSpeed
 		ig.RenderingOrigin = New Point(shp.BaseRect.Location.X,
@@ -1178,12 +1179,11 @@ Public Class Canvas
 		If shp.Glow.Enabled AndAlso shp.Glow.BeforeFill Then CreateGlow(ig, shp)
 
 		'Fill and Draw Shape
-		Dim pth As GraphicsPath = shp.TotalPath(False)
 		Dim fbr As Brush = shp.FillBrush
 		Dim dpn As Pen = shp.CreatePen
-		If Not IsNothing(pth) Then
-			'DrawPathPoint(ig, pth)
-			If Not IsNothing(fbr) Then
+
+		'DrawPathPoint(ig, pth)
+		If Not IsNothing(fbr) Then
 				ig.RenderingOrigin = Point.Ceiling(pth.GetBounds.Location)
 				ig.FillPath(fbr, pth)
 			End If
@@ -1195,10 +1195,11 @@ Public Class Canvas
 				ig.DrawPath(dpn, pth)
 				dpn.Dispose()
 			End If
-			pth.Dispose()
-		End If
+		pth.Dispose()
 
 		If shp.Glow.Enabled AndAlso Not shp.Glow.BeforeFill Then CreateGlow(ig, shp)
+
+		If Not _oncanvas Then Return
 
 		If shp.Selected Then
 			If shp.Primary Then
@@ -1320,43 +1321,55 @@ Public Class Canvas
 
 	End Sub
 
+	Private Function CreateImage() As Bitmap
+		Dim img As Bitmap
+
+		If Not IsNothing(BackgroundImage) Then
+			img = New Bitmap(BackgroundImage, Width, Height)
+		Else
+			img = New Bitmap(Width, Height)
+		End If
+
+		Using ig As Graphics = Graphics.FromImage(img)
+
+			ig.SmoothingMode = SmoothingMode.HighQuality
+			ig.TextRenderingHint = TextRenderingHint.AntiAlias
+
+			'Drawing background
+			ig.FillRectangle(New SolidBrush(BackColor), ClientRectangle)
+
+			'Draw all shapes on image
+			shps.ForEach(Sub(shp) DrawShape(ig, shp, False))
+
+		End Using
+
+		Return img
+	End Function
+
 	Private Sub Canvas_Paint(sender As Object, e As PaintEventArgs) Handles MyBase.Paint
 		Dim g As Graphics = e.Graphics
 		g.SmoothingMode = SmoothingMode.HighQuality
+		g.TextRenderingHint = TextRenderingHint.AntiAlias
 
-		'Draw background of canvas
+		'Paint pattern
 		If BackColor.A < 255 Then
 			Using bk As New HatchBrush(HatchStyle.LargeCheckerBoard, Color.White, focus_clr)
 				g.FillRectangle(bk, ClientRectangle)
 			End Using
 		End If
 
-		'Draw shapes
-		If redraw_img Then
-
-			SetImageSize()
-
-			Using ig As Graphics = Graphics.FromImage(img)
-
-				ig.SmoothingMode = SmoothingMode.HighQuality
-				ig.TextRenderingHint = TextRenderingHint.AntiAlias
-
-				'Drawing background
-				ig.FillRectangle(New SolidBrush(BackColor), ClientRectangle)
-
-				'Draw all shapes on image
-				shps.ForEach(Sub(shp) DrawShape(ig, shp))
-
-			End Using
-
+		'Draw background image
+		If Not IsNothing(MainForm) AndAlso Not MainForm.WindowState = FormWindowState.Minimized Then
+			If Not IsNothing(BackgroundImage) Then
+				g.DrawImage(BackgroundImage, 0, 0, Width, Height)
+			End If
 		End If
 
-		If Not IsNothing(img) Then
-			'Draw image containing shapes
-			g.DrawImageUnscaled(img, 0, 0, Width, Height)
-		End If
+		'Draw background color
+		g.FillRectangle(New SolidBrush(BackColor), ClientRectangle)
 
-
+		'Draw all shapes on image
+		shps.ForEach(Sub(shp) DrawShape(g, shp))
 
 		'Draw mode
 		If d_info.DrawMode Then
@@ -1420,11 +1433,6 @@ Public Class Canvas
 		'Force Garbage Collection
 		'If Not IsDesignMode() Then GC.Collect()
 
-	End Sub
-
-	Private Sub Canvas_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
-		SetImageSize()
-		Invalidate()
 	End Sub
 
 #End Region
