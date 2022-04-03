@@ -1161,15 +1161,13 @@ Public Class Canvas
 	End Sub
 
 	Private Sub DrawShape(ig As Graphics, shp As Shape, Optional _oncanvas As Boolean = True)
-		Dim pth As GraphicsPath = shp.TotalPath(False)
+		Dim rgn As Region = shp.Region()
 
-		If IsNothing(pth) Then Return
-
-		If Not ig.IsVisible(pth.GetBounds) Then Return
+		If Not ig.IsVisible(rgn.GetBounds(ig)) Then Return
 
 		ig.PixelOffsetMode = PixelOffsetMode.HighSpeed
-		ig.RenderingOrigin = New Point(shp.BaseRect.Location.X,
-											  shp.BaseRect.Location.Y)
+		ig.RenderingOrigin = Point.Ceiling(shp.BaseRect.Location)
+
 		Using mm As New Matrix
 			mm.RotateAt(shp.Angle, shp.CenterPoint)
 			ig.Transform = mm
@@ -1179,6 +1177,7 @@ Public Class Canvas
 		If shp.Glow.Enabled AndAlso shp.Glow.BeforeFill Then CreateGlow(ig, shp)
 
 		'Fill and Draw Shape
+		Dim pth As GraphicsPath = shp.TotalPath(False)
 		Dim fbr As Brush = shp.FillBrush
 		Dim dpn As Pen = shp.CreatePen
 
@@ -1370,6 +1369,8 @@ Public Class Canvas
 
 		'Draw all shapes on image
 		shps.ForEach(Sub(shp) DrawShape(g, shp))
+
+		g.ResetTransform()
 
 		'Draw mode
 		If d_info.DrawMode Then
