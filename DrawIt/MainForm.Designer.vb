@@ -956,7 +956,6 @@ Partial Class MainForm
 		Me.ud_H.DecimalPlaces = 2
 		Me.ud_H.Location = New System.Drawing.Point(550, 12)
 		Me.ud_H.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
-		Me.ud_H.Minimum = New Decimal(New Integer() {5000, 0, 0, -2147483648})
 		Me.ud_H.Name = "ud_H"
 		Me.ud_H.Size = New System.Drawing.Size(61, 23)
 		Me.ud_H.TabIndex = 3
@@ -967,7 +966,6 @@ Partial Class MainForm
 		Me.ud_W.DecimalPlaces = 2
 		Me.ud_W.Location = New System.Drawing.Point(459, 12)
 		Me.ud_W.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
-		Me.ud_W.Minimum = New Decimal(New Integer() {5000, 0, 0, -2147483648})
 		Me.ud_W.Name = "ud_W"
 		Me.ud_W.Size = New System.Drawing.Size(61, 23)
 		Me.ud_W.TabIndex = 2

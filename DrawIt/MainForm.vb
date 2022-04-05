@@ -159,12 +159,14 @@ Public Class MainForm
 	End Sub
 
 	Public Sub UpdateBoundControls()
+		RemoveHandler ud_W.ValueChanged, AddressOf ud_W_ValueChanged
+		RemoveHandler ud_H.ValueChanged, AddressOf ud_H_ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
 			ud_X.Value = shp.BaseRect.X
 			ud_Y.Value = shp.BaseRect.Y
-			ud_W.Value = shp.BaseRect.Width
-			ud_H.Value = shp.BaseRect.Height
+			ud_W.Value = Math.Abs(shp.BaseRect.Width)
+			ud_H.Value = Math.Abs(shp.BaseRect.Height)
 			ud_A.Value = shp.Angle
 		Else
 			ud_X.Value = 0
@@ -173,6 +175,8 @@ Public Class MainForm
 			ud_H.Value = 0
 			ud_A.Value = 0
 		End If
+		AddHandler ud_W.ValueChanged, AddressOf ud_W_ValueChanged
+		AddHandler ud_H.ValueChanged, AddressOf ud_H_ValueChanged
 	End Sub
 
 	Private Sub UpdateSettings()

@@ -692,7 +692,7 @@ Public Class Shape
 
 	Public Function TopLeft(Optional rotated As Boolean = True) As GraphicsPath
 		Dim rect As New RectangleF(_rect.X - AnchorSize.Width, _rect.Y - AnchorSize.Height, AnchorSize.Width, AnchorSize.Height)
-		If _rect.Width > 20 AndAlso _rect.Height > 20 Then
+		If Math.Abs(_rect.Width) > 20 AndAlso Math.Abs(_rect.Height) > 20 Then
 			rect.X += (AnchorSize.Width / 2)
 			rect.Y += (AnchorSize.Height / 2)
 		End If
@@ -704,7 +704,7 @@ Public Class Shape
 
 	Public Function Top(Optional rotated As Boolean = True) As GraphicsPath
 		Dim rect As New RectangleF(_rect.X + (_rect.Width / 2) - (AnchorSize.Width / 2), _rect.Y - AnchorSize.Height, AnchorSize.Width, AnchorSize.Height)
-		If _rect.Width > 20 AndAlso _rect.Height > 20 Then
+		If Math.Abs(_rect.Width) > 20 AndAlso Math.Abs(_rect.Height) > 20 Then
 			rect.Y += (AnchorSize.Height / 2)
 		End If
 		Dim gp As New GraphicsPath()
@@ -715,7 +715,7 @@ Public Class Shape
 
 	Public Function TopRight(Optional rotated As Boolean = True) As GraphicsPath
 		Dim rect As New RectangleF(_rect.Right, _rect.Y - AnchorSize.Height, AnchorSize.Width, AnchorSize.Height)
-		If _rect.Width > 20 AndAlso _rect.Height > 20 Then
+		If Math.Abs(_rect.Width) > 20 AndAlso Math.Abs(_rect.Height) > 20 Then
 			rect.X -= (AnchorSize.Width / 2)
 			rect.Y += (AnchorSize.Height / 2)
 		End If
@@ -727,7 +727,7 @@ Public Class Shape
 
 	Public Function Left(Optional rotated As Boolean = True) As GraphicsPath
 		Dim rect As New RectangleF(_rect.X - AnchorSize.Width, _rect.Y + (_rect.Height / 2) - (AnchorSize.Height / 2), AnchorSize.Width, AnchorSize.Height)
-		If _rect.Width > 20 AndAlso _rect.Height > 20 Then
+		If Math.Abs(_rect.Width) > 20 AndAlso Math.Abs(_rect.Height) > 20 Then
 			rect.X += (AnchorSize.Width / 2)
 		End If
 		Dim gp As New GraphicsPath()
@@ -738,7 +738,7 @@ Public Class Shape
 
 	Public Function Right(Optional rotated As Boolean = True) As GraphicsPath
 		Dim rect As New RectangleF(_rect.Right, _rect.Y + (_rect.Height / 2) - (AnchorSize.Height / 2), AnchorSize.Width, AnchorSize.Height)
-		If _rect.Width > 20 AndAlso _rect.Height > 20 Then
+		If Math.Abs(_rect.Width) > 20 AndAlso Math.Abs(_rect.Height) > 20 Then
 			rect.X -= (AnchorSize.Width / 2)
 		End If
 		Dim gp As New GraphicsPath()
@@ -749,7 +749,7 @@ Public Class Shape
 
 	Public Function BottomLeft(Optional rotated As Boolean = True) As GraphicsPath
 		Dim rect As New RectangleF(_rect.X - AnchorSize.Width, _rect.Bottom, AnchorSize.Width, AnchorSize.Height)
-		If _rect.Width > 20 AndAlso _rect.Height > 20 Then
+		If Math.Abs(_rect.Width) > 20 AndAlso Math.Abs(_rect.Height) > 20 Then
 			rect.X += (AnchorSize.Width / 2)
 			rect.Y -= (AnchorSize.Height / 2)
 		End If
@@ -761,7 +761,7 @@ Public Class Shape
 
 	Public Function Bottom(Optional rotated As Boolean = True) As GraphicsPath
 		Dim rect As New RectangleF(_rect.X + (_rect.Width / 2) - (AnchorSize.Width / 2), _rect.Bottom, AnchorSize.Width, AnchorSize.Height)
-		If _rect.Width > 20 AndAlso _rect.Height > 20 Then
+		If Math.Abs(_rect.Width) > 20 AndAlso Math.Abs(_rect.Height) > 20 Then
 			rect.Y -= (AnchorSize.Height / 2)
 		End If
 		Dim gp As New GraphicsPath()
@@ -772,7 +772,7 @@ Public Class Shape
 
 	Public Function BottomRight(Optional rotated As Boolean = True) As GraphicsPath
 		Dim rect As New RectangleF(_rect.Right, _rect.Bottom, AnchorSize.Width, AnchorSize.Height)
-		If _rect.Width > 20 AndAlso _rect.Height > 20 Then
+		If Math.Abs(_rect.Width) > 20 AndAlso Math.Abs(_rect.Height) > 20 Then
 			rect.X -= (AnchorSize.Width / 2)
 			rect.Y -= (AnchorSize.Height / 2)
 		End If
