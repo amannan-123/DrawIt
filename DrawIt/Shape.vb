@@ -53,6 +53,7 @@ Public Class Shape
 		End Get
 		Set(value As RectangleF)
 			_rect = value
+
 			UpdatePath()
 			If Not FBrush.BType = MyBrush.BrushType.Solid AndAlso Not FBrush.BType = MyBrush.BrushType.Hatch Then
 				UpdateBrush()
@@ -130,6 +131,26 @@ Public Class Shape
 		End Get
 		Set(value As Single)
 			shear_y = value
+		End Set
+	End Property
+
+	Private _flipX As Boolean = False
+	Public Property FlipX() As Boolean
+		Get
+			Return _flipX
+		End Get
+		Set(ByVal value As Boolean)
+			_flipX = value
+		End Set
+	End Property
+
+	Private _flipY As Boolean = False
+	Public Property FlipY() As Boolean
+		Get
+			Return _flipY
+		End Get
+		Set(ByVal value As Boolean)
+			_flipY = value
 		End Set
 	End Property
 
@@ -520,14 +541,14 @@ Public Class Shape
 	''' </summary>
 	Public Sub UpdatePath()
 
-		If _rect.Width < 1 Or _rect.Height < 1 Then
+		If _rect.Width = 0 Or _rect.Height = 0 Then
 			_pth = Nothing
 			Return
 		End If
 
 		Dim gp As New GraphicsPath()
 
-		Dim rt As New RectangleF(0, 0, _rect.Width, _rect.Height)
+		Dim rt As New RectangleF(0, 0, Math.Abs(_rect.Width), Math.Abs(_rect.Height))
 		Select Case MShape.SType
 			Case MyShape.ShapeStyle.Rectangle
 				gp.AddRectangle(rt)
@@ -634,16 +655,19 @@ Public Class Shape
 		End Select
 
 		'flip
-		'Dim flipXMatrix = New Matrix(-1, 0,
-		'							 0, 1,
-		'							 BaseRect.Width, 0)
-		'Dim flipYMatrix = New Matrix(1, 0,
-		'							 0, -1,
-		'							 0, BaseRect.Height)
-		'Dim transformMatrix = New Matrix()
-		'transformMatrix.Multiply(flipXMatrix)
-		'transformMatrix.Multiply(flipYMatrix)
-		'gp.Transform(transformMatrix)
+		Dim flipXMatrix = New Matrix(-1, 0,
+									 0, 1,
+									 BaseRect.Width, 0)
+		Dim flipYMatrix = New Matrix(1, 0,
+									 0, -1,
+									 0, BaseRect.Height)
+		Dim transformMatrix = New Matrix()
+		If FlipX Then transformMatrix.Multiply(flipXMatrix)
+		If FlipY Then transformMatrix.Multiply(flipYMatrix)
+		If _rect.Width < 0 Then transformMatrix.Translate(_rect.Width, 0)
+		If _rect.Height < 0 Then transformMatrix.Translate(0, _rect.Height)
+		gp.Transform(transformMatrix)
+		'Debug.WriteLine(gp.GetBounds)
 
 		'warp
 		'rt = gp.GetBounds
