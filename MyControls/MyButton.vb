@@ -136,27 +136,30 @@ Public Class MyButton
 			Dim gp As GraphicsPath = New GraphicsPath()
 			gp.AddEllipse(rect)
 			Dim lgb As PathGradientBrush = New PathGradientBrush(gp)
-			Dim bl As ColorBlend = New ColorBlend()
-			bl.Colors = New Color() {Color.Transparent, Color.Transparent, EffectColor}
-			bl.Positions = New Single() {0F, 0.2F, 1.0F}
+			Dim bl As ColorBlend = New ColorBlend With {
+				.Colors = New Color() {Color.Transparent, Color.Transparent, EffectColor},
+				.Positions = New Single() {0F, 0.2F, 1.0F}
+			}
 			lgb.InterpolationColors = bl
 			g.FillEllipse(lgb, rect)
 			Dim bord As Rectangle = New Rectangle(0, 0, Width - 1, Height - 1)
 			Dim gpb As GraphicsPath = New GraphicsPath()
 			gpb.AddEllipse(rect)
 			Dim lgbb As PathGradientBrush = New PathGradientBrush(gpb)
-			Dim blb As ColorBlend = New ColorBlend()
-			blb.Colors = New Color() {Color.Transparent, Color.Transparent, Color.FromArgb(255, EffectColor)}
-			blb.Positions = New Single() {0F, 0.2F, 1.0F}
+			Dim blb As ColorBlend = New ColorBlend With {
+				.Colors = New Color() {Color.Transparent, Color.Transparent, Color.FromArgb(255, EffectColor)},
+				.Positions = New Single() {0F, 0.2F, 1.0F}
+			}
 			lgbb.InterpolationColors = blb
 			Dim pn As Pen = New Pen(lgbb)
 			g.DrawRectangle(pn, bord)
 		End If
 
 		Dim sld As SolidBrush = New SolidBrush(ForeColor)
-		Dim sf As StringFormat = New StringFormat(StringFormatFlags.NoWrap)
-		sf.Alignment = StringAlignment.Center
-		sf.LineAlignment = StringAlignment.Center
+		Dim sf As StringFormat = New StringFormat(StringFormatFlags.NoWrap) With {
+			.Alignment = StringAlignment.Center,
+			.LineAlignment = StringAlignment.Center
+		}
 		Dim layoutRectangle As RectangleF = ClientRectangle
 		g.DrawString(MyText, Font, sld, layoutRectangle, sf)
 
@@ -166,8 +169,9 @@ Public Class MyButton
 		If DrawBorder Then g.DrawRectangle(New Pen(BorderColor), b_rect)
 
 		If Focused AndAlso DrawFocus Then
-			Dim pn As New Pen(Color.Gray)
-			pn.DashPattern = New Single() {3, 2}
+			Dim pn As New Pen(Color.Gray) With {
+				.DashPattern = New Single() {3, 2}
+			}
 			If DrawEffect Then
 				If Not md Then g.DrawRectangle(pn, b_rect)
 			Else

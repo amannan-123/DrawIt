@@ -280,16 +280,18 @@ Public Class PointSelector
 		DrawRectF(g, pn, rectSlider)
 
 		Dim rectVal As New Rectangle(0, rectSliderBar.Bottom + 5, Width, 20)
-		Dim sf As New StringFormat()
-		sf.Alignment = StringAlignment.Center
-		sf.LineAlignment = StringAlignment.Center
+		Dim sf As New StringFormat With {
+			.Alignment = StringAlignment.Center,
+			.LineAlignment = StringAlignment.Center
+		}
 		Dim str As String = Value.ToString
 		Dim tbr As New SolidBrush(ForeColor)
 		g.DrawString(str, Font, tbr, rectVal, sf)
 
 		If Focused Then
-			Dim pnf As New Pen(Color.Gray, 1)
-			pnf.DashStyle = DashStyle.Dash
+			Dim pnf As New Pen(Color.Gray, 1) With {
+				.DashStyle = DashStyle.Dash
+			}
 			Dim rect As Rectangle = ClientRectangle
 			rect.Width -= 1 : rect.Height -= 1
 			g.DrawRectangle(pnf, rect)

@@ -562,8 +562,9 @@ Public Class Canvas
 							MainForm.UpdateControls()
 						Else
 							If Not d_info.DrawMode Then
-								Dim shp_n = New Shape(e.Location, sty, bty)
-								shp_n.Selected = True
+								Dim shp_n = New Shape(e.Location, sty, bty) With {
+									.Selected = True
+								}
 								shps.Add(shp_n)
 								op = MOperations.Draw
 								MainForm.UpdateControls()
@@ -572,8 +573,9 @@ Public Class Canvas
 					End If
 					Invalidate()
 				Case Else
-					Dim shp_n = New Shape(md_pt, sty, bty)
-					shp_n.Selected = True
+					Dim shp_n = New Shape(md_pt, sty, bty) With {
+						.Selected = True
+					}
 					shps.Add(shp_n)
 					op = MOperations.Draw
 					MainForm.UpdateControls()
@@ -1044,16 +1046,14 @@ Public Class Canvas
 #End Region
 
 #Region "Paint Event"
-	Private Function IsDesignMode() As Boolean
-		Return Process.GetCurrentProcess().ProcessName = "devenv"
-	End Function
 
 	Private Sub DrawControlSize(g As Graphics)
 		Dim rect As New Rectangle(Width - 107, 7, 100, 20)
 		Dim fnt As New Font("Segoe UI", 12)
-		Dim sf As New StringFormat()
-		sf.Alignment = StringAlignment.Center
-		sf.LineAlignment = StringAlignment.Center
+		Dim sf As New StringFormat With {
+			.Alignment = StringAlignment.Center,
+			.LineAlignment = StringAlignment.Center
+		}
 		Dim bbr As New SolidBrush(Color.FromArgb(130, Color.White))
 		g.FillRectangle(bbr, rect)
 		g.DrawString(Width & " , " & Height, fnt, Brushes.Black, rect, sf)
@@ -1070,9 +1070,10 @@ Public Class Canvas
 				g.TextRenderingHint = TextRenderingHint.AntiAlias
 		End Select
 		Dim rt As RectangleF = AbsRect(shp.BaseRect)
-		Dim sf As New StringFormat()
-		sf.Alignment = StringAlignment.Center
-		sf.LineAlignment = StringAlignment.Center
+		Dim sf As New StringFormat With {
+			.Alignment = StringAlignment.Center,
+			.LineAlignment = StringAlignment.Center
+		}
 		Dim fnt As New Font("Arial", 10)
 		If _horz Then
 			Dim t_horz As String = Math.Round(rt.Width, 2)

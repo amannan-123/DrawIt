@@ -360,8 +360,9 @@ Public Class CornersEditor
 				Select Case blc
 					Case 0
 						ArcRect = New RectangleF(rect.Location,
-											New SizeF(_b1 * 2, _l2 * 2))
-						ArcRect.Y = rect.Bottom - (_l2 * 2)
+											New SizeF(_b1 * 2, _l2 * 2)) With {
+							.Y = rect.Bottom - (_l2 * 2)
+											}
 						.AddArc(ArcRect, 90, 90)
 					Case 1
 						ArcRect = New RectangleF(rect.X - _b1, rect.Bottom - _l2,
@@ -391,8 +392,9 @@ Public Class CornersEditor
 		Dim g As Graphics = e.Graphics
 		g.SmoothingMode = SmoothingMode.AntiAlias
 
-		Dim pn As New Pen(Color.Gray)
-		pn.DashStyle = DashStyle.Dash
+		Dim pn As New Pen(Color.Gray) With {
+			.DashStyle = DashStyle.Dash
+		}
 		g.DrawRectangle(pn, Rectangle.Ceiling(rect))
 
 		Dim pth As GraphicsPath = GetRoundedRectPath(rect, Corners,
@@ -410,9 +412,11 @@ Public Class CornersEditor
 				Case Else
 					str = curr.ToString & ": " & _lst(curr).ToString
 			End Select
-			Dim sf As New StringFormat
-			sf.Alignment = StringAlignment.Center
-			sf.LineAlignment = StringAlignment.Center
+
+			Dim sf As New StringFormat With {
+				.Alignment = StringAlignment.Center,
+				.LineAlignment = StringAlignment.Center
+			}
 			Dim rtext As New Rectangle(rect.X, rect.Bottom + pSize, rect.Width, Height - rect.Bottom)
 			g.DrawString(str, Font, Brushes.Black, rtext, sf)
 		End If

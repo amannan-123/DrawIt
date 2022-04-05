@@ -277,9 +277,10 @@ Public Class ColorListBox
 
 				' Draw the text in the item.
 				Dim rt As New Rectangle(c_rect.Right, rect.Y, rect.Width - c_rect.Right, rect.Height)
-				Dim sf As New StringFormat
-				sf.Alignment = StringAlignment.Center
-				sf.LineAlignment = StringAlignment.Center
+				Dim sf As New StringFormat With {
+					.Alignment = StringAlignment.Center,
+					.LineAlignment = StringAlignment.Center
+				}
 				g.DrawString(itemString, Font, New SolidBrush(ForeColor), rt, sf)
 
 			Next
