@@ -24,6 +24,23 @@ Module Helpers
 #End Region
 
 #Region "Functions"
+	Public Function IsDesignMode() As Boolean
+		Return Process.GetCurrentProcess().ProcessName = "devenv"
+	End Function
+
+	Public Function AbsRect(_rect As RectangleF) As RectangleF
+		Dim frect = _rect
+		If frect.Width < 0 Then
+			frect.Width *= -1
+			frect.X -= frect.Width
+		End If
+		If frect.Height < 0 Then
+			frect.Height *= -1
+			frect.Y -= frect.Height
+		End If
+		Return frect
+	End Function
+
 	Public Function GetRoundedRectPath(rect As RectangleF, crn As RRCorners,
 									   ulc As MyShape.CornerType, urc As MyShape.CornerType,
 									   llc As MyShape.CornerType, lrc As MyShape.CornerType) As GraphicsPath
@@ -98,8 +115,9 @@ Module Helpers
 				Select Case llc
 					Case 0
 						ArcRect = New RectangleF(rect.Location,
-											New SizeF(_b1 * 2, _l2 * 2))
-						ArcRect.Y = rect.Bottom - (_l2 * 2)
+											New SizeF(_b1 * 2, _l2 * 2)) With {
+							.Y = rect.Bottom - (_l2 * 2)
+											}
 						.AddArc(ArcRect, 90, 90)
 					Case 1
 						ArcRect = New RectangleF(rect.X - _b1, rect.Bottom - _l2,
@@ -202,8 +220,6 @@ Module Helpers
 				snOut = QuantizeRotation(snOut, snTarget, bQuantized)
 				If bQuantized Then Exit For
 			Next snTarget
-		Else
-			snRotation = snOut
 		End If
 
 		' Return

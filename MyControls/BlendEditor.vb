@@ -214,10 +214,11 @@ Public Class BlendEditor
 				_end.Selected = True
 			Else
 				If _rect.Contains(e.Location) AndAlso e.Button = MouseButtons.Left Then
-					Dim bl As New BlendItem
-					bl.BPosition = ToPercentage(_rect.X, _rect.Right, e.X) / 100
-					bl.BFactor = BL_Fac.Value / 100
-					bl.Selected = True
+					Dim bl As New BlendItem With {
+						.BPosition = ToPercentage(_rect.X, _rect.Right, e.X) / 100,
+						.BFactor = BL_Fac.Value / 100,
+						.Selected = True
+					}
 					_lst.Add(bl)
 				End If
 			End If
@@ -271,9 +272,10 @@ Public Class BlendEditor
 
 		If Factors.Count > 1 AndAlso Positions.Count = Factors.Count Then
 			Dim lgb As New LinearGradientBrush(r1, _clr1, _clr2, 0)
-			Dim cb As New Blend
-			cb.Factors = Factors
-			cb.Positions = Positions
+			Dim cb As New Blend With {
+				.Factors = Factors,
+				.Positions = Positions
+			}
 			lgb.Blend = cb
 
 			g.FillRectangle(lgb, r1)

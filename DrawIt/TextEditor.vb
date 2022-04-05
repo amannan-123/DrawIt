@@ -72,10 +72,11 @@ Public Class TextEditor
 
 		Dim rect As Rectangle = e.Bounds
 		Dim _x As Integer = 20
-		Dim sf As New StringFormat()
-		sf.Trimming = StringTrimming.EllipsisCharacter
-		sf.Alignment = StringAlignment.Near
-		sf.LineAlignment = StringAlignment.Center
+		Dim sf As New StringFormat With {
+			.Trimming = StringTrimming.EllipsisCharacter,
+			.Alignment = StringAlignment.Near,
+			.LineAlignment = StringAlignment.Center
+		}
 
 		If (e.State And DrawItemState.ComboBoxEdit) = DrawItemState.ComboBoxEdit Then
 			_x = 1

@@ -367,17 +367,19 @@ Public Class MyTrackBar
 		Dim brSlider As New LinearGradientBrush(rectSliderBar, Color1, Color2, 0)
 
 		If Type = BlendType.ColorBlend AndAlso Colors.Length > 1 AndAlso Positions.Length = Colors.Length Then
-			Dim cb As New ColorBlend
-			cb.Colors = Colors
-			cb.Positions = Positions
+			Dim cb As New ColorBlend With {
+				.Colors = Colors,
+				.Positions = Positions
+			}
 			brSlider.InterpolationColors = cb
 			g.FillRectangle(brSlider, rectSliderBar)
 		End If
 
 		If Type = BlendType.Blend AndAlso Factors.Length > 1 AndAlso Positions.Length = Factors.Length Then
-			Dim cb As New Blend
-			cb.Factors = Factors
-			cb.Positions = Positions
+			Dim cb As New Blend With {
+				.Factors = Factors,
+				.Positions = Positions
+			}
 			brSlider.Blend = cb
 			g.FillRectangle(brSlider, rectSliderBar)
 		End If
@@ -387,9 +389,10 @@ Public Class MyTrackBar
 		g.FillRectangle(New SolidBrush(ThumbColor), rectSlider)
 		g.DrawRectangle(New Pen(ThumbBorderColor), rectSlider)
 
-		Dim sf As New StringFormat()
-		sf.Alignment = StringAlignment.Center
-		sf.LineAlignment = StringAlignment.Center
+		Dim sf As New StringFormat With {
+			.Alignment = StringAlignment.Center,
+			.LineAlignment = StringAlignment.Center
+		}
 		Dim str As String = CSng(Math.Round(Value, 2)).ToString
 		Dim tbr As New SolidBrush(ForeColor)
 		Dim t_size = TextRenderer.MeasureText(str, Font)
@@ -398,8 +401,9 @@ Public Class MyTrackBar
 		TextRenderer.DrawText(e.Graphics, str, Font, rectVal, ForeColor, TextFormatFlags.SingleLine)
 
 		If Focused Then
-			Dim pn As New Pen(Color.Gray, 1)
-			pn.DashStyle = DashStyle.Dash
+			Dim pn As New Pen(Color.Gray, 1) With {
+				.DashStyle = DashStyle.Dash
+			}
 			Dim rect As Rectangle = ClientRectangle
 			rect.Width -= 1 : rect.Height -= 1
 			g.DrawRectangle(pn, rect)

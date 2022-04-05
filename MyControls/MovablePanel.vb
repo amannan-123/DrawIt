@@ -102,9 +102,10 @@ Public Class MovablePanel
 		g.FillRectangle(New SolidBrush(BackColor), ClientRectangle)
 
 		'Draw title
-		Dim sf As New StringFormat()
-		sf.Alignment = StringAlignment.Near
-		sf.LineAlignment = StringAlignment.Center
+		Dim sf As New StringFormat With {
+			.Alignment = StringAlignment.Near,
+			.LineAlignment = StringAlignment.Center
+		}
 		g.DrawString(Text, Font, New SolidBrush(ForeColor), r_up, sf)
 
 		'Draw Cross

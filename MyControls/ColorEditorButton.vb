@@ -25,11 +25,12 @@ Public Class ColorEditorButton
 		_selector.Button2.ForeColor = Color.White
 		_selector.Button1.BackColor = Color.Black
 		_selector.Button2.BackColor = Color.Black
-		Dim _host As New ToolStripControlHost(_selector)
-		_host.Margin = Padding.Empty
-		_host.Padding = Padding.Empty
-		_host.AutoSize = False
-		_host.Size = New Size(_selector.Width, _selector.Height)
+		Dim _host As New ToolStripControlHost(_selector) With {
+			.Margin = Padding.Empty,
+			.Padding = Padding.Empty,
+			.AutoSize = False,
+			.Size = New Size(_selector.Width, _selector.Height)
+		}
 		TSDropDown.Items.Add(_host)
 		TSDropDown.Size = _selector.Size
 		TSDropDown.BackColor = Color.Black
@@ -164,9 +165,10 @@ Public Class ColorEditorButton
 		Dim lgb3 As New LinearGradientBrush(rect3, cc1, Color.FromArgb(42, 79, 109), 0)
 		lgb3.SetBlendTriangularShape(0.5, 1)
 		g.FillRectangle(lgb3, rect3)
-		Dim sf As New StringFormat()
-		sf.Alignment = StringAlignment.Center
-		sf.LineAlignment = StringAlignment.Center
+		Dim sf As New StringFormat With {
+			.Alignment = StringAlignment.Center,
+			.LineAlignment = StringAlignment.Center
+		}
 		g.DrawString(MyText, Font, New SolidBrush(Color.White), rect3, sf)
 		g.DrawRectangle(Pens.Black, Rectangle.Ceiling(rect3))
 
@@ -175,8 +177,9 @@ Public Class ColorEditorButton
 		g.DrawRectangle(Pens.Black, brd_rect)
 
 		If Focused Then
-			Dim pn As New Pen(Color.Gray, 1)
-			pn.DashStyle = DashStyle.Dash
+			Dim pn As New Pen(Color.Gray, 1) With {
+				.DashStyle = DashStyle.Dash
+			}
 			g.DrawRectangle(pn, brd_rect)
 		End If
 

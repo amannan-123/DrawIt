@@ -282,8 +282,9 @@ Public Class FlatButton
 
 		If d_text Then
 			'g.FillRectangle(Brushes.White, t_rect)
-			Dim sf As New StringFormat
-			sf.Alignment = StringAlignment.Center
+			Dim sf As New StringFormat With {
+				.Alignment = StringAlignment.Center
+			}
 			If Not IsNothing(_icon) Then sf.Alignment = StringAlignment.Near
 			sf.LineAlignment = StringAlignment.Center
 			'sf.Trimming = StringTrimming.EllipsisWord

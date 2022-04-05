@@ -222,10 +222,11 @@ Public Class MyTabControl
 
 		g.SmoothingMode = SmoothingMode.AntiAlias
 
-		Dim sf As New StringFormat()
-		sf.Alignment = StringAlignment.Center
-		sf.LineAlignment = StringAlignment.Center
-		sf.Trimming = StringTrimming.EllipsisWord
+		Dim sf As New StringFormat With {
+			.Alignment = StringAlignment.Center,
+			.LineAlignment = StringAlignment.Center,
+			.Trimming = StringTrimming.EllipsisWord
+		}
 
 		For i As Integer = 0 To TabCount - 1
 

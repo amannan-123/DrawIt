@@ -139,6 +139,8 @@ Public Class Canvas
 	Private ReadOnly m_rect As New List(Of RectangleF)
 	Private s_rect As New RectangleF
 	Private h_info As New HoverInfo(-1, 0)
+	Private _negX As Boolean = False
+	Private _negY As Boolean = False
 	'drawing
 	Private d_info As New DrawModeInfo(False)
 	Private curr_loc As Point = Point.Empty
@@ -470,6 +472,7 @@ Public Class Canvas
 	End Sub
 
 	Public Sub FinalizeResize(shp As Shape)
+		shp.BaseRect = AbsRect(shp.BaseRect)
 		If shp.Angle <> 0.0 Then
 			Dim _rgRect = New Region(shp.BaseRect)
 			Dim oMtx = New Matrix
@@ -546,8 +549,9 @@ Public Class Canvas
 							MainForm.UpdateControls()
 						Else
 							If Not d_info.DrawMode Then
-								Dim shp_n = New Shape(e.Location, sty, bty)
-								shp_n.Selected = True
+								Dim shp_n = New Shape(e.Location, sty, bty) With {
+									.Selected = True
+								}
 								shps.Add(shp_n)
 								op = MOperations.Draw
 								MainForm.UpdateControls()
@@ -556,8 +560,9 @@ Public Class Canvas
 					End If
 					Invalidate()
 				Case Else
-					Dim shp_n = New Shape(md_pt, sty, bty)
-					shp_n.Selected = True
+					Dim shp_n = New Shape(md_pt, sty, bty) With {
+						.Selected = True
+					}
 					shps.Add(shp_n)
 					op = MOperations.Draw
 					MainForm.UpdateControls()
@@ -569,10 +574,13 @@ Public Class Canvas
 		If MainForm.Operation = MainForm.Operations.Draw Then
 			Cursor = Cursors.Cross
 			If op = MOperations.Draw Then
+				Dim shp_d As Shape = MainSelected()
 				Dim rtd As New RectangleF(Math.Min(e.X, md_pt.X),
 								   Math.Min(e.Y, md_pt.Y),
 								   Math.Abs(e.X - md_pt.X),
 								   Math.Abs(e.Y - md_pt.Y))
+				shp_d.FlipX = (e.X - md_pt.X < 0)
+				shp_d.FlipY = (e.Y - md_pt.Y < 0)
 				If My.Computer.Keyboard.ShiftKeyDown Then 'make width and height equal
 					Dim mxx As Integer = Math.Max(rtd.Width, rtd.Height)
 					rtd.Width = mxx
@@ -586,7 +594,6 @@ Public Class Canvas
 					rtd.Width *= 2
 					rtd.Height *= 2
 				End If
-				Dim shp_d As Shape = MainSelected()
 				shp_d.BaseRect = rtd
 				Invalidate()
 				MainForm.UpdateBoundControls()
@@ -621,6 +628,7 @@ Public Class Canvas
 #End Region
 
 #Region "Select & Resize"
+
 	Private Sub CanvasSelect_MouseDown(sender As Object, e As MouseEventArgs) Handles MyBase.MouseDown
 		If MainForm.Operation = MainForm.Operations.Select Then
 
@@ -662,6 +670,14 @@ Public Class Canvas
 					m_path.Union(ss.Region)
 					m_rect.Add(ss.BaseRect)
 				Next
+
+				If _ord = SelectOrder.AboveFirst Then
+					_negX = shps(s_inds.Last).FlipX
+					_negY = shps(s_inds.Last).FlipY
+				Else
+					_negX = shps(s_inds.First).FlipX
+					_negY = shps(s_inds.First).FlipY
+				End If
 
 				If shp.FBrush.BType = MyBrush.BrushType.PathGradient AndAlso shp.Centering.IsVisible(e.Location) Then
 					If e.Button = MouseButtons.Left Then
@@ -933,18 +949,18 @@ Public Class Canvas
 						Case MOperations.TopLeft, MOperations.TopRight,
 							 MOperations.BottomLeft, MOperations.BottomRight
 							If oRc.Width > oRc.Height Then
-								rtd.Height = rtd.Width / asp
+								rtd.Height = Math.Abs(rtd.Width) / asp
 							ElseIf oRc.Width < oRc.Height Then
-								rtd.Width = rtd.Height * asp
+								rtd.Width = Math.Abs(rtd.Height) * asp
 							Else
 								Dim mxx As Integer = Math.Max(rtd.Width, rtd.Height)
 								rtd.Width = mxx
 								rtd.Height = mxx
 							End If
 						Case MOperations.Top, MOperations.Bottom
-							rtd.Width = rtd.Height * asp
+							rtd.Width = Math.Abs(rtd.Height) * asp
 						Case MOperations.Left, MOperations.Right
-							rtd.Height = rtd.Width / asp
+							rtd.Height = Math.Abs(rtd.Width) / asp
 					End Select
 					If op = MOperations.TopLeft Or op = MOperations.TopRight Then
 						rtd.Y = oRc.Bottom - rtd.Height
@@ -954,13 +970,25 @@ Public Class Canvas
 					End If
 					tRc = rtd
 				End If
-				If tRc.Width <= 0 Then Return
-				If tRc.Height <= 0 Then Return
+				If tRc.Width = 0 Then Return
+				If tRc.Height = 0 Then Return
+				If _negX Then oRc.Width *= -1
+				If _negY Then oRc.Height *= -1
+				If tRc.Width * oRc.Width < 0 Then
+					shp.FlipX = True
+				Else
+					shp.FlipX = False
+				End If
+				If tRc.Height * oRc.Height < 0 Then
+					shp.FlipY = True
+				Else
+					shp.FlipY = False
+				End If
 				shp.BaseRect = tRc
 			End If
 
 			If op <> MOperations.None Then
-				Invalidate(DisplayRectangle)
+				Invalidate()
 				MainForm.UpdateBoundControls()
 			End If
 
@@ -1005,16 +1033,14 @@ Public Class Canvas
 #End Region
 
 #Region "Paint Event"
-	Private Function IsDesignMode() As Boolean
-		Return Process.GetCurrentProcess().ProcessName = "devenv"
-	End Function
 
 	Private Sub DrawControlSize(g As Graphics)
 		Dim rect As New Rectangle(Width - 107, 7, 100, 20)
 		Dim fnt As New Font("Segoe UI", 12)
-		Dim sf As New StringFormat()
-		sf.Alignment = StringAlignment.Center
-		sf.LineAlignment = StringAlignment.Center
+		Dim sf As New StringFormat With {
+			.Alignment = StringAlignment.Center,
+			.LineAlignment = StringAlignment.Center
+		}
 		Dim bbr As New SolidBrush(Color.FromArgb(130, Color.White))
 		g.FillRectangle(bbr, rect)
 		g.DrawString(Width & " , " & Height, fnt, Brushes.Black, rect, sf)
@@ -1030,32 +1056,34 @@ Public Class Canvas
 			Case Else
 				g.TextRenderingHint = TextRenderingHint.AntiAlias
 		End Select
-		Dim sf As New StringFormat()
-		sf.Alignment = StringAlignment.Center
-		sf.LineAlignment = StringAlignment.Center
+		Dim rt As RectangleF = AbsRect(shp.BaseRect)
+		Dim sf As New StringFormat With {
+			.Alignment = StringAlignment.Center,
+			.LineAlignment = StringAlignment.Center
+		}
 		Dim fnt As New Font("Arial", 10)
 		If _horz Then
-			Dim t_horz As String = Math.Round(shp.BaseRect.Width, 2)
+			Dim t_horz As String = Math.Round(rt.Width, 2)
 			Dim s_horz As SizeF = g.MeasureString(t_horz, fnt)
-			Dim r_horz As New RectangleF(New PointF(shp.BaseRect.Right - s_horz.Width, shp.BaseRect.Bottom + 2), s_horz)
+			Dim r_horz As New RectangleF(New PointF(rt.Right - s_horz.Width, rt.Bottom + 2), s_horz)
 			g.FillRectangle(New SolidBrush(Color.FromArgb(100, Color.White)), r_horz)
 			g.DrawString(t_horz, fnt, New SolidBrush(clr_sz), r_horz, sf)
-			If shp.BaseRect.Width > r_horz.Width Then
-				Dim p1 As New Point(shp.BaseRect.X, r_horz.Y + (r_horz.Height / 2))
+			If rt.Width > r_horz.Width Then
+				Dim p1 As New Point(rt.X, r_horz.Y + (r_horz.Height / 2))
 				Dim p2 As New Point(r_horz.Left - 1, p1.Y)
 				g.DrawLine(New Pen(clr_sz), p1, p2)
 			End If
 		End If
 		If _vert Then
 			sf.FormatFlags = StringFormatFlags.DirectionVertical
-			Dim t_vert As String = Math.Round(shp.BaseRect.Height, 2)
+			Dim t_vert As String = Math.Round(rt.Height, 2)
 			Dim s_vert As SizeF = g.MeasureString(t_vert, fnt)
-			Dim r_vert As New RectangleF(New PointF(shp.BaseRect.Right + 2, shp.BaseRect.Top), New SizeF(s_vert.Height, s_vert.Width))
+			Dim r_vert As New RectangleF(New PointF(rt.Right + 2, rt.Top), New SizeF(s_vert.Height, s_vert.Width))
 			g.FillRectangle(New SolidBrush(Color.FromArgb(100, Color.White)), r_vert)
 			g.DrawString(t_vert, fnt, New SolidBrush(clr_sz), r_vert, sf)
-			If shp.BaseRect.Height > r_vert.Height Then
+			If rt.Height > r_vert.Height Then
 				Dim p1 As New Point(r_vert.X + (r_vert.Width / 2), r_vert.Bottom + 1)
-				Dim p2 As New Point(p1.X, shp.BaseRect.Bottom)
+				Dim p2 As New Point(p1.X, rt.Bottom)
 				g.DrawLine(New Pen(clr_sz), p1, p2)
 			End If
 		End If
@@ -1183,17 +1211,17 @@ Public Class Canvas
 
 		'DrawPathPoint(ig, pth)
 		If Not IsNothing(fbr) Then
-				ig.RenderingOrigin = Point.Ceiling(pth.GetBounds.Location)
-				ig.FillPath(fbr, pth)
-			End If
-			If Not IsNothing(dpn) Then
-				Using ppth As GraphicsPath = pth.Clone
-					If Not IsNothing(shp.SelectionPen) Then ppth.Widen(shp.SelectionPen)
-					ig.RenderingOrigin = Point.Ceiling(ppth.GetBounds.Location)
-				End Using
-				ig.DrawPath(dpn, pth)
-				dpn.Dispose()
-			End If
+			ig.RenderingOrigin = Point.Ceiling(pth.GetBounds.Location)
+			ig.FillPath(fbr, pth)
+		End If
+		If Not IsNothing(dpn) Then
+			Using ppth As GraphicsPath = pth.Clone
+				If Not IsNothing(shp.SelectionPen) Then ppth.Widen(shp.SelectionPen)
+				ig.RenderingOrigin = Point.Ceiling(ppth.GetBounds.Location)
+			End Using
+			ig.DrawPath(dpn, pth)
+			dpn.Dispose()
+		End If
 		pth.Dispose()
 
 		If shp.Glow.Enabled AndAlso Not shp.Glow.BeforeFill Then CreateGlow(ig, shp)
@@ -1205,7 +1233,7 @@ Public Class Canvas
 
 				If op = MOperations.Draw Or op = MOperations.Selection Or op = MOperations.None Or (op >= MOperations.TopLeft And op <= MOperations.BottomRight) Then
 					Using pth_brd As New GraphicsPath
-						pth_brd.AddRectangle(shp.BaseRect)
+						pth_brd.AddRectangle(AbsRect(shp.BaseRect))
 						Dim pn_brd As New Pen(Brushes.Black) With {
 							.DashPattern = New Single() {2, 2, 3}
 						}

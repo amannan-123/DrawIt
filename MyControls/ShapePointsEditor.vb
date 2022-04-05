@@ -215,9 +215,10 @@ Public Class ShapePointsEditor
 		ElseIf curl > -1 Then
 			If rect.Contains(e.Location) Then
 				If e.Button = MouseButtons.Left Then
-					Dim bl As New MyPoint
-					bl.Point = ToPercentage(rect, e.Location)
-					bl.Selected = True
+					Dim bl As New MyPoint With {
+						.Point = ToPercentage(rect, e.Location),
+						.Selected = True
+					}
 					_lst.Insert(curl + 1, bl)
 					m_anc = True
 					RaiseEvent PointsChanged(Me, New EventArgs)
@@ -230,9 +231,10 @@ Public Class ShapePointsEditor
 			End If
 		Else
 			If rect.Contains(e.Location) AndAlso e.Button = MouseButtons.Left Then
-				Dim bl As New MyPoint
-				bl.Point = ToPercentage(rect, e.Location)
-				bl.Selected = True
+				Dim bl As New MyPoint With {
+					.Point = ToPercentage(rect, e.Location),
+					.Selected = True
+				}
 				_lst.Add(bl)
 				RaiseEvent PointsChanged(Me, New EventArgs)
 			End If
@@ -299,8 +301,9 @@ Public Class ShapePointsEditor
 		Dim g As Graphics = e.Graphics
 		g.SmoothingMode = SmoothingMode.AntiAlias
 
-		Dim pn As New Pen(Color.Gray)
-		pn.DashStyle = DashStyle.Dash
+		Dim pn As New Pen(Color.Gray) With {
+			.DashStyle = DashStyle.Dash
+		}
 		g.DrawRectangle(pn, Rectangle.Ceiling(rect))
 
 		If Points.Count >= GetMin() Then
@@ -340,9 +343,10 @@ Public Class ShapePointsEditor
 		Dim curr = SelectedItem()
 		If curr > -1 Then
 			Dim str As String = curr.ToString & ". " & _lst(curr).Point.ToString
-			Dim sf As New StringFormat
-			sf.Alignment = StringAlignment.Center
-			sf.LineAlignment = StringAlignment.Center
+			Dim sf As New StringFormat With {
+				.Alignment = StringAlignment.Center,
+				.LineAlignment = StringAlignment.Center
+			}
 			Dim rtext As New Rectangle(rect.X, rect.Bottom, rect.Width, 25)
 			g.DrawString(str, Font, Brushes.Black, rtext, sf)
 		End If

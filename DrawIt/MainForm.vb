@@ -287,8 +287,9 @@ Public Class MainForm
 		End If
 
 		Dim rect As New Rectangle(e.Bounds.X + 3, e.Bounds.Y + 1, 20, e.Bounds.Height - 3)
-		Dim shp As New Shape()
-		shp.BaseRect = rect
+		Dim shp As New Shape With {
+			.BaseRect = rect
+		}
 		shp.MShape.SType = [Enum].Parse(GetType(MyShape.ShapeStyle), itemString)
 		shp.DPen.PBrush.SolidColor = Color.Black
 		shp.FBrush.SolidColor = Color.Black
@@ -332,8 +333,9 @@ Public Class MainForm
 		End If
 
 		Dim rect As New Rectangle(e.Bounds.X + 3, e.Bounds.Y + 1, 20, e.Bounds.Height - 3)
-		Dim shp As New Shape()
-		shp.BaseRect = rect
+		Dim shp As New Shape With {
+			.BaseRect = rect
+		}
 		shp.FBrush.BType = [Enum].Parse(GetType(MyBrush.BrushType), itemString)
 		shp.DPen.PBrush.SolidColor = Color.Black
 		shp.FBrush.SolidColor = Color.White
@@ -343,8 +345,9 @@ Public Class MainForm
 			Case MyBrush.BrushType.Texture
 				e.Graphics.FillRectangle(Brushes.White, rect)
 				Dim r1 As New Rectangle(rect.X, rect.Y + 4, rect.Width / 2, rect.Height - 4)
-				Dim s1 As New Shape()
-				s1.BaseRect = r1
+				Dim s1 As New Shape With {
+					.BaseRect = r1
+				}
 				s1.MShape.SType = MyShape.ShapeStyle.Triangle
 				s1.UpdatePath()
 				e.Graphics.FillPath(Brushes.Brown, s1.TotalPath)
@@ -425,9 +428,10 @@ Public Class MainForm
 		Dim pty As Single = rect.Y + (rect.Height / 2)
 		Dim p1 As New PointF(3, pty)
 		Dim p2 As New PointF(rect.Width - 3, pty)
-		Dim pn As New Pen(Color.Black, 10)
-		pn.DashStyle = DashStyle.DashDot
-		pn.DashCap = [Enum].Parse(GetType(DashCap), itemString)
+		Dim pn As New Pen(Color.Black, 10) With {
+			.DashStyle = DashStyle.DashDot,
+			.DashCap = [Enum].Parse(GetType(DashCap), itemString)
+		}
 		e.Graphics.DrawLine(pn, p1, p2)
 		pn.Dispose()
 
@@ -455,9 +459,10 @@ Public Class MainForm
 		Dim pty As Single = rect.Y + (rect.Height / 2)
 		Dim p1 As New PointF(3, pty)
 		Dim p2 As New PointF(rect.Width - 3, pty)
-		Dim pn As New Pen(Color.Black, 10)
-		pn.DashStyle = [Enum].Parse(GetType(DashStyle), itemString)
-		pn.DashCap = DashCap.Flat
+		Dim pn As New Pen(Color.Black, 10) With {
+			.DashStyle = [Enum].Parse(GetType(DashStyle), itemString),
+			.DashCap = DashCap.Flat
+		}
 		e.Graphics.DrawLine(pn, p1, p2)
 		pn.Dispose()
 
@@ -485,8 +490,9 @@ Public Class MainForm
 		Dim pty As Single = rect.Y + (rect.Height / 2)
 		Dim p1 As New PointF(12, pty)
 		Dim p2 As New PointF(rect.Width - 6, pty)
-		Dim pn As New Pen(Color.Black, 8)
-		pn.StartCap = [Enum].Parse(GetType(LineCap), itemString)
+		Dim pn As New Pen(Color.Black, 8) With {
+			.StartCap = [Enum].Parse(GetType(LineCap), itemString)
+		}
 		e.Graphics.DrawLine(pn, p1, p2)
 		pn.Dispose()
 
@@ -514,8 +520,9 @@ Public Class MainForm
 		Dim pty As Single = rect.Y + (rect.Height / 2)
 		Dim p1 As New PointF(6, pty)
 		Dim p2 As New PointF(rect.Width - 12, pty)
-		Dim pn As New Pen(Color.Black, 8)
-		pn.EndCap = [Enum].Parse(GetType(LineCap), itemString)
+		Dim pn As New Pen(Color.Black, 8) With {
+			.EndCap = [Enum].Parse(GetType(LineCap), itemString)
+		}
 		e.Graphics.DrawLine(pn, p1, p2)
 		pn.Dispose()
 
@@ -1404,8 +1411,9 @@ Public Class MainForm
 		cn.baseCanvas.MainForm = Me
 		cn.Dock = DockStyle.Fill
 		cn.Text = "Canvas" & tCanvas.TabCount + 1
-		Dim tp As New TabPage(cn.Text)
-		tp.BorderStyle = BorderStyle.FixedSingle
+		Dim tp As New TabPage(cn.Text) With {
+			.BorderStyle = BorderStyle.FixedSingle
+		}
 		tp.Controls.Add(cn)
 		tCanvas.TabPages.Add(tp)
 		tCanvas.SelectedTab = tp
@@ -1425,8 +1433,9 @@ Public Class MainForm
 				Continue For
 			End If
 			cn.Text = Path.GetFileNameWithoutExtension(str)
-			Dim tp As New TabPage(cn.Text)
-			tp.BorderStyle = BorderStyle.FixedSingle
+			Dim tp As New TabPage(cn.Text) With {
+				.BorderStyle = BorderStyle.FixedSingle
+			}
 			tp.Controls.Add(cn)
 			tCanvas.TabPages.Add(tp)
 			tCanvas.SelectedTab = tp

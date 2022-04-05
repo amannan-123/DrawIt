@@ -188,10 +188,11 @@ Public Class ColorBlendEditor
 				_end.Selected = True
 			Else
 				If _rect.Contains(e.Location) AndAlso e.Button = MouseButtons.Left Then
-					Dim bl As New ColorBlendItem
-					bl.BPosition = ToPercentage(_rect.X, _rect.Right, e.X) / 100
-					bl.BColor = CE_Button.SelectedColor
-					bl.Selected = True
+					Dim bl As New ColorBlendItem With {
+						.BPosition = ToPercentage(_rect.X, _rect.Right, e.X) / 100,
+						.BColor = CE_Button.SelectedColor,
+						.Selected = True
+					}
 					_lst.Add(bl)
 				End If
 			End If
@@ -245,9 +246,10 @@ Public Class ColorBlendEditor
 
 		If Colors.Count > 1 AndAlso Positions.Count = Colors.Count Then
 			Dim lgb As New LinearGradientBrush(r1, Color.Transparent, Color.Transparent, 0)
-			Dim cb As New ColorBlend
-			cb.Colors = Colors
-			cb.Positions = Positions
+			Dim cb As New ColorBlend With {
+				.Colors = Colors,
+				.Positions = Positions
+			}
 			lgb.InterpolationColors = cb
 
 			g.FillRectangle(lgb, r1)

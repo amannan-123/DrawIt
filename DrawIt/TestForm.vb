@@ -20,10 +20,11 @@ Public Class TestForm
 		Dim accentPtr = Marshal.AllocHGlobal(accentStructSize)
 		Marshal.StructureToPtr(accent, accentPtr, False)
 
-		Dim Data = New W10BlurHelper.WindowCompositionAttributeData()
-		Data.Attribute = W10BlurHelper.WindowCompositionAttribute.WCA_ACCENT_POLICY
-		Data.SizeOfData = accentStructSize
-		Data.Data = accentPtr
+		Dim Data = New W10BlurHelper.WindowCompositionAttributeData With {
+			.Attribute = W10BlurHelper.WindowCompositionAttribute.WCA_ACCENT_POLICY,
+			.SizeOfData = accentStructSize,
+			.Data = accentPtr
+		}
 		W10BlurHelper.SetWindowCompositionAttribute(hwnd, Data)
 
 		Marshal.FreeHGlobal(accentPtr)

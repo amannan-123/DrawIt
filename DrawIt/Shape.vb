@@ -53,6 +53,7 @@ Public Class Shape
 		End Get
 		Set(value As RectangleF)
 			_rect = value
+
 			UpdatePath()
 			If Not FBrush.BType = MyBrush.BrushType.Solid AndAlso Not FBrush.BType = MyBrush.BrushType.Hatch Then
 				UpdateBrush()
@@ -130,6 +131,26 @@ Public Class Shape
 		End Get
 		Set(value As Single)
 			shear_y = value
+		End Set
+	End Property
+
+	Private _flipX As Boolean = False
+	Public Property FlipX() As Boolean
+		Get
+			Return _flipX
+		End Get
+		Set(ByVal value As Boolean)
+			_flipX = value
+		End Set
+	End Property
+
+	Private _flipY As Boolean = False
+	Public Property FlipY() As Boolean
+		Get
+			Return _flipY
+		End Get
+		Set(ByVal value As Boolean)
+			_flipY = value
 		End Set
 	End Property
 
@@ -312,8 +333,9 @@ Public Class Shape
 				r2.Inflate(1, 1)
 				Dim lgb As New LinearGradientBrush(r2, DPen.PBrush.LColor1,
 													DPen.PBrush.LColor2,
-													DPen.PBrush.LinearAngle)
-				lgb.GammaCorrection = DPen.PBrush.LGamma
+													DPen.PBrush.LinearAngle) With {
+					.GammaCorrection = DPen.PBrush.LGamma
+													}
 				If DPen.PBrush.LTriangular Then
 					lgb.SetBlendTriangularShape(DPen.PBrush.LTriFocus, DPen.PBrush.LTriScale)
 				End If
@@ -375,48 +397,55 @@ Public Class Shape
 					_cb = Nothing
 					Return
 				End If
+
 				Dim lgb As New LinearGradientBrush(r2, FBrush.LColor1,
 														FBrush.LColor2,
-														FBrush.LinearAngle)
-				lgb.GammaCorrection = FBrush.LGamma
+														FBrush.LinearAngle) With {
+					.GammaCorrection = FBrush.LGamma
+														}
 				If FBrush.LTriangular Then
 					lgb.SetBlendTriangularShape(FBrush.LTriFocus, FBrush.LTriScale)
 				ElseIf FBrush.LBell Then
 					lgb.SetSigmaBellShape(FBrush.LBellFocus, FBrush.LBellScale)
 				End If
 				If FBrush.LInterpolate Then
-					Dim ip As New ColorBlend
-					ip.Colors = FBrush.LInterColors
-					ip.Positions = FBrush.LInterPositions
+					Dim ip As New ColorBlend With {
+						.Colors = FBrush.LInterColors,
+						.Positions = FBrush.LInterPositions
+					}
 					If ip.Colors.Length = ip.Positions.Length Then lgb.InterpolationColors = ip
 				ElseIf FBrush.LBlend Then
-					Dim bl As New Blend
-					bl.Factors = FBrush.LBlendFactors
-					bl.Positions = FBrush.LBlendPositions
+					Dim bl As New Blend With {
+						.Factors = FBrush.LBlendFactors,
+						.Positions = FBrush.LBlendPositions
+					}
 					If bl.Factors.Length = bl.Positions.Length Then lgb.Blend = bl
 				End If
 				_cb = lgb
 			Case MyBrush.BrushType.PathGradient
 				Try
-					Dim ptb As New PathGradientBrush(TotalPath(False))
-					ptb.CenterColor = FBrush.PCenter
-					ptb.SurroundColors = FBrush.PSurround
-					ptb.FocusScales = New PointF(FBrush.PFocusX, FBrush.PFocusY)
-					ptb.CenterPoint = FromPercentage(_rect, FBrush.PCenterPoint)
+					Dim ptb As New PathGradientBrush(TotalPath(False)) With {
+						.CenterColor = FBrush.PCenter,
+						.SurroundColors = FBrush.PSurround,
+						.FocusScales = New PointF(FBrush.PFocusX, FBrush.PFocusY),
+						.CenterPoint = FromPercentage(_rect, FBrush.PCenterPoint)
+					}
 					If FBrush.PTriangular Then
 						ptb.SetBlendTriangularShape(FBrush.PTriFocus, FBrush.PTriScale)
 					ElseIf FBrush.PBell Then
 						ptb.SetSigmaBellShape(FBrush.PBellFocus, FBrush.PBellScale)
 					End If
 					If FBrush.PInterpolate Then
-						Dim ip As New ColorBlend
-						ip.Colors = FBrush.PInterColors
-						ip.Positions = FBrush.PInterPositions
+						Dim ip As New ColorBlend With {
+							.Colors = FBrush.PInterColors,
+							.Positions = FBrush.PInterPositions
+						}
 						ptb.InterpolationColors = ip
 					ElseIf FBrush.PBlend Then
-						Dim bl As New Blend
-						bl.Factors = FBrush.PBlendFactors
-						bl.Positions = FBrush.PBlendPositions
+						Dim bl As New Blend With {
+							.Factors = FBrush.PBlendFactors,
+							.Positions = FBrush.PBlendPositions
+						}
 						ptb.Blend = bl
 					End If
 					_cb = ptb
@@ -520,14 +549,14 @@ Public Class Shape
 	''' </summary>
 	Public Sub UpdatePath()
 
-		If _rect.Width < 1 Or _rect.Height < 1 Then
+		If _rect.Width = 0 Or _rect.Height = 0 Then
 			_pth = Nothing
 			Return
 		End If
 
 		Dim gp As New GraphicsPath()
 
-		Dim rt As New RectangleF(0, 0, _rect.Width, _rect.Height)
+		Dim rt As New RectangleF(0, 0, Math.Abs(_rect.Width), Math.Abs(_rect.Height))
 		Select Case MShape.SType
 			Case MyShape.ShapeStyle.Rectangle
 				gp.AddRectangle(rt)
@@ -596,9 +625,10 @@ Public Class Shape
 					_pth = Nothing
 					Return
 				End If
-				Dim sf As New StringFormat()
 				'sf.FormatFlags = StringFormatFlags.NoWrap
-				sf.Trimming = StringTrimming.EllipsisCharacter
+				Dim sf As New StringFormat With {
+					.Trimming = StringTrimming.EllipsisCharacter
+				}
 				Select Case MShape.TextAlignment
 					Case ContentAlignment.TopLeft
 						sf.LineAlignment = StringAlignment.Near
@@ -634,16 +664,19 @@ Public Class Shape
 		End Select
 
 		'flip
-		'Dim flipXMatrix = New Matrix(-1, 0,
-		'							 0, 1,
-		'							 BaseRect.Width, 0)
-		'Dim flipYMatrix = New Matrix(1, 0,
-		'							 0, -1,
-		'							 0, BaseRect.Height)
-		'Dim transformMatrix = New Matrix()
-		'transformMatrix.Multiply(flipXMatrix)
-		'transformMatrix.Multiply(flipYMatrix)
-		'gp.Transform(transformMatrix)
+		Dim flipXMatrix = New Matrix(-1, 0,
+									 0, 1,
+									 BaseRect.Width, 0)
+		Dim flipYMatrix = New Matrix(1, 0,
+									 0, -1,
+									 0, BaseRect.Height)
+		Dim transformMatrix = New Matrix()
+		If FlipX Then transformMatrix.Multiply(flipXMatrix)
+		If FlipY Then transformMatrix.Multiply(flipYMatrix)
+		If _rect.Width < 0 Then transformMatrix.Translate(_rect.Width, 0)
+		If _rect.Height < 0 Then transformMatrix.Translate(0, _rect.Height)
+		gp.Transform(transformMatrix)
+		'Debug.WriteLine(gp.GetBounds)
 
 		'warp
 		'rt = gp.GetBounds
