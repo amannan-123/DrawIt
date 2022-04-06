@@ -1,8 +1,6 @@
 ﻿Imports System.ComponentModel
-Imports System.Drawing
 Imports System.Drawing.Design
 Imports System.Drawing.Drawing2D
-Imports System.Windows.Forms
 Imports System.Windows.Forms.Design
 
 #Region "ColorSelector"
@@ -330,6 +328,7 @@ Public Class ColorSelector
 		g.FillRectangle(New SolidBrush(sender.BackColor), sender.ClientRectangle)
 		br.Dispose()
 	End Sub
+
 End Class
 #End Region 'ColorSelector Control Class
 

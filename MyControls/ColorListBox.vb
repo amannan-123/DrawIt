@@ -1,10 +1,8 @@
 ﻿#Region "Imports"
 Imports System.ComponentModel
-Imports System.Drawing
 Imports System.Drawing.Design
 Imports System.Drawing.Drawing2D
 Imports System.Drawing.Text
-Imports System.Windows.Forms
 Imports System.Windows.Forms.Design
 #End Region
 

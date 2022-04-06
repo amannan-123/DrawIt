@@ -26,10 +26,11 @@ Partial Class ColorEditorButton
         '
         'ColorEditorButton
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 15.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Name = "ColorEditorButton"
-        Me.Size = New System.Drawing.Size(150, 30)
+        Me.Size = New System.Drawing.Size(175, 35)
         Me.ResumeLayout(False)
 
     End Sub

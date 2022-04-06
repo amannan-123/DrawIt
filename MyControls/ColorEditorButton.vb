@@ -1,15 +1,13 @@
 ﻿Imports System.ComponentModel
-Imports System.Drawing
 Imports System.Drawing.Design
 Imports System.Drawing.Drawing2D
-Imports System.Windows.Forms
 
 <DefaultEvent("ColorChanged")>
 <DefaultProperty("SelectedColor")>
 Public Class ColorEditorButton
 
-	Private TSDropDown As New ToolStripDropDown
-	Private _selector As New ColorSelector
+	Private ReadOnly TSDropDown As New ToolStripDropDown
+	Private ReadOnly _selector As New ColorSelector
 	Private IsOpen As Boolean = False
 	Private rect1, rect2, rect3 As RectangleF
 

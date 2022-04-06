@@ -1,7 +1,5 @@
 ﻿Imports System.Drawing.Drawing2D
 Imports System.ComponentModel
-Imports System.Windows.Forms
-Imports System.Drawing
 
 <DefaultEvent("PointsChanged")>
 <DefaultProperty("Points")>

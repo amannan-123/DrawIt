@@ -35,9 +35,10 @@ Partial Class ColorListDialog
 		'OK_Button
 		'
 		Me.OK_Button.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.OK_Button.Location = New System.Drawing.Point(102, 256)
+		Me.OK_Button.Location = New System.Drawing.Point(122, 297)
+		Me.OK_Button.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
 		Me.OK_Button.Name = "OK_Button"
-		Me.OK_Button.Size = New System.Drawing.Size(67, 23)
+		Me.OK_Button.Size = New System.Drawing.Size(78, 27)
 		Me.OK_Button.TabIndex = 6
 		Me.OK_Button.Text = "OK"
 		'
@@ -45,22 +46,27 @@ Partial Class ColorListDialog
 		'
 		Me.Cancel_Button.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
-		Me.Cancel_Button.Location = New System.Drawing.Point(175, 256)
+		Me.Cancel_Button.Location = New System.Drawing.Point(207, 297)
+		Me.Cancel_Button.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
 		Me.Cancel_Button.Name = "Cancel_Button"
-		Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
+		Me.Cancel_Button.Size = New System.Drawing.Size(77, 27)
 		Me.Cancel_Button.TabIndex = 7
 		Me.Cancel_Button.Text = "Cancel"
 		'
 		'lstColors
 		'
+		Me.lstColors.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+			Or System.Windows.Forms.AnchorStyles.Left) _
+			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.lstColors.AutoScroll = True
 		Me.lstColors.BackColor = System.Drawing.Color.FromArgb(CType(CType(33, Byte), Integer), CType(CType(37, Byte), Integer), CType(CType(41, Byte), Integer))
-		Me.lstColors.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.lstColors.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
 		Me.lstColors.ForeColor = System.Drawing.Color.White
 		Me.lstColors.ItemHeight = 25
 		Me.lstColors.Location = New System.Drawing.Point(12, 12)
+		Me.lstColors.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
 		Me.lstColors.Name = "lstColors"
-		Me.lstColors.Size = New System.Drawing.Size(230, 166)
+		Me.lstColors.Size = New System.Drawing.Size(272, 208)
 		Me.lstColors.TabIndex = 8
 		'
 		'b_Down
@@ -70,10 +76,11 @@ Partial Class ColorListDialog
 		Me.b_Down.DrawBorder = True
 		Me.b_Down.DrawEffect = False
 		Me.b_Down.ForeColor = System.Drawing.Color.Black
-		Me.b_Down.Location = New System.Drawing.Point(185, 215)
+		Me.b_Down.Location = New System.Drawing.Point(219, 261)
+		Me.b_Down.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
 		Me.b_Down.MyText = "Down"
 		Me.b_Down.Name = "b_Down"
-		Me.b_Down.Size = New System.Drawing.Size(57, 26)
+		Me.b_Down.Size = New System.Drawing.Size(65, 30)
 		Me.b_Down.TabIndex = 5
 		'
 		'b_Up
@@ -83,10 +90,11 @@ Partial Class ColorListDialog
 		Me.b_Up.DrawBorder = True
 		Me.b_Up.DrawEffect = False
 		Me.b_Up.ForeColor = System.Drawing.Color.Black
-		Me.b_Up.Location = New System.Drawing.Point(134, 215)
+		Me.b_Up.Location = New System.Drawing.Point(159, 261)
+		Me.b_Up.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
 		Me.b_Up.MyText = "Up"
 		Me.b_Up.Name = "b_Up"
-		Me.b_Up.Size = New System.Drawing.Size(45, 26)
+		Me.b_Up.Size = New System.Drawing.Size(52, 30)
 		Me.b_Up.TabIndex = 4
 		'
 		'b_Remove
@@ -96,10 +104,11 @@ Partial Class ColorListDialog
 		Me.b_Remove.DrawBorder = True
 		Me.b_Remove.DrawEffect = False
 		Me.b_Remove.ForeColor = System.Drawing.Color.Black
-		Me.b_Remove.Location = New System.Drawing.Point(71, 215)
+		Me.b_Remove.Location = New System.Drawing.Point(86, 261)
+		Me.b_Remove.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
 		Me.b_Remove.MyText = "Remove"
 		Me.b_Remove.Name = "b_Remove"
-		Me.b_Remove.Size = New System.Drawing.Size(57, 26)
+		Me.b_Remove.Size = New System.Drawing.Size(66, 30)
 		Me.b_Remove.TabIndex = 3
 		'
 		'b_Add
@@ -109,28 +118,30 @@ Partial Class ColorListDialog
 		Me.b_Add.DrawBorder = True
 		Me.b_Add.DrawEffect = False
 		Me.b_Add.ForeColor = System.Drawing.Color.Black
-		Me.b_Add.Location = New System.Drawing.Point(12, 215)
+		Me.b_Add.Location = New System.Drawing.Point(12, 261)
+		Me.b_Add.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
 		Me.b_Add.MyText = "Add"
 		Me.b_Add.Name = "b_Add"
-		Me.b_Add.Size = New System.Drawing.Size(53, 26)
+		Me.b_Add.Size = New System.Drawing.Size(67, 30)
 		Me.b_Add.TabIndex = 2
 		'
 		'CE_Button
 		'
-		Me.CE_Button.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+		Me.CE_Button.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.CE_Button.Location = New System.Drawing.Point(12, 184)
+		Me.CE_Button.Location = New System.Drawing.Point(12, 226)
+		Me.CE_Button.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
 		Me.CE_Button.MyText = "ChooseColor"
 		Me.CE_Button.Name = "CE_Button"
 		Me.CE_Button.SelectedColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
-		Me.CE_Button.Size = New System.Drawing.Size(230, 25)
+		Me.CE_Button.Size = New System.Drawing.Size(272, 29)
 		Me.CE_Button.TabIndex = 1
 		'
 		'ColorListDialog
 		'
-		Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+		Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 15.0!)
 		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-		Me.ClientSize = New System.Drawing.Size(254, 291)
+		Me.ClientSize = New System.Drawing.Size(296, 336)
 		Me.Controls.Add(Me.lstColors)
 		Me.Controls.Add(Me.OK_Button)
 		Me.Controls.Add(Me.b_Down)
@@ -141,6 +152,7 @@ Partial Class ColorListDialog
 		Me.Controls.Add(Me.CE_Button)
 		Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
 		Me.KeyPreview = True
+		Me.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
 		Me.MaximizeBox = False
 		Me.MinimizeBox = False
 		Me.Name = "ColorListDialog"

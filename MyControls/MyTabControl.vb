@@ -1,9 +1,7 @@
 ﻿#Region "Imports"
 Imports System.ComponentModel
 Imports System.ComponentModel.Design
-Imports System.Drawing
 Imports System.Drawing.Drawing2D
-Imports System.Windows.Forms
 #End Region
 
 #Region "MyTabControl"

@@ -1,8 +1,6 @@
 ﻿#Region "Imports"
 Imports System.Drawing.Drawing2D
 Imports System.ComponentModel
-Imports System.Windows.Forms
-Imports System.Drawing
 #End Region
 
 <DefaultEvent("Scroll")>

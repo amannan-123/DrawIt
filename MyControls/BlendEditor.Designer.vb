@@ -72,7 +72,7 @@ Partial Class BlendEditor
 		Me.B_Reverse.DrawBorder = True
 		Me.B_Reverse.DrawEffect = False
 		Me.B_Reverse.ForeColor = System.Drawing.Color.Black
-		Me.B_Reverse.Location = New System.Drawing.Point(95, 135)
+		Me.B_Reverse.Location = New System.Drawing.Point(97, 135)
 		Me.B_Reverse.MyText = "Reverse"
 		Me.B_Reverse.Name = "B_Reverse"
 		Me.B_Reverse.Size = New System.Drawing.Size(47, 23)
@@ -85,7 +85,7 @@ Partial Class BlendEditor
 		Me.B_Balance.DrawBorder = True
 		Me.B_Balance.DrawEffect = False
 		Me.B_Balance.ForeColor = System.Drawing.Color.Black
-		Me.B_Balance.Location = New System.Drawing.Point(143, 135)
+		Me.B_Balance.Location = New System.Drawing.Point(145, 135)
 		Me.B_Balance.MyText = "Balance"
 		Me.B_Balance.Name = "B_Balance"
 		Me.B_Balance.Size = New System.Drawing.Size(56, 23)
@@ -98,7 +98,7 @@ Partial Class BlendEditor
 		Me.B_Clear.DrawBorder = True
 		Me.B_Clear.DrawEffect = False
 		Me.B_Clear.ForeColor = System.Drawing.Color.Black
-		Me.B_Clear.Location = New System.Drawing.Point(200, 135)
+		Me.B_Clear.Location = New System.Drawing.Point(202, 135)
 		Me.B_Clear.MyText = "Clear"
 		Me.B_Clear.Name = "B_Clear"
 		Me.B_Clear.Size = New System.Drawing.Size(36, 23)

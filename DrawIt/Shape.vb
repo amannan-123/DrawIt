@@ -382,7 +382,6 @@ Public Class Shape
 		'cnt += 1
 		'Debug.WriteLine(cnt & "UpdateBrush")
 
-		Dim rt As New RectangleF(0, 0, _rect.Width, _rect.Height)
 		Select Case FBrush.BType
 			Case MyBrush.BrushType.Solid
 				_cb = New SolidBrush(FBrush.SolidColor)
@@ -397,7 +396,6 @@ Public Class Shape
 					_cb = Nothing
 					Return
 				End If
-
 				Dim lgb As New LinearGradientBrush(r2, FBrush.LColor1,
 														FBrush.LColor2,
 														FBrush.LinearAngle) With {
@@ -423,35 +421,31 @@ Public Class Shape
 				End If
 				_cb = lgb
 			Case MyBrush.BrushType.PathGradient
-				Try
-					Dim ptb As New PathGradientBrush(TotalPath(False)) With {
+				Dim ptb As New PathGradientBrush(TotalPath(False)) With {
 						.CenterColor = FBrush.PCenter,
 						.SurroundColors = FBrush.PSurround,
 						.FocusScales = New PointF(FBrush.PFocusX, FBrush.PFocusY),
-						.CenterPoint = FromPercentage(_rect, FBrush.PCenterPoint)
+						.CenterPoint = FromPercentage(AbsRect(_rect), FBrush.PCenterPoint)
 					}
-					If FBrush.PTriangular Then
-						ptb.SetBlendTriangularShape(FBrush.PTriFocus, FBrush.PTriScale)
-					ElseIf FBrush.PBell Then
-						ptb.SetSigmaBellShape(FBrush.PBellFocus, FBrush.PBellScale)
-					End If
-					If FBrush.PInterpolate Then
-						Dim ip As New ColorBlend With {
-							.Colors = FBrush.PInterColors,
-							.Positions = FBrush.PInterPositions
-						}
-						ptb.InterpolationColors = ip
-					ElseIf FBrush.PBlend Then
-						Dim bl As New Blend With {
-							.Factors = FBrush.PBlendFactors,
-							.Positions = FBrush.PBlendPositions
-						}
-						ptb.Blend = bl
-					End If
-					_cb = ptb
-				Catch ex As Exception
-					_cb = Nothing
-				End Try
+				If FBrush.PTriangular Then
+					ptb.SetBlendTriangularShape(FBrush.PTriFocus, FBrush.PTriScale)
+				ElseIf FBrush.PBell Then
+					ptb.SetSigmaBellShape(FBrush.PBellFocus, FBrush.PBellScale)
+				End If
+				If FBrush.PInterpolate Then
+					Dim ip As New ColorBlend With {
+						.Colors = FBrush.PInterColors,
+						.Positions = FBrush.PInterPositions
+					}
+					If ip.Colors.Length = ip.Positions.Length Then ptb.InterpolationColors = ip
+				ElseIf FBrush.PBlend Then
+					Dim bl As New Blend With {
+						.Factors = FBrush.PBlendFactors,
+						.Positions = FBrush.PBlendPositions
+					}
+					If bl.Factors.Length = bl.Positions.Length Then ptb.Blend = bl
+				End If
+				_cb = ptb
 			Case MyBrush.BrushType.Hatch
 				_cb = New HatchBrush(FBrush.HStyle, FBrush.HFore, FBrush.HBack)
 			Case MyBrush.BrushType.Texture
@@ -459,35 +453,32 @@ Public Class Shape
 					_cb = Nothing
 					Return
 				End If
-				If rt.Width < 1 Or rt.Height < 1 Then
+				Dim rt As New RectangleF(0, 0, Math.Abs(_rect.Width), Math.Abs(_rect.Height))
+				If rt.Width = 0 Or rt.Height = 0 Then
 					_cb = Nothing
 					Return
 				End If
-				Try
-					Dim img As Image = FBrush.TImage.Clone
-					img.RotateFlip(FBrush.TRotateFlip)
-					Dim bmp As New Bitmap(img, rt.Width, rt.Height)
-					'Dim bmp As New Bitmap(CInt(rt.Width), CInt(rt.Height))
-					'Dim g As Graphics = Graphics.FromImage(bmp)
-					'g.CompositingMode = CompositingMode.SourceCopy
-					'g.CompositingQuality = CompositingQuality.HighQuality
-					'g.InterpolationMode = InterpolationMode.HighQualityBicubic
-					'g.SmoothingMode = SmoothingMode.HighQuality
-					'g.PixelOffsetMode = PixelOffsetMode.HighQuality
-					'Dim img As Image = FBrush.TImage.GetThumbnailImage(rt.Width, rt.Height, Nothing, IntPtr.Zero)
-					'img.RotateFlip(FBrush.TRotateFlip)
-					'g.DrawImage(img, rt)
-					img.Dispose()
-					If FBrush.TTransparency Then bmp.MakeTransparent(FBrush.TColor)
-					Dim txb As New TextureBrush(bmp)
-					Dim mm As New Matrix
-					mm.Translate(_rect.X, _rect.Y)
-					mm.Shear(ShearX, ShearY)
-					txb.Transform = mm
-					_cb = txb
-				Catch ex As Exception
-					_cb = Nothing
-				End Try
+				Dim img As Image = FBrush.TImage.Clone
+				img.RotateFlip(FBrush.TRotateFlip)
+				Dim bmp As New Bitmap(img, rt.Width, rt.Height)
+				'Dim bmp As New Bitmap(CInt(rt.Width), CInt(rt.Height))
+				'Dim g As Graphics = Graphics.FromImage(bmp)
+				'g.CompositingMode = CompositingMode.SourceCopy
+				'g.CompositingQuality = CompositingQuality.HighQuality
+				'g.InterpolationMode = InterpolationMode.HighQualityBicubic
+				'g.SmoothingMode = SmoothingMode.HighQuality
+				'g.PixelOffsetMode = PixelOffsetMode.HighQuality
+				'Dim img As Image = FBrush.TImage.GetThumbnailImage(rt.Width, rt.Height, Nothing, IntPtr.Zero)
+				'img.RotateFlip(FBrush.TRotateFlip)
+				'g.DrawImage(img, rt)
+				img.Dispose()
+				If FBrush.TTransparency Then bmp.MakeTransparent(FBrush.TColor)
+				Dim txb As New TextureBrush(bmp)
+				Dim mm As New Matrix
+				mm.Translate(_rect.X, _rect.Y)
+				mm.Shear(ShearX, ShearY)
+				txb.Transform = mm
+				_cb = txb
 		End Select
 	End Sub
 

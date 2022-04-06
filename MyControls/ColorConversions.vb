@@ -1,6 +1,4 @@
-﻿Imports System.Drawing
-
-Public Class ColorConversions
+﻿Public Class ColorConversions
 
 #Region "Structs"
 	Public Structure RGB

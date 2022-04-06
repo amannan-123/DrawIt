@@ -1,8 +1,4 @@
-﻿Imports System.ComponentModel
-Imports System.Drawing
-Imports System.Windows.Forms
-
-Public Class ColorListDialog
+﻿Public Class ColorListDialog
 
 	Public Sub LoadColors(_clr As Color())
 		lstColors.Items.Clear()

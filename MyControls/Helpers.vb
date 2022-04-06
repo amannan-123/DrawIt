@@ -1,7 +1,4 @@
-﻿Imports System.Drawing
-Imports System.Drawing.Drawing2D
-
-Module Helpers
+﻿Module Helpers
 
 	Public Function ToPercentage(p1 As Single, p2 As Single, pt As Single) As Single
 		Return (pt - p1) * 100 / (p2 - p1)

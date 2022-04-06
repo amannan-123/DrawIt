@@ -1,8 +1,6 @@
 ﻿Imports System.ComponentModel
-Imports System.Drawing
 Imports System.Drawing.Drawing2D
 Imports System.Drawing.Text
-Imports System.Windows.Forms
 
 <DefaultEvent("ValueChanged")>
 <DefaultProperty("Value")>

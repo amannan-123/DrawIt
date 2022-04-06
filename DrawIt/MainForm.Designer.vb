@@ -1943,7 +1943,7 @@ Partial Class MainForm
 		'P_CBEditor
 		'
 		Me.P_CBEditor.BackColor = System.Drawing.Color.White
-		Me.P_CBEditor.Colors = New System.Drawing.Color() {System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer)), System.Drawing.Color.Black}
+		Me.P_CBEditor.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))}
 		Me.P_CBEditor.ForeColor = System.Drawing.Color.Black
 		Me.P_CBEditor.Location = New System.Drawing.Point(3, 302)
 		Me.P_CBEditor.MinimumSize = New System.Drawing.Size(240, 160)
@@ -1955,8 +1955,8 @@ Partial Class MainForm
 		'P_BEditor
 		'
 		Me.P_BEditor.BackColor = System.Drawing.Color.White
-		Me.P_BEditor.Color1 = System.Drawing.Color.White
-		Me.P_BEditor.Color2 = System.Drawing.Color.Black
+		Me.P_BEditor.Color1 = System.Drawing.Color.Black
+		Me.P_BEditor.Color2 = System.Drawing.Color.White
 		Me.P_BEditor.Factors = New Single() {0!, 1.0!}
 		Me.P_BEditor.ForeColor = System.Drawing.Color.Black
 		Me.P_BEditor.Location = New System.Drawing.Point(7, 490)
