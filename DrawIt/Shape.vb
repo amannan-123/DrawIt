@@ -229,10 +229,10 @@ Public Class Shape
 	''' <summary>
 	''' Returns a region containing path and border.
 	''' </summary>
-	Public Function Region() As Region
+	Public Function Region(Optional _anc As Boolean = True) As Region
 		Dim rg As New Region(Rectangle.Empty)
 		If Not IsNothing(BorderPath) Then rg.Union(BorderPath)
-		If Not IsNothing(SelectionPath) Then rg.Union(SelectionPath)
+		If Not IsNothing(SelectionPath(_anc)) Then rg.Union(SelectionPath(_anc))
 		Return rg
 	End Function
 
@@ -421,6 +421,10 @@ Public Class Shape
 				End If
 				_cb = lgb
 			Case MyBrush.BrushType.PathGradient
+				If IsNothing(TotalPath(False)) Then
+					_cb = Nothing
+					Return
+				End If
 				Dim ptb As New PathGradientBrush(TotalPath(False)) With {
 						.CenterColor = FBrush.PCenter,
 						.SurroundColors = FBrush.PSurround,
@@ -677,7 +681,7 @@ Public Class Shape
 		'	New PointF(rt.X, rt.Bottom),
 		'	New PointF(rt.Right, rt.Bottom)}
 		'gp.Warp(points, rt)
-
+		gp.FillMode = FillMode.Winding
 		_pth = gp
 	End Sub
 

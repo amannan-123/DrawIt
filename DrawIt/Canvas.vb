@@ -1120,7 +1120,6 @@ Public Class Canvas
 		ElseIf shp.Glow.GClip = MyGlow.Clip.Inside Then
 			Dim rg As New Region(pth)
 			g.Clip = rg
-		Else
 		End If
 		For i As Integer = 1 To shp.Glow.Glow Step 2
 			Dim aGlow As Integer = shp.Glow.Feather - ((shp.Glow.Feather / shp.Glow.Glow) * i)
@@ -1148,12 +1147,10 @@ Public Class Canvas
 			g.Clip = rg
 		End If
 
-		Dim x As Integer = 6
-		For i As Integer = 1 To x
-			Using pen As New Pen(Color.FromArgb(
-									   shp.Shadow.Feather - ((shp.Shadow.Feather / x) * i), shp.Shadow.ShadowColor),
-									   i * (shp.Shadow.Blur)) With
-				 {.LineJoin = LineJoin.Round, .StartCap = shp.DPen.PStartCap, .EndCap = shp.DPen.PEndCap}
+		For i As Integer = 1 To shp.Shadow.Blur
+			Dim aGlow As Integer = shp.Shadow.Feather - ((shp.Shadow.Feather / shp.Shadow.Blur) * i)
+			Using pen As New Pen(Color.FromArgb(aGlow, shp.Shadow.ShadowColor), i) With
+				{.LineJoin = LineJoin.Round, .StartCap = shp.DPen.PStartCap, .EndCap = shp.DPen.PEndCap}
 				g.DrawPath(pen, pth)
 			End Using
 		Next i
@@ -1197,9 +1194,20 @@ Public Class Canvas
 	End Sub
 
 	Private Sub DrawShape(ig As Graphics, shp As Shape, Optional _oncanvas As Boolean = True)
-		Dim rgn As Region = shp.Region()
+		Dim brect = shp.Region(False).GetBounds(ig)
 
-		If Not ig.IsVisible(rgn.GetBounds(ig)) Then Return
+		Dim inc As Integer = 0
+		If shp.Selected Then inc += 30
+
+		If shp.Glow.Enabled Then inc = Math.Max(inc, shp.Glow.Glow / 2)
+
+		If shp.Shadow.Enabled Then inc = Math.Max(inc, shp.Shadow.Blur / 2 +
+										Math.Max(Math.Abs(shp.Shadow.Offset.X),
+												 Math.Abs(shp.Shadow.Offset.Y)))
+
+		brect.Inflate(inc, inc)
+
+		If Not ig.IsVisible(brect) Then Return
 
 		ig.PixelOffsetMode = PixelOffsetMode.HighSpeed
 		ig.RenderingOrigin = Point.Ceiling(shp.BaseRect.Location)
@@ -1216,6 +1224,8 @@ Public Class Canvas
 		Dim pth As GraphicsPath = shp.TotalPath(False)
 		Dim fbr As Brush = shp.FillBrush
 		Dim dpn As Pen = shp.CreatePen
+
+		If IsNothing(pth) Then Return
 
 		'DrawPathPoint(ig, pth)
 		If Not IsNothing(fbr) Then

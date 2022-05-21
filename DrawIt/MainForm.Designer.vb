@@ -1831,13 +1831,13 @@ Partial Class MainForm
 		Me.TB_SBlur.Factors = New Single() {0!, 1.0!}
 		Me.TB_SBlur.Location = New System.Drawing.Point(83, 57)
 		Me.TB_SBlur.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-		Me.TB_SBlur.Maximum = 10.0!
+		Me.TB_SBlur.Maximum = 30.0!
 		Me.TB_SBlur.Name = "TB_SBlur"
 		Me.TB_SBlur.Positions = New Single() {0!, 0.5!, 1.0!}
 		Me.TB_SBlur.Size = New System.Drawing.Size(160, 20)
 		Me.TB_SBlur.TabIndex = 2
 		Me.TB_SBlur.ThumbBorderColor = System.Drawing.Color.White
-		Me.TB_SBlur.Value = 2.0!
+		Me.TB_SBlur.Value = 10.0!
 		'
 		'Label57
 		'
