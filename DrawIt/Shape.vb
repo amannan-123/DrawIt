@@ -421,16 +421,19 @@ Public Class Shape
 				End If
 				_cb = lgb
 			Case MyBrush.BrushType.PathGradient
-				If IsNothing(TotalPath(False)) Then
+				Dim t_path = TotalPath(False)
+				If IsNothing(t_path) Then
 					_cb = Nothing
 					Return
 				End If
 				Dim ptb As New PathGradientBrush(TotalPath(False)) With {
 						.CenterColor = FBrush.PCenter,
-						.SurroundColors = FBrush.PSurround,
 						.FocusScales = New PointF(FBrush.PFocusX, FBrush.PFocusY),
 						.CenterPoint = FromPercentage(AbsRect(_rect), FBrush.PCenterPoint)
 					}
+				If FBrush.PSurround.Length <= t_path.PointCount Then
+					ptb.SurroundColors = FBrush.PSurround
+				End If
 				If FBrush.PTriangular Then
 					ptb.SetBlendTriangularShape(FBrush.PTriFocus, FBrush.PTriScale)
 				ElseIf FBrush.PBell Then
