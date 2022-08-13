@@ -14,6 +14,7 @@ Public Class Shape
 
 	Private Sub ShapeChanged(sender As Object, e As PropertyChangedEventArgs)
 		UpdatePath()
+		UpdateImage()
 		UpdateBrush()
 		UpdatePenBrush()
 	End Sub
@@ -24,6 +25,7 @@ Public Class Shape
 	End Sub
 
 	Private Sub BrushChanged(sender As Object, e As PropertyChangedEventArgs)
+		UpdateImage()
 		UpdateBrush()
 	End Sub
 
@@ -55,6 +57,8 @@ Public Class Shape
 			_rect = value
 
 			UpdatePath()
+			'resize image only if shape is being resized.
+			If Not Moving Then UpdateImage()
 			If Not FBrush.BType = MyBrush.BrushType.Solid AndAlso Not FBrush.BType = MyBrush.BrushType.Hatch Then
 				UpdateBrush()
 			End If
@@ -221,6 +225,7 @@ Public Class Shape
 
 	Public Sub ReloadCachedObjects()
 		UpdatePath()
+		UpdateImage()
 		UpdateBrush()
 		UpdateSelectionPen()
 		UpdatePenBrush()
@@ -374,6 +379,46 @@ Public Class Shape
 		End Get
 	End Property
 
+	<NonSerialized>
+	Private _img As Image = Nothing
+	''' <summary>
+	''' Returns <see cref="Image"/> from <see cref="FBrush"/> resized according to GraphicsPath of current instance.
+	''' </summary>
+	''' <returns></returns>
+	Public ReadOnly Property FittedImage() As Image
+		Get
+			Return _img
+		End Get
+	End Property
+
+	Public Sub UpdateImage()
+		If IsNothing(FBrush.TImage) Then
+			_img = Nothing
+			Return
+		End If
+		Dim rt As New RectangleF(0, 0, Math.Abs(_rect.Width), Math.Abs(_rect.Height))
+		If rt.Width = 0 Or rt.Height = 0 Then
+			_img = Nothing
+			Return
+		End If
+		Dim img As Image = FBrush.TImage.Clone
+		img.RotateFlip(FBrush.TRotateFlip)
+		Dim bmp As New Bitmap(img, rt.Width, rt.Height)
+		'Dim bmp As New Bitmap(CInt(rt.Width), CInt(rt.Height))
+		'Dim g As Graphics = Graphics.FromImage(bmp)
+		'g.CompositingMode = CompositingMode.SourceCopy
+		'g.CompositingQuality = CompositingQuality.HighQuality
+		'g.InterpolationMode = InterpolationMode.HighQualityBicubic
+		'g.SmoothingMode = SmoothingMode.HighQuality
+		'g.PixelOffsetMode = PixelOffsetMode.HighQuality
+		'Dim img As Image = FBrush.TImage.GetThumbnailImage(rt.Width, rt.Height, Nothing, IntPtr.Zero)
+		'img.RotateFlip(FBrush.TRotateFlip)
+		'g.DrawImage(img, rt)
+		img.Dispose()
+		If FBrush.TTransparency Then bmp.MakeTransparent(FBrush.TColor)
+		_img = bmp
+	End Sub
+
 	''' <summary>
 	''' Updates <see cref="FillBrush"/>.
 	''' </summary>
@@ -456,31 +501,11 @@ Public Class Shape
 			Case MyBrush.BrushType.Hatch
 				_cb = New HatchBrush(FBrush.HStyle, FBrush.HFore, FBrush.HBack)
 			Case MyBrush.BrushType.Texture
-				If IsNothing(FBrush.TImage) Then
+				If IsNothing(FittedImage) Then
 					_cb = Nothing
 					Return
 				End If
-				Dim rt As New RectangleF(0, 0, Math.Abs(_rect.Width), Math.Abs(_rect.Height))
-				If rt.Width = 0 Or rt.Height = 0 Then
-					_cb = Nothing
-					Return
-				End If
-				Dim img As Image = FBrush.TImage.Clone
-				img.RotateFlip(FBrush.TRotateFlip)
-				Dim bmp As New Bitmap(img, rt.Width, rt.Height)
-				'Dim bmp As New Bitmap(CInt(rt.Width), CInt(rt.Height))
-				'Dim g As Graphics = Graphics.FromImage(bmp)
-				'g.CompositingMode = CompositingMode.SourceCopy
-				'g.CompositingQuality = CompositingQuality.HighQuality
-				'g.InterpolationMode = InterpolationMode.HighQualityBicubic
-				'g.SmoothingMode = SmoothingMode.HighQuality
-				'g.PixelOffsetMode = PixelOffsetMode.HighQuality
-				'Dim img As Image = FBrush.TImage.GetThumbnailImage(rt.Width, rt.Height, Nothing, IntPtr.Zero)
-				'img.RotateFlip(FBrush.TRotateFlip)
-				'g.DrawImage(img, rt)
-				img.Dispose()
-				If FBrush.TTransparency Then bmp.MakeTransparent(FBrush.TColor)
-				Dim txb As New TextureBrush(bmp)
+				Dim txb As New TextureBrush(FittedImage)
 				Dim mm As New Matrix
 				mm.Translate(_rect.X, _rect.Y)
 				mm.Shear(ShearX, ShearY)
