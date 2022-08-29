@@ -1,5 +1,7 @@
 ﻿Imports System.ComponentModel
+Imports System.DirectoryServices.ActiveDirectory
 Imports System.Drawing.Drawing2D
+Imports System.Text.Json.Serialization
 
 <Serializable>
 Public Class Shape
@@ -31,13 +33,17 @@ Public Class Shape
 
 	Sub New()
 		ReloadCachedObjects()
+		Zoom = 1
 	End Sub
 
-	Sub New(_loc As PointF, _shp As MyShape.ShapeStyle, _br As MyBrush.BrushType)
+	Sub New(_loc As PointF, _shp As MyShape.ShapeStyle, _br As MyBrush.BrushType, Optional _zm As Single = 1)
 		FBrush.BType = _br
 		MShape.SType = _shp
-		_rect.Location = _loc
-		_rect.Size = New SizeF(10, 10)
+		_baseX = _loc.X / _zm
+		_baseY = _loc.Y / _zm
+		_baseWidth = 10
+		_baseHeight = 10
+		_zoom = _zm
 		BindEvents()
 		ReloadCachedObjects()
 	End Sub
@@ -48,23 +54,96 @@ Public Class Shape
 #End Region
 
 #Region "Properties"
-	Private _rect As RectangleF = RectangleF.Empty
-	Public Property BaseRect() As RectangleF
-		Get
-			Return _rect
-		End Get
-		Set(value As RectangleF)
-			_rect = value
 
-			UpdatePath()
-			'resize image only if shape is being resized.
-			If Not Moving Then UpdateImage()
-			If Not FBrush.BType = MyBrush.BrushType.Solid AndAlso Not FBrush.BType = MyBrush.BrushType.Hatch Then
-				UpdateBrush()
-			End If
-			If Not DPen.PBrush.BType = MyBrush.BrushType.Solid AndAlso Not DPen.PBrush.BType = MyBrush.BrushType.Hatch Then
-				UpdatePenBrush()
-			End If
+#Region "Base Rect"
+
+	Private _baseX As Single = 0
+	Public Property BaseX() As Single
+		Get
+			Return _baseX
+		End Get
+		Set(ByVal value As Single)
+			_baseX = value
+			FinalizeCoordsChange()
+		End Set
+	End Property
+
+	Private _baseY As Single = 0
+	Public Property BaseY() As Single
+		Get
+			Return _baseY
+		End Get
+		Set(ByVal value As Single)
+			_baseY = value
+			FinalizeCoordsChange()
+		End Set
+	End Property
+
+	Private _baseWidth As Single = 10
+	Public Property BaseWidth() As Single
+		Get
+			Return _baseWidth
+		End Get
+		Set(ByVal value As Single)
+			_baseWidth = value
+			FinalizeCoordsChange()
+		End Set
+	End Property
+
+	Private _baseHeight As Single = 10
+	Public Property BaseHeight() As Single
+		Get
+			Return _baseHeight
+		End Get
+		Set(ByVal value As Single)
+			_baseHeight = value
+			FinalizeCoordsChange()
+		End Set
+	End Property
+
+	Public Sub FinalizeCoordsChange()
+		UpdatePath()
+		'resize image only if shape is being resized.
+		If Not Moving Then UpdateImage()
+		If Not FBrush.BType = MyBrush.BrushType.Solid AndAlso Not FBrush.BType = MyBrush.BrushType.Hatch Then
+			UpdateBrush()
+		End If
+		If Not DPen.PBrush.BType = MyBrush.BrushType.Solid AndAlso Not DPen.PBrush.BType = MyBrush.BrushType.Hatch Then
+			UpdatePenBrush()
+		End If
+	End Sub
+
+	Public Function GetRect() As RectangleF
+		If Zoom <= 0 Then Zoom = 1
+		Return New RectangleF(
+				_baseX * Zoom,
+				_baseY * Zoom,
+				_baseWidth * Zoom,
+				_baseHeight * Zoom)
+	End Function
+
+	Public Sub SetAllRect(rect As RectangleF)
+		_baseX = rect.X / Zoom
+		_baseY = rect.Y / Zoom
+		_baseWidth = rect.Width / Zoom
+		_baseHeight = rect.Height / Zoom
+		FinalizeCoordsChange()
+	End Sub
+
+#End Region
+
+	<NonSerialized>
+	Private _zoom As Single = 1.0F
+	<JsonIgnore>
+	Public Property Zoom() As Single
+		Get
+			Return _zoom
+		End Get
+		Set(ByVal value As Single)
+			_zoom = value
+			FinalizeCoordsChange()
+			Dim rc = GetRect()
+			CenterPoint = New PointF(rc.X + rc.Width / 2, rc.Y + rc.Height / 2)
 		End Set
 	End Property
 
@@ -88,7 +167,7 @@ Public Class Shape
 		End Set
 	End Property
 
-	Private _sel As Boolean = True
+	Private _sel As Boolean = False
 	Public Property Selected() As Boolean
 		Get
 			Return _sel
@@ -98,7 +177,7 @@ Public Class Shape
 		End Set
 	End Property
 
-	Private _mov As Boolean = True
+	Private _mov As Boolean = False
 	Public Property Moving() As Boolean
 		Get
 			Return _mov
@@ -279,7 +358,7 @@ Public Class Shape
 			Dim pn = _pn.Clone
 			If sheared Then
 				Dim mm As New Matrix
-				mm.Translate(_rect.X, _rect.Y)
+				mm.Translate(GetRect.X, GetRect.Y)
 				mm.Shear(ShearX, ShearY)
 				pn.MultiplyTransform(mm)
 			End If
@@ -396,7 +475,7 @@ Public Class Shape
 			_img = Nothing
 			Return
 		End If
-		Dim rt As New RectangleF(0, 0, Math.Abs(_rect.Width), Math.Abs(_rect.Height))
+		Dim rt As New RectangleF(0, 0, Math.Abs(GetRect.Width), Math.Abs(GetRect.Height))
 		If rt.Width = 0 Or rt.Height = 0 Then
 			_img = Nothing
 			Return
@@ -474,7 +553,7 @@ Public Class Shape
 				Dim ptb As New PathGradientBrush(TotalPath(False)) With {
 						.CenterColor = FBrush.PCenter,
 						.FocusScales = New PointF(FBrush.PFocusX, FBrush.PFocusY),
-						.CenterPoint = FromPercentage(AbsRect(_rect), FBrush.PCenterPoint)
+						.CenterPoint = FromPercentage(AbsRect(GetRect), FBrush.PCenterPoint)
 					}
 				If FBrush.PSurround.Length <= t_path.PointCount Then
 					ptb.SurroundColors = FBrush.PSurround
@@ -507,7 +586,7 @@ Public Class Shape
 				End If
 				Dim txb As New TextureBrush(FittedImage)
 				Dim mm As New Matrix
-				mm.Translate(_rect.X, _rect.Y)
+				mm.Translate(GetRect.X, GetRect.Y)
 				mm.Shear(ShearX, ShearY)
 				txb.Transform = mm
 				_cb = txb
@@ -559,7 +638,7 @@ Public Class Shape
 			If IsNothing(_pth) Then Return Nothing
 			Dim gp As GraphicsPath = _pth.Clone
 			Dim mm As New Matrix
-			If translated Then mm.Translate(_rect.X, _rect.Y)
+			If translated Then mm.Translate(GetRect.X, GetRect.Y)
 			If sheared Then mm.Shear(ShearX, ShearY)
 			gp.Transform(mm)
 			If rotated Then AdjustRotation(gp)
@@ -572,14 +651,14 @@ Public Class Shape
 	''' </summary>
 	Public Sub UpdatePath()
 
-		If _rect.Width = 0 Or _rect.Height = 0 Then
+		If GetRect.Width = 0 Or GetRect.Height = 0 Then
 			_pth = Nothing
 			Return
 		End If
 
 		Dim gp As New GraphicsPath()
 
-		Dim rt As New RectangleF(0, 0, Math.Abs(_rect.Width), Math.Abs(_rect.Height))
+		Dim rt As New RectangleF(0, 0, Math.Abs(GetRect.Width), Math.Abs(GetRect.Height))
 		Select Case MShape.SType
 			Case MyShape.ShapeStyle.Rectangle
 				gp.AddRectangle(rt)
@@ -636,8 +715,8 @@ Public Class Shape
 					_lst.Add(FromPercentage(rt, pt))
 				Next
 				gp.AddClosedCurve(_lst.ToArray, MShape.Tension)
-			Case MyShape.ShapeStyle.Spiral
-				gp = SpiralPath(BaseRect, MShape.Spirals)
+			'Case MyShape.ShapeStyle.Spiral
+			'	gp = SpiralPath(GetRect, MShape.Spirals)
 			Case MyShape.ShapeStyle.Arc
 				gp.AddArc(rt, MShape.StartAngle, MShape.SweepAngle)
 			Case MyShape.ShapeStyle.Pie
@@ -683,21 +762,21 @@ Public Class Shape
 				End Select
 				Dim fl As New FontFamily(MShape.FontName)
 				gp.AddString(MShape.Text, fl, MShape.FontStyle,
-						 MShape.FontSize * 1.34, rt, sf)
+						 MShape.FontSize * 1.34 * Zoom, rt, sf)
 		End Select
 
 		'flip
 		Dim flipXMatrix = New Matrix(-1, 0,
 									 0, 1,
-									 BaseRect.Width, 0)
+									 GetRect.Width, 0)
 		Dim flipYMatrix = New Matrix(1, 0,
 									 0, -1,
-									 0, BaseRect.Height)
+									 0, GetRect.Height)
 		Dim transformMatrix = New Matrix()
 		If FlipX Then transformMatrix.Multiply(flipXMatrix)
 		If FlipY Then transformMatrix.Multiply(flipYMatrix)
-		If _rect.Width < 0 Then transformMatrix.Translate(_rect.Width, 0)
-		If _rect.Height < 0 Then transformMatrix.Translate(0, _rect.Height)
+		If GetRect.Width < 0 Then transformMatrix.Translate(GetRect.Width, 0)
+		If GetRect.Height < 0 Then transformMatrix.Translate(0, GetRect.Height)
 		gp.Transform(transformMatrix)
 		'Debug.WriteLine(gp.GetBounds)
 
@@ -714,8 +793,8 @@ Public Class Shape
 	End Sub
 
 	Public Function TopLeft(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(_rect.X - AnchorSize.Width, _rect.Y - AnchorSize.Height, AnchorSize.Width, AnchorSize.Height)
-		If Math.Abs(_rect.Width) > 20 AndAlso Math.Abs(_rect.Height) > 20 Then
+		Dim rect As New RectangleF(GetRect.X - AnchorSize.Width, GetRect.Y - AnchorSize.Height, AnchorSize.Width, AnchorSize.Height)
+		If Math.Abs(GetRect.Width) > 20 AndAlso Math.Abs(GetRect.Height) > 20 Then
 			rect.X += (AnchorSize.Width / 2)
 			rect.Y += (AnchorSize.Height / 2)
 		End If
@@ -726,8 +805,8 @@ Public Class Shape
 	End Function
 
 	Public Function Top(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(_rect.X + (_rect.Width / 2) - (AnchorSize.Width / 2), _rect.Y - AnchorSize.Height, AnchorSize.Width, AnchorSize.Height)
-		If Math.Abs(_rect.Width) > 20 AndAlso Math.Abs(_rect.Height) > 20 Then
+		Dim rect As New RectangleF(GetRect.X + (GetRect.Width / 2) - (AnchorSize.Width / 2), GetRect.Y - AnchorSize.Height, AnchorSize.Width, AnchorSize.Height)
+		If Math.Abs(GetRect.Width) > 20 AndAlso Math.Abs(GetRect.Height) > 20 Then
 			rect.Y += (AnchorSize.Height / 2)
 		End If
 		Dim gp As New GraphicsPath()
@@ -737,8 +816,8 @@ Public Class Shape
 	End Function
 
 	Public Function TopRight(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(_rect.Right, _rect.Y - AnchorSize.Height, AnchorSize.Width, AnchorSize.Height)
-		If Math.Abs(_rect.Width) > 20 AndAlso Math.Abs(_rect.Height) > 20 Then
+		Dim rect As New RectangleF(GetRect.Right, GetRect.Y - AnchorSize.Height, AnchorSize.Width, AnchorSize.Height)
+		If Math.Abs(GetRect.Width) > 20 AndAlso Math.Abs(GetRect.Height) > 20 Then
 			rect.X -= (AnchorSize.Width / 2)
 			rect.Y += (AnchorSize.Height / 2)
 		End If
@@ -749,8 +828,8 @@ Public Class Shape
 	End Function
 
 	Public Function Left(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(_rect.X - AnchorSize.Width, _rect.Y + (_rect.Height / 2) - (AnchorSize.Height / 2), AnchorSize.Width, AnchorSize.Height)
-		If Math.Abs(_rect.Width) > 20 AndAlso Math.Abs(_rect.Height) > 20 Then
+		Dim rect As New RectangleF(GetRect.X - AnchorSize.Width, GetRect.Y + (GetRect.Height / 2) - (AnchorSize.Height / 2), AnchorSize.Width, AnchorSize.Height)
+		If Math.Abs(GetRect.Width) > 20 AndAlso Math.Abs(GetRect.Height) > 20 Then
 			rect.X += (AnchorSize.Width / 2)
 		End If
 		Dim gp As New GraphicsPath()
@@ -760,8 +839,8 @@ Public Class Shape
 	End Function
 
 	Public Function Right(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(_rect.Right, _rect.Y + (_rect.Height / 2) - (AnchorSize.Height / 2), AnchorSize.Width, AnchorSize.Height)
-		If Math.Abs(_rect.Width) > 20 AndAlso Math.Abs(_rect.Height) > 20 Then
+		Dim rect As New RectangleF(GetRect.Right, GetRect.Y + (GetRect.Height / 2) - (AnchorSize.Height / 2), AnchorSize.Width, AnchorSize.Height)
+		If Math.Abs(GetRect.Width) > 20 AndAlso Math.Abs(GetRect.Height) > 20 Then
 			rect.X -= (AnchorSize.Width / 2)
 		End If
 		Dim gp As New GraphicsPath()
@@ -771,8 +850,8 @@ Public Class Shape
 	End Function
 
 	Public Function BottomLeft(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(_rect.X - AnchorSize.Width, _rect.Bottom, AnchorSize.Width, AnchorSize.Height)
-		If Math.Abs(_rect.Width) > 20 AndAlso Math.Abs(_rect.Height) > 20 Then
+		Dim rect As New RectangleF(GetRect.X - AnchorSize.Width, GetRect.Bottom, AnchorSize.Width, AnchorSize.Height)
+		If Math.Abs(GetRect.Width) > 20 AndAlso Math.Abs(GetRect.Height) > 20 Then
 			rect.X += (AnchorSize.Width / 2)
 			rect.Y -= (AnchorSize.Height / 2)
 		End If
@@ -783,8 +862,8 @@ Public Class Shape
 	End Function
 
 	Public Function Bottom(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(_rect.X + (_rect.Width / 2) - (AnchorSize.Width / 2), _rect.Bottom, AnchorSize.Width, AnchorSize.Height)
-		If Math.Abs(_rect.Width) > 20 AndAlso Math.Abs(_rect.Height) > 20 Then
+		Dim rect As New RectangleF(GetRect.X + (GetRect.Width / 2) - (AnchorSize.Width / 2), GetRect.Bottom, AnchorSize.Width, AnchorSize.Height)
+		If Math.Abs(GetRect.Width) > 20 AndAlso Math.Abs(GetRect.Height) > 20 Then
 			rect.Y -= (AnchorSize.Height / 2)
 		End If
 		Dim gp As New GraphicsPath()
@@ -794,8 +873,8 @@ Public Class Shape
 	End Function
 
 	Public Function BottomRight(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(_rect.Right, _rect.Bottom, AnchorSize.Width, AnchorSize.Height)
-		If Math.Abs(_rect.Width) > 20 AndAlso Math.Abs(_rect.Height) > 20 Then
+		Dim rect As New RectangleF(GetRect.Right, GetRect.Bottom, AnchorSize.Width, AnchorSize.Height)
+		If Math.Abs(GetRect.Width) > 20 AndAlso Math.Abs(GetRect.Height) > 20 Then
 			rect.X -= (AnchorSize.Width / 2)
 			rect.Y -= (AnchorSize.Height / 2)
 		End If
@@ -806,7 +885,7 @@ Public Class Shape
 	End Function
 
 	Public Function Rotate(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(_rect.X + (_rect.Width / 2) - (AnchorSize.Width / 2), _rect.Y - 30, AnchorSize.Width, AnchorSize.Height)
+		Dim rect As New RectangleF(GetRect.X + (GetRect.Width / 2) - (AnchorSize.Width / 2), GetRect.Y - 30, AnchorSize.Width, AnchorSize.Height)
 		rect.Inflate(1, 1)
 		Dim gp As New GraphicsPath()
 		gp.AddEllipse(rect)
@@ -815,7 +894,7 @@ Public Class Shape
 	End Function
 
 	Public Function Centering(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(FromPercentage(BaseRect, FBrush.PCenterPoint), New SizeF(0, 0))
+		Dim rect As New RectangleF(FromPercentage(GetRect, FBrush.PCenterPoint), New SizeF(0, 0))
 		rect.Inflate(3, 3)
 		Dim pt As PointF = rect.Location
 		Dim gp As New GraphicsPath()

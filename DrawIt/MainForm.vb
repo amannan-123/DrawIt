@@ -163,10 +163,10 @@ Public Class MainForm
 		RemoveHandler ud_H.ValueChanged, AddressOf ud_H_ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			ud_X.Value = shp.BaseRect.X
-			ud_Y.Value = shp.BaseRect.Y
-			ud_W.Value = Math.Abs(shp.BaseRect.Width)
-			ud_H.Value = Math.Abs(shp.BaseRect.Height)
+			ud_X.Value = shp.BaseX
+			ud_Y.Value = shp.BaseY
+			ud_W.Value = Math.Abs(shp.BaseWidth)
+			ud_H.Value = Math.Abs(shp.BaseHeight)
 			ud_A.Value = shp.Angle
 		Else
 			ud_X.Value = 0
@@ -179,7 +179,7 @@ Public Class MainForm
 		AddHandler ud_H.ValueChanged, AddressOf ud_H_ValueChanged
 	End Sub
 
-	Private Sub UpdateSettings()
+	Public Sub UpdateSettings()
 		Dim cn = MainCanvas()
 		If Not IsNothing(cn) Then
 			If cn.Text = "" Then cn.Text = tCanvas.SelectedTab.Text
@@ -187,12 +187,9 @@ Public Class MainForm
 			set_BC.SelectedColor = cn.BackColor
 			set_PB.Image = cn.BackgroundImage
 			set_cname.Text = cn.Text
-			set_r1.Checked = cn.Docked
-			set_r2.Checked = Not cn.Docked
-			If Not cn.Docked Then
-				set_W.Value = cn.Width
-				set_H.Value = cn.Height
-			End If
+			TBZoom.Value = cn.Zoom * 100
+			set_W.Value = cn.AbsSize.Width
+			set_H.Value = cn.AbsSize.Height
 			set_ord.SelectedItem = cn.SelectionOrder.ToString
 			set_hgt.Checked = cn.HighlightShapes
 			set_pclr.SelectedColor = cn.PathHighlightColor
@@ -203,7 +200,6 @@ Public Class MainForm
 
 #Region "Load"
 	Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-		CanvasControl1.baseCanvas.MainForm = Me
 		MainCanvas = CanvasControl1.baseCanvas
 		UpdateSettings()
 
@@ -291,9 +287,8 @@ Public Class MainForm
 		End If
 
 		Dim rect As New Rectangle(e.Bounds.X + 3, e.Bounds.Y + 1, 20, e.Bounds.Height - 3)
-		Dim shp As New Shape With {
-			.BaseRect = rect
-		}
+		Dim shp As New Shape
+		shp.SetAllRect(rect)
 		shp.MShape.SType = [Enum].Parse(GetType(MyShape.ShapeStyle), itemString)
 		shp.DPen.PBrush.SolidColor = Color.Black
 		shp.FBrush.SolidColor = Color.Black
@@ -337,9 +332,8 @@ Public Class MainForm
 		End If
 
 		Dim rect As New Rectangle(e.Bounds.X + 3, e.Bounds.Y + 1, 20, e.Bounds.Height - 3)
-		Dim shp As New Shape With {
-			.BaseRect = rect
-		}
+		Dim shp As New Shape
+		shp.SetAllRect(rect)
 		shp.FBrush.BType = [Enum].Parse(GetType(MyBrush.BrushType), itemString)
 		shp.DPen.PBrush.SolidColor = Color.Black
 		shp.FBrush.SolidColor = Color.White
@@ -349,19 +343,18 @@ Public Class MainForm
 			Case MyBrush.BrushType.Texture
 				e.Graphics.FillRectangle(Brushes.White, rect)
 				Dim r1 As New Rectangle(rect.X, rect.Y + 4, rect.Width / 2, rect.Height - 4)
-				Dim s1 As New Shape With {
-					.BaseRect = r1
-				}
+				Dim s1 As New Shape
+				s1.SetAllRect(r1)
 				s1.MShape.SType = MyShape.ShapeStyle.Triangle
 				s1.UpdatePath()
 				e.Graphics.FillPath(Brushes.Brown, s1.TotalPath)
 				Dim r2 As Rectangle = r1
 				r2.X += 7 : r2.Y += 3 : r2.Width -= 1 : r2.Height -= 3
-				s1.BaseRect = r2
+				s1.SetAllRect(r2)
 				s1.UpdatePath()
 				e.Graphics.FillPath(Brushes.Brown, s1.TotalPath)
 				Dim r3 As New Rectangle(rect.Right - 7, rect.Y + 2, 5, 5)
-				s1.BaseRect = r3
+				s1.SetAllRect(r3)
 				s1.MShape.SType = MyShape.ShapeStyle.Ellipse
 				s1.UpdatePath()
 				e.Graphics.FillPath(Brushes.DarkOrange, s1.TotalPath)
@@ -1061,9 +1054,7 @@ Public Class MainForm
 	Private Sub ud_X_ValueChanged(sender As Object, e As EventArgs) Handles ud_X.ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			Dim rect = shp.BaseRect
-			rect.X = ud_X.Value
-			shp.BaseRect = rect
+			shp.BaseX = ud_X.Value
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -1071,9 +1062,7 @@ Public Class MainForm
 	Private Sub ud_Y_ValueChanged(sender As Object, e As EventArgs) Handles ud_Y.ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			Dim rect = shp.BaseRect
-			rect.Y = ud_Y.Value
-			shp.BaseRect = rect
+			shp.BaseY = ud_Y.Value
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -1081,9 +1070,7 @@ Public Class MainForm
 	Private Sub ud_W_ValueChanged(sender As Object, e As EventArgs) Handles ud_W.ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			Dim rect = shp.BaseRect
-			rect.Width = ud_W.Value
-			shp.BaseRect = rect
+			shp.BaseWidth = ud_W.Value
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -1091,9 +1078,7 @@ Public Class MainForm
 	Private Sub ud_H_ValueChanged(sender As Object, e As EventArgs) Handles ud_H.ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			Dim rect = shp.BaseRect
-			rect.Height = ud_H.Value
-			shp.BaseRect = rect
+			shp.BaseHeight = ud_H.Value
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -1131,9 +1116,6 @@ Public Class MainForm
 					dlg.ShowDialog()
 				Case MyShape.ShapeStyle.Arc, MyShape.ShapeStyle.Pie
 					Dim dlg As New AnglesDialog(shp, MainCanvas)
-					dlg.ShowDialog()
-				Case MyShape.ShapeStyle.Spiral
-					Dim dlg As New SpiralDialog(shp, MainCanvas)
 					dlg.ShowDialog()
 				Case MyShape.ShapeStyle.Text
 					Dim dlg As New TextEditor(shp)
@@ -1411,8 +1393,6 @@ Public Class MainForm
 
 	Private Sub btNewC_Click(sender As Object, e As EventArgs) Handles btNewC.Click
 		Dim cn As New CanvasControl
-		cn.baseCanvas.BackColor = Color.Transparent
-		cn.baseCanvas.MainForm = Me
 		cn.Dock = DockStyle.Fill
 		cn.Text = "Canvas" & tCanvas.TabCount + 1
 		Dim tp As New TabPage(cn.Text) With {
@@ -1428,7 +1408,6 @@ Public Class MainForm
 		For Each str As String In paths
 			Dim cn As New CanvasControl
 			cn.baseCanvas.BackColor = Color.Transparent
-			cn.baseCanvas.MainForm = Me
 			cn.Dock = DockStyle.Fill
 			Dim op = cn.baseCanvas.LoadProject(str)
 			If Not IsNothing(op) Then
@@ -1492,6 +1471,25 @@ Public Class MainForm
 #End Region
 
 #Region "Settings"
+
+	Private Sub TBZoom_ValueChanged(sender As Object, e As EventArgs) Handles TBZoom.ValueChanged
+		Dim cn = MainCanvas()
+		If Not IsNothing(cn) Then
+			cn.Zoom = TBZoom.Value / 100
+			cn.MainCanvasControl.SetSize(False)
+			cn.MainCanvasControl.basePnl.Invalidate()
+		End If
+	End Sub
+
+	Private Sub bResetZoom_Click(sender As Object, e As EventArgs) Handles bResetZoom.Click
+		Dim cn = MainCanvas()
+		If Not IsNothing(cn) Then
+			cn.Zoom = 1
+			cn.MainCanvasControl.SetSize(False)
+			cn.MainCanvasControl.basePnl.Invalidate()
+		End If
+	End Sub
+
 	Private Sub set_lpic_Click(sender As Object, e As EventArgs) Handles set_lpic.Click
 		openDialog.Multiselect = False
 		openDialog.Title = "Choose Image"
@@ -1509,28 +1507,20 @@ Public Class MainForm
 		set_PB.Image = Nothing
 	End Sub
 
-	Private Sub set_r1_CheckedChanged(sender As Object, e As EventArgs) Handles set_r2.CheckedChanged, set_r1.CheckedChanged
-		set_W.Enabled = set_r2.Checked
-		set_H.Enabled = set_W.Enabled
-	End Sub
-
 	Private Sub set_Apply_Click(sender As Object, e As EventArgs) Handles set_Apply.Click
 		Dim cn = MainCanvas()
 		If Not IsNothing(cn) Then
 			cn.BackColor = set_BC.SelectedColor
 			cn.BackgroundImage = set_PB.Image
 			cn.Text = set_cname.Text
-			cn.Docked = set_r1.Checked
-			If Not cn.Docked Then
-				cn.Width = set_W.Value
-				cn.Height = set_H.Value
-			End If
+			cn.AbsSize = New SizeF(set_W.Value, set_H.Value)
 			cn.SelectionOrder = [Enum].Parse(GetType(Canvas.SelectOrder), set_ord.SelectedItem)
 			cn.HighlightShapes = set_hgt.Checked
 			cn.PathHighlightColor = set_pclr.SelectedColor
 			cn.BorderHighlightColor = set_bclr.SelectedColor
+			cn.MainCanvasControl.SetSize(False)
+			cn.MainCanvasControl.basePnl.Invalidate()
 			tCanvas.SelectedTab.Text = cn.Text
-			CurrentCanvasControl.SetSize()
 			pSettings.Visible = False
 		End If
 	End Sub

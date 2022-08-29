@@ -94,6 +94,9 @@ Public Class TestForm
 		Return (CInt(color.A) << 24) Or (CInt(color.B) << 16) Or (CInt(color.G) << 8) Or color.R
 	End Function
 
+	Private Sub MyVScrollBar1_Scroll(sender As Object, e As EventArgs) Handles MyVScrollBar1.Scroll
+		Text = MyVScrollBar1.Value
+	End Sub
 End Class
 
 Class W10BlurHelper

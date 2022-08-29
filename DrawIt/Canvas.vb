@@ -38,7 +38,6 @@ Public Class Canvas
 		SetStyle(ControlStyles.ResizeRedraw, True)
 		SetStyle(ControlStyles.UserMouse, True)
 		SetStyle(ControlStyles.UserPaint, True)
-		_frm = frm
 	End Sub
 #End Region
 
@@ -141,35 +140,56 @@ Public Class Canvas
 	Private h_info As New HoverInfo(-1, 0)
 	Private _negX As Boolean = False
 	Private _negY As Boolean = False
+	Private panning As Boolean = False
+	Private m_down As Boolean = False
+	Private m_pt As Point
 	'drawing
 	Private d_info As New DrawModeInfo(False)
 	Private curr_loc As Point = Point.Empty
 #End Region
 
 #Region "Properties"
-	Private _auto As Boolean = True
-	<DefaultValue(GetType(Boolean), "True")>
-	Public Property Docked() As Boolean
+
+	Private _zoom As Single = 1.0F
+	Public Property Zoom() As Single
 		Get
-			Return _auto
+			Return _zoom
 		End Get
-		Set(value As Boolean)
-			_auto = value
+		Set(ByVal value As Single)
+			If value <> _zoom Then
+				value = Math.Max(0.2, value)
+				value = Math.Min(10, value)
+				_zoom = value
+				shps.ForEach(Sub(x)
+								 x.Zoom = _zoom
+							 End Sub)
+				FixSize()
+				MainForm.UpdateSettings()
+			End If
 		End Set
 	End Property
 
-	Private _frm As MainForm
-	Public Property MainForm() As MainForm
+	Private _absSize As New SizeF(500, 500)
+	Public Property AbsSize() As SizeF
 		Get
-			Return _frm
+			Return _absSize
 		End Get
-		Set(value As MainForm)
-			_frm = value
-			If Not IsNothing(_frm) Then
-				AddHandler _frm.ResizeBegin, AddressOf F_ResizeStarted
-				AddHandler _frm.ResizeEnd, AddressOf F_ResizeEnded
-			End If
+		Set(ByVal value As SizeF)
+			_absSize = value
+			FixSize()
 		End Set
+	End Property
+
+	Public Sub FixSize()
+		Width = _absSize.Width * Zoom
+		Height = _absSize.Height * Zoom
+	End Sub
+
+	Public ReadOnly Property MainCanvasControl() As CanvasControl
+		Get
+			If IsNothing(Me.Parent) Then Return Nothing
+			Return DirectCast(Me.Parent.Parent, CanvasControl)
+		End Get
 	End Property
 
 	Private _ord As SelectOrder = SelectOrder.AboveFirst
@@ -241,27 +261,6 @@ Public Class Canvas
 	End Property
 #End Region
 
-#Region "Form Resize"
-	Private _fres As Boolean = False
-	Public Property FResizing() As Boolean
-		Get
-			Return _fres
-		End Get
-		Set(value As Boolean)
-			_fres = value
-			Invalidate()
-		End Set
-	End Property
-
-	Private Sub F_ResizeStarted(sender As Object, e As EventArgs)
-		FResizing = True
-	End Sub
-
-	Private Sub F_ResizeEnded(sender As Object, e As EventArgs)
-		FResizing = False
-	End Sub
-#End Region
-
 #Region "File Operations"
 	Public Function SaveProject(_loc As String) As Exception
 		Try
@@ -270,7 +269,7 @@ Public Class Canvas
 				Case ".bin"
 					Dim stream As FileStream = File.Create(_loc)
 					Dim formatter As New BinaryFormatter()
-					formatter.Serialize(stream, shps)
+					formatter.Serialize(stream, New ProjectData(shps, AbsSize, BackColor, BackgroundImage))
 					stream.Close()
 				Case ".json"
 					Dim stream As FileStream = File.Create(_loc)
@@ -283,7 +282,8 @@ Public Class Canvas
 									}
 					options.Converters.Add(New JsonStringEnumConverter())
 					options.Converters.Add(New JSONColorConverter())
-					Dim jsonString = JsonSerializer.Serialize(shps, options)
+					options.Converters.Add(New JSONImageConverter())
+					Dim jsonString = JsonSerializer.Serialize(New ProjectData(shps, AbsSize, BackColor, BackgroundImage), options)
 					File.WriteAllText(_loc, jsonString)
 				Case Else
 					Return New InvalidDataException("File type not supported!")
@@ -295,33 +295,49 @@ Public Class Canvas
 	End Function
 
 	Public Function LoadProject(_loc As String) As Exception
-		Try
-			Dim inf As New FileInfo(_loc)
-			Select Case inf.Extension.ToLower
-				Case ".bin"
-					Dim stream As FileStream = File.Open(_loc, FileMode.Open)
-					Dim formatter As New BinaryFormatter()
-					shps = formatter.Deserialize(stream)
-					stream.Close()
-				Case ".json"
-					Dim jsonString = File.ReadAllText(_loc)
-					Dim options = New JsonSerializerOptions()
-					options.Converters.Add(New JsonStringEnumConverter())
-					options.Converters.Add(New JSONColorConverter())
-					Dim data = JsonSerializer.Deserialize(Of List(Of Shape))(jsonString, options)
-					shps = data
-				Case Else
-					Return New InvalidDataException("File type not supported!")
-			End Select
-		Catch ex As Exception
-			Return ex
-		Finally
-			shps.ForEach(Sub(x)
-							 x.BindEvents()
-							 x.ReloadCachedObjects()
-						 End Sub)
-			Invalidate()
-		End Try
+		'Try
+		Dim inf As New FileInfo(_loc)
+		Select Case inf.Extension.ToLower
+			Case ".bin"
+				Dim stream As FileStream = File.Open(_loc, FileMode.Open)
+				Dim formatter As New BinaryFormatter()
+				Dim des_data As ProjectData = TryCast(formatter.Deserialize(stream), ProjectData)
+				stream.Close()
+				shps = des_data.Shapes
+				BackColor = des_data.BackgroundColor
+				BackgroundImage = des_data.BackgroundImage
+				AbsSize = des_data.Size
+			Case ".json"
+				Dim jsonString = File.ReadAllText(_loc)
+				Dim options = New JsonSerializerOptions With
+								{
+									.UnknownTypeHandling = JsonUnknownTypeHandling.JsonElement,
+									.IgnoreReadOnlyProperties = True,
+									.WriteIndented = True
+								}
+				options.Converters.Add(New JsonStringEnumConverter())
+				options.Converters.Add(New JSONColorConverter())
+				options.Converters.Add(New JSONImageConverter())
+				Dim des_data = JsonSerializer.Deserialize(Of ProjectData)(jsonString, options)
+				shps = des_data.Shapes
+				BackColor = des_data.BackgroundColor
+				BackgroundImage = des_data.BackgroundImage
+				AbsSize = des_data.Size
+			Case Else
+				Return New InvalidDataException("File type not supported!")
+		End Select
+		'Catch ex As Exception
+		'	Return ex
+		'Finally
+		Zoom = 1
+		MainCanvasControl.SetSize()
+		MainCanvasControl.basePnl.Invalidate()
+		shps.ForEach(Sub(x)
+						 x.BindEvents()
+						 x.ReloadCachedObjects()
+					 End Sub)
+		Invalidate()
+		'End Try
 		Return Nothing
 	End Function
 
@@ -484,29 +500,57 @@ Public Class Canvas
 	End Function
 
 	Public Sub FinalizeResize(shp As Shape)
-		shp.BaseRect = AbsRect(shp.BaseRect)
+		Dim fRect = AbsRect(shp.GetRect)
+		shp.SetAllRect(fRect)
 		If shp.Angle <> 0.0 Then
-			Dim _rgRect = New Region(shp.BaseRect)
+			Dim _rgRect = New Region(shp.GetRect)
 			Dim oMtx = New Matrix
 			oMtx.RotateAt(shp.Angle, shp.CenterPoint)
 			_rgRect.Transform(oMtx)
 			Dim rfNewBounds As RectangleF = _rgRect.GetBounds(CreateGraphics)
 			Dim ptNewScreenCenterOrigin As New PointF(rfNewBounds.X + (rfNewBounds.Width / 2), rfNewBounds.Y + (rfNewBounds.Height / 2))
-			Dim rcNewRenderRect As New RectangleF((ptNewScreenCenterOrigin.X - (shp.BaseRect.Width / 2)),
-														  (ptNewScreenCenterOrigin.Y - (shp.BaseRect.Height / 2)),
-														  shp.BaseRect.Width,
-														  shp.BaseRect.Height)
-			shp.BaseRect = rcNewRenderRect
-			shp.CenterPoint = New PointF(shp.BaseRect.X + (shp.BaseRect.Width / 2),
-					 shp.BaseRect.Y + (shp.BaseRect.Height / 2))
+			Dim rcNewRenderRect As New RectangleF((ptNewScreenCenterOrigin.X - (shp.GetRect.Width / 2)),
+														  (ptNewScreenCenterOrigin.Y - (shp.GetRect.Height / 2)),
+														  shp.GetRect.Width,
+														  shp.GetRect.Height)
+			shp.SetAllRect(rcNewRenderRect)
+			shp.CenterPoint = New PointF(shp.GetRect.X + (shp.GetRect.Width / 2),
+					 shp.GetRect.Y + (shp.GetRect.Height / 2))
 		End If
 	End Sub
 #End Region
 
 #Region "Mouse Events"
 
+#Region "Panning"
+	Private Sub CanvasPan_MouseDown(sender As Object, e As MouseEventArgs) Handles MyBase.MouseDown
+		If panning Then
+			m_down = True
+			m_pt = e.Location
+		End If
+	End Sub
+
+	Private Sub CanvasPan_MouseMove(sender As Object, e As MouseEventArgs) Handles MyBase.MouseMove
+		If panning Then
+			If m_down Then
+				MainCanvasControl.ApplyScrollChange(e.X - m_pt.X, e.Y - m_pt.Y)
+			End If
+		End If
+	End Sub
+
+	Private Sub CanvasPan_MouseUp(sender As Object, e As MouseEventArgs) Handles MyBase.MouseUp
+		If panning Then
+			m_down = False
+			MainCanvasControl.basePnl.Invalidate()
+		End If
+	End Sub
+
+
+#End Region
+
 #Region "Draw"
 	Private Sub CanvasDraw_MouseDown(sender As Object, e As MouseEventArgs) Handles MyBase.MouseDown
+		If panning Then Return
 		If MainForm.Operation = MainForm.Operations.Draw Then
 			md_pt = e.Location
 
@@ -546,9 +590,9 @@ Public Class Canvas
 							_max.Y = d_info.Points.Max(Function(pt As PointF) pt.Y)
 							If _min.X = _max.X Then _max.X += 1
 							If _min.Y = _max.Y Then _max.Y += 1
-							Dim sshp As New Shape(_min, sty, bty)
+							Dim sshp As New Shape(_min, sty, bty, Zoom)
 							Dim rectf As New RectangleF(_min, New SizeF(_max.X - _min.X, _max.Y - _min.Y))
-							sshp.BaseRect = rectf
+							sshp.SetAllRect(rectf)
 							Dim l_perc = New List(Of PointF)
 							d_info.Points.ForEach(Sub(x) l_perc.Add(ToPercentage(rectf, x)))
 							If d_info.ShapeType = 4 Or d_info.ShapeType = 5 Then
@@ -561,7 +605,7 @@ Public Class Canvas
 							MainForm.UpdateControls()
 						Else
 							If Not d_info.DrawMode Then
-								Dim shp_n = New Shape(e.Location, sty, bty) With {
+								Dim shp_n = New Shape(e.Location, sty, bty, Zoom) With {
 									.Selected = True
 								}
 								shps.Add(shp_n)
@@ -572,7 +616,7 @@ Public Class Canvas
 					End If
 					Invalidate()
 				Case Else
-					Dim shp_n = New Shape(md_pt, sty, bty) With {
+					Dim shp_n = New Shape(md_pt, sty, bty, Zoom) With {
 						.Selected = True
 					}
 					shps.Add(shp_n)
@@ -583,6 +627,7 @@ Public Class Canvas
 	End Sub
 
 	Private Sub CanvasDraw_MouseMove(sender As Object, e As MouseEventArgs) Handles MyBase.MouseMove
+		If panning Then Return
 		If MainForm.Operation = MainForm.Operations.Draw Then
 			Cursor = Cursors.Cross
 			If op = MOperations.Draw Then
@@ -606,7 +651,7 @@ Public Class Canvas
 					rtd.Width *= 2
 					rtd.Height *= 2
 				End If
-				shp_d.BaseRect = rtd
+				shp_d.SetAllRect(rtd)
 				Invalidate()
 				MainForm.UpdateBoundControls()
 			End If
@@ -624,6 +669,7 @@ Public Class Canvas
 	End Sub
 
 	Private Sub CanvasDraw_MouseUp(sender As Object, e As MouseEventArgs) Handles MyBase.MouseUp
+		If panning Then Return
 		If MainForm.Operation = MainForm.Operations.Draw Then
 			If Not d_info.DrawMode Then MainForm.rSelect.Checked = True
 			op = MOperations.None
@@ -642,6 +688,7 @@ Public Class Canvas
 #Region "Select & Resize"
 
 	Private Sub CanvasSelect_MouseDown(sender As Object, e As MouseEventArgs) Handles MyBase.MouseDown
+		If panning Then Return
 		If MainForm.Operation = MainForm.Operations.Select Then
 
 			md_pt = e.Location
@@ -670,8 +717,8 @@ Public Class Canvas
 			If Not IsNothing(shp) Then
 				m_ang = shp.Angle
 				m_rect.Clear()
-				m_cnt = New PointF(shp.BaseRect.X + (shp.BaseRect.Width / 2),
-							 shp.BaseRect.Y + (shp.BaseRect.Height / 2))
+				m_cnt = New PointF(shp.GetRect.X + (shp.GetRect.Width / 2),
+							 shp.GetRect.Y + (shp.GetRect.Height / 2))
 				shp.CenterPoint = m_cnt
 
 				Dim m_path As New Region(Rectangle.Empty)
@@ -680,7 +727,7 @@ Public Class Canvas
 				For Each ind As Integer In s_inds
 					Dim ss As Shape = shps(ind)
 					m_path.Union(ss.Region)
-					m_rect.Add(ss.BaseRect)
+					m_rect.Add(ss.GetRect)
 				Next
 
 				If _ord = SelectOrder.AboveFirst Then
@@ -730,6 +777,7 @@ Public Class Canvas
 	End Sub
 
 	Private Sub CanvasSelect_MouseMove(sender As Object, e As MouseEventArgs) Handles MyBase.MouseMove
+		If panning Then Return
 		If MainForm.Operation = MainForm.Operations.Select Then
 
 			If op = MOperations.Selection Then
@@ -828,7 +876,7 @@ Public Class Canvas
 			Select Case op
 				Case MOperations.Centering
 					Dim npt As PointF = RotatePoint(e.Location, shp.CenterPoint, -shp.Angle)
-					shp.FBrush.PCenterPoint = ToPercentage(shp.BaseRect, npt)
+					shp.FBrush.PCenterPoint = ToPercentage(shp.GetRect, npt)
 				Case MOperations.TopLeft
 					tRc.X += tPt.X
 					tRc.Width -= tPt.X
@@ -908,7 +956,7 @@ Public Class Canvas
 							Dim _lst = selc
 							For i As Integer = 0 To old_sl.Count - 1
 								Dim ss As Shape = shps(_lst(i))
-								shps(old_sl(i)).BaseRect = ss.BaseRect
+								shps(old_sl(i)).SetAllRect(ss.GetRect)
 								shps(old_sl(i)).Selected = False
 								shps(old_sl(i)).Moving = False
 							Next
@@ -943,8 +991,8 @@ Public Class Canvas
 							dRc.Offset(iXMove, iYMove)
 						End If
 						Dim ss As Shape = shps(SelectedIndices()(i))
-						ss.BaseRect = dRc
-						ss.CenterPoint = New PointF(ss.BaseRect.X + (ss.BaseRect.Width / 2), ss.BaseRect.Y + (ss.BaseRect.Height / 2))
+						ss.SetAllRect(dRc)
+						ss.CenterPoint = New PointF(ss.GetRect.X + (ss.GetRect.Width / 2), ss.GetRect.Y + (ss.GetRect.Height / 2))
 					Next
 			End Select
 
@@ -992,7 +1040,7 @@ Public Class Canvas
 				Else
 					shp.FlipY = False
 				End If
-				shp.BaseRect = tRc
+				shp.SetAllRect(tRc)
 			End If
 
 			If op <> MOperations.None Then
@@ -1004,6 +1052,7 @@ Public Class Canvas
 	End Sub
 
 	Private Sub CanvasSelect_MouseUp(sender As Object, e As MouseEventArgs) Handles MyBase.MouseUp
+		If panning Then Return
 		If MainForm.Operation = MainForm.Operations.Select Then
 
 			If My.Computer.Keyboard.CtrlKeyDown AndAlso e.Location = md_pt AndAlso up_fix Then
@@ -1042,20 +1091,6 @@ Public Class Canvas
 
 #Region "Paint Event"
 
-	Private Sub DrawControlSize(g As Graphics)
-		Dim rect As New Rectangle(Width - 107, 7, 100, 20)
-		Dim fnt As New Font("Segoe UI", 12)
-		Dim sf As New StringFormat With {
-			.Alignment = StringAlignment.Center,
-			.LineAlignment = StringAlignment.Center
-		}
-		Dim bbr As New SolidBrush(Color.FromArgb(130, Color.White))
-		g.FillRectangle(bbr, rect)
-		g.DrawString(Width & " , " & Height, fnt, Brushes.Black, rect, sf)
-		bbr.Dispose()
-		fnt.Dispose()
-	End Sub
-
 	Private Sub DrawSize(g As Graphics, shp As Shape, Optional _horz As Boolean = True, Optional _vert As Boolean = True)
 		g.PixelOffsetMode = PixelOffsetMode.Default
 		Select Case shp.Angle
@@ -1064,14 +1099,14 @@ Public Class Canvas
 			Case Else
 				g.TextRenderingHint = TextRenderingHint.AntiAlias
 		End Select
-		Dim rt As RectangleF = AbsRect(shp.BaseRect)
+		Dim rt As RectangleF = AbsRect(shp.GetRect)
 		Dim sf As New StringFormat With {
 			.Alignment = StringAlignment.Center,
 			.LineAlignment = StringAlignment.Center
 		}
 		Dim fnt As New Font("Arial", 10)
 		If _horz Then
-			Dim t_horz As String = Math.Round(rt.Width, 2)
+			Dim t_horz As String = Math.Round(Math.Abs(shp.BaseWidth), 2)
 			Dim s_horz As SizeF = g.MeasureString(t_horz, fnt)
 			Dim r_horz As New RectangleF(New PointF(rt.Right - s_horz.Width, rt.Bottom + 2), s_horz)
 			g.FillRectangle(New SolidBrush(Color.FromArgb(100, Color.White)), r_horz)
@@ -1084,7 +1119,7 @@ Public Class Canvas
 		End If
 		If _vert Then
 			sf.FormatFlags = StringFormatFlags.DirectionVertical
-			Dim t_vert As String = Math.Round(rt.Height, 2)
+			Dim t_vert As String = Math.Round(Math.Abs(shp.BaseHeight), 2)
 			Dim s_vert As SizeF = g.MeasureString(t_vert, fnt)
 			Dim r_vert As New RectangleF(New PointF(rt.Right + 2, rt.Top), New SizeF(s_vert.Height, s_vert.Width))
 			g.FillRectangle(New SolidBrush(Color.FromArgb(100, Color.White)), r_vert)
@@ -1135,9 +1170,9 @@ Public Class Canvas
 
 	Private Sub CreateShadow(g As Graphics, shp As Shape)
 		Dim temp_s = shp.Clone
-		Dim temp_r As New RectangleF(shp.BaseRect.X + shp.Shadow.Offset.X, shp.BaseRect.Y + shp.Shadow.Offset.Y,
-									 shp.BaseRect.Width, shp.BaseRect.Height)
-		temp_s.BaseRect = temp_r
+		Dim temp_r As New RectangleF(shp.GetRect.X + shp.Shadow.Offset.X, shp.GetRect.Y + shp.Shadow.Offset.Y,
+									 shp.GetRect.Width, shp.GetRect.Height)
+		temp_s.SetAllRect(temp_r)
 		Dim pth As GraphicsPath = temp_s.TotalPath(False)
 		If IsNothing(pth) Then Return
 
@@ -1210,7 +1245,7 @@ Public Class Canvas
 		If Not ig.IsVisible(brect) Then Return
 
 		ig.PixelOffsetMode = PixelOffsetMode.HighSpeed
-		ig.RenderingOrigin = Point.Ceiling(shp.BaseRect.Location)
+		ig.RenderingOrigin = Point.Ceiling(shp.GetRect.Location)
 
 		Using mm As New Matrix
 			mm.RotateAt(shp.Angle, shp.CenterPoint)
@@ -1251,7 +1286,7 @@ Public Class Canvas
 
 				If op = MOperations.Draw Or op = MOperations.Selection Or op = MOperations.None Or (op >= MOperations.TopLeft And op <= MOperations.BottomRight) Then
 					Using pth_brd As New GraphicsPath
-						pth_brd.AddRectangle(AbsRect(shp.BaseRect))
+						pth_brd.AddRectangle(AbsRect(shp.GetRect))
 						Dim pn_brd As New Pen(Brushes.Black) With {
 							.DashPattern = New Single() {2, 2, 3}
 						}
@@ -1328,7 +1363,7 @@ Public Class Canvas
 
 					Case MOperations.Rotate
 						DrawAnchorEllipse(ig, shp.Rotate(False).GetBounds)
-						Dim dist As Single = shp.BaseRect.Height / 2
+						Dim dist As Single = shp.GetRect.Height / 2
 						Dim rectt As New RectangleF(shp.CenterPoint, SizeF.Empty)
 						rectt.Inflate(dist, dist)
 						Using pnt As New Pen(Color.FromArgb(120, Color.Black), 5)
@@ -1337,12 +1372,12 @@ Public Class Canvas
 							ig.ResetTransform()
 							ig.DrawEllipse(pnt, rectt)
 						End Using
-						If shp.BaseRect.Width >= 25 AndAlso shp.BaseRect.Height >= 25 Then
+						If shp.GetRect.Width >= 25 AndAlso shp.GetRect.Height >= 25 Then
 							Using sf As New StringFormat()
 								sf.Alignment = StringAlignment.Center
 								sf.LineAlignment = StringAlignment.Center
 								Dim fnt As New Font("Consolas", 13)
-								ig.DrawString(shp.Angle.ToString, fnt, Brushes.Black, shp.BaseRect, sf)
+								ig.DrawString(shp.Angle.ToString, fnt, Brushes.Black, shp.GetRect, sf)
 								fnt.Dispose()
 							End Using
 						End If
@@ -1350,7 +1385,7 @@ Public Class Canvas
 			Else
 				'Draw indicator for non-primary selected shapes
 				If shp.Moving = False Then
-					Dim rtt As Rectangle = Rectangle.Ceiling(shp.BaseRect)
+					Dim rtt As Rectangle = Rectangle.Ceiling(shp.GetRect)
 					Dim hbr As New HatchBrush(HatchStyle.DarkVertical, Color.White, Color.Black)
 					Select Case shp.Angle
 						Case 0, 90, 180, 270, 360
@@ -1396,14 +1431,6 @@ Public Class Canvas
 		g.SmoothingMode = SmoothingMode.HighQuality
 		g.TextRenderingHint = TextRenderingHint.AntiAlias
 
-		'Paint pattern
-		If BackColor.A < 255 Then
-			Using bk As New HatchBrush(HatchStyle.LargeCheckerBoard, Color.White, focus_clr)
-				g.FillRectangle(bk, ClientRectangle)
-			End Using
-		End If
-
-		'Draw background image
 		If Not IsNothing(MainForm) AndAlso Not MainForm.WindowState = FormWindowState.Minimized Then
 			If Not IsNothing(BackgroundImage) Then
 				g.DrawImage(BackgroundImage, 0, 0, Width, Height)
@@ -1474,9 +1501,6 @@ Public Class Canvas
 		rt.Width -= 1 : rt.Height -= 1
 		g.DrawRectangle(Pens.Black, rt)
 
-		'Draw Size if control is being resized
-		If FResizing AndAlso Docked Then DrawControlSize(g)
-
 		'Force Garbage Collection
 		'If Not IsDesignMode() Then GC.Collect()
 
@@ -1499,6 +1523,9 @@ Public Class Canvas
 
 	Private Sub Canvas_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
 		Select Case e.KeyData
+			Case Keys.Space
+				panning = True
+				Cursor = Cursors.NoMove2D
 			Case Keys.Delete
 				DeleteSelected()
 			Case Keys.Tab
@@ -1524,130 +1551,106 @@ Public Class Canvas
 			Case Keys.Left
 				For Each i As Integer In SelectedIndices()
 					Dim shp As Shape = shps(i)
-					Dim rect As RectangleF = shp.BaseRect
-					rect.X -= 1
-					shp.BaseRect = rect
+					shp.BaseX -= 1
 				Next
 			Case Keys.Right
 				For Each i As Integer In SelectedIndices()
 					Dim shp As Shape = shps(i)
-					Dim rect As RectangleF = shp.BaseRect
-					rect.X += 1
-					shp.BaseRect = rect
+					shp.BaseX += 1
 				Next
 			Case Keys.Up
 				For Each i As Integer In SelectedIndices()
 					Dim shp As Shape = shps(i)
-					Dim rect As RectangleF = shp.BaseRect
-					rect.Y -= 1
-					shp.BaseRect = rect
+					shp.BaseY -= 1
 				Next
 			Case Keys.Down
 				For Each i As Integer In SelectedIndices()
 					Dim shp As Shape = shps(i)
-					Dim rect As RectangleF = shp.BaseRect
-					rect.Y += 1
-					shp.BaseRect = rect
+					shp.BaseY += 1
 				Next
 			Case Keys.Control Or Keys.Left
 				For Each i As Integer In SelectedIndices()
 					Dim shp As Shape = shps(i)
-					Dim rect As RectangleF = shp.BaseRect
-					If rect.Width > 1 Then
-						rect.Width -= 1
-						shp.BaseRect = rect
+					If shp.BaseWidth > 1 Then
+						shp.BaseWidth -= 1
 					End If
 				Next
 			Case Keys.Control Or Keys.Right
 				For Each i As Integer In SelectedIndices()
 					Dim shp As Shape = shps(i)
-					Dim rect As RectangleF = shp.BaseRect
-					rect.Width += 1
-					shp.BaseRect = rect
+					shp.BaseWidth += 1
 				Next
 			Case Keys.Control Or Keys.Up
 				For Each i As Integer In SelectedIndices()
 					Dim shp As Shape = shps(i)
-					Dim rect As RectangleF = shp.BaseRect
-					If rect.Height > 1 Then
-						rect.Height -= 1
-						shp.BaseRect = rect
+					If shp.BaseHeight > 1 Then
+						shp.BaseHeight -= 1
 					End If
 				Next
 			Case Keys.Control Or Keys.Down
 				For Each i As Integer In SelectedIndices()
 					Dim shp As Shape = shps(i)
-					Dim rect As RectangleF = shp.BaseRect
-					rect.Height += 1
-					shp.BaseRect = rect
+					shp.BaseHeight += 1
 				Next
 			Case Keys.Shift Or Keys.Left
 				For Each i As Integer In SelectedIndices()
 					Dim shp As Shape = shps(i)
-					Dim rect As RectangleF = shp.BaseRect
-					rect.X -= 1
-					rect.Width += 1
-					shp.BaseRect = rect
+					shp.BaseX -= 1
+					shp.BaseWidth += 1
 				Next
 			Case Keys.Shift Or Keys.Right
 				For Each i As Integer In SelectedIndices()
 					Dim shp As Shape = shps(i)
-					Dim rect As RectangleF = shp.BaseRect
-					If rect.Width > 1 Then
-						rect.X += 1
-						rect.Width -= 1
-						shp.BaseRect = rect
+					If shp.BaseWidth > 1 Then
+						shp.BaseX += 1
+						shp.BaseWidth -= 1
 					End If
 				Next
 			Case Keys.Shift Or Keys.Up
 				For Each i As Integer In SelectedIndices()
 					Dim shp As Shape = shps(i)
-					Dim rect As RectangleF = shp.BaseRect
-					rect.Y -= 1
-					rect.Height += 1
-					shp.BaseRect = rect
+					shp.BaseY -= 1
+					shp.BaseHeight += 1
 				Next
 			Case Keys.Shift Or Keys.Down
 				For Each i As Integer In SelectedIndices()
 					Dim shp As Shape = shps(i)
-					Dim rect As RectangleF = shp.BaseRect
-					If rect.Height > 1 Then
-						rect.Y += 1
-						rect.Height -= 1
-						shp.BaseRect = rect
+					If shp.BaseHeight > 1 Then
+						shp.BaseY += 1
+						shp.BaseHeight -= 1
 					End If
 				Next
 			Case Keys.Shift Or Keys.Control Or Keys.Left
 				For Each i As Integer In SelectedIndices()
 					Dim shp As Shape = shps(i)
-					Dim rect As RectangleF = shp.BaseRect
+					Dim rect As RectangleF = shp.GetRect
 					If rect.Width > 2 Then
 						rect.Inflate(-1, 0)
-						shp.BaseRect = rect
+						shp.SetAllRect(rect)
 					End If
 				Next
 			Case Keys.Shift Or Keys.Control Or Keys.Right
 				For Each i As Integer In SelectedIndices()
 					Dim shp As Shape = shps(i)
-					Dim rect As RectangleF = shp.BaseRect
+					Dim rect As RectangleF = shp.GetRect
 					rect.Inflate(1, 0)
-					shp.BaseRect = rect
+					shp.SetAllRect(rect)
 				Next
 			Case Keys.Shift Or Keys.Control Or Keys.Up
 				For Each i As Integer In SelectedIndices()
 					Dim shp As Shape = shps(i)
-					Dim rect As RectangleF = shp.BaseRect
-					If rect.Height > 2 Then
+					Dim rect As RectangleF = shp.GetRect
+					If rect.Width > 2 Then
 						rect.Inflate(0, -1)
-						shp.BaseRect = rect
+						shp.SetAllRect(rect)
 					End If
 				Next
 			Case Keys.Shift Or Keys.Control Or Keys.Down
 				For Each i As Integer In SelectedIndices()
 					Dim shp As Shape = shps(i)
-					Dim rect As RectangleF = shp.BaseRect
+					Dim rect As RectangleF = shp.GetRect
 					rect.Inflate(0, 1)
-					shp.BaseRect = rect
+					shp.SetAllRect(rect)
 				Next
 			Case Keys.Control Or Keys.A
 				For Each shp As Shape In shps
@@ -1673,10 +1676,17 @@ Public Class Canvas
 				_lst = My.Computer.Clipboard.GetData("DrawIt-Shapes")
 				If IsNothing(_lst) Then Return
 				For Each shp As Shape In _lst
+					shp.BindEvents()
 					shp.ReloadCachedObjects()
 					shps.Add(shp)
 				Next
 				SetPrimary()
+			Case Keys.F1
+				Zoom -= 0.1
+				If Not IsNothing(MainCanvasControl) Then MainCanvasControl.SetSize()
+			Case Keys.F2
+				Zoom += 0.1
+				If Not IsNothing(MainCanvasControl) Then MainCanvasControl.SetSize()
 		End Select
 		MainForm.UpdateControls()
 		Invalidate()
@@ -1696,6 +1706,10 @@ Public Class Canvas
 				SelectedIndices.ForEach(Sub(i) FinalizeResize(shps(i)))
 				MainForm.UpdateControls()
 				Invalidate()
+			Case Keys.Space
+				panning = False
+				Cursor = Cursors.Arrow
+				MainCanvasControl.basePnl.Invalidate()
 		End Select
 	End Sub
 
@@ -1715,3 +1729,63 @@ Public Class Canvas
 #End Region
 
 End Class
+
+#Region "Project Data Class"
+
+<Serializable>
+Public Class ProjectData
+
+	Public Sub New()
+
+	End Sub
+
+	Public Sub New(shp As List(Of Shape), sz As SizeF, clr As Color, img As Image)
+		_shps = shp
+		_size = sz
+		_bclr = clr
+		_bimg = img
+	End Sub
+
+	Private _shps As List(Of Shape) = New List(Of Shape)
+	Public Property Shapes() As List(Of Shape)
+		Get
+			Return _shps
+		End Get
+		Set(ByVal value As List(Of Shape))
+			_shps = value
+		End Set
+	End Property
+
+	Private _size As SizeF = SizeF.Empty
+	Public Property Size() As SizeF
+		Get
+			Return _size
+		End Get
+		Set(ByVal value As SizeF)
+			_size = value
+		End Set
+	End Property
+
+	Private _bclr As Color = Color.Transparent
+	Public Property BackgroundColor() As Color
+		Get
+			Return _bclr
+		End Get
+		Set(ByVal value As Color)
+			_bclr = value
+		End Set
+	End Property
+
+	Private _bimg As Image = Nothing
+	Public Property BackgroundImage() As Image
+		Get
+			Return _bimg
+		End Get
+		Set(ByVal value As Image)
+			_bimg = value
+		End Set
+	End Property
+
+End Class
+
+#End Region

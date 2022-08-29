@@ -40,9 +40,6 @@ Partial Class MainForm
 		Me.set_hgt = New System.Windows.Forms.CheckBox()
 		Me.set_H = New System.Windows.Forms.NumericUpDown()
 		Me.set_W = New System.Windows.Forms.NumericUpDown()
-		Me.set_r2 = New System.Windows.Forms.RadioButton()
-		Me.set_r1 = New System.Windows.Forms.RadioButton()
-		Me.Label51 = New System.Windows.Forms.Label()
 		Me.Label60 = New System.Windows.Forms.Label()
 		Me.Label19 = New System.Windows.Forms.Label()
 		Me.Label59 = New System.Windows.Forms.Label()
@@ -70,7 +67,10 @@ Partial Class MainForm
 		Me.tbShadow = New MyControls.MyButton()
 		Me.tbGlow = New MyControls.MyButton()
 		Me.tBottom = New MyControls.MyPanel()
+		Me.TBZoom = New MyControls.MyTrackBar()
+		Me.bResetZoom = New MyControls.MyButton()
 		Me.bShape = New MyControls.MyButton()
+		Me.Label51 = New System.Windows.Forms.Label()
 		Me.Label49 = New System.Windows.Forms.Label()
 		Me.Label48 = New System.Windows.Forms.Label()
 		Me.Label47 = New System.Windows.Forms.Label()
@@ -268,9 +268,6 @@ Partial Class MainForm
 		Me.pSettings.Controls.Add(Me.set_hgt)
 		Me.pSettings.Controls.Add(Me.set_H)
 		Me.pSettings.Controls.Add(Me.set_W)
-		Me.pSettings.Controls.Add(Me.set_r2)
-		Me.pSettings.Controls.Add(Me.set_r1)
-		Me.pSettings.Controls.Add(Me.Label51)
 		Me.pSettings.Controls.Add(Me.Label60)
 		Me.pSettings.Controls.Add(Me.Label19)
 		Me.pSettings.Controls.Add(Me.Label59)
@@ -304,7 +301,7 @@ Partial Class MainForm
 		'
 		Me.set_cname.Anchor = System.Windows.Forms.AnchorStyles.Bottom
 		Me.set_cname.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-		Me.set_cname.Location = New System.Drawing.Point(5, 230)
+		Me.set_cname.Location = New System.Drawing.Point(6, 230)
 		Me.set_cname.MaxLength = 30
 		Me.set_cname.Name = "set_cname"
 		Me.set_cname.Size = New System.Drawing.Size(238, 25)
@@ -351,7 +348,7 @@ Partial Class MainForm
 		Me.set_ord.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
 		Me.set_ord.FormattingEnabled = True
 		Me.set_ord.Items.AddRange(New Object() {"AboveFirst", "BelowFirst"})
-		Me.set_ord.Location = New System.Drawing.Point(91, 316)
+		Me.set_ord.Location = New System.Drawing.Point(92, 294)
 		Me.set_ord.Name = "set_ord"
 		Me.set_ord.Size = New System.Drawing.Size(154, 25)
 		Me.set_ord.TabIndex = 10
@@ -436,7 +433,7 @@ Partial Class MainForm
 		'
 		Me.set_H.Anchor = System.Windows.Forms.AnchorStyles.Bottom
 		Me.set_H.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-		Me.set_H.Location = New System.Drawing.Point(175, 290)
+		Me.set_H.Location = New System.Drawing.Point(174, 263)
 		Me.set_H.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
 		Me.set_H.Minimum = New Decimal(New Integer() {10, 0, 0, 0})
 		Me.set_H.Name = "set_H"
@@ -448,7 +445,7 @@ Partial Class MainForm
 		'
 		Me.set_W.Anchor = System.Windows.Forms.AnchorStyles.Bottom
 		Me.set_W.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-		Me.set_W.Location = New System.Drawing.Point(48, 290)
+		Me.set_W.Location = New System.Drawing.Point(47, 263)
 		Me.set_W.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
 		Me.set_W.Minimum = New Decimal(New Integer() {10, 0, 0, 0})
 		Me.set_W.Name = "set_W"
@@ -456,53 +453,13 @@ Partial Class MainForm
 		Me.set_W.TabIndex = 6
 		Me.set_W.Value = New Decimal(New Integer() {500, 0, 0, 0})
 		'
-		'set_r2
-		'
-		Me.set_r2.Anchor = System.Windows.Forms.AnchorStyles.Bottom
-		Me.set_r2.AutoSize = True
-		Me.set_r2.BackColor = System.Drawing.Color.Transparent
-		Me.set_r2.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-		Me.set_r2.Location = New System.Drawing.Point(122, 267)
-		Me.set_r2.Name = "set_r2"
-		Me.set_r2.Size = New System.Drawing.Size(60, 17)
-		Me.set_r2.TabIndex = 4
-		Me.set_r2.Text = "Custom"
-		Me.set_r2.UseVisualStyleBackColor = False
-		'
-		'set_r1
-		'
-		Me.set_r1.Anchor = System.Windows.Forms.AnchorStyles.Bottom
-		Me.set_r1.AutoSize = True
-		Me.set_r1.BackColor = System.Drawing.Color.Transparent
-		Me.set_r1.Checked = True
-		Me.set_r1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-		Me.set_r1.Location = New System.Drawing.Point(69, 267)
-		Me.set_r1.Name = "set_r1"
-		Me.set_r1.Size = New System.Drawing.Size(47, 17)
-		Me.set_r1.TabIndex = 3
-		Me.set_r1.TabStop = True
-		Me.set_r1.Text = "Auto"
-		Me.set_r1.UseVisualStyleBackColor = False
-		'
-		'Label51
-		'
-		Me.Label51.Anchor = System.Windows.Forms.AnchorStyles.Bottom
-		Me.Label51.AutoSize = True
-		Me.Label51.BackColor = System.Drawing.Color.Transparent
-		Me.Label51.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-		Me.Label51.Location = New System.Drawing.Point(4, 258)
-		Me.Label51.Name = "Label51"
-		Me.Label51.Size = New System.Drawing.Size(38, 13)
-		Me.Label51.TabIndex = 2
-		Me.Label51.Text = "Sizing:"
-		'
 		'Label60
 		'
 		Me.Label60.Anchor = System.Windows.Forms.AnchorStyles.Bottom
 		Me.Label60.AutoSize = True
 		Me.Label60.BackColor = System.Drawing.Color.Transparent
 		Me.Label60.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-		Me.Label60.Location = New System.Drawing.Point(128, 292)
+		Me.Label60.Location = New System.Drawing.Point(131, 266)
 		Me.Label60.Name = "Label60"
 		Me.Label60.Size = New System.Drawing.Size(41, 13)
 		Me.Label60.TabIndex = 7
@@ -514,7 +471,7 @@ Partial Class MainForm
 		Me.Label19.AutoSize = True
 		Me.Label19.BackColor = System.Drawing.Color.Transparent
 		Me.Label19.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-		Me.Label19.Location = New System.Drawing.Point(4, 322)
+		Me.Label19.Location = New System.Drawing.Point(5, 300)
 		Me.Label19.Name = "Label19"
 		Me.Label19.Size = New System.Drawing.Size(83, 13)
 		Me.Label19.TabIndex = 9
@@ -526,7 +483,7 @@ Partial Class MainForm
 		Me.Label59.AutoSize = True
 		Me.Label59.BackColor = System.Drawing.Color.Transparent
 		Me.Label59.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-		Me.Label59.Location = New System.Drawing.Point(4, 292)
+		Me.Label59.Location = New System.Drawing.Point(7, 266)
 		Me.Label59.Name = "Label59"
 		Me.Label59.Size = New System.Drawing.Size(38, 13)
 		Me.Label59.TabIndex = 5
@@ -862,7 +819,10 @@ Partial Class MainForm
 		Me.tBottom.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.tBottom.BackColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer))
+		Me.tBottom.Controls.Add(Me.TBZoom)
+		Me.tBottom.Controls.Add(Me.bResetZoom)
 		Me.tBottom.Controls.Add(Me.bShape)
+		Me.tBottom.Controls.Add(Me.Label51)
 		Me.tBottom.Controls.Add(Me.Label49)
 		Me.tBottom.Controls.Add(Me.Label48)
 		Me.tBottom.Controls.Add(Me.Label47)
@@ -879,22 +839,63 @@ Partial Class MainForm
 		Me.tBottom.Size = New System.Drawing.Size(1054, 45)
 		Me.tBottom.TabIndex = 2
 		'
+		'TBZoom
+		'
+		Me.TBZoom.AllowDecimal = False
+		Me.TBZoom.BackColor = System.Drawing.Color.Transparent
+		Me.TBZoom.BarBorderColor = System.Drawing.Color.White
+		Me.TBZoom.Colors = New System.Drawing.Color() {System.Drawing.Color.Black, System.Drawing.Color.SteelBlue, System.Drawing.Color.Black}
+		Me.TBZoom.Factors = New Single() {0!, 1.0!}
+		Me.TBZoom.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+		Me.TBZoom.Increment = 10.0!
+		Me.TBZoom.Location = New System.Drawing.Point(800, 12)
+		Me.TBZoom.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+		Me.TBZoom.Maximum = 1000.0!
+		Me.TBZoom.Minimum = 20.0!
+		Me.TBZoom.Name = "TBZoom"
+		Me.TBZoom.Positions = New Single() {0!, 0.5!, 1.0!}
+		Me.TBZoom.Size = New System.Drawing.Size(177, 20)
+		Me.TBZoom.TabIndex = 6
+		Me.TBZoom.ThumbBorderColor = System.Drawing.Color.White
+		Me.TBZoom.Value = 100.0!
+		'
+		'bResetZoom
+		'
+		Me.bResetZoom.Anchor = System.Windows.Forms.AnchorStyles.None
+		Me.bResetZoom.BackColor = System.Drawing.Color.Black
+		Me.bResetZoom.ForeColor = System.Drawing.Color.White
+		Me.bResetZoom.Location = New System.Drawing.Point(979, 8)
+		Me.bResetZoom.MyText = "Reset"
+		Me.bResetZoom.Name = "bResetZoom"
+		Me.bResetZoom.Size = New System.Drawing.Size(60, 30)
+		Me.bResetZoom.TabIndex = 5
+		'
 		'bShape
 		'
 		Me.bShape.Anchor = System.Windows.Forms.AnchorStyles.None
 		Me.bShape.BackColor = System.Drawing.Color.Black
 		Me.bShape.ForeColor = System.Drawing.Color.White
-		Me.bShape.Location = New System.Drawing.Point(727, 7)
+		Me.bShape.Location = New System.Drawing.Point(586, 8)
 		Me.bShape.MyText = "Edit Shape"
 		Me.bShape.Name = "bShape"
 		Me.bShape.Size = New System.Drawing.Size(75, 30)
 		Me.bShape.TabIndex = 5
 		'
+		'Label51
+		'
+		Me.Label51.Anchor = System.Windows.Forms.AnchorStyles.None
+		Me.Label51.AutoSize = True
+		Me.Label51.Location = New System.Drawing.Point(759, 14)
+		Me.Label51.Name = "Label51"
+		Me.Label51.Size = New System.Drawing.Size(42, 15)
+		Me.Label51.TabIndex = 1
+		Me.Label51.Text = "Zoom:"
+		'
 		'Label49
 		'
 		Me.Label49.Anchor = System.Windows.Forms.AnchorStyles.None
 		Me.Label49.AutoSize = True
-		Me.Label49.Location = New System.Drawing.Point(617, 14)
+		Me.Label49.Location = New System.Drawing.Point(476, 15)
 		Me.Label49.Name = "Label49"
 		Me.Label49.Size = New System.Drawing.Size(41, 15)
 		Me.Label49.TabIndex = 1
@@ -904,7 +905,7 @@ Partial Class MainForm
 		'
 		Me.Label48.Anchor = System.Windows.Forms.AnchorStyles.None
 		Me.Label48.AutoSize = True
-		Me.Label48.Location = New System.Drawing.Point(526, 14)
+		Me.Label48.Location = New System.Drawing.Point(385, 15)
 		Me.Label48.Name = "Label48"
 		Me.Label48.Size = New System.Drawing.Size(19, 15)
 		Me.Label48.TabIndex = 1
@@ -914,7 +915,7 @@ Partial Class MainForm
 		'
 		Me.Label47.Anchor = System.Windows.Forms.AnchorStyles.None
 		Me.Label47.AutoSize = True
-		Me.Label47.Location = New System.Drawing.Point(432, 14)
+		Me.Label47.Location = New System.Drawing.Point(291, 15)
 		Me.Label47.Name = "Label47"
 		Me.Label47.Size = New System.Drawing.Size(21, 15)
 		Me.Label47.TabIndex = 1
@@ -924,7 +925,7 @@ Partial Class MainForm
 		'
 		Me.Label46.Anchor = System.Windows.Forms.AnchorStyles.None
 		Me.Label46.AutoSize = True
-		Me.Label46.Location = New System.Drawing.Point(342, 14)
+		Me.Label46.Location = New System.Drawing.Point(201, 15)
 		Me.Label46.Name = "Label46"
 		Me.Label46.Size = New System.Drawing.Size(17, 15)
 		Me.Label46.TabIndex = 1
@@ -934,7 +935,7 @@ Partial Class MainForm
 		'
 		Me.Label45.Anchor = System.Windows.Forms.AnchorStyles.None
 		Me.Label45.AutoSize = True
-		Me.Label45.Location = New System.Drawing.Point(252, 14)
+		Me.Label45.Location = New System.Drawing.Point(111, 15)
 		Me.Label45.Name = "Label45"
 		Me.Label45.Size = New System.Drawing.Size(17, 15)
 		Me.Label45.TabIndex = 1
@@ -944,7 +945,7 @@ Partial Class MainForm
 		'
 		Me.ud_A.Anchor = System.Windows.Forms.AnchorStyles.None
 		Me.ud_A.DecimalPlaces = 2
-		Me.ud_A.Location = New System.Drawing.Point(660, 12)
+		Me.ud_A.Location = New System.Drawing.Point(519, 12)
 		Me.ud_A.Maximum = New Decimal(New Integer() {360, 0, 0, 0})
 		Me.ud_A.Name = "ud_A"
 		Me.ud_A.Size = New System.Drawing.Size(61, 23)
@@ -954,7 +955,7 @@ Partial Class MainForm
 		'
 		Me.ud_H.Anchor = System.Windows.Forms.AnchorStyles.None
 		Me.ud_H.DecimalPlaces = 2
-		Me.ud_H.Location = New System.Drawing.Point(550, 12)
+		Me.ud_H.Location = New System.Drawing.Point(409, 12)
 		Me.ud_H.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
 		Me.ud_H.Name = "ud_H"
 		Me.ud_H.Size = New System.Drawing.Size(61, 23)
@@ -964,7 +965,7 @@ Partial Class MainForm
 		'
 		Me.ud_W.Anchor = System.Windows.Forms.AnchorStyles.None
 		Me.ud_W.DecimalPlaces = 2
-		Me.ud_W.Location = New System.Drawing.Point(459, 12)
+		Me.ud_W.Location = New System.Drawing.Point(318, 12)
 		Me.ud_W.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
 		Me.ud_W.Name = "ud_W"
 		Me.ud_W.Size = New System.Drawing.Size(61, 23)
@@ -974,7 +975,7 @@ Partial Class MainForm
 		'
 		Me.ud_Y.Anchor = System.Windows.Forms.AnchorStyles.None
 		Me.ud_Y.DecimalPlaces = 2
-		Me.ud_Y.Location = New System.Drawing.Point(365, 12)
+		Me.ud_Y.Location = New System.Drawing.Point(224, 12)
 		Me.ud_Y.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
 		Me.ud_Y.Minimum = New Decimal(New Integer() {5000, 0, 0, -2147483648})
 		Me.ud_Y.Name = "ud_Y"
@@ -985,7 +986,7 @@ Partial Class MainForm
 		'
 		Me.ud_X.Anchor = System.Windows.Forms.AnchorStyles.None
 		Me.ud_X.DecimalPlaces = 2
-		Me.ud_X.Location = New System.Drawing.Point(275, 12)
+		Me.ud_X.Location = New System.Drawing.Point(134, 12)
 		Me.ud_X.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
 		Me.ud_X.Minimum = New Decimal(New Integer() {5000, 0, 0, -2147483648})
 		Me.ud_X.Name = "ud_X"
@@ -2556,7 +2557,6 @@ Partial Class MainForm
 		'
 		'TabPage1
 		'
-		Me.TabPage1.AutoScroll = True
 		Me.TabPage1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
 		Me.TabPage1.Controls.Add(Me.CanvasControl1)
 		Me.TabPage1.Location = New System.Drawing.Point(4, 28)
@@ -2567,7 +2567,6 @@ Partial Class MainForm
 		'
 		'CanvasControl1
 		'
-		Me.CanvasControl1.AutoScroll = True
 		Me.CanvasControl1.Dock = System.Windows.Forms.DockStyle.Fill
 		Me.CanvasControl1.Location = New System.Drawing.Point(0, 0)
 		Me.CanvasControl1.Margin = New System.Windows.Forms.Padding(0)
@@ -2895,9 +2894,6 @@ Partial Class MainForm
 	Friend WithEvents set_hgt As CheckBox
 	Friend WithEvents set_H As NumericUpDown
 	Friend WithEvents set_W As NumericUpDown
-	Friend WithEvents set_r2 As RadioButton
-	Friend WithEvents set_r1 As RadioButton
-	Friend WithEvents Label51 As Label
 	Friend WithEvents Label60 As Label
 	Friend WithEvents Label59 As Label
 	Friend WithEvents set_Apply As MyControls.MyButton
@@ -2920,4 +2916,7 @@ Partial Class MainForm
 	Friend WithEvents P_CBEditor As MyControls.ColorBlendEditor
 	Friend WithEvents P_BEditor As MyControls.BlendEditor
 	Friend WithEvents pCanvas As MyControls.MyPanel
+	Friend WithEvents TBZoom As MyControls.MyTrackBar
+	Friend WithEvents Label51 As Label
+	Friend WithEvents bResetZoom As MyControls.MyButton
 End Class

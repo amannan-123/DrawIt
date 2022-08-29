@@ -19,4 +19,10 @@
     <Folder Include="My Project\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="MyHScrollBar.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>

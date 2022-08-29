@@ -23,9 +23,8 @@ Partial Class TestForm
 	<System.Diagnostics.DebuggerStepThrough()>
 	Private Sub InitializeComponent()
 		Me.CheckBox1 = New System.Windows.Forms.CheckBox()
-		Me.CornersEditor1 = New MyControls.CornersEditor()
 		Me.ColorListBox1 = New MyControls.ColorListBox()
-		Me.ColorBlendEditor1 = New MyControls.ColorBlendEditor()
+		Me.MyVScrollBar1 = New MyControls.MyHScrollBar()
 		Me.SuspendLayout()
 		'
 		'CheckBox1
@@ -39,20 +38,6 @@ Partial Class TestForm
 		Me.CheckBox1.TabIndex = 0
 		Me.CheckBox1.Text = "Blur"
 		Me.CheckBox1.UseVisualStyleBackColor = True
-		'
-		'CornersEditor1
-		'
-		Me.CornersEditor1.BackColor = System.Drawing.Color.White
-		Me.CornersEditor1.BLReversed = False
-		Me.CornersEditor1.BRReversed = False
-		Me.CornersEditor1.Corners = New Single() {25.0!, 25.0!, 25.0!, 25.0!, 75.0!, 75.0!, 75.0!, 75.0!}
-		Me.CornersEditor1.Location = New System.Drawing.Point(453, 14)
-		Me.CornersEditor1.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
-		Me.CornersEditor1.Name = "CornersEditor1"
-		Me.CornersEditor1.Size = New System.Drawing.Size(112, 98)
-		Me.CornersEditor1.TabIndex = 2
-		Me.CornersEditor1.ULReversed = False
-		Me.CornersEditor1.URReversed = False
 		'
 		'ColorListBox1
 		'
@@ -74,25 +59,22 @@ Partial Class TestForm
 		Me.ColorListBox1.Size = New System.Drawing.Size(177, 192)
 		Me.ColorListBox1.TabIndex = 1
 		'
-		'ColorBlendEditor1
+		'MyVScrollBar1
 		'
-		Me.ColorBlendEditor1.BackColor = System.Drawing.Color.White
-		Me.ColorBlendEditor1.Colors = New System.Drawing.Color() {System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer)), System.Drawing.Color.Black}
-		Me.ColorBlendEditor1.Location = New System.Drawing.Point(315, 158)
-		Me.ColorBlendEditor1.MinimumSize = New System.Drawing.Size(250, 160)
-		Me.ColorBlendEditor1.Name = "ColorBlendEditor1"
-		Me.ColorBlendEditor1.Positions = New Single() {0!, 1.0!}
-		Me.ColorBlendEditor1.Size = New System.Drawing.Size(250, 160)
-		Me.ColorBlendEditor1.TabIndex = 3
+		Me.MyVScrollBar1.Location = New System.Drawing.Point(323, 112)
+		Me.MyVScrollBar1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+		Me.MyVScrollBar1.Maximum = 10000
+		Me.MyVScrollBar1.Name = "MyVScrollBar1"
+		Me.MyVScrollBar1.Size = New System.Drawing.Size(368, 25)
+		Me.MyVScrollBar1.TabIndex = 0
 		'
 		'TestForm
 		'
 		Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 15.0!)
 		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-		Me.BackColor = System.Drawing.Color.Black
+		Me.BackColor = System.Drawing.Color.White
 		Me.ClientSize = New System.Drawing.Size(797, 354)
-		Me.Controls.Add(Me.ColorBlendEditor1)
-		Me.Controls.Add(Me.CornersEditor1)
+		Me.Controls.Add(Me.MyVScrollBar1)
 		Me.Controls.Add(Me.ColorListBox1)
 		Me.Controls.Add(Me.CheckBox1)
 		Me.DoubleBuffered = True
@@ -106,6 +88,5 @@ Partial Class TestForm
 
 	Friend WithEvents CheckBox1 As CheckBox
 	Friend WithEvents ColorListBox1 As MyControls.ColorListBox
-	Friend WithEvents CornersEditor1 As MyControls.CornersEditor
-	Friend WithEvents ColorBlendEditor1 As MyControls.ColorBlendEditor
+	Friend WithEvents MyVScrollBar1 As MyControls.MyHScrollBar
 End Class

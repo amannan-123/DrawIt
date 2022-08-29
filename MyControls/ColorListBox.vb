@@ -188,7 +188,7 @@ Public Class ColorListBox
 	End Sub
 
 	Private Sub ColorList_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-		MyVScrollBar1.Bind(Me)
+		MyVScrollBar1.BindWheelEvent(Me)
 		UpdateSize()
 	End Sub
 #End Region

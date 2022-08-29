@@ -35,7 +35,6 @@ Public Class MyShape
 		Polygon
 		Curves
 		ClosedCurve
-		Spiral
 		Arc
 		Pie
 		Text

@@ -1,25 +1,44 @@
 ﻿Public Class CanvasControl
 
-	Public Sub SetSize()
-		If baseCanvas.Docked Then
-			baseCanvas.Dock = DockStyle.Fill
+	Private mouseLoc As Point = Point.Empty
+
+	Public Sub ApplyScrollChange(hscr As Integer, vscr As Integer)
+		If hscr Then HScrollBar.Value -= hscr
+		If vscr Then VScrollBar.Value -= vscr
+	End Sub
+
+	Public Sub SetSize(Optional scVals As Boolean = True)
+		SuspendLayout()
+		basePnl.Width = Math.Max(Width - 20, baseCanvas.Width * 2)
+		basePnl.Height = Math.Max(Height - 20, baseCanvas.Height * 2)
+		Dim centX = basePnl.Width / 2
+		Dim centY = basePnl.Height / 2
+		baseCanvas.Location = New Point(centX - (baseCanvas.Width / 2),
+								centY - (baseCanvas.Height / 2))
+		HScrollBar.Maximum = basePnl.Width - Width
+		VScrollBar.Maximum = basePnl.Height - Height
+		If scVals Then
+			If mouseLoc = Point.Empty Then mouseLoc = New Point(centX, centY)
+			Dim pX = ToPercentage(0, basePnl.Width, mouseLoc.X)
+			Dim pY = ToPercentage(0, basePnl.Height, mouseLoc.Y)
+			HScrollBar.Value = FromPercentage(HScrollBar.Minimum, HScrollBar.Maximum, pX)
+			VScrollBar.Value = FromPercentage(VScrollBar.Minimum, VScrollBar.Maximum, pY)
 		Else
-			baseCanvas.Dock = DockStyle.None
-			Dim center As New Point(ClientRectangle.Width / 2, ClientRectangle.Height / 2)
-			Dim rect As Rectangle = baseCanvas.ClientRectangle
-			If rect.Width < Width Then
-				rect.X = center.X - (rect.Width / 2)
-			Else
-				rect.X = DisplayRectangle.X
-			End If
-			If rect.Height < Height Then
-				rect.Y = center.Y - (rect.Height / 2)
-			Else
-				rect.Y = DisplayRectangle.Y
-			End If
-			baseCanvas.Bounds = rect
-			Invalidate()
+			HScrollBar.Value = FromPercentage(HScrollBar.Minimum, HScrollBar.Maximum, 50)
+			VScrollBar.Value = FromPercentage(VScrollBar.Minimum, VScrollBar.Maximum, 50)
 		End If
+		ResumeLayout()
+	End Sub
+
+	Private Sub basePnl_MouseWheel(sender As Object, e As MouseEventArgs) Handles basePnl.MouseWheel
+		If Not My.Computer.Keyboard.CtrlKeyDown Then Return
+		mouseLoc = e.Location
+		If e.Delta < 0 Then
+			baseCanvas.Zoom -= 0.5
+		Else
+			baseCanvas.Zoom += 0.5
+		End If
+		SetSize()
 	End Sub
 
 	Private Sub CanvasControl_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -34,10 +53,31 @@
 		Return DisplayRectangle.Location
 	End Function
 
-	Private Sub CanvasControl_Paint(sender As Object, e As PaintEventArgs) Handles MyBase.Paint
+	Private Sub basePnl_Paint(sender As Object, e As PaintEventArgs) Handles basePnl.Paint
 		Dim g As Graphics = e.Graphics
 		Dim rect = New Rectangle(baseCanvas.Location, baseCanvas.Size)
 		rect.Inflate(10, 10)
 		g.DrawRectangle(Pens.RoyalBlue, rect)
+	End Sub
+
+	Private Sub VScrollBar_Scroll(sender As Object, e As EventArgs) Handles VScrollBar.Scroll
+		basePnl.Top = -VScrollBar.Value
+	End Sub
+
+	Private Sub HScrollBar_Scroll(sender As Object, e As EventArgs) Handles HScrollBar.Scroll
+		basePnl.Left = -HScrollBar.Value
+	End Sub
+
+	Private Sub basePnl_MouseMove(sender As Object, e As MouseEventArgs) Handles basePnl.MouseMove
+		mouseLoc = e.Location
+	End Sub
+
+	Private Sub basePnl_LocationChanged(sender As Object, e As EventArgs) Handles basePnl.LocationChanged
+		HScrollBar.Value = -basePnl.Left
+		VScrollBar.Value = -basePnl.Top
+	End Sub
+
+	Private Sub basePnl_MouseLeave(sender As Object, e As EventArgs) Handles basePnl.MouseLeave
+		mouseLoc = Point.Empty
 	End Sub
 End Class

@@ -5,7 +5,7 @@ Imports System.ComponentModel
 
 <DefaultEvent("Scroll")>
 <DefaultProperty("Value")>
-Public Class MyVScrollBar
+Public Class MyHScrollBar
 
 #Region "Declerations"
 	Private DrawFull As Boolean = False
@@ -187,14 +187,14 @@ Public Class MyVScrollBar
 #Region "Re-Size"
 	Private Sub MyVScrollBar_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
 		Dim min = b_size * 2 + 15
-		If Height < min Then Height = min
+		If Width < min Then Width = min
 		Resizeit()
 	End Sub
 
 	Private Sub Resizeit()
-		rectUp = New Rectangle(0, 0, Width - 1, b_size)
-		rectDown = New Rectangle(0, Height - (b_size + 1), Width - 1, b_size)
-		rectScroll = New Rectangle(0, rectUp.Bottom, Width - 1, Height - (b_size * 2))
+		rectUp = New Rectangle(0, 0, b_size, Height - 1)
+		rectDown = New Rectangle(Width - (b_size + 1), 0, b_size, Height - 1)
+		rectScroll = New Rectangle(rectUp.Right, 0, Width - (b_size * 2), Height - 1)
 		SetSliderFromValues()
 	End Sub
 #End Region
@@ -205,23 +205,23 @@ Public Class MyVScrollBar
 		AddHandler ctrl.MouseWheel, AddressOf MyVScrollBar_MouseWheel
 	End Sub
 
-	Public Sub UnBindWheelEvent(ctrl As Control)
+	Public Sub UnBindBindWheelEvent(ctrl As Control)
 		TabStop = True
 		RemoveHandler ctrl.MouseWheel, AddressOf MyVScrollBar_MouseWheel
 	End Sub
 
 	Private Sub UpdateSlider(xPos As Single)
 		sngSliderPos = xPos
-		Dim t_size As Integer = Math.Max(rectScroll.Height - (Maximum - Minimum), 15)
+		Dim t_size As Integer = Math.Max(rectScroll.Width - (Maximum - Minimum), 15)
 		rectSlider = rectScroll
-		rectSlider.Height -= t_size
-		If sngSliderPos < rectSlider.Y Then sngSliderPos = rectSlider.Y
-		If sngSliderPos > rectSlider.Bottom Then sngSliderPos = rectSlider.Bottom
-		rectThumb = New Rectangle(0, sngSliderPos, Width - 1, t_size)
+		rectSlider.Width -= t_size
+		If sngSliderPos < rectSlider.X Then sngSliderPos = rectSlider.X
+		If sngSliderPos > rectSlider.Right Then sngSliderPos = rectSlider.Right
+		rectThumb = New Rectangle(sngSliderPos, 0, t_size, Height - 1)
 	End Sub
 
 	Private Sub SetSliderValue(_y As Single)
-		Dim perc As Single = ToPercentage(rectSlider.Y, rectSlider.Bottom, _y)
+		Dim perc As Single = ToPercentage(rectSlider.X, rectSlider.Right, _y)
 		Dim _val As Single = FromPercentage(Minimum, Maximum, perc)
 		Value = _val
 		UpdateSlider(_y)
@@ -229,7 +229,7 @@ Public Class MyVScrollBar
 
 	Private Sub SetSliderFromValues()
 		Dim perc As Single = ToPercentage(Minimum, Maximum, Value)
-		Dim pos As Single = FromPercentage(rectSlider.Y, rectSlider.Bottom, perc)
+		Dim pos As Single = FromPercentage(rectSlider.X, rectSlider.Right, perc)
 		UpdateSlider(pos)
 	End Sub
 #End Region
@@ -243,14 +243,14 @@ Public Class MyVScrollBar
 			m_down = True
 			Timer1.Start()
 		ElseIf rectThumb.Contains(e.Location) Then
-			If rectSlider.Height > 0 Then IsMouseDown = True
+			If rectSlider.Width > 0 Then IsMouseDown = True
 			m_thumb = True
 		ElseIf rectUp.Contains(e.Location) Then
 			Value -= SmallChange
 			m_up = True
 			Timer1.Start()
 		ElseIf rectScroll.Contains(e.Location) Then
-			If e.Y > sngSliderPos Then
+			If e.X > sngSliderPos Then
 				Value += LargeChange
 				b_down = True
 				Timer1.Start()
@@ -265,7 +265,7 @@ Public Class MyVScrollBar
 
 	Private Sub MyVScrollBar_MouseMove(sender As Object, e As MouseEventArgs) Handles MyBase.MouseMove
 		If IsMouseDown Then
-			Dim pt As Single = m_p + (e.Y - m_pt.Y)
+			Dim pt As Single = m_p + (e.X - m_pt.X)
 			SetSliderValue(pt)
 			Invalidate()
 		End If
@@ -312,7 +312,7 @@ Public Class MyVScrollBar
 		'This is needed to fix the KeyDown problem
 		If Not _arr Then Return MyBase.IsInputKey(keyData)
 		Select Case keyData
-			Case Keys.Up, Keys.Down
+			Case Keys.Left, Keys.Right
 				Return True
 			Case Else
 				Return MyBase.IsInputKey(keyData)
@@ -321,9 +321,9 @@ Public Class MyVScrollBar
 
 	Private Sub MyTrackBar_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
 		Select Case e.KeyData
-			Case Keys.Down
+			Case Keys.Right
 				Value += SmallChange
-			Case Keys.Up
+			Case Keys.Left
 				Value -= SmallChange
 			Case Keys.PageDown
 				Value += LargeChange
@@ -351,14 +351,9 @@ Public Class MyVScrollBar
 			Dim r1 As New RectangleF(0, 0, 6, 6)
 			r1.Location = New PointF(rectUp.X + (rectUp.Width / 2) - (r1.Width / 2),
 									 rectUp.Y + (rectUp.Height / 2) - (r1.Height / 2))
-			'g.DrawLines(p_brd, New PointF() {
-			'		New PointF(r1.X, r1.Bottom),
-			'		New PointF(r1.X + (r1.Width / 2), r1.Top),
-			'		New PointF(r1.Right, r1.Bottom)
-			'		})
 			g.FillPolygon(Brushes.Black, New PointF() {
-					New PointF(r1.Left, r1.Bottom),
-					New PointF(r1.Left + (r1.Width / 2), r1.Top),
+					New PointF(r1.Left, r1.Top + (r1.Height / 2)),
+					New PointF(r1.Right, r1.Top),
 					New PointF(r1.Right, r1.Bottom)
 					})
 			g.DrawRectangle(p_brd, rectUp)
@@ -368,15 +363,10 @@ Public Class MyVScrollBar
 			Dim r2 As New RectangleF(0, 0, 6, 6)
 			r2.Location = New PointF(rectDown.X + (rectDown.Width / 2) - (r2.Width / 2),
 									 rectDown.Y + (rectDown.Height / 2) - (r2.Height / 2))
-			'g.DrawLines(p_brd, New PointF() {
-			'		New PointF(r2.X, r2.Top),
-			'		New PointF(r2.X + (r2.Width / 2), r2.Bottom),
-			'		New PointF(r2.Right, r2.Top)
-			'		})
 			g.FillPolygon(Brushes.Black, New PointF() {
+					New PointF(r2.Right, r2.Top + (r2.Height / 2)),
 					New PointF(r2.Left, r2.Top),
-					New PointF(r2.Left + (r2.Width / 2), r2.Bottom),
-					New PointF(r2.Right, r2.Top)
+					New PointF(r2.Left, r2.Bottom)
 					})
 			g.DrawRectangle(p_brd, rectDown)
 
@@ -389,9 +379,9 @@ Public Class MyVScrollBar
 			Dim r3 As New Rectangle(0, 0, 6, 6)
 			r3.Location = New Point(rectThumb.X + rectThumb.Width / 2 - r3.Width / 2,
 								rectThumb.Y + rectThumb.Height / 2 - r3.Height / 2)
-			g.DrawLine(p_brd, New PointF(r3.X, r3.Y), New PointF(r3.Right, r3.Y))
-			g.DrawLine(p_brd, New PointF(r3.X, r3.Y + (r3.Height / 2)), New PointF(r3.Right, r3.Y + (r3.Height / 2)))
-			g.DrawLine(p_brd, New PointF(r3.X, r3.Bottom), New PointF(r3.Right, r3.Bottom))
+			g.DrawLine(p_brd, New PointF(r3.X, r3.Y), New PointF(r3.X, r3.Bottom))
+			g.DrawLine(p_brd, New PointF(r3.X + (r3.Width / 2), r3.Y), New PointF(r3.X + (r3.Width / 2), r3.Bottom))
+			g.DrawLine(p_brd, New PointF(r3.Right, r3.Y), New PointF(r3.Right, r3.Bottom))
 			g.DrawRectangle(p_brd, rectThumb)
 
 			p_brd.Dispose()
