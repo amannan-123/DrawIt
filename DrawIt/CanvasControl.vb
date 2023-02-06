@@ -2,13 +2,18 @@
 
 	Private mouseLoc As Point = Point.Empty
 
+	Public Sub ResetZoom()
+		baseCanvas.Zoom = 1
+		SetSize(False)
+		basePnl.Invalidate()
+	End Sub
+
 	Public Sub ApplyScrollChange(hscr As Integer, vscr As Integer)
 		If hscr Then HScrollBar.Value -= hscr
 		If vscr Then VScrollBar.Value -= vscr
 	End Sub
 
 	Public Sub SetSize(Optional scVals As Boolean = True)
-		SuspendLayout()
 		basePnl.Width = Math.Max(Width - 20, baseCanvas.Width * 2)
 		basePnl.Height = Math.Max(Height - 20, baseCanvas.Height * 2)
 		Dim centX = basePnl.Width / 2
@@ -27,7 +32,6 @@
 			HScrollBar.Value = FromPercentage(HScrollBar.Minimum, HScrollBar.Maximum, 50)
 			VScrollBar.Value = FromPercentage(VScrollBar.Minimum, VScrollBar.Maximum, 50)
 		End If
-		ResumeLayout()
 	End Sub
 
 	Private Sub basePnl_MouseWheel(sender As Object, e As MouseEventArgs) Handles basePnl.MouseWheel

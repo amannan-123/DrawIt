@@ -7,6 +7,7 @@
     <StartupObject></StartupObject>
     <Company>ArcCode</Company>
     <MyType>WindowsForms</MyType>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

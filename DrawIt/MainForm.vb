@@ -1422,6 +1422,7 @@ Public Class MainForm
 			tp.Controls.Add(cn)
 			tCanvas.TabPages.Add(tp)
 			tCanvas.SelectedTab = tp
+			cn.ResetZoom()
 		Next
 	End Sub
 
@@ -1432,6 +1433,7 @@ Public Class MainForm
 		If openDialog.ShowDialog = DialogResult.OK Then
 			OpenFiles(openDialog.FileNames)
 		End If
+		UpdateSettings()
 	End Sub
 
 	Private Sub btSave_Click(sender As Object, e As EventArgs) Handles btSave.Click
@@ -1470,7 +1472,7 @@ Public Class MainForm
 	End Sub
 #End Region
 
-#Region "Settings"
+#Region "Zoom"
 
 	Private Sub TBZoom_ValueChanged(sender As Object, e As EventArgs) Handles TBZoom.ValueChanged
 		Dim cn = MainCanvas()
@@ -1484,11 +1486,13 @@ Public Class MainForm
 	Private Sub bResetZoom_Click(sender As Object, e As EventArgs) Handles bResetZoom.Click
 		Dim cn = MainCanvas()
 		If Not IsNothing(cn) Then
-			cn.Zoom = 1
-			cn.MainCanvasControl.SetSize(False)
-			cn.MainCanvasControl.basePnl.Invalidate()
+			cn.MainCanvasControl.ResetZoom()
 		End If
 	End Sub
+
+#End Region
+
+#Region "Settings"
 
 	Private Sub set_lpic_Click(sender As Object, e As EventArgs) Handles set_lpic.Click
 		openDialog.Multiselect = False
@@ -1513,12 +1517,12 @@ Public Class MainForm
 			cn.BackColor = set_BC.SelectedColor
 			cn.BackgroundImage = set_PB.Image
 			cn.Text = set_cname.Text
-			cn.AbsSize = New SizeF(set_W.Value, set_H.Value)
+			cn.AbsSize = New Size(set_W.Value, set_H.Value)
 			cn.SelectionOrder = [Enum].Parse(GetType(Canvas.SelectOrder), set_ord.SelectedItem)
 			cn.HighlightShapes = set_hgt.Checked
 			cn.PathHighlightColor = set_pclr.SelectedColor
 			cn.BorderHighlightColor = set_bclr.SelectedColor
-			cn.MainCanvasControl.SetSize(False)
+			cn.MainCanvasControl.SetSize()
 			cn.MainCanvasControl.basePnl.Invalidate()
 			tCanvas.SelectedTab.Text = cn.Text
 			pSettings.Visible = False
