@@ -1,5 +1,4 @@
 ﻿Imports System.ComponentModel
-Imports System.DirectoryServices.ActiveDirectory
 Imports System.Drawing.Drawing2D
 Imports System.Text.Json.Serialization
 
@@ -204,6 +203,10 @@ Public Class Shape
 		End Get
 		Set(value As Single)
 			shear_x = value
+			UpdatePath()
+			UpdateBrush()
+			UpdateSelectionPen()
+			UpdatePenBrush()
 		End Set
 	End Property
 
@@ -214,6 +217,10 @@ Public Class Shape
 		End Get
 		Set(value As Single)
 			shear_y = value
+			UpdatePath()
+			UpdateBrush()
+			UpdateSelectionPen()
+			UpdatePenBrush()
 		End Set
 	End Property
 

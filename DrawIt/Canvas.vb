@@ -169,12 +169,12 @@ Public Class Canvas
 		End Set
 	End Property
 
-	Private _absSize As New SizeF(500, 500)
-	Public Property AbsSize() As SizeF
+	Private _absSize As New Size(500, 500)
+	Public Property AbsSize() As Size
 		Get
 			Return _absSize
 		End Get
-		Set(ByVal value As SizeF)
+		Set(ByVal value As Size)
 			_absSize = value
 			FixSize()
 		End Set
@@ -295,49 +295,46 @@ Public Class Canvas
 	End Function
 
 	Public Function LoadProject(_loc As String) As Exception
-		'Try
-		Dim inf As New FileInfo(_loc)
-		Select Case inf.Extension.ToLower
-			Case ".bin"
-				Dim stream As FileStream = File.Open(_loc, FileMode.Open)
-				Dim formatter As New BinaryFormatter()
-				Dim des_data As ProjectData = TryCast(formatter.Deserialize(stream), ProjectData)
-				stream.Close()
-				shps = des_data.Shapes
-				BackColor = des_data.BackgroundColor
-				BackgroundImage = des_data.BackgroundImage
-				AbsSize = des_data.Size
-			Case ".json"
-				Dim jsonString = File.ReadAllText(_loc)
-				Dim options = New JsonSerializerOptions With
-								{
-									.UnknownTypeHandling = JsonUnknownTypeHandling.JsonElement,
-									.IgnoreReadOnlyProperties = True,
-									.WriteIndented = True
-								}
-				options.Converters.Add(New JsonStringEnumConverter())
-				options.Converters.Add(New JSONColorConverter())
-				options.Converters.Add(New JSONImageConverter())
-				Dim des_data = JsonSerializer.Deserialize(Of ProjectData)(jsonString, options)
-				shps = des_data.Shapes
-				BackColor = des_data.BackgroundColor
-				BackgroundImage = des_data.BackgroundImage
-				AbsSize = des_data.Size
-			Case Else
-				Return New InvalidDataException("File type not supported!")
-		End Select
-		'Catch ex As Exception
-		'	Return ex
-		'Finally
-		Zoom = 1
-		MainCanvasControl.SetSize()
-		MainCanvasControl.basePnl.Invalidate()
-		shps.ForEach(Sub(x)
-						 x.BindEvents()
-						 x.ReloadCachedObjects()
-					 End Sub)
-		Invalidate()
-		'End Try
+		Try
+			Dim inf As New FileInfo(_loc)
+			Select Case inf.Extension.ToLower
+				Case ".bin"
+					Dim stream As FileStream = File.Open(_loc, FileMode.Open)
+					Dim formatter As New BinaryFormatter()
+					Dim des_data As ProjectData = TryCast(formatter.Deserialize(stream), ProjectData)
+					stream.Close()
+					shps = des_data.Shapes
+					BackColor = des_data.BackgroundColor
+					BackgroundImage = des_data.BackgroundImage
+					AbsSize = des_data.Size
+				Case ".json"
+					Dim jsonString = File.ReadAllText(_loc)
+					Dim options = New JsonSerializerOptions With
+									{
+										.UnknownTypeHandling = JsonUnknownTypeHandling.JsonElement,
+										.IgnoreReadOnlyProperties = True,
+										.WriteIndented = True
+									}
+					options.Converters.Add(New JsonStringEnumConverter())
+					options.Converters.Add(New JSONColorConverter())
+					options.Converters.Add(New JSONImageConverter())
+					Dim des_data = JsonSerializer.Deserialize(Of ProjectData)(jsonString, options)
+					shps = des_data.Shapes
+					BackColor = des_data.BackgroundColor
+					BackgroundImage = des_data.BackgroundImage
+					AbsSize = des_data.Size
+				Case Else
+					Return New InvalidDataException("File type not supported!")
+			End Select
+		Catch ex As Exception
+			Return ex
+		Finally
+			shps.ForEach(Sub(x)
+							 x.BindEvents()
+							 x.ReloadCachedObjects()
+						 End Sub)
+			Invalidate()
+		End Try
 		Return Nothing
 	End Function
 
@@ -1405,9 +1402,9 @@ Public Class Canvas
 		Dim img As Bitmap
 
 		If Not IsNothing(BackgroundImage) Then
-			img = New Bitmap(BackgroundImage, Width, Height)
+			img = New Bitmap(BackgroundImage, AbsSize.Width, AbsSize.Height)
 		Else
-			img = New Bitmap(Width, Height)
+			img = New Bitmap(AbsSize.Width, AbsSize.Height)
 		End If
 
 		Using ig As Graphics = Graphics.FromImage(img)
@@ -1415,11 +1412,17 @@ Public Class Canvas
 			ig.SmoothingMode = SmoothingMode.HighQuality
 			ig.TextRenderingHint = TextRenderingHint.AntiAlias
 
-			'Drawing background
-			ig.FillRectangle(New SolidBrush(BackColor), ClientRectangle)
+			'Painting background color
+			ig.Clear(BackColor)
 
+			Dim temp_shp As New List(Of Shape)
 			'Draw all shapes on image
-			shps.ForEach(Sub(shp) DrawShape(ig, shp, False))
+			shps.ForEach(Sub(shp) temp_shp.Add(shp.Clone))
+			temp_shp.ForEach(Sub(shp)
+								 shp.Zoom = 1
+								 shp.ReloadCachedObjects()
+								 DrawShape(ig, shp, False)
+							 End Sub)
 
 		End Using
 
@@ -1497,9 +1500,9 @@ Public Class Canvas
 		End If
 
 		'Draw border
-		Dim rt As Rectangle = ClientRectangle
-		rt.Width -= 1 : rt.Height -= 1
-		g.DrawRectangle(Pens.Black, rt)
+		'Dim rt As Rectangle = ClientRectangle
+		'rt.Width -= 1 : rt.Height -= 1
+		'g.DrawRectangle(Pens.Black, rt)
 
 		'Force Garbage Collection
 		'If Not IsDesignMode() Then GC.Collect()
@@ -1739,7 +1742,7 @@ Public Class ProjectData
 
 	End Sub
 
-	Public Sub New(shp As List(Of Shape), sz As SizeF, clr As Color, img As Image)
+	Public Sub New(shp As List(Of Shape), sz As Size, clr As Color, img As Image)
 		_shps = shp
 		_size = sz
 		_bclr = clr
@@ -1756,12 +1759,12 @@ Public Class ProjectData
 		End Set
 	End Property
 
-	Private _size As SizeF = SizeF.Empty
-	Public Property Size() As SizeF
+	Private _size As Size = Size.Empty
+	Public Property Size() As Size
 		Get
 			Return _size
 		End Get
-		Set(ByVal value As SizeF)
+		Set(ByVal value As Size)
 			_size = value
 		End Set
 	End Property

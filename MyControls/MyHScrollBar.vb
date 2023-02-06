@@ -298,9 +298,9 @@ Public Class MyHScrollBar
 		If My.Computer.Keyboard.ShiftKeyDown Then chg = LargeChange
 
 		If e.Delta > 0 Then
-			Value -= chg
-		Else
 			Value += chg
+		Else
+			Value -= chg
 		End If
 	End Sub
 #End Region
