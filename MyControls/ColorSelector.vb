@@ -6,7 +6,6 @@ Imports System.Windows.Forms.Design
 #Region "ColorSelector"
 <DefaultEvent("ColorChanged")>
 <DefaultProperty("SelectedColor")>
-<Designer(GetType(ColorSelectorDesigner))>
 Public Class ColorSelector
 
 	Private m_EditorService As IWindowsFormsEditorService = Nothing
@@ -32,7 +31,6 @@ Public Class ColorSelector
 		Button2.Visible = True
 	End Sub
 
-	<Editor(GetType(ColorTypeEditor), GetType(UITypeEditor))>
 	Public Property SelectedColor() As Color
 		Get
 			Return MyPanel1.BackColor
@@ -331,56 +329,3 @@ Public Class ColorSelector
 
 End Class
 #End Region 'ColorSelector Control Class
-
-#Region "Designer"
-Public Class ColorSelectorDesigner
-	Inherits ControlDesigner
-
-	Public Overrides Sub Initialize(component As IComponent)
-		MyBase.Initialize(component)
-	End Sub
-
-	Public Overrides ReadOnly Property SelectionRules As SelectionRules
-		Get
-			Return SelectionRules.Moveable
-		End Get
-	End Property
-
-End Class
-#End Region 'ColorSelector Designer Class
-
-#Region "TypeEditor"
-Public Class ColorTypeEditor
-	Inherits UITypeEditor
-
-	Public Overrides Function GetEditStyle(context As ITypeDescriptorContext) As UITypeEditorEditStyle
-		Return UITypeEditorEditStyle.DropDown
-	End Function
-
-	Public Overrides Function EditValue(context As ITypeDescriptorContext, provider As IServiceProvider, value As Object) As Object
-		' Get an IWindowsFormsEditorService object.
-		Dim editor_service As IWindowsFormsEditorService =
-			CType(provider.GetService(GetType(IWindowsFormsEditorService)),
-			IWindowsFormsEditorService)
-
-		If editor_service Is Nothing Then
-			Return MyBase.EditValue(context, provider, value)
-		End If
-
-		Dim Instance As ColorSelector = New ColorSelector
-		If context.Instance.GetType Is GetType(ColorSelector) Then
-			Instance = CType(context.Instance, ColorSelector)
-		End If
-
-		Dim _clr As Color = Instance.SelectedColor
-
-		Using editor_control As New ColorSelector(_clr, editor_service)
-			editor_control.ForeColor = Color.White
-			editor_service.DropDownControl(editor_control)
-
-			Return editor_control.SelectedColor
-		End Using
-	End Function
-
-End Class
-#End Region 'SelectedColor UITypeEditor

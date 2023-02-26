@@ -7,7 +7,6 @@ Imports System.Windows.Forms.Design
 #End Region
 
 #Region "ColorListBox"
-<Designer(GetType(ColorListDesigner))>
 <Description("Custom listbox for choosing colors.")>
 <DefaultProperty("Items")>
 <DefaultEvent("SelectedIndexChanged")>
@@ -63,7 +62,6 @@ Public Class ColorListBox
 
 	Private _lst As New ColorsCollection(Me)
 	<DesignerSerializationVisibility(DesignerSerializationVisibility.Content)>
-	<Editor(GetType(ColorsEditor), GetType(UITypeEditor))>
 	Public Property Items() As ColorsCollection
 		Get
 			Return _lst
@@ -574,73 +572,5 @@ Public Class DrawItemsEventArgs
 			Return clr
 		End Get
 	End Property
-End Class
-#End Region
-
-#Region "Control Designer"
-Public Class ColorListDesigner
-	Inherits ControlDesigner
-
-	Private _list As ColorListBox
-	Public Overrides Sub Initialize(component As IComponent)
-		MyBase.Initialize(component)
-
-		' Get list control shortcut reference
-		_list = CType(component, ColorListBox)
-	End Sub
-
-	Protected Overrides Function GetHitTest(point As Point) As Boolean
-		If _list.MyVScrollBar1.Visible Then
-			point = _list.MyVScrollBar1.PointToClient(point)
-			'scrollbar rectangle
-			If _list.MyVScrollBar1.ClientRectangle.Contains(point) Then Return True
-		End If
-		Return MyBase.GetHitTest(point)
-	End Function
-
-End Class
-#End Region
-
-#Region "Items Editor"
-Public Class ColorsEditor
-	Inherits UITypeEditor
-
-	Public Overrides Function GetEditStyle(context As ITypeDescriptorContext) As UITypeEditorEditStyle
-		Return UITypeEditorEditStyle.Modal
-	End Function
-
-	Public Overrides Function EditValue(context As ITypeDescriptorContext, provider As IServiceProvider, value As Object) As Object
-		Dim editor_service As IWindowsFormsEditorService =
-			CType(provider.GetService(GetType(IWindowsFormsEditorService)),
-				IWindowsFormsEditorService)
-		If editor_service Is Nothing Then Return value
-
-		' Control to be modofied
-		Dim Instance As ColorListBox = CType(context.Instance, ColorListBox)
-
-		' Prepare the editing dialog.
-		Dim dlg As New ColorListDialog
-
-		' Load colors in dialog.
-		dlg.LoadColors(Instance.Items.ToArray)
-
-		' Display the dialog.
-		If editor_service.ShowDialog(dlg) = DialogResult.OK Then
-
-			'initiate change
-			context.OnComponentChanging()
-
-			'change items
-			Instance.Items = dlg.lstColors.Items
-
-			'finalize change
-			context.OnComponentChanged()
-
-			Return dlg.lstColors.Items
-		End If
-
-		Return value
-	End Function
-
 End Class
 #End Region

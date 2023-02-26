@@ -65,7 +65,6 @@ Public Class ColorEditorButton
 		End Set
 	End Property
 
-	<Editor(GetType(ColorTypeEditor), GetType(UITypeEditor))>
 	Public Property SelectedColor() As Color
 		Get
 			Return _selector.SelectedColor

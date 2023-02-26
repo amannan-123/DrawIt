@@ -152,19 +152,6 @@ Public Class MyShape
 	End Property
 #End Region
 
-#Region "Spiral"
-	Private _spirals As Integer = 5
-	Public Property Spirals() As Integer
-		Get
-			Return _spirals
-		End Get
-		Set(value As Integer)
-			_spirals = value
-			NotifyPropertyChanged()
-		End Set
-	End Property
-#End Region
-
 #Region "Arc/Pie"
 	Private st_and As Single = 0
 	Public Property StartAngle() As Single

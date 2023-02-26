@@ -131,7 +131,6 @@ Public Class Shape
 
 #End Region
 
-	<NonSerialized>
 	Private _zoom As Single = 1.0F
 	<JsonIgnore>
 	Public Property Zoom() As Single
@@ -230,7 +229,11 @@ Public Class Shape
 			Return _flipX
 		End Get
 		Set(ByVal value As Boolean)
+			If _flipX = value Then Return
 			_flipX = value
+			Dim cent_pt = FBrush.PCenterPoint
+			cent_pt.X = 100 - cent_pt.X
+			FBrush.PCenterPoint = cent_pt
 		End Set
 	End Property
 
@@ -240,7 +243,11 @@ Public Class Shape
 			Return _flipY
 		End Get
 		Set(ByVal value As Boolean)
+			If _flipY = value Then Return
 			_flipY = value
+			Dim cent_pt = FBrush.PCenterPoint
+			cent_pt.Y = 100 - cent_pt.Y
+			FBrush.PCenterPoint = cent_pt
 		End Set
 	End Property
 
@@ -478,7 +485,7 @@ Public Class Shape
 	End Property
 
 	Public Sub UpdateImage()
-		If IsNothing(FBrush.TImage) Then
+		If IsNothing(FBrush.TImage) Or Not FBrush.BType = MyBrush.BrushType.Texture Then
 			_img = Nothing
 			Return
 		End If
@@ -529,9 +536,8 @@ Public Class Shape
 				End If
 				Dim lgb As New LinearGradientBrush(r2, FBrush.LColor1,
 														FBrush.LColor2,
-														FBrush.LinearAngle) With {
-					.GammaCorrection = FBrush.LGamma
-														}
+														FBrush.LinearAngle) With
+														{.GammaCorrection = FBrush.LGamma}
 				If FBrush.LTriangular Then
 					lgb.SetBlendTriangularShape(FBrush.LTriFocus, FBrush.LTriScale)
 				ElseIf FBrush.LBell Then
@@ -553,7 +559,7 @@ Public Class Shape
 				_cb = lgb
 			Case MyBrush.BrushType.PathGradient
 				Dim t_path = TotalPath(False)
-				If IsNothing(t_path) Then
+				If IsNothing(t_path) Or AbsRect(GetRect).Width = 0 Or AbsRect(GetRect).Height = 0 Then
 					_cb = Nothing
 					Return
 				End If

@@ -53,10 +53,10 @@ Partial Class TestForm
 		Me.ColorListBox1.Items.Add(System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer)))
 		Me.ColorListBox1.Items.Add(System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(99, Byte), Integer)))
 		Me.ColorListBox1.Items.Add(System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer)))
-		Me.ColorListBox1.Location = New System.Drawing.Point(72, 14)
+		Me.ColorListBox1.Location = New System.Drawing.Point(68, 54)
 		Me.ColorListBox1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
 		Me.ColorListBox1.Name = "ColorListBox1"
-		Me.ColorListBox1.Size = New System.Drawing.Size(177, 192)
+		Me.ColorListBox1.Size = New System.Drawing.Size(208, 141)
 		Me.ColorListBox1.TabIndex = 1
 		'
 		'MyVScrollBar1

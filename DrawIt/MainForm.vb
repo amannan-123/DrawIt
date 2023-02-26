@@ -294,7 +294,6 @@ Public Class MainForm
 		shp.FBrush.SolidColor = Color.Black
 		shp.MShape.Text = "AZ"
 		shp.MShape.FontSize = 9
-		shp.MShape.Spirals = 3
 
 		shp.UpdatePath()
 

@@ -597,6 +597,7 @@ Public Class Canvas
 							Else
 								sshp.MShape.CurvePoints = l_perc.ToArray()
 							End If
+							sshp.Selected = True
 							shps.Add(sshp)
 							ClearDrawingData()
 							MainForm.UpdateControls()
@@ -1226,21 +1227,6 @@ Public Class Canvas
 	End Sub
 
 	Private Sub DrawShape(ig As Graphics, shp As Shape, Optional _oncanvas As Boolean = True)
-		Dim brect = shp.Region(False).GetBounds(ig)
-
-		Dim inc As Integer = 0
-		If shp.Selected Then inc += 30
-
-		If shp.Glow.Enabled Then inc = Math.Max(inc, shp.Glow.Glow / 2)
-
-		If shp.Shadow.Enabled Then inc = Math.Max(inc, shp.Shadow.Blur / 2 +
-										Math.Max(Math.Abs(shp.Shadow.Offset.X),
-												 Math.Abs(shp.Shadow.Offset.Y)))
-
-		brect.Inflate(inc, inc)
-
-		If Not ig.IsVisible(brect) Then Return
-
 		ig.PixelOffsetMode = PixelOffsetMode.HighSpeed
 		ig.RenderingOrigin = Point.Ceiling(shp.GetRect.Location)
 
