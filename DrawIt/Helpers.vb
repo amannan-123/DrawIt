@@ -170,6 +170,18 @@ Module Helpers
 						  pt.Y * (rect.Bottom - rect.Y) / 100 + rect.Y)
 	End Function
 
+	Public Function ToPercentage(baseRect As RectangleF, childRect As RectangleF) As RectangleF
+		Return New RectangleF(ToPercentage(baseRect, childRect.Location),
+							  New SizeF(childRect.Width * 100 / baseRect.Width,
+										childRect.Height * 100 / baseRect.Height))
+	End Function
+
+	Public Function FromPercentage(baseRect As RectangleF, childRect As RectangleF) As RectangleF
+		Return New RectangleF(FromPercentage(baseRect, childRect.Location),
+							  New SizeF(childRect.Width * baseRect.Width / 100,
+										childRect.Height * baseRect.Height / 100))
+	End Function
+
 	Public Function AnchorToCursor(eAnchor As MOperations, _angle As Single) As Cursor
 		Dim snAngle As Single = _angle
 		Select Case eAnchor

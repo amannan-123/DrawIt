@@ -163,10 +163,10 @@ Public Class MainForm
 		RemoveHandler ud_H.ValueChanged, AddressOf ud_H_ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			ud_X.Value = shp.BaseX
-			ud_Y.Value = shp.BaseY
-			ud_W.Value = Math.Abs(shp.BaseWidth)
-			ud_H.Value = Math.Abs(shp.BaseHeight)
+			If Math.Abs(shp.BaseX) <= ud_X.Maximum Then ud_X.Value = shp.BaseX
+			If Math.Abs(shp.BaseY) <= ud_Y.Maximum Then ud_Y.Value = shp.BaseY
+			If Math.Abs(shp.BaseWidth) <= ud_W.Maximum Then ud_W.Value = Math.Abs(shp.BaseWidth)
+			If Math.Abs(shp.BaseHeight) <= ud_H.Maximum Then ud_H.Value = Math.Abs(shp.BaseHeight)
 			ud_A.Value = shp.Angle
 		Else
 			ud_X.Value = 0
@@ -1477,7 +1477,7 @@ Public Class MainForm
 		Dim cn = MainCanvas()
 		If Not IsNothing(cn) Then
 			cn.Zoom = TBZoom.Value / 100
-			cn.MainCanvasControl.SetSize(False)
+			cn.MainCanvasControl.SetSize()
 			cn.MainCanvasControl.basePnl.Invalidate()
 		End If
 	End Sub
@@ -1521,7 +1521,6 @@ Public Class MainForm
 			cn.HighlightShapes = set_hgt.Checked
 			cn.PathHighlightColor = set_pclr.SelectedColor
 			cn.BorderHighlightColor = set_bclr.SelectedColor
-			cn.MainCanvasControl.SetSize()
 			cn.MainCanvasControl.basePnl.Invalidate()
 			tCanvas.SelectedTab.Text = cn.Text
 			pSettings.Visible = False

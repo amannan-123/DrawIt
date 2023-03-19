@@ -31,7 +31,7 @@ Partial Class CanvasControl
 		'
 		'baseCanvas
 		'
-		Me.baseCanvas.AbsSize = New System.Drawing.Size(500.0!, 500.0!)
+		Me.baseCanvas.AbsSize = New System.Drawing.Size(500, 500)
 		Me.baseCanvas.BackColor = System.Drawing.Color.White
 		Me.baseCanvas.Location = New System.Drawing.Point(0, 0)
 		Me.baseCanvas.Margin = New System.Windows.Forms.Padding(0)
@@ -47,6 +47,7 @@ Partial Class CanvasControl
 		Me.basePnl.Name = "basePnl"
 		Me.basePnl.Size = New System.Drawing.Size(500, 500)
 		Me.basePnl.TabIndex = 3
+		Me.basePnl.TabStop = True
 		'
 		'VScrollBar
 		'

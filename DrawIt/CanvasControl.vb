@@ -1,19 +1,59 @@
-﻿Public Class CanvasControl
+﻿Imports System.ComponentModel
 
-	Private mouseLoc As Point = Point.Empty
+Public Class CanvasControl
+
+	Private m_down As Boolean = False
+	Private m_pt As Point
 
 	Public Sub ResetZoom()
 		baseCanvas.Zoom = 1
-		SetSize(False)
 		basePnl.Invalidate()
 	End Sub
+
+	Private _pan As Boolean = False
+	<Browsable(False)>
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)>
+	Public Property Panning() As Boolean
+		Get
+			Return _pan
+		End Get
+		Set(ByVal value As Boolean)
+			If value <> _pan Then
+				_pan = value
+			End If
+		End Set
+	End Property
 
 	Public Sub ApplyScrollChange(hscr As Integer, vscr As Integer)
 		If hscr Then HScrollBar.Value -= hscr
 		If vscr Then VScrollBar.Value -= vscr
 	End Sub
 
-	Public Sub SetSize(Optional scVals As Boolean = True)
+	Public Sub SetSize()
+		basePnl.Width = Math.Max(Width - 20, baseCanvas.Width * 2)
+		basePnl.Height = Math.Max(Height - 20, baseCanvas.Height * 2)
+		Dim centX = basePnl.Width / 2
+		Dim centY = basePnl.Height / 2
+		baseCanvas.Location = New Point(centX - (baseCanvas.Width / 2),
+										centY - (baseCanvas.Height / 2))
+		HScrollBar.Maximum = basePnl.Width - Width
+		VScrollBar.Maximum = basePnl.Height - Height
+
+		HScrollBar.Value = FromPercentage(HScrollBar.Minimum, HScrollBar.Maximum, 50)
+		VScrollBar.Value = FromPercentage(VScrollBar.Minimum, VScrollBar.Maximum, 50)
+	End Sub
+
+	Protected Overrides Sub OnMouseWheel(e As MouseEventArgs)
+		If Not My.Computer.Keyboard.CtrlKeyDown Then Return
+		If e.Delta < 0 Then
+			baseCanvas.Zoom -= 0.5
+		Else
+			baseCanvas.Zoom += 0.5
+		End If
+		If baseCanvas.Zoom = 10 Then Return
+
+		basePnl.SuspendLayout()
+
 		basePnl.Width = Math.Max(Width - 20, baseCanvas.Width * 2)
 		basePnl.Height = Math.Max(Height - 20, baseCanvas.Height * 2)
 		Dim centX = basePnl.Width / 2
@@ -22,27 +62,16 @@
 								centY - (baseCanvas.Height / 2))
 		HScrollBar.Maximum = basePnl.Width - Width
 		VScrollBar.Maximum = basePnl.Height - Height
-		If scVals Then
-			If mouseLoc = Point.Empty Then mouseLoc = New Point(centX, centY)
-			Dim pX = ToPercentage(0, basePnl.Width, mouseLoc.X)
-			Dim pY = ToPercentage(0, basePnl.Height, mouseLoc.Y)
-			HScrollBar.Value = FromPercentage(HScrollBar.Minimum, HScrollBar.Maximum, pX)
-			VScrollBar.Value = FromPercentage(VScrollBar.Minimum, VScrollBar.Maximum, pY)
-		Else
-			HScrollBar.Value = FromPercentage(HScrollBar.Minimum, HScrollBar.Maximum, 50)
-			VScrollBar.Value = FromPercentage(VScrollBar.Minimum, VScrollBar.Maximum, 50)
-		End If
-	End Sub
 
-	Private Sub basePnl_MouseWheel(sender As Object, e As MouseEventArgs) Handles basePnl.MouseWheel
-		If Not My.Computer.Keyboard.CtrlKeyDown Then Return
-		mouseLoc = e.Location
-		If e.Delta < 0 Then
-			baseCanvas.Zoom -= 0.5
-		Else
-			baseCanvas.Zoom += 0.5
-		End If
-		SetSize()
+		Dim mouseLoc = baseCanvas.PointToClient(MousePosition)
+
+		Dim pX = ToPercentage(0, baseCanvas.Width, mouseLoc.X)
+		Dim pY = ToPercentage(0, baseCanvas.Height, mouseLoc.Y)
+
+		HScrollBar.Value = FromPercentage(0, HScrollBar.Maximum, pX)
+		VScrollBar.Value = FromPercentage(0, VScrollBar.Maximum, pY)
+
+		basePnl.ResumeLayout()
 	End Sub
 
 	Private Sub CanvasControl_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -72,16 +101,57 @@
 		basePnl.Left = -HScrollBar.Value
 	End Sub
 
-	Private Sub basePnl_MouseMove(sender As Object, e As MouseEventArgs) Handles basePnl.MouseMove
-		mouseLoc = e.Location
-	End Sub
-
 	Private Sub basePnl_LocationChanged(sender As Object, e As EventArgs) Handles basePnl.LocationChanged
 		HScrollBar.Value = -basePnl.Left
 		VScrollBar.Value = -basePnl.Top
 	End Sub
 
-	Private Sub basePnl_MouseLeave(sender As Object, e As EventArgs) Handles basePnl.MouseLeave
-		mouseLoc = Point.Empty
+#Region "Panning"
+	Private Sub CanvasPan_MouseDown(sender As Object, e As MouseEventArgs) Handles basePnl.MouseDown, baseCanvas.MouseDown
+		If Panning Then
+			m_down = True
+			m_pt = e.Location
+		End If
 	End Sub
+
+	Private Sub CanvasPan_MouseMove(sender As Object, e As MouseEventArgs) Handles basePnl.MouseMove, baseCanvas.MouseMove
+		If Panning Then
+			If m_down Then
+				ApplyScrollChange(e.X - m_pt.X, e.Y - m_pt.Y)
+			End If
+		End If
+	End Sub
+
+	Private Sub CanvasPan_MouseUp(sender As Object, e As MouseEventArgs) Handles basePnl.MouseUp, baseCanvas.MouseUp
+		If Panning Then
+			m_down = False
+			basePnl.Invalidate()
+		End If
+	End Sub
+
+	Private Sub CanvasControl_KeyDown(sender As Object, e As KeyEventArgs) Handles basePnl.KeyDown, baseCanvas.KeyDown
+		Select Case e.KeyData
+			Case Keys.Space
+				Panning = True
+				Cursor = Cursors.NoMove2D
+				baseCanvas.Cursor = Cursors.NoMove2D
+		End Select
+	End Sub
+
+	Private Sub CanvasControl_KeyUp(sender As Object, e As KeyEventArgs) Handles basePnl.KeyUp, baseCanvas.KeyUp
+		Select Case e.KeyData
+			Case Keys.Space
+				Panning = False
+				Cursor = Cursors.Arrow
+				baseCanvas.Cursor = Cursors.Arrow
+				basePnl.Invalidate()
+		End Select
+	End Sub
+
+	Private Sub basePnl_Click(sender As Object, e As EventArgs) Handles basePnl.Click
+		basePnl.Focus()
+	End Sub
+
+#End Region
+
 End Class

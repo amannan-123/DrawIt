@@ -141,7 +141,7 @@ Public Class Shape
 			_zoom = value
 			FinalizeCoordsChange()
 			Dim rc = GetRect()
-			CenterPoint = New PointF(rc.X + rc.Width / 2, rc.Y + rc.Height / 2)
+			RotationPoint = New PointF(rc.X + rc.Width / 2, rc.Y + rc.Height / 2)
 		End Set
 	End Property
 
@@ -155,13 +155,13 @@ Public Class Shape
 		End Set
 	End Property
 
-	Private _cpt As New PointF
-	Public Property CenterPoint() As PointF
+	Private _rpt As New PointF
+	Public Property RotationPoint() As PointF
 		Get
-			Return _cpt
+			Return _rpt
 		End Get
 		Set(value As PointF)
-			_cpt = value
+			_rpt = value
 		End Set
 	End Property
 
@@ -309,7 +309,7 @@ Public Class Shape
 	''' <param name="gp"><see cref="GraphicsPath"/> on which rotation should be applied.</param>
 	Private Sub AdjustRotation(ByRef gp As GraphicsPath)
 		Dim mm As New Matrix
-		mm.RotateAt(Angle, _cpt)
+		mm.RotateAt(Angle, _rpt)
 		gp.Transform(mm)
 	End Sub
 #End Region
@@ -378,7 +378,7 @@ Public Class Shape
 			End If
 			If rotated Then
 				Dim mm As New Matrix
-				mm.RotateAt(Angle, CenterPoint)
+				mm.RotateAt(Angle, RotationPoint)
 				pn.MultiplyTransform(mm)
 			End If
 			Return pn
@@ -614,28 +614,51 @@ Public Class Shape
 	Public Function SelectionPath(Optional _anc As Boolean = True) As Region
 		Dim gp As GraphicsPath = TotalPath()
 		If IsNothing(gp) Then Return Nothing
-		If Not IsNothing(gp) Then
-			Dim rg As New Region(gp)
-			If Primary AndAlso _anc Then
-				Dim _anchors As New List(Of GraphicsPath) From {
-					TopLeft(),
-					Top(),
-					TopRight(),
-					Left(),
-					Right(),
-					BottomLeft(),
-					Bottom(),
-					BottomRight(),
-					Rotate()
-				}
-				If FBrush.BType = MyBrush.BrushType.PathGradient Then _anchors.Add(Centering())
-				For Each anc As GraphicsPath In _anchors
-					rg.Union(anc)
-				Next
-			End If
-			Return rg
+		Dim rg As New Region(gp)
+		If Primary AndAlso _anc Then
+			Dim _anchors As New List(Of GraphicsPath) From {
+				TopLeft(),
+				Top(),
+				TopRight(),
+				Left(),
+				Right(),
+				BottomLeft(),
+				Bottom(),
+				BottomRight(),
+				Rotate()
+			}
+			If FBrush.BType = MyBrush.BrushType.PathGradient Then _anchors.Add(Centering())
+			For Each anc As GraphicsPath In _anchors
+				rg.Union(anc)
+			Next
 		End If
-		Return Nothing
+		Return rg
+	End Function
+
+	''' <summary>
+	''' Returns a region containing anchors only.
+	''' </summary>
+	''' <returns></returns>
+	Public Function AnchorsPath() As Region
+		Dim rg As New Region(RectangleF.Empty)
+		If Primary Then
+			Dim _anchors As New List(Of GraphicsPath) From {
+				TopLeft(),
+				Top(),
+				TopRight(),
+				Left(),
+				Right(),
+				BottomLeft(),
+				Bottom(),
+				BottomRight(),
+				Rotate()
+			}
+			If FBrush.BType = MyBrush.BrushType.PathGradient Then _anchors.Add(Centering())
+			For Each anc As GraphicsPath In _anchors
+				rg.Union(anc)
+			Next
+		End If
+		Return rg
 	End Function
 
 	<NonSerialized>
