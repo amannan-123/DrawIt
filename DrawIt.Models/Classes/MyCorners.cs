@@ -6,13 +6,29 @@ namespace DrawIt.Models
 	[Serializable]
 	public class MyCorners : INotifyPropertyChanged, ICloneable
 	{
+		#region INotifyPropertyChanged
 		public event PropertyChangedEventHandler? PropertyChanged;
 
 		private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
+		#endregion
 
+		#region ICloneable
+		/// <summary>
+		/// 	Creates an exact copy of this <see cref="MyCorners"/> object.
+		/// </summary>
+		public object Clone()
+		{
+			MyCorners _new = new();
+			foreach (PropertyDescriptor pd in TypeDescriptor.GetProperties(typeof(MyCorners)))
+				pd.SetValue(_new, pd.GetValue(this));
+			return _new;
+		}
+		#endregion
+
+		#region CornerType
 		private CornerType tl_tp = CornerType.Normal;
 		public CornerType TLType
 		{
@@ -80,7 +96,9 @@ namespace DrawIt.Models
 				}
 			}
 		}
+		#endregion
 
+		#region CornerRadius
 		private float _t1 = 25;
 		public float T1
 		{
@@ -216,7 +234,9 @@ namespace DrawIt.Models
 				}
 			}
 		}
+		#endregion
 
+		#region ArrayHelpers
 		public static MyCorners? FromArray(float[] arr)
 		{
 			if (arr.Length < 8)
@@ -239,17 +259,7 @@ namespace DrawIt.Models
 		{
 			return new float[] { T1, 100 - T2, R1, 100 - R2, B1, 100 - B2, L1, 100 - L2 };
 		}
-
-		/// <summary>
-		/// 	Creates an exact copy of this <see cref="MyCorners"/> object.
-		/// </summary>
-		public object Clone()
-		{
-			MyCorners _new = new();
-			foreach (PropertyDescriptor pd in TypeDescriptor.GetProperties(typeof(MyCorners)))
-				pd.SetValue(_new, pd.GetValue(this));
-			return _new;
-		}
+		#endregion
 	}
 
 }

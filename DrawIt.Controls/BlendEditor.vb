@@ -1,5 +1,6 @@
 ﻿Imports System.ComponentModel
 Imports System.Drawing.Drawing2D
+Imports DrawIt.Helpers
 
 <DefaultEvent("BlendChanged")>
 Public Class BlendEditor
@@ -13,9 +14,9 @@ Public Class BlendEditor
 
 	Private m_down As Boolean = False
 	Private _rect As New RectangleF
-	Private _start As New blenditem(0, 0, True)
-	Private _end As New blenditem(1, 1)
-	Private _lst As New List(Of blenditem)
+	Private _start As New BlendItem(0, 0, True)
+	Private _end As New BlendItem(1, 1)
+	Private _lst As New List(Of BlendItem)
 
 	Private _brd As Color = Color.Black
 	<Description("Borders Color")>
@@ -89,7 +90,7 @@ Public Class BlendEditor
 		_f.Add(_start.BFactor)
 		_p.Add(0)
 
-		For Each bl As blenditem In _lst
+		For Each bl As BlendItem In _lst
 			_f.Add(bl.BFactor)
 			_p.Add(bl.BPosition)
 		Next
@@ -110,13 +111,13 @@ Public Class BlendEditor
 		If _pts.First <> 0 Then Return False
 		If _pts.Last <> 1 Then Return False
 
-		_start = New blenditem(0, _fac.First, True)
-		_end = New blenditem(1, _fac.Last)
+		_start = New BlendItem(0, _fac.First, True)
+		_end = New BlendItem(1, _fac.Last)
 
 		_lst.Clear()
 		If _fac.Count > 2 Then
 			For ind As Integer = 1 To _fac.Count - 2
-				_lst.Add(New blenditem(_pts(ind), _fac(ind)))
+				_lst.Add(New BlendItem(_pts(ind), _fac(ind)))
 			Next
 		End If
 
@@ -137,14 +138,14 @@ Public Class BlendEditor
 	Private Sub DeselectAll()
 		_start.Selected = False
 		_end.Selected = False
-		For Each bl As blenditem In _lst
+		For Each bl As BlendItem In _lst
 			bl.Selected = False
 		Next
 	End Sub
 
 	Private Function BlendInCursor(pt As Point) As Integer
 		Dim ind As Integer = -1
-		For Each bl As blenditem In _lst
+		For Each bl As BlendItem In _lst
 			If BlendRegion(bl).IsVisible(pt) Then
 				ind = _lst.IndexOf(bl)
 			End If
@@ -152,9 +153,9 @@ Public Class BlendEditor
 		Return ind
 	End Function
 
-	Private Function BlendRegion(_item As blenditem) As GraphicsPath
+	Private Function BlendRegion(_item As BlendItem) As GraphicsPath
 		Dim gp As New GraphicsPath
-		Dim pos As Single = FromPercentage(_rect.X, _rect.Right, _item.BPosition * 100)
+		Dim pos As Single = MathUtils.FromPercentage(_rect.X, _rect.Right, _item.BPosition * 100)
 		Dim rect As New Rectangle(pos - 3, _rect.Bottom - 10, 6, 8)
 		Dim p1 As New Point(rect.X + (rect.Width / 2), rect.Y - 3)
 		Dim p2 As Point = rect.Location
@@ -165,7 +166,7 @@ Public Class BlendEditor
 		Return gp
 	End Function
 
-	Private Function Sortblenditems(x As blenditem, y As blenditem) As Integer
+	Private Function Sortblenditems(x As BlendItem, y As BlendItem) As Integer
 		Dim pos As Integer = x.BPosition.CompareTo(y.BPosition)
 		If pos <> 0 Then
 			Return pos
@@ -213,7 +214,7 @@ Public Class BlendEditor
 			Else
 				If _rect.Contains(e.Location) AndAlso e.Button = MouseButtons.Left Then
 					Dim bl As New BlendItem With {
-						.BPosition = ToPercentage(_rect.X, _rect.Right, e.X) / 100,
+						.BPosition = MathUtils.ToPercentage(_rect.X, _rect.Right, e.X) / 100,
 						.BFactor = BL_Fac.Value / 100,
 						.Selected = True
 					}
@@ -232,8 +233,8 @@ Public Class BlendEditor
 		If m_down Then
 			Dim sel As Integer = SelectedItem()
 			If sel = -1 Then Return
-			Dim bl As blenditem = _lst(sel)
-			Dim pos = ToPercentage(_rect.X, _rect.Right, e.X) / 100
+			Dim bl As BlendItem = _lst(sel)
+			Dim pos = MathUtils.ToPercentage(_rect.X, _rect.Right, e.X) / 100
 			If pos > 1 Or pos < 0 Then Return
 			bl.BPosition = pos
 		End If
@@ -249,7 +250,7 @@ Public Class BlendEditor
 		Invalidate()
 	End Sub
 
-	Private Sub Drawblenditem(g As Graphics, bl As blenditem)
+	Private Sub Drawblenditem(g As Graphics, bl As BlendItem)
 		g.FillPath(New SolidBrush(Color.White), BlendRegion(bl))
 		g.DrawPath(New Pen(BordersColor), BlendRegion(bl))
 		If bl.Selected Then
@@ -282,7 +283,7 @@ Public Class BlendEditor
 
 		Drawblenditem(g, _start)
 
-		For Each bl As blenditem In _lst
+		For Each bl As BlendItem In _lst
 			Drawblenditem(g, bl)
 		Next
 
@@ -309,7 +310,7 @@ Public Class BlendEditor
 	Private Sub BL_Pos_ValueChanged(sender As Object, e As EventArgs) Handles BL_Pos.ValueChanged
 		Dim sel As Integer = SelectedItem()
 		If sel = -1 Then Return
-		Dim bl As blenditem = _lst(sel)
+		Dim bl As BlendItem = _lst(sel)
 		bl.BPosition = BL_Pos.Value / 100
 		If CB_Sort.Checked Then _lst.Sort(AddressOf Sortblenditems)
 		CreateBlend()
@@ -348,7 +349,7 @@ Public Class BlendEditor
 		Dim _temp As Single = _end.BFactor
 		_end.BFactor = _start.BFactor
 		_start.BFactor = _temp
-		For Each it As blenditem In _lst
+		For Each it As BlendItem In _lst
 			it.BPosition = 1 - it.BPosition
 		Next
 		_start.Selected = True
@@ -366,7 +367,7 @@ Public Class BlendEditor
 		Else
 			Dim sel As Integer = SelectedItem()
 			If sel = -1 Then Return
-			Dim bl As blenditem = _lst(sel)
+			Dim bl As BlendItem = _lst(sel)
 			bl.BFactor = BL_Fac.Value / 100
 		End If
 		CreateBlend()

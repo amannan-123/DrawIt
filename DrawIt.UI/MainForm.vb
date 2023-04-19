@@ -141,8 +141,8 @@ Public Class MainForm
 				cb_GClip.SelectedItem = shp.Glow.GClip.ToString
 				'shadow
 				CE_Shadow.SelectedColor = shp.Shadow.ShadowColor
-				TB_SBlur.Value = shp.Shadow.Blur
-				TB_SFeather.Value = shp.Shadow.Radius
+				TB_SBlur.Value = shp.Shadow.Radius
+				TB_SFeather.Value = shp.Shadow.Strength
 				cb_clip.Checked = shp.Shadow.RegionClipping
 				cb_fill.Checked = shp.Shadow.Fill
 				PS_Shadow.Value = shp.Shadow.Offset
@@ -199,7 +199,7 @@ Public Class MainForm
 	End Sub
 #End Region
 
-#Region "Load"
+#Region "Form"
 	Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 		MainCanvas = CanvasControl1.baseCanvas
 		UpdateSettings()
@@ -264,6 +264,13 @@ Public Class MainForm
 			End If
 		End If
 
+	End Sub
+
+	Private Sub MainForm_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
+		For Each tp As TabPage In tCanvas.TabPages
+			Dim ctrl = DirectCast(tp.Controls()(0), CanvasControl)
+			ctrl.baseCanvas.ClearData()
+		Next
 	End Sub
 #End Region
 
@@ -1202,7 +1209,7 @@ Public Class MainForm
 	Private Sub TB_SBlur_ValueChanged(sender As Object, e As EventArgs) Handles TB_SBlur.ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.Shadow.Blur = TB_SBlur.Value
+			shp.Shadow.Radius = TB_SBlur.Value
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -1210,7 +1217,7 @@ Public Class MainForm
 	Private Sub TB_SFeather_ValueChanged(sender As Object, e As EventArgs) Handles TB_SFeather.ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.Shadow.Radius = TB_SFeather.Value
+			shp.Shadow.Strength = TB_SFeather.Value
 			MainCanvas.Invalidate()
 		End If
 	End Sub

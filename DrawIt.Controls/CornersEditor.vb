@@ -1,5 +1,6 @@
 ﻿Imports System.Drawing.Drawing2D
 Imports System.ComponentModel
+Imports DrawIt.Helpers
 
 <DefaultEvent("CornersChanged")>
 <DefaultProperty("Corners")>
@@ -109,39 +110,39 @@ Public Class CornersEditor
 		Dim rt As RectangleF
 		Select Case ind
 			Case 0
-				rt = New RectangleF(FromPercentage(rect.X, rect.Right, _lst(0)),
+				rt = New RectangleF(MathUtils.FromPercentage(rect.X, rect.Right, _lst(0)),
 									rect.Y, 0, 0)
 				rt.Y -= pSize
 			Case 1
-				rt = New RectangleF(FromPercentage(rect.X, rect.Right, _lst(1)),
+				rt = New RectangleF(MathUtils.FromPercentage(rect.X, rect.Right, _lst(1)),
 									rect.Y, 0, 0)
 				rt.Y -= pSize
 			Case 2
 				rt = New RectangleF(rect.Right,
-									FromPercentage(rect.Y, rect.Bottom, _lst(2)),
+									MathUtils.FromPercentage(rect.Y, rect.Bottom, _lst(2)),
 									0, 0)
 				rt.X += pSize
 			Case 3
 				rt = New RectangleF(rect.Right,
-									FromPercentage(rect.Y, rect.Bottom, _lst(3)),
+									MathUtils.FromPercentage(rect.Y, rect.Bottom, _lst(3)),
 									0, 0)
 				rt.X += pSize
 			Case 4
-				rt = New RectangleF(FromPercentage(rect.X, rect.Right, _lst(4)),
+				rt = New RectangleF(MathUtils.FromPercentage(rect.X, rect.Right, _lst(4)),
 									rect.Bottom, 0, 0)
 				rt.Y += pSize
 			Case 5
-				rt = New RectangleF(FromPercentage(rect.X, rect.Right, _lst(5)),
+				rt = New RectangleF(MathUtils.FromPercentage(rect.X, rect.Right, _lst(5)),
 									rect.Bottom, 0, 0)
 				rt.Y += pSize
 			Case 6
 				rt = New RectangleF(rect.X,
-									FromPercentage(rect.Y, rect.Bottom, _lst(6)),
+									MathUtils.FromPercentage(rect.Y, rect.Bottom, _lst(6)),
 									0, 0)
 				rt.X -= pSize
 			Case 7
 				rt = New RectangleF(rect.X,
-									FromPercentage(rect.Y, rect.Bottom, _lst(7)),
+									MathUtils.FromPercentage(rect.Y, rect.Bottom, _lst(7)),
 									0, 0)
 				rt.X -= pSize
 		End Select
@@ -179,8 +180,8 @@ Public Class CornersEditor
 	Private Sub CornersEditor_MouseMove(sender As Object, e As MouseEventArgs) Handles MyBase.MouseMove
 		If m_down Then
 			Cursor = Cursors.SizeAll
-			Dim x_pt = ToPercentage(rect.X, rect.Right, e.X)
-			Dim y_pt = ToPercentage(rect.Y, rect.Bottom, e.Y)
+			Dim x_pt = MathUtils.ToPercentage(rect.X, rect.Right, e.X)
+			Dim y_pt = MathUtils.ToPercentage(rect.Y, rect.Bottom, e.Y)
 
 			If My.Computer.Keyboard.CtrlKeyDown Then
 				x_pt = CInt(x_pt)
@@ -288,14 +289,14 @@ Public Class CornersEditor
 									   ulc As Boolean, urc As Boolean,
 									   blc As Boolean, brc As Boolean) As GraphicsPath
 		Dim ArcRect As RectangleF
-		Dim _t1 = FromPercentage(0, rect.Width, crn(0))
-		Dim _t2 = FromPercentage(0, rect.Width, 100 - crn(1))
-		Dim _r1 = FromPercentage(0, rect.Height, crn(2))
-		Dim _r2 = FromPercentage(0, rect.Height, 100 - crn(3))
-		Dim _b1 = FromPercentage(0, rect.Width, crn(4))
-		Dim _b2 = FromPercentage(0, rect.Width, 100 - crn(5))
-		Dim _l1 = FromPercentage(0, rect.Height, crn(6))
-		Dim _l2 = FromPercentage(0, rect.Height, 100 - crn(7))
+		Dim _t1 = MathUtils.FromPercentage(0, rect.Width, crn(0))
+		Dim _t2 = MathUtils.FromPercentage(0, rect.Width, 100 - crn(1))
+		Dim _r1 = MathUtils.FromPercentage(0, rect.Height, crn(2))
+		Dim _r2 = MathUtils.FromPercentage(0, rect.Height, 100 - crn(3))
+		Dim _b1 = MathUtils.FromPercentage(0, rect.Width, crn(4))
+		Dim _b2 = MathUtils.FromPercentage(0, rect.Width, 100 - crn(5))
+		Dim _l1 = MathUtils.FromPercentage(0, rect.Height, crn(6))
+		Dim _l2 = MathUtils.FromPercentage(0, rect.Height, 100 - crn(7))
 		Dim MyPath As New GraphicsPath()
 		With MyPath
 			' top left arc

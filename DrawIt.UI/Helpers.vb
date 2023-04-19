@@ -1,5 +1,5 @@
 ﻿Imports System.Drawing.Drawing2D
-Imports System.Security.Policy
+Imports DrawIt.Helpers
 Imports DrawIt.Models
 
 Module Helpers
@@ -45,14 +45,14 @@ Module Helpers
 
 	Public Function GetRoundedRectPath(rect As RectangleF, crn As MyCorners) As GraphicsPath
 		Dim ArcRect As RectangleF
-		Dim _t1 = FromPercentage(rect.X, rect.Width, crn.T1)
-		Dim _t2 = FromPercentage(rect.X, rect.Width, crn.T2)
-		Dim _r1 = FromPercentage(rect.Y, rect.Height, crn.R1)
-		Dim _r2 = FromPercentage(rect.Y, rect.Height, crn.R2)
-		Dim _b1 = FromPercentage(rect.X, rect.Width, crn.B1)
-		Dim _b2 = FromPercentage(rect.X, rect.Width, crn.B2)
-		Dim _l1 = FromPercentage(rect.Y, rect.Height, crn.L1)
-		Dim _l2 = FromPercentage(rect.Y, rect.Height, crn.L2)
+		Dim _t1 = MathUtils.FromPercentage(rect.X, rect.Width, crn.T1)
+		Dim _t2 = MathUtils.FromPercentage(rect.X, rect.Width, crn.T2)
+		Dim _r1 = MathUtils.FromPercentage(rect.Y, rect.Height, crn.R1)
+		Dim _r2 = MathUtils.FromPercentage(rect.Y, rect.Height, crn.R2)
+		Dim _b1 = MathUtils.FromPercentage(rect.X, rect.Width, crn.B1)
+		Dim _b2 = MathUtils.FromPercentage(rect.X, rect.Width, crn.B2)
+		Dim _l1 = MathUtils.FromPercentage(rect.Y, rect.Height, crn.L1)
+		Dim _l2 = MathUtils.FromPercentage(rect.Y, rect.Height, crn.L2)
 
 		Dim MyPath As New GraphicsPath()
 		With MyPath
@@ -151,36 +151,6 @@ Module Helpers
 		Dim gp As New GraphicsPath
 		gp.AddCurve(aptf)
 		Return gp
-	End Function
-
-	Public Function ToPercentage(p1 As Single, p2 As Single, pt As Single) As Single
-		Return (pt - p1) * 100 / (p2 - p1)
-	End Function
-
-	Public Function FromPercentage(p1 As Single, p2 As Single, pt As Single) As Single
-		Return pt * (p2 - p1) / 100 + p1
-	End Function
-
-	Public Function ToPercentage(rect As RectangleF, pt As PointF) As PointF
-		Return New PointF((pt.X - rect.X) * 100 / (rect.Right - rect.X),
-						  (pt.Y - rect.Y) * 100 / (rect.Bottom - rect.Y))
-	End Function
-
-	Public Function FromPercentage(rect As RectangleF, pt As PointF) As PointF
-		Return New PointF(pt.X * (rect.Right - rect.X) / 100 + rect.X,
-						  pt.Y * (rect.Bottom - rect.Y) / 100 + rect.Y)
-	End Function
-
-	Public Function ToPercentage(baseRect As RectangleF, childRect As RectangleF) As RectangleF
-		Return New RectangleF(ToPercentage(baseRect, childRect.Location),
-							  New SizeF(childRect.Width * 100 / baseRect.Width,
-										childRect.Height * 100 / baseRect.Height))
-	End Function
-
-	Public Function FromPercentage(baseRect As RectangleF, childRect As RectangleF) As RectangleF
-		Return New RectangleF(FromPercentage(baseRect, childRect.Location),
-							  New SizeF(childRect.Width * baseRect.Width / 100,
-										childRect.Height * baseRect.Height / 100))
 	End Function
 
 	Public Function AnchorToCursor(eAnchor As MOperations, _angle As Single) As Cursor

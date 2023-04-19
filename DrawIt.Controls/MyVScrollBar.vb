@@ -1,6 +1,8 @@
 ﻿#Region "Imports"
 Imports System.Drawing.Drawing2D
 Imports System.ComponentModel
+Imports DrawIt.Helpers
+
 #End Region
 
 <DefaultEvent("Scroll")>
@@ -221,15 +223,15 @@ Public Class MyVScrollBar
 	End Sub
 
 	Private Sub SetSliderValue(_y As Single)
-		Dim perc As Single = ToPercentage(rectSlider.Y, rectSlider.Bottom, _y)
-		Dim _val As Single = FromPercentage(Minimum, Maximum, perc)
+		Dim perc As Single = MathUtils.ToPercentage(rectSlider.Y, rectSlider.Bottom, _y)
+		Dim _val As Single = MathUtils.FromPercentage(Minimum, Maximum, perc)
 		Value = _val
 		UpdateSlider(_y)
 	End Sub
 
 	Private Sub SetSliderFromValues()
-		Dim perc As Single = ToPercentage(Minimum, Maximum, Value)
-		Dim pos As Single = FromPercentage(rectSlider.Y, rectSlider.Bottom, perc)
+		Dim perc As Single = MathUtils.ToPercentage(Minimum, Maximum, Value)
+		Dim pos As Single = MathUtils.FromPercentage(rectSlider.Y, rectSlider.Bottom, perc)
 		UpdateSlider(pos)
 	End Sub
 #End Region

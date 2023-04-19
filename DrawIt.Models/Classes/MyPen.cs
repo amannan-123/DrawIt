@@ -6,27 +6,49 @@ namespace DrawIt.Models
 {
 
 	[Serializable]
-	public class MyPen : INotifyPropertyChanged, ICloneable
+	public class MyPen : INotifyPropertyChanged, ICloneable, IDisposable
 	{
 		public MyPen()
 		{
 			PBrush.SolidColor = Color.Black;
 			PBrush.LInterpolate = true;
-			PBrush.PropertyChanged += PBrush_PropertyChanged;
+			PBrush.PropertyChanged += (sender, e) =>
+			{
+				PropertyChanged?.Invoke(this, e!);
+			};
 		}
 
-		private void PBrush_PropertyChanged(object? sender, PropertyChangedEventArgs? e)
-		{
-			PropertyChanged?.Invoke(this, e!);
-		}
-
+		#region INotifyPropertyChanged
 		public event PropertyChangedEventHandler? PropertyChanged;
 
 		private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
+		#endregion
 
+		#region ICloneable
+		/// <summary>
+		///		Creates an exact copy of this <see cref="MyPen"/> object.
+		/// </summary>
+		public object Clone()
+		{
+			MyPen _new = new();
+			foreach (PropertyDescriptor pd in TypeDescriptor.GetProperties(typeof(MyPen)))
+				pd.SetValue(_new, pd.GetValue(this));
+			_new.PBrush = (MyBrush)PBrush.Clone();
+			return _new;
+		}
+		#endregion
+
+		#region IDisposable
+		public void Dispose()
+		{
+			_br?.Dispose();
+		}
+		#endregion
+
+		#region Properties
 		private MyBrush _br = new();
 		public MyBrush PBrush
 		{
@@ -179,18 +201,7 @@ namespace DrawIt.Models
 				}
 			}
 		}
-
-		/// <summary>
-		///		Creates an exact copy of this <see cref="MyPen"/> object.
-		/// </summary>
-		public object Clone()
-		{
-			MyPen _new = new();
-			foreach (PropertyDescriptor pd in TypeDescriptor.GetProperties(typeof(MyPen)))
-				pd.SetValue(_new, pd.GetValue(this));
-			_new.PBrush = (MyBrush)PBrush.Clone();
-			return _new;
-		}
+		#endregion
 	}
 
 }

@@ -5,7 +5,6 @@
     <UseWindowsForms>true</UseWindowsForms>
     <OutputType>Library</OutputType>
     <StartupObject></StartupObject>
-    <Company>ArcCode</Company>
     <MyType>WindowsForms</MyType>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
@@ -21,9 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="MyHScrollBar.vb">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <ProjectReference Include="..\DrawIt.Helpers\DrawIt.Helpers.csproj" />
   </ItemGroup>
 
 </Project>

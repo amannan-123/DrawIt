@@ -6,15 +6,38 @@ namespace DrawIt.Models
 {
 
 	[Serializable]
-	public class MyBrush : INotifyPropertyChanged, ICloneable
+	public class MyBrush : INotifyPropertyChanged, ICloneable, IDisposable
 	{
+		#region INotifyPropertyChanged
 		public event PropertyChangedEventHandler? PropertyChanged;
 
 		private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
+		#endregion
 
+		#region ICloneable
+		/// <summary>
+		/// 	Creates an exact copy of this <see cref="MyBrush"/> object.
+		/// </summary>
+		public object Clone()
+		{
+			MyBrush _new = new();
+			foreach (PropertyDescriptor pd in TypeDescriptor.GetProperties(typeof(MyBrush)))
+				pd.SetValue(_new, pd.GetValue(this));
+			return _new;
+		}
+		#endregion
+
+		#region IDisposable
+		public void Dispose()
+		{
+			t_img?.Dispose();
+		}
+		#endregion
+
+		#region BrushType
 		private BrushType sty = BrushType.Solid;
 		public BrushType BType
 		{
@@ -31,7 +54,9 @@ namespace DrawIt.Models
 				}
 			}
 		}
+		#endregion
 
+		#region Solid
 		private Color _sld = Color.White;
 		public Color SolidColor
 		{
@@ -48,7 +73,9 @@ namespace DrawIt.Models
 				}
 			}
 		}
+		#endregion
 
+		#region LinearGradient
 		private Color _lg1 = Color.White;
 		public Color LColor1
 		{
@@ -328,7 +355,9 @@ namespace DrawIt.Models
 				}
 			}
 		}
+		#endregion
 
+		#region PathGradient
 		private Color _pg1 = Color.White;
 		public Color PCenter
 		{
@@ -625,7 +654,9 @@ namespace DrawIt.Models
 				}
 			}
 		}
+		#endregion
 
+		#region Hatch
 		private Color _hb1 = Color.White;
 		public Color HBack
 		{
@@ -676,7 +707,9 @@ namespace DrawIt.Models
 				}
 			}
 		}
+		#endregion
 
+		#region Texture
 		private Image? t_img = null;
 		public Image? TImage
 		{
@@ -741,18 +774,7 @@ namespace DrawIt.Models
 				}
 			}
 		}
-
-		/// <summary>
-		/// 	''' Creates an exact copy of this <see cref="MyBrush"/> object.
-		/// 	''' </summary>
-		public object Clone()
-		{
-			MyBrush _new = new();
-			foreach (PropertyDescriptor pd in TypeDescriptor.GetProperties(typeof(MyBrush)))
-				pd.SetValue(_new, pd.GetValue(this));
-			return _new;
-		}
+		#endregion
 	}
-
 
 }

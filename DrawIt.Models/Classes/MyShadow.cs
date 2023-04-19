@@ -7,13 +7,29 @@ namespace DrawIt.Models
 	[Serializable]
 	public class MyShadow : INotifyPropertyChanged, ICloneable
 	{
+		#region INotifyPropertyChanged
 		public event PropertyChangedEventHandler? PropertyChanged;
 
 		private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
+		#endregion
 
+		#region ICloneable
+		/// <summary>
+		/// 	Creates an exact copy of this <see cref="MyShadow"/> object.
+		/// </summary>
+		public object Clone()
+		{
+			MyShadow _new = new();
+			foreach (PropertyDescriptor pd in TypeDescriptor.GetProperties(typeof(MyShadow)))
+				pd.SetValue(_new, pd.GetValue(this));
+			return _new;
+		}
+		#endregion
+
+		#region Properties
 		private bool _enabled = false;
 		public bool Enabled
 		{
@@ -82,24 +98,7 @@ namespace DrawIt.Models
 			}
 		}
 
-		private int _blur = 2;
-		public int Blur
-		{
-			get
-			{
-				return _blur;
-			}
-			set
-			{
-				if (!value.Equals(_blur))
-				{
-					_blur = value;
-					NotifyPropertyChanged();
-				}
-			}
-		}
-
-		private int _radius = 100;
+		private int _radius = 2;
 		public int Radius
 		{
 			get
@@ -111,6 +110,23 @@ namespace DrawIt.Models
 				if (!value.Equals(_radius))
 				{
 					_radius = value;
+					NotifyPropertyChanged();
+				}
+			}
+		}
+
+		private int _strength = 100;
+		public int Strength
+		{
+			get
+			{
+				return _strength;
+			}
+			set
+			{
+				if (!value.Equals(_strength))
+				{
+					_strength = value;
 					NotifyPropertyChanged();
 				}
 			}
@@ -132,17 +148,7 @@ namespace DrawIt.Models
 				}
 			}
 		}
-
-		/// <summary>
-		/// 	Creates an exact copy of this <see cref="MyShadow"/> object.
-		/// </summary>
-		public object Clone()
-		{
-			MyShadow _new = new();
-			foreach (PropertyDescriptor pd in TypeDescriptor.GetProperties(typeof(MyShadow)))
-				pd.SetValue(_new, pd.GetValue(this));
-			return _new;
-		}
+		#endregion
 	}
 
 }

@@ -1,10 +1,11 @@
 ﻿Imports System.ComponentModel
 Imports System.Drawing.Drawing2D
 Imports System.Text.Json.Serialization
+Imports DrawIt.Helpers
 Imports DrawIt.Models
 
 <Serializable>
-Public Class Shape
+Public Class Shape : Implements IDisposable
 
 #Region "Constructor"
 	Public Sub BindEvents()
@@ -484,7 +485,7 @@ Public Class Shape
 			_img = Nothing
 			Return
 		End If
-		Dim img As Image = FBrush.TImage.Clone
+		Dim img As Image = FBrush.TImage
 		img.RotateFlip(FBrush.TRotateFlip)
 		Dim bmp As New Bitmap(img, rt.Width, rt.Height)
 		'Dim bmp As New Bitmap(CInt(rt.Width), CInt(rt.Height))
@@ -497,7 +498,7 @@ Public Class Shape
 		'Dim img As Image = FBrush.TImage.GetThumbnailImage(rt.Width, rt.Height, Nothing, IntPtr.Zero)
 		'img.RotateFlip(FBrush.TRotateFlip)
 		'g.DrawImage(img, rt)
-		img.Dispose()
+		'img.Dispose()
 		If FBrush.TTransparency Then bmp.MakeTransparent(FBrush.TColor)
 		_img = bmp
 	End Sub
@@ -556,7 +557,7 @@ Public Class Shape
 				Dim ptb As New PathGradientBrush(TotalPath(False)) With {
 						.CenterColor = FBrush.PCenter,
 						.FocusScales = New PointF(FBrush.PFocusX, FBrush.PFocusY),
-						.CenterPoint = FromPercentage(AbsRect(GetRect), FBrush.PCenterPoint)
+						.CenterPoint = MathUtils.FromPercentage(AbsRect(GetRect), FBrush.PCenterPoint)
 					}
 				If FBrush.PSurround.Length <= t_path.PointCount Then
 					ptb.SurroundColors = FBrush.PSurround
@@ -661,9 +662,9 @@ Public Class Shape
 				gp.AddEllipse(rt)
 			Case ShapeStyle.Triangle
 				Dim _lst As New List(Of PointF) From {
-					FromPercentage(rt, New PointF(50, 0)),
-					FromPercentage(rt, New PointF(0, 100)),
-					FromPercentage(rt, New PointF(100, 100))
+					MathUtils.FromPercentage(rt, New PointF(50, 0)),
+					MathUtils.FromPercentage(rt, New PointF(0, 100)),
+					MathUtils.FromPercentage(rt, New PointF(100, 100))
 				}
 				gp.AddPolygon(_lst.ToArray)
 			Case ShapeStyle.Lines
@@ -673,7 +674,7 @@ Public Class Shape
 				End If
 				Dim _lst As New List(Of PointF)
 				For Each pt As PointF In MShape.PolygonPoints
-					_lst.Add(FromPercentage(rt, pt))
+					_lst.Add(MathUtils.FromPercentage(rt, pt))
 				Next
 				gp.AddLines(_lst.ToArray)
 			Case ShapeStyle.Polygon
@@ -683,7 +684,7 @@ Public Class Shape
 				End If
 				Dim _lst As New List(Of PointF)
 				For Each pt As PointF In MShape.PolygonPoints
-					_lst.Add(FromPercentage(rt, pt))
+					_lst.Add(MathUtils.FromPercentage(rt, pt))
 				Next
 				gp.AddPolygon(_lst.ToArray)
 			Case ShapeStyle.Curves
@@ -693,7 +694,7 @@ Public Class Shape
 				End If
 				Dim _lst As New List(Of PointF)
 				For Each pt As PointF In MShape.CurvePoints
-					_lst.Add(FromPercentage(rt, pt))
+					_lst.Add(MathUtils.FromPercentage(rt, pt))
 				Next
 				gp.AddCurve(_lst.ToArray, MShape.Tension)
 			Case ShapeStyle.ClosedCurve
@@ -703,7 +704,7 @@ Public Class Shape
 				End If
 				Dim _lst As New List(Of PointF)
 				For Each pt As PointF In MShape.CurvePoints
-					_lst.Add(FromPercentage(rt, pt))
+					_lst.Add(MathUtils.FromPercentage(rt, pt))
 				Next
 				gp.AddClosedCurve(_lst.ToArray, MShape.Tension)
 			'Case ShapeStyle.Spiral
@@ -895,7 +896,7 @@ Public Class Shape
 	End Function
 
 	Public Function Centering(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(FromPercentage(GetRect, FBrush.PCenterPoint), New SizeF(0, 0))
+		Dim rect As New RectangleF(MathUtils.FromPercentage(GetRect, FBrush.PCenterPoint), New SizeF(0, 0))
 		rect.Inflate(3, 3)
 		Dim pt As PointF = rect.Location
 		Dim gp As New GraphicsPath()
@@ -923,6 +924,16 @@ Public Class Shape
 		_new.BindEvents()
 		Return _new
 	End Function
+#End Region
+
+#Region "IDisposable"
+	Public Sub Dispose() Implements IDisposable.Dispose
+		If Not IsNothing(_pn) Then _pn.Dispose()
+		If Not IsNothing(_pb) Then _pb.Dispose()
+		If Not IsNothing(_cb) Then _cb.Dispose()
+		If Not IsNothing(_img) Then _img.Dispose()
+		If Not IsNothing(_pth) Then _pth.Dispose()
+	End Sub
 #End Region
 
 End Class

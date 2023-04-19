@@ -3,12 +3,10 @@ Imports System.ComponentModel
 Imports System.Drawing.Drawing2D
 Imports System.Drawing.Text
 Imports System.IO
-Imports System.Runtime.InteropServices
 Imports System.Text.Json
 Imports System.Text.Json.Serialization
-Imports System.Xml
+Imports DrawIt.Helpers
 Imports DrawIt.Models
-Imports JSONHelpers
 #End Region
 
 Public Class Canvas
@@ -447,8 +445,12 @@ Public Class Canvas
 	End Sub
 
 	Public Sub DeleteSelected()
-		For i As Integer = SelectedIndices.Count - 1 To 0 Step -1
-			shps.RemoveAt(SelectedIndices()(i))
+		Dim inds = SelectedIndices()
+		For i = inds.Count - 1 To 0 Step -1
+			Dim ind = inds(i)
+			Dim shp = shps(ind)
+			shp.Dispose()
+			shps.RemoveAt(ind)
 		Next
 		Invalidate()
 	End Sub
@@ -495,6 +497,12 @@ Public Class Canvas
 			shp.RotationPoint = New PointF(shp.GetRect.X + (shp.GetRect.Width / 2),
 					 shp.GetRect.Y + (shp.GetRect.Height / 2))
 		End If
+	End Sub
+
+	Public Sub ClearData()
+		For Each shp As Shape In shps
+			shp.Dispose()
+		Next
 	End Sub
 #End Region
 
@@ -715,7 +723,7 @@ Public Class Canvas
 							Dim rectf As New RectangleF(_min, New SizeF(_max.X - _min.X, _max.Y - _min.Y))
 							sshp.SetAllRect(rectf)
 							Dim l_perc = New List(Of PointF)
-							d_info.Points.ForEach(Sub(x) l_perc.Add(ToPercentage(rectf, x)))
+							d_info.Points.ForEach(Sub(x) l_perc.Add(MathUtils.ToPercentage(rectf, x)))
 							If d_info.ShapeType = 4 Or d_info.ShapeType = 5 Then
 								sshp.MShape.PolygonPoints = l_perc.ToArray()
 							Else
@@ -846,7 +854,7 @@ Public Class Canvas
 			'set operations
 			If selc.Count Then
 
-				shp.RotationPoint = FromPercentage(shp.GetRect, New PointF(50, 50))
+				shp.RotationPoint = MathUtils.FromPercentage(shp.GetRect, New PointF(50, 50))
 				m_cnt = shp.RotationPoint
 				m_ang = shp.Angle
 
@@ -863,7 +871,7 @@ Public Class Canvas
 					For Each ind As Integer In selc
 						Dim ss As Shape = shps(ind)
 						mv_rect.Add(ss.GetRect)
-						res_rect.Add(ToPercentage(boundsAll, ss.GetRect))
+						res_rect.Add(MathUtils.ToPercentage(boundsAll, ss.GetRect))
 					Next
 					res_bounds = boundsAll
 				End If
@@ -1021,7 +1029,7 @@ Public Class Canvas
 			Select Case op
 				Case MOperations.Centering
 					Dim npt As PointF = RotatePoint(e.Location, shp.RotationPoint, -shp.Angle)
-					shp.FBrush.PCenterPoint = ToPercentage(shp.GetRect, npt)
+					shp.FBrush.PCenterPoint = MathUtils.ToPercentage(shp.GetRect, npt)
 				Case MOperations.TopLeft
 					tRc.X += tPt.X
 					tRc.Width -= tPt.X
@@ -1138,7 +1146,7 @@ Public Class Canvas
 						End If
 						Dim ss As Shape = shps(selc(i))
 						ss.SetAllRect(dRc)
-						ss.RotationPoint = FromPercentage(ss.GetRect, New PointF(50, 50))
+						ss.RotationPoint = MathUtils.FromPercentage(ss.GetRect, New PointF(50, 50))
 					Next
 			End Select
 
@@ -1197,8 +1205,8 @@ Public Class Canvas
 				Else
 					For ind As Integer = 0 To selc.Count - 1
 						Dim ss As Shape = shps(selc(ind))
-						ss.SetAllRect(FromPercentage(tRc, res_rect(ind)))
-						ss.RotationPoint = FromPercentage(ss.GetRect, New PointF(50, 50))
+						ss.SetAllRect(MathUtils.FromPercentage(tRc, res_rect(ind)))
+						ss.RotationPoint = MathUtils.FromPercentage(ss.GetRect, New PointF(50, 50))
 					Next
 				End If
 			End If
@@ -1307,17 +1315,22 @@ Public Class Canvas
 		Dim pth As GraphicsPath = shp.TotalPath(False)
 		If IsNothing(pth) Then Return
 		pth = pth.Clone
+
 		If shp.Glow.GStyle = GlowStyle.OnBorder Then
 			If Not IsNothing(shp.SelectionPen) Then pth.Widen(shp.SelectionPen)
 		End If
+
 		If shp.Glow.GClip = GlowClip.Outside Then
 			Dim rg As New Region(ClientRectangle)
 			rg.Exclude(pth)
 			g.Clip = rg
+			rg.Dispose()
 		ElseIf shp.Glow.GClip = GlowClip.Inside Then
 			Dim rg As New Region(pth)
 			g.Clip = rg
+			rg.Dispose()
 		End If
+
 		For i As Integer = 1 To shp.Glow.Radius Step 2
 			Dim aGlow As Integer = shp.Glow.Strength - (shp.Glow.Strength / shp.Glow.Radius * i)
 			Using pen As New Pen(Color.FromArgb(aGlow, shp.Glow.GlowColor), i) With
@@ -1325,6 +1338,8 @@ Public Class Canvas
 				g.DrawPath(pen, pth)
 			End Using
 		Next i
+
+		pth.Dispose()
 
 		If shp.Glow.GClip <> GlowClip.None Then g.ResetClip()
 
@@ -1342,10 +1357,11 @@ Public Class Canvas
 			Dim rg As New Region(ClientRectangle)
 			rg.Exclude(shp.TotalPath(False))
 			g.Clip = rg
+			rg.Dispose()
 		End If
 
-		For i As Integer = 1 To shp.Shadow.Blur
-			Dim aGlow As Integer = shp.Shadow.Radius - (shp.Shadow.Radius / shp.Shadow.Blur * i)
+		For i As Integer = 1 To shp.Shadow.Radius
+			Dim aGlow As Integer = shp.Shadow.Strength - (shp.Shadow.Strength / shp.Shadow.Radius * i)
 			Using pen As New Pen(Color.FromArgb(aGlow, shp.Shadow.ShadowColor), i) With
 				{.LineJoin = LineJoin.Round, .StartCap = shp.DPen.PStartCap, .EndCap = shp.DPen.PEndCap}
 				g.DrawPath(pen, pth)
@@ -1353,6 +1369,9 @@ Public Class Canvas
 		Next i
 
 		If shp.Shadow.Fill Then g.FillPath(New SolidBrush(shp.Shadow.ShadowColor), pth)
+
+		pth.Dispose()
+		temp_s.Dispose()
 
 		If shp.Shadow.RegionClipping Then g.ResetClip()
 
@@ -1387,6 +1406,9 @@ Public Class Canvas
 				fnt.Dispose()
 			End Using
 
+			ptpath.Dispose()
+			brsh.Dispose()
+
 		Next
 	End Sub
 
@@ -1405,7 +1427,7 @@ Public Class Canvas
 		'Fill and Draw Shape
 		Dim pth As GraphicsPath = shp.TotalPath(False)
 		Dim fbr As Brush = shp.FillBrush
-		Dim dpn As Pen = shp.CreatePen
+		Dim dpn As Pen = shp.CreatePen()
 
 		If IsNothing(pth) Then Return
 
@@ -1442,6 +1464,7 @@ Public Class Canvas
 					.DashPattern = New Single() {2, 2, 3}
 				}
 				g.DrawPath(pn_brd, pth_brd)
+				pn_brd.Dispose()
 			End Using
 		End If
 
@@ -1473,12 +1496,16 @@ Public Class Canvas
 									 g.DrawPath(pn, gp)
 								 End Sub)
 
+				br.Dispose()
+
 				'Draw Rotation Anchor Line
 				Dim pt1 As New PointF(shp.Top(False).GetBounds().X + (shp.Top(False).GetBounds().Width / 2),
 					 shp.Top(False).GetBounds().Top)
 				Dim pt2 As New PointF(shp.Rotate(False).GetBounds().X + (shp.Rotate(False).GetBounds().Width / 2),
 					 shp.Rotate(False).GetBounds().Bottom)
 				g.DrawLine(pn, pt1, pt2)
+
+				pn.Dispose()
 
 			Case MOperations.TopLeft
 				DrawSize(g, shp)
@@ -1549,6 +1576,7 @@ Public Class Canvas
 					.DashPattern = New Single() {2, 2, 3}
 				}
 				g.DrawPath(pn_brd, pth_brd)
+				pn_brd.Dispose()
 			End Using
 		End If
 
@@ -1577,6 +1605,9 @@ Public Class Canvas
 									 g.FillPath(bounds_br, gp)
 									 g.DrawPath(bounds_pn, gp)
 								 End Sub)
+
+				bounds_br.Dispose()
+				bounds_pn.Dispose()
 		End Select
 
 		g.PixelOffsetMode = PixelOffsetMode.HighSpeed

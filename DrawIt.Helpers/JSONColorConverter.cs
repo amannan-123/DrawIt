@@ -1,9 +1,8 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace JSONHelpers
+namespace DrawIt.Helpers
 {
 	public class JSONColorConverter : JsonConverter<Color>
 	{

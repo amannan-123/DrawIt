@@ -7,13 +7,29 @@ namespace DrawIt.Models
 	[Serializable]
 	public class MyGlow : INotifyPropertyChanged, ICloneable
 	{
+		#region INotifyPropertyChanged
 		public event PropertyChangedEventHandler? PropertyChanged;
 
 		private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
+		#endregion
 
+		#region ICloneable
+		/// <summary>
+		///		Creates an exact copy of this <see cref="MyGlow"/> object.
+		/// </summary>
+		public object Clone()
+		{
+			MyGlow _new = new();
+			foreach (PropertyDescriptor pd in TypeDescriptor.GetProperties(typeof(MyGlow)))
+				pd.SetValue(_new, pd.GetValue(this));
+			return _new;
+		}
+		#endregion
+
+		#region Properties
 		private bool _enabled = false;
 		public bool Enabled
 		{
@@ -132,17 +148,7 @@ namespace DrawIt.Models
 				}
 			}
 		}
-
-		/// <summary>
-		///		Creates an exact copy of this <see cref="MyGlow"/> object.
-		/// </summary>
-		public object Clone()
-		{
-			MyGlow _new = new();
-			foreach (PropertyDescriptor pd in TypeDescriptor.GetProperties(typeof(MyGlow)))
-				pd.SetValue(_new, pd.GetValue(this));
-			return _new;
-		}
+		#endregion
 	}
 
 }

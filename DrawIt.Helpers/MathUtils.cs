@@ -1,9 +1,7 @@
-﻿using System.Diagnostics;
-
-namespace DrawIt
+﻿namespace DrawIt.Helpers
 {
 
-	internal sealed class Helpers
+	public sealed class MathUtils
 	{
 		public static float ToPercentage(float p1, float p2, float pt)
 		{
@@ -14,6 +12,17 @@ namespace DrawIt
 		{
 			return pt * (p2 - p1) / 100f + p1;
 		}
+
+		public static PointF ToPercentage(PointF p1, PointF p2, PointF pt)
+		{
+			return new PointF((float)((pt.X - p1.X) * 100 / (double)(p2.X - p1.X)), (float)((pt.Y - p1.Y) * 100 / (double)(p2.Y - p1.Y)));
+		}
+
+		public static PointF FromPercentage(PointF p1, PointF p2, PointF pt)
+		{
+			return new PointF((float)(pt.X * (p2.X - p1.X) / (double)100 + p1.X), (float)(pt.Y * (p2.Y - p1.Y) / (double)100 + p1.Y));
+		}
+
 
 		public static PointF ToPercentage(RectangleF rect, PointF pt)
 		{
@@ -27,7 +36,7 @@ namespace DrawIt
 
 		public static RectangleF ToPercentage(RectangleF baseRect, RectangleF childRect)
 		{
-			return new(Helpers.ToPercentage(baseRect, childRect.Location), new SizeF(childRect.Width * 100f / baseRect.Width, childRect.Height * 100f / baseRect.Height));
+			return new(ToPercentage(baseRect, childRect.Location), new SizeF(childRect.Width * 100f / baseRect.Width, childRect.Height * 100f / baseRect.Height));
 		}
 
 		public static RectangleF FromPercentage(RectangleF baseRect, RectangleF childRect)

@@ -1,5 +1,4 @@
 ﻿Imports System.ComponentModel
-Imports System.Drawing.Design
 Imports System.Drawing.Drawing2D
 Imports System.Windows.Forms.Design
 

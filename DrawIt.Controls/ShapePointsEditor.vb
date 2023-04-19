@@ -1,5 +1,6 @@
 ﻿Imports System.Drawing.Drawing2D
 Imports System.ComponentModel
+Imports DrawIt.Helpers
 
 <DefaultEvent("PointsChanged")>
 <DefaultProperty("Points")>
@@ -143,8 +144,8 @@ Public Class ShapePointsEditor
 	Private Function LineFromIndex(p1 As Integer) As GraphicsPath
 		Dim p2 = (p1 + 1) Mod _lst.Count
 		Dim gp As New GraphicsPath
-		Dim pt1 = FromPercentage(rect, _lst(p1).Point)
-		Dim pt2 = FromPercentage(rect, _lst(p2).Point)
+		Dim pt1 = MathUtils.FromPercentage(rect, _lst(p1).Point)
+		Dim pt2 = MathUtils.FromPercentage(rect, _lst(p2).Point)
 		gp.AddLine(pt1, pt2)
 		Return gp
 	End Function
@@ -152,7 +153,7 @@ Public Class ShapePointsEditor
 	Private Function CurveFromIndex(p1 As Integer) As GraphicsPath
 		Dim p_pos As New List(Of PointF)
 		For Each pt As PointF In Points
-			p_pos.Add(FromPercentage(rect, pt))
+			p_pos.Add(MathUtils.FromPercentage(rect, pt))
 		Next
 		Dim pth_chk As New GraphicsPath
 		If ShapeType = DrawType.ClosedCurve Then
@@ -182,7 +183,7 @@ Public Class ShapePointsEditor
 
 	Private Function PointRegion(_item As MyPoint) As GraphicsPath
 		Dim gp As New GraphicsPath
-		Dim pos As PointF = FromPercentage(rect, _item.Point)
+		Dim pos As PointF = MathUtils.FromPercentage(rect, _item.Point)
 		Dim rt As New RectangleF(pos, SizeF.Empty)
 		rt.Inflate(3, 3)
 		gp.AddEllipse(rt)
@@ -214,7 +215,7 @@ Public Class ShapePointsEditor
 			If rect.Contains(e.Location) Then
 				If e.Button = MouseButtons.Left Then
 					Dim bl As New MyPoint With {
-						.Point = ToPercentage(rect, e.Location),
+						.Point = MathUtils.ToPercentage(rect, e.Location),
 						.Selected = True
 					}
 					_lst.Insert(curl + 1, bl)
@@ -223,14 +224,14 @@ Public Class ShapePointsEditor
 				ElseIf e.Button = MouseButtons.Right Then
 					m_line = True
 					s_ind = curl
-					pt1 = FromPercentage(rect, _lst(curl).Point)
-					pt2 = FromPercentage(rect, _lst((curl + 1) Mod _lst.Count).Point)
+					pt1 = MathUtils.FromPercentage(rect, _lst(curl).Point)
+					pt2 = MathUtils.FromPercentage(rect, _lst((curl + 1) Mod _lst.Count).Point)
 				End If
 			End If
 		Else
 			If rect.Contains(e.Location) AndAlso e.Button = MouseButtons.Left Then
 				Dim bl As New MyPoint With {
-					.Point = ToPercentage(rect, e.Location),
+					.Point = MathUtils.ToPercentage(rect, e.Location),
 					.Selected = True
 				}
 				_lst.Add(bl)
@@ -246,7 +247,7 @@ Public Class ShapePointsEditor
 			Cursor = Cursors.Hand
 			Dim sel As Integer = SelectedItem()
 			If sel = -1 Then Return
-			Dim pos = ToPercentage(rect, e.Location)
+			Dim pos = MathUtils.ToPercentage(rect, e.Location)
 			If My.Computer.Keyboard.CtrlKeyDown Then pos = Point.Round(pos)
 			_lst(sel).Point = pos
 			RaiseEvent PointsChanged(Me, New EventArgs)
@@ -257,8 +258,8 @@ Public Class ShapePointsEditor
 			Dim p2 = pt2
 			p1.X += offset.X : p1.Y += offset.Y
 			p2.X += offset.X : p2.Y += offset.Y
-			Dim tp1 = ToPercentage(rect, p1)
-			Dim tp2 = ToPercentage(rect, p2)
+			Dim tp1 = MathUtils.ToPercentage(rect, p1)
+			Dim tp2 = MathUtils.ToPercentage(rect, p2)
 			If My.Computer.Keyboard.CtrlKeyDown Then
 				tp1 = Point.Round(tp1)
 				tp2 = Point.Round(tp2)
@@ -307,7 +308,7 @@ Public Class ShapePointsEditor
 		If Points.Count >= GetMin() Then
 			Dim p_pos As New List(Of PointF)
 			For Each pt As PointF In Points
-				p_pos.Add(FromPercentage(rect, pt))
+				p_pos.Add(MathUtils.FromPercentage(rect, pt))
 			Next
 			Dim pth As New GraphicsPath
 			Select Case ShapeType

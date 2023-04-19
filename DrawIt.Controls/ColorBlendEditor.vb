@@ -1,5 +1,6 @@
 ﻿Imports System.ComponentModel
 Imports System.Drawing.Drawing2D
+Imports DrawIt.Helpers
 
 <DefaultEvent("BlendChanged")>
 Public Class ColorBlendEditor
@@ -128,7 +129,7 @@ Public Class ColorBlendEditor
 
 	Private Function BlendRegion(_item As ColorBlendItem) As GraphicsPath
 		Dim gp As New GraphicsPath
-		Dim pos As Single = FromPercentage(_rect.X, _rect.Right, _item.BPosition * 100)
+		Dim pos As Single = MathUtils.FromPercentage(_rect.X, _rect.Right, _item.BPosition * 100)
 		Dim rect As New Rectangle(pos - 3, _rect.Bottom - 10, 6, 8)
 		Dim p1 As New Point(rect.X + (rect.Width / 2), rect.Y - 3)
 		Dim p2 As Point = rect.Location
@@ -187,7 +188,7 @@ Public Class ColorBlendEditor
 			Else
 				If _rect.Contains(e.Location) AndAlso e.Button = MouseButtons.Left Then
 					Dim bl As New ColorBlendItem With {
-						.BPosition = ToPercentage(_rect.X, _rect.Right, e.X) / 100,
+						.BPosition = MathUtils.ToPercentage(_rect.X, _rect.Right, e.X) / 100,
 						.BColor = CE_Button.SelectedColor,
 						.Selected = True
 					}
@@ -207,7 +208,7 @@ Public Class ColorBlendEditor
 			Dim sel As Integer = SelectedItem()
 			If sel = -1 Then Return
 			Dim bl As ColorBlendItem = _lst(sel)
-			Dim pos = ToPercentage(_rect.X, _rect.Right, e.X) / 100
+			Dim pos = MathUtils.ToPercentage(_rect.X, _rect.Right, e.X) / 100
 			If pos > 1 Or pos < 0 Then Return
 			bl.BPosition = pos
 		End If

@@ -1,6 +1,8 @@
 ﻿#Region "Imports"
 Imports System.Drawing.Drawing2D
 Imports System.ComponentModel
+Imports DrawIt.Helpers
+
 #End Region
 
 <ToolboxBitmap(GetType(TrackBar))>
@@ -275,16 +277,16 @@ Public Class MyTrackBar
 	End Sub
 
 	Private Sub SetSliderValue(pt As Point)
-		Dim perc As Single = ToPercentage(rectSliderBar.X, rectSliderBar.Right, pt.X)
-		Dim _val As Single = FromPercentage(Minimum, Maximum, perc)
+		Dim perc As Single = MathUtils.ToPercentage(rectSliderBar.X, rectSliderBar.Right, pt.X)
+		Dim _val As Single = MathUtils.FromPercentage(Minimum, Maximum, perc)
 		If AllowDecimal = False Then _val = CInt(_val)
 		Value = _val
 		UpdateSlider(pt.X)
 	End Sub
 
 	Private Sub SetSliderFromValues()
-		Dim perc As Single = ToPercentage(Minimum, Maximum, Value)
-		Dim pos As Single = FromPercentage(rectSliderBar.X, rectSliderBar.Right, perc)
+		Dim perc As Single = MathUtils.ToPercentage(Minimum, Maximum, Value)
+		Dim pos As Single = MathUtils.FromPercentage(rectSliderBar.X, rectSliderBar.Right, perc)
 		UpdateSlider(pos)
 	End Sub
 

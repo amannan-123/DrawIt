@@ -1,6 +1,7 @@
 ﻿Imports System.ComponentModel
 Imports System.Drawing.Drawing2D
 Imports System.Drawing.Text
+Imports DrawIt.Helpers
 
 <DefaultEvent("ValueChanged")>
 <DefaultProperty("Value")>
@@ -163,15 +164,15 @@ Public Class PointSelector
 	End Sub
 
 	Private Sub SetSliderValue(pt As Point)
-		Dim perc As Point = Point.Ceiling(ToPercentage(rectSliderBar.Location, New Point(rectSliderBar.Right, rectSliderBar.Bottom), pt))
-		Dim _val As Point = Point.Ceiling(FromPercentage(Minimum, Maximum, perc))
+		Dim perc As Point = Point.Ceiling(MathUtils.ToPercentage(rectSliderBar.Location, New Point(rectSliderBar.Right, rectSliderBar.Bottom), pt))
+		Dim _val As Point = Point.Ceiling(MathUtils.FromPercentage(Minimum, Maximum, perc))
 		Value = _val
 		UpdateSlider(pt)
 	End Sub
 
 	Private Sub SetThumb()
-		Dim perc As Point = Point.Ceiling(ToPercentage(Minimum, Maximum, Value))
-		Dim pos As Point = Point.Ceiling(FromPercentage(rectSliderBar.Location, New Point(rectSliderBar.Right, rectSliderBar.Bottom), perc))
+		Dim perc As Point = Point.Ceiling(MathUtils.ToPercentage(Minimum, Maximum, Value))
+		Dim pos As Point = Point.Ceiling(MathUtils.FromPercentage(rectSliderBar.Location, New Point(rectSliderBar.Right, rectSliderBar.Bottom), perc))
 		UpdateSlider(pos)
 	End Sub
 

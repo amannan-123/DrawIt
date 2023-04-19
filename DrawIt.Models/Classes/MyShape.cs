@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using Microsoft.VisualBasic;
 
 namespace DrawIt.Models
 {
@@ -10,21 +9,36 @@ namespace DrawIt.Models
 	{
 		public MyShape()
 		{
-			Corners.PropertyChanged += Corners_PropertyChanged;
+			Corners.PropertyChanged += (sender, e) =>
+			{
+				PropertyChanged?.Invoke(this, e!);
+			};
 		}
 
-		private void Corners_PropertyChanged(object? sender, PropertyChangedEventArgs? e)
-		{
-			PropertyChanged?.Invoke(this, e!);
-		}
-
+		#region INotifyPropertyChanged
 		public event PropertyChangedEventHandler? PropertyChanged;
 
 		private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
+		#endregion
 
+		#region ICloneable
+		/// <summary>
+		/// 	Creates an exact copy of this <see cref="MyShape"/> object.
+		/// </summary>
+		public object Clone()
+		{
+			MyShape _new = new();
+			foreach (PropertyDescriptor pd in TypeDescriptor.GetProperties(typeof(MyShape)))
+				pd.SetValue(_new, pd.GetValue(this));
+			_new.Corners = (MyCorners)Corners.Clone();
+			return _new;
+		}
+		#endregion
+
+		#region ShapeType
 		private ShapeStyle s_type = ShapeStyle.Rectangle;
 		public ShapeStyle SType
 		{
@@ -41,7 +55,9 @@ namespace DrawIt.Models
 				}
 			}
 		}
+		#endregion
 
+		#region RoundedRectangle
 		private MyCorners _crn = new();
 		public MyCorners Corners
 		{
@@ -58,7 +74,9 @@ namespace DrawIt.Models
 				}
 			}
 		}
+		#endregion
 
+		#region Polygon
 		private PointF[] pol_pt = new PointF[] { new PointF(10, 10), new PointF(10, 90), new PointF(90, 90) };
 		public PointF[] PolygonPoints
 		{
@@ -75,7 +93,9 @@ namespace DrawIt.Models
 				}
 			}
 		}
+		#endregion
 
+		#region Curve
 		private PointF[] cur_pt = new PointF[] { new PointF(10, 10), new PointF(10, 90), new PointF(90, 90) };
 		public PointF[] CurvePoints
 		{
@@ -109,7 +129,9 @@ namespace DrawIt.Models
 				}
 			}
 		}
+		#endregion
 
+		#region Arc,Pie
 		private float st_ang = 0;
 		public float StartAngle
 		{
@@ -143,7 +165,9 @@ namespace DrawIt.Models
 				}
 			}
 		}
+		#endregion
 
+		#region Text
 		private string f_name = "Segoe UI";
 		public string FontName
 		{
@@ -228,18 +252,7 @@ namespace DrawIt.Models
 				}
 			}
 		}
-
-		/// <summary>
-		/// 	Creates an exact copy of this <see cref="MyShape"/> object.
-		/// </summary>
-		public object Clone()
-		{
-			MyShape _new = new();
-			foreach (PropertyDescriptor pd in TypeDescriptor.GetProperties(typeof(MyShape)))
-				pd.SetValue(_new, pd.GetValue(this));
-			_new.Corners = (MyCorners)Corners.Clone();
-			return _new;
-		}
+		#endregion
 	}
 
 }
