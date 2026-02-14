@@ -50,7 +50,7 @@ Public Class Shape : Implements IDisposable
 	End Sub
 
 	Sub New(_loc As PointF, _shp As ShapeStyle, _br As BrushType)
-		FBrush.BType = _br
+		FBrush = MyBrushFactory.Create(_br)
 		MShape = MyShapeFactory.Create(_shp)
 		_baseX = _loc.X
 		_baseY = _loc.Y
@@ -131,12 +131,8 @@ Public Class Shape : Implements IDisposable
 		UpdatePath()
 		'resize image only if shape is being resized.
 		If Not Moving Then UpdateImage()
-		If Not FBrush.BType = BrushType.Solid AndAlso Not FBrush.BType = BrushType.Hatch Then
-			UpdateBrush()
-		End If
-		If DPen.PBrush.BType = BrushType.LinearGradient Then
-			UpdatePenBrush()
-		End If
+		UpdateBrush()
+		UpdatePenBrush()
 	End Sub
 
 	Public Function GetRect() As RectangleF
@@ -239,9 +235,11 @@ Public Class Shape : Implements IDisposable
 		Set(ByVal value As Boolean)
 			If _flipX = value Then Return
 			_flipX = value
-			Dim cent_pt = FBrush.PCenterPoint
+			Dim pathBrush = TryCast(FBrush, MyPathGradientBrush)
+			If IsNothing(pathBrush) Then Return
+			Dim cent_pt = pathBrush.CenterPoint
 			cent_pt.X = 100 - cent_pt.X
-			FBrush.PCenterPoint = cent_pt
+			pathBrush.CenterPoint = cent_pt
 		End Set
 	End Property
 
@@ -253,19 +251,35 @@ Public Class Shape : Implements IDisposable
 		Set(ByVal value As Boolean)
 			If _flipY = value Then Return
 			_flipY = value
-			Dim cent_pt = FBrush.PCenterPoint
+			Dim pathBrush = TryCast(FBrush, MyPathGradientBrush)
+			If IsNothing(pathBrush) Then Return
+			Dim cent_pt = pathBrush.CenterPoint
 			cent_pt.Y = 100 - cent_pt.Y
-			FBrush.PCenterPoint = cent_pt
+			pathBrush.CenterPoint = cent_pt
 		End Set
 	End Property
 
-	Private _brush As New MyBrush()
+	Private _brush As MyBrush = New MySolidBrush()
 	Public Property FBrush() As MyBrush
 		Get
 			Return _brush
 		End Get
 		Set(value As MyBrush)
+			If IsNothing(value) Then value = New MySolidBrush()
+			If ReferenceEquals(_brush, value) Then Return
+
+			If _eventsBound AndAlso Not IsNothing(_brush) Then
+				RemoveHandler _brush.PropertyChanged, AddressOf BrushChanged
+			End If
+
 			_brush = value
+
+			If _eventsBound Then
+				AddHandler _brush.PropertyChanged, AddressOf BrushChanged
+			End If
+
+			UpdateImage()
+			UpdateBrush()
 		End Set
 	End Property
 
@@ -275,7 +289,23 @@ Public Class Shape : Implements IDisposable
 			Return _pen
 		End Get
 		Set(value As MyPen)
+			If IsNothing(value) Then value = New MyPen()
+			If ReferenceEquals(_pen, value) Then Return
+
+			If _eventsBound AndAlso Not IsNothing(_pen) Then
+				RemoveHandler _pen.PropertyChanged, AddressOf PenChanged
+				If Not IsNothing(_pen.PBrush) Then RemoveHandler _pen.PBrush.PropertyChanged, AddressOf PenChanged
+			End If
+
 			_pen = value
+
+			If _eventsBound Then
+				AddHandler _pen.PropertyChanged, AddressOf PenChanged
+				If Not IsNothing(_pen.PBrush) Then AddHandler _pen.PBrush.PropertyChanged, AddressOf PenChanged
+			End If
+
+			UpdateSelectionPen()
+			UpdatePenBrush()
 		End Set
 	End Property
 
@@ -406,11 +436,11 @@ Public Class Shape : Implements IDisposable
 	Public Sub UpdateSelectionPen()
 		Dim pn As New Pen(Color.Black) With {
 			.Width = DPen.PWidth,
-			.StartCap = DPen.PStartCap,
-			.EndCap = DPen.PEndCap,
-			.DashCap = DPen.PDashCap,
-			.DashStyle = DPen.PDashstyle,
-			.LineJoin = DPen.PLineJoin
+			.StartCap = ToLineCap(DPen.PStartCap),
+			.EndCap = ToLineCap(DPen.PEndCap),
+			.DashCap = ToDashCap(DPen.PDashCap),
+			.DashStyle = ToDashStyle(DPen.PDashstyle),
+			.LineJoin = ToLineJoin(DPen.PLineJoin)
 		}
 		pn.ScaleTransform(DPen.ScaleX, DPen.ScaleY)
 		_pn = pn
@@ -434,8 +464,18 @@ Public Class Shape : Implements IDisposable
 	Public Sub UpdatePenBrush()
 		Select Case DPen.PBrush.BType
 			Case BrushType.Solid
-				_pb = New SolidBrush(DPen.PBrush.SolidColor)
+				Dim solid = TryCast(DPen.PBrush, MySolidBrush)
+				If IsNothing(solid) Then
+					_pb = Nothing
+					Return
+				End If
+				_pb = New SolidBrush(solid.Color)
 			Case BrushType.LinearGradient
+				Dim linear = TryCast(DPen.PBrush, MyLinearGradientBrush)
+				If IsNothing(linear) Then
+					_pb = Nothing
+					Return
+				End If
 				Dim pth As GraphicsPath = TotalPath(False)
 				If IsNothing(pth) Then
 					_pb = Nothing
@@ -444,22 +484,22 @@ Public Class Shape : Implements IDisposable
 				pth.Widen(SelectionPen)
 				Dim r2 As RectangleF = pth.GetBounds
 				r2.Inflate(1, 1)
-				Dim lgb As New LinearGradientBrush(r2, DPen.PBrush.LColor1,
-													DPen.PBrush.LColor2,
-													DPen.PBrush.LinearAngle) With {
-					.GammaCorrection = DPen.PBrush.LGamma
+				Dim lgb As New LinearGradientBrush(r2, linear.Color1,
+													linear.Color2,
+													linear.Angle) With {
+					.GammaCorrection = linear.Gamma
 													}
-				If DPen.PBrush.LTriangular Then
-					lgb.SetBlendTriangularShape(DPen.PBrush.LTriFocus, DPen.PBrush.LTriScale)
+				If linear.Triangular Then
+					lgb.SetBlendTriangularShape(linear.TriFocus, linear.TriScale)
 				End If
-				If DPen.PBrush.LBell Then
-					lgb.SetSigmaBellShape(DPen.PBrush.LBellFocus, DPen.PBrush.LBellScale)
+				If linear.Bell Then
+					lgb.SetSigmaBellShape(linear.BellFocus, linear.BellScale)
 				End If
-				If DPen.PBrush.LInterpolate Then
+				If linear.Interpolate Then
 					Dim ip As New ColorBlend
-					If DPen.PBrush.LInterColors.Length = DPen.PBrush.LInterPositions.Length Then
-						ip.Colors = DPen.PBrush.LInterColors
-						ip.Positions = DPen.PBrush.LInterPositions
+					If linear.InterColors.Length = linear.InterPositions.Length Then
+						ip.Colors = linear.InterColors
+						ip.Positions = linear.InterPositions
 						lgb.InterpolationColors = ip
 					Else
 						_pb = Nothing
@@ -469,7 +509,12 @@ Public Class Shape : Implements IDisposable
 			Case BrushType.PathGradient
 				_pb = Nothing
 			Case BrushType.Hatch
-				_pb = New HatchBrush(DPen.PBrush.HStyle, DPen.PBrush.HFore, DPen.PBrush.HBack)
+				Dim hatch = TryCast(DPen.PBrush, MyHatchBrush)
+				If IsNothing(hatch) Then
+					_pb = Nothing
+					Return
+				End If
+				_pb = New HatchBrush(ToHatchStyle(hatch.Style), hatch.Fore, hatch.Back)
 			Case BrushType.Texture
 				_pb = Nothing
 		End Select
@@ -500,7 +545,8 @@ Public Class Shape : Implements IDisposable
 	End Property
 
 	Public Sub UpdateImage()
-		If IsNothing(FBrush.TImage) Or Not FBrush.BType = BrushType.Texture Then
+		Dim texture = TryCast(FBrush, MyTextureBrush)
+		If IsNothing(texture) Then
 			_img = Nothing
 			Return
 		End If
@@ -509,9 +555,14 @@ Public Class Shape : Implements IDisposable
 			_img = Nothing
 			Return
 		End If
-		Dim img As Image = FBrush.TImage
-		img.RotateFlip(FBrush.TRotateFlip)
+		Dim img As Image = BytesToImage(texture.ImageBytes)
+		If IsNothing(img) Then
+			_img = Nothing
+			Return
+		End If
+		img.RotateFlip(ToRotateFlipType(texture.RotateFlip))
 		Dim bmp As New Bitmap(img, rt.Width, rt.Height)
+		img.Dispose()
 		'Dim bmp As New Bitmap(CInt(rt.Width), CInt(rt.Height))
 		'Dim g As Graphics = Graphics.FromImage(bmp)
 		'g.CompositingMode = CompositingMode.SourceCopy
@@ -519,11 +570,9 @@ Public Class Shape : Implements IDisposable
 		'g.InterpolationMode = InterpolationMode.HighQualityBicubic
 		'g.SmoothingMode = SmoothingMode.HighQuality
 		'g.PixelOffsetMode = PixelOffsetMode.HighQuality
-		'Dim img As Image = FBrush.TImage.GetThumbnailImage(rt.Width, rt.Height, Nothing, IntPtr.Zero)
-		'img.RotateFlip(FBrush.TRotateFlip)
 		'g.DrawImage(img, rt)
 		'img.Dispose()
-		If FBrush.TTransparency Then bmp.MakeTransparent(FBrush.TColor)
+		If texture.Transparency Then bmp.MakeTransparent(texture.TransparentColor)
 		_img = bmp
 	End Sub
 
@@ -537,8 +586,18 @@ Public Class Shape : Implements IDisposable
 
 		Select Case FBrush.BType
 			Case BrushType.Solid
-				_cb = New SolidBrush(FBrush.SolidColor)
+				Dim solid = TryCast(FBrush, MySolidBrush)
+				If IsNothing(solid) Then
+					_cb = Nothing
+					Return
+				End If
+				_cb = New SolidBrush(solid.Color)
 			Case BrushType.LinearGradient
+				Dim linear = TryCast(FBrush, MyLinearGradientBrush)
+				If IsNothing(linear) Then
+					_cb = Nothing
+					Return
+				End If
 				If IsNothing(TotalPath(False)) Then
 					_cb = Nothing
 					Return
@@ -549,64 +608,74 @@ Public Class Shape : Implements IDisposable
 					_cb = Nothing
 					Return
 				End If
-				Dim lgb As New LinearGradientBrush(r2, FBrush.LColor1,
-														FBrush.LColor2,
-														FBrush.LinearAngle) With
-														{.GammaCorrection = FBrush.LGamma}
-				If FBrush.LTriangular Then
-					lgb.SetBlendTriangularShape(FBrush.LTriFocus, FBrush.LTriScale)
-				ElseIf FBrush.LBell Then
-					lgb.SetSigmaBellShape(FBrush.LBellFocus, FBrush.LBellScale)
+				Dim lgb As New LinearGradientBrush(r2, linear.Color1,
+														linear.Color2,
+														linear.Angle) With
+														{.GammaCorrection = linear.Gamma}
+				If linear.Triangular Then
+					lgb.SetBlendTriangularShape(linear.TriFocus, linear.TriScale)
+				ElseIf linear.Bell Then
+					lgb.SetSigmaBellShape(linear.BellFocus, linear.BellScale)
 				End If
-				If FBrush.LInterpolate Then
+				If linear.Interpolate Then
 					Dim ip As New ColorBlend With {
-						.Colors = FBrush.LInterColors,
-						.Positions = FBrush.LInterPositions
+						.Colors = linear.InterColors,
+						.Positions = linear.InterPositions
 					}
 					If ip.Colors.Length = ip.Positions.Length Then lgb.InterpolationColors = ip
-				ElseIf FBrush.LBlend Then
+				ElseIf linear.Blend Then
 					Dim bl As New Blend With {
-						.Factors = FBrush.LBlendFactors,
-						.Positions = FBrush.LBlendPositions
+						.Factors = linear.BlendFactors,
+						.Positions = linear.BlendPositions
 					}
 					If bl.Factors.Length = bl.Positions.Length Then lgb.Blend = bl
 				End If
 				_cb = lgb
 			Case BrushType.PathGradient
+				Dim pathBrush = TryCast(FBrush, MyPathGradientBrush)
+				If IsNothing(pathBrush) Then
+					_cb = Nothing
+					Return
+				End If
 				Dim t_path = TotalPath(False)
 				If IsNothing(t_path) Or AbsRect(GetRect).Width = 0 Or AbsRect(GetRect).Height = 0 Then
 					_cb = Nothing
 					Return
 				End If
 				Dim ptb As New PathGradientBrush(TotalPath(False)) With {
-						.CenterColor = FBrush.PCenter,
-						.FocusScales = New PointF(FBrush.PFocusX, FBrush.PFocusY),
-						.CenterPoint = MathUtils.FromPercentage(AbsRect(GetRect), FBrush.PCenterPoint)
+						.CenterColor = pathBrush.Center,
+						.FocusScales = New PointF(pathBrush.FocusX, pathBrush.FocusY),
+						.CenterPoint = MathUtils.FromPercentage(AbsRect(GetRect), pathBrush.CenterPoint)
 					}
-				If FBrush.PSurround.Length <= t_path.PointCount Then
-					ptb.SurroundColors = FBrush.PSurround
+				If pathBrush.Surround.Length <= t_path.PointCount Then
+					ptb.SurroundColors = pathBrush.Surround
 				End If
-				If FBrush.PTriangular Then
-					ptb.SetBlendTriangularShape(FBrush.PTriFocus, FBrush.PTriScale)
-				ElseIf FBrush.PBell Then
-					ptb.SetSigmaBellShape(FBrush.PBellFocus, FBrush.PBellScale)
+				If pathBrush.Triangular Then
+					ptb.SetBlendTriangularShape(pathBrush.TriFocus, pathBrush.TriScale)
+				ElseIf pathBrush.Bell Then
+					ptb.SetSigmaBellShape(pathBrush.BellFocus, pathBrush.BellScale)
 				End If
-				If FBrush.PInterpolate Then
+				If pathBrush.Interpolate Then
 					Dim ip As New ColorBlend With {
-						.Colors = FBrush.PInterColors,
-						.Positions = FBrush.PInterPositions
+						.Colors = pathBrush.InterColors,
+						.Positions = pathBrush.InterPositions
 					}
 					If ip.Colors.Length = ip.Positions.Length Then ptb.InterpolationColors = ip
-				ElseIf FBrush.PBlend Then
+				ElseIf pathBrush.Blend Then
 					Dim bl As New Blend With {
-						.Factors = FBrush.PBlendFactors,
-						.Positions = FBrush.PBlendPositions
+						.Factors = pathBrush.BlendFactors,
+						.Positions = pathBrush.BlendPositions
 					}
 					If bl.Factors.Length = bl.Positions.Length Then ptb.Blend = bl
 				End If
 				_cb = ptb
 			Case BrushType.Hatch
-				_cb = New HatchBrush(FBrush.HStyle, FBrush.HFore, FBrush.HBack)
+				Dim hatch = TryCast(FBrush, MyHatchBrush)
+				If IsNothing(hatch) Then
+					_cb = Nothing
+					Return
+				End If
+				_cb = New HatchBrush(ToHatchStyle(hatch.Style), hatch.Fore, hatch.Back)
 			Case BrushType.Texture
 				If IsNothing(FittedImage) Then
 					_cb = Nothing
@@ -772,36 +841,36 @@ Public Class Shape : Implements IDisposable
 					.Trimming = StringTrimming.EllipsisCharacter
 				}
 				Select Case data.TextAlignment
-					Case ContentAlignment.TopLeft
+					Case MyTextAlignment.TopLeft
 						sf.LineAlignment = StringAlignment.Near
 						sf.Alignment = StringAlignment.Near
-					Case ContentAlignment.TopCenter
+					Case MyTextAlignment.TopCenter
 						sf.LineAlignment = StringAlignment.Near
 						sf.Alignment = StringAlignment.Center
-					Case ContentAlignment.TopRight
+					Case MyTextAlignment.TopRight
 						sf.LineAlignment = StringAlignment.Near
 						sf.Alignment = StringAlignment.Far
-					Case ContentAlignment.MiddleLeft
+					Case MyTextAlignment.MiddleLeft
 						sf.LineAlignment = StringAlignment.Center
 						sf.Alignment = StringAlignment.Near
-					Case ContentAlignment.MiddleCenter
+					Case MyTextAlignment.MiddleCenter
 						sf.LineAlignment = StringAlignment.Center
 						sf.Alignment = StringAlignment.Center
-					Case ContentAlignment.MiddleRight
+					Case MyTextAlignment.MiddleRight
 						sf.LineAlignment = StringAlignment.Center
 						sf.Alignment = StringAlignment.Far
-					Case ContentAlignment.BottomLeft
+					Case MyTextAlignment.BottomLeft
 						sf.LineAlignment = StringAlignment.Far
 						sf.Alignment = StringAlignment.Near
-					Case ContentAlignment.BottomCenter
+					Case MyTextAlignment.BottomCenter
 						sf.LineAlignment = StringAlignment.Far
 						sf.Alignment = StringAlignment.Center
-					Case ContentAlignment.BottomRight
+					Case MyTextAlignment.BottomRight
 						sf.LineAlignment = StringAlignment.Far
 						sf.Alignment = StringAlignment.Far
 				End Select
 				Dim fl As New FontFamily(data.FontName)
-				gp.AddString(data.Text, fl, data.FontStyle,
+				gp.AddString(data.Text, fl, ToFontStyle(data.FontStyle),
 						 data.FontSize * 1.34, rt, sf)
 		End Select
 
@@ -953,7 +1022,9 @@ Public Class Shape : Implements IDisposable
 	End Function
 
 	Public Function Centering(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(MathUtils.FromPercentage(GetRect, FBrush.PCenterPoint), New SizeF(0, 0))
+		Dim pathBrush = TryCast(FBrush, MyPathGradientBrush)
+		Dim centerPoint As PointF = If(IsNothing(pathBrush), New PointF(50, 50), pathBrush.CenterPoint)
+		Dim rect As New RectangleF(MathUtils.FromPercentage(GetRect, centerPoint), New SizeF(0, 0))
 		rect.Inflate(3 * AnchorScale, 3 * AnchorScale)
 		Dim pt As PointF = rect.Location
 		Dim gp As New GraphicsPath()

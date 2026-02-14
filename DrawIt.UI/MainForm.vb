@@ -1,4 +1,4 @@
-﻿#Region "Imports"
+#Region "Imports"
 Imports System.Drawing.Drawing2D
 Imports System.IO
 Imports DrawIt.Controls
@@ -61,53 +61,65 @@ Public Class MainForm
 			Dim shp As Shape = MainCanvas.MainSelected
 			MainShape = shp
 			If Not IsNothing(shp) Then
+				Dim fillSolid = TryCast(shp.FBrush, MySolidBrush)
+				Dim fillTexture = TryCast(shp.FBrush, MyTextureBrush)
+				Dim fillHatch = TryCast(shp.FBrush, MyHatchBrush)
+				Dim fillLinear = TryCast(shp.FBrush, MyLinearGradientBrush)
+				Dim fillPath = TryCast(shp.FBrush, MyPathGradientBrush)
+				Dim penSolid = TryCast(shp.DPen.PBrush, MySolidBrush)
+				Dim penLinear = TryCast(shp.DPen.PBrush, MyLinearGradientBrush)
+				Dim penHatch = TryCast(shp.DPen.PBrush, MyHatchBrush)
 				'shape and brush
 				cb_Shape.SelectedItem = shp.MShape.SType.ToString
 				cb_Brush.SelectedItem = shp.FBrush.BType.ToString
 				'solid brush
-				CE_Solid.SelectedColor = shp.FBrush.SolidColor
+				If Not IsNothing(fillSolid) Then CE_Solid.SelectedColor = fillSolid.Color
 				'texture brush
-				PB_Texture.Image = shp.FBrush.TImage
-				CB_Trans.Checked = shp.FBrush.TTransparency
-				CE_Trans.SelectedColor = shp.FBrush.TColor
-				cb_RotateFlip.SelectedItem = shp.FBrush.TRotateFlip.ToString
+				PB_Texture.Image = If(IsNothing(fillTexture), Nothing, BytesToImage(fillTexture.ImageBytes))
+				CB_Trans.Checked = Not IsNothing(fillTexture) AndAlso fillTexture.Transparency
+				If Not IsNothing(fillTexture) Then CE_Trans.SelectedColor = fillTexture.TransparentColor
+				If Not IsNothing(fillTexture) Then cb_RotateFlip.SelectedItem = fillTexture.RotateFlip
 				'hatch brush
-				CE_H1.SelectedColor = shp.FBrush.HFore
-				CE_H2.SelectedColor = shp.FBrush.HBack
-				cb_HatchStyle.SelectedItem = shp.FBrush.HStyle.ToString
+				If Not IsNothing(fillHatch) Then CE_H1.SelectedColor = fillHatch.Fore
+				If Not IsNothing(fillHatch) Then CE_H2.SelectedColor = fillHatch.Back
+				If Not IsNothing(fillHatch) Then cb_HatchStyle.SelectedItem = fillHatch.Style
 				'linear gradient brush
-				CE_L1.SelectedColor = shp.FBrush.LColor1
-				CE_L2.SelectedColor = shp.FBrush.LColor2
-				CB_Gamma.Checked = shp.FBrush.LGamma
-				TB_LAngle.Value = shp.FBrush.LinearAngle
-				CB_LTri.Checked = shp.FBrush.LTriangular
-				LTriFocus.Value = shp.FBrush.LTriFocus
-				LTriScale.Value = shp.FBrush.LTriScale
-				CB_LBell.Checked = shp.FBrush.LBell
-				LBellFocus.Value = shp.FBrush.LBellFocus
-				LBellScale.Value = shp.FBrush.LBellScale
-				CB_LColorBlend.Checked = shp.FBrush.LInterpolate
-				L_CBEditor.LoadColorBlendItems(shp.FBrush.LInterColors, shp.FBrush.LInterPositions)
-				CB_LBlend.Checked = shp.FBrush.LBlend
-				L_BEditor.Loadblenditems(shp.FBrush.LBlendFactors, shp.FBrush.LBlendPositions)
-				L_BEditor.Color1 = shp.FBrush.LColor1
-				L_BEditor.Color2 = shp.FBrush.LColor2
+				If Not IsNothing(fillLinear) Then
+					CE_L1.SelectedColor = fillLinear.Color1
+					CE_L2.SelectedColor = fillLinear.Color2
+					CB_Gamma.Checked = fillLinear.Gamma
+					TB_LAngle.Value = fillLinear.Angle
+					CB_LTri.Checked = fillLinear.Triangular
+					LTriFocus.Value = fillLinear.TriFocus
+					LTriScale.Value = fillLinear.TriScale
+					CB_LBell.Checked = fillLinear.Bell
+					LBellFocus.Value = fillLinear.BellFocus
+					LBellScale.Value = fillLinear.BellScale
+					CB_LColorBlend.Checked = fillLinear.Interpolate
+					L_CBEditor.LoadColorBlendItems(fillLinear.InterColors, fillLinear.InterPositions)
+					CB_LBlend.Checked = fillLinear.Blend
+					L_BEditor.Loadblenditems(fillLinear.BlendFactors, fillLinear.BlendPositions)
+					L_BEditor.Color1 = fillLinear.Color1
+					L_BEditor.Color2 = fillLinear.Color2
+				End If
 				'path gradient brush
-				CE_P1.SelectedColor = shp.FBrush.PCenter
-				PFocusX.Value = shp.FBrush.PFocusX
-				PFocusY.Value = shp.FBrush.PFocusY
-				CB_PTri.Checked = shp.FBrush.PTriangular
-				PTriFocus.Value = shp.FBrush.PTriFocus
-				PTriScale.Value = shp.FBrush.PTriScale
-				CB_PBell.Checked = shp.FBrush.PBell
-				PBellFocus.Value = shp.FBrush.PBellFocus
-				PBellScale.Value = shp.FBrush.PBellScale
-				CB_PColorBlend.Checked = shp.FBrush.PInterpolate
-				P_CBEditor.LoadColorBlendItems(shp.FBrush.PInterColors, shp.FBrush.PInterPositions)
-				CB_PBlend.Checked = shp.FBrush.PBlend
-				P_BEditor.Loadblenditems(shp.FBrush.PBlendFactors, shp.FBrush.PBlendPositions)
-				P_BEditor.Color1 = shp.FBrush.PSurround(0)
-				P_BEditor.Color2 = shp.FBrush.PCenter
+				If Not IsNothing(fillPath) Then
+					CE_P1.SelectedColor = fillPath.Center
+					PFocusX.Value = fillPath.FocusX
+					PFocusY.Value = fillPath.FocusY
+					CB_PTri.Checked = fillPath.Triangular
+					PTriFocus.Value = fillPath.TriFocus
+					PTriScale.Value = fillPath.TriScale
+					CB_PBell.Checked = fillPath.Bell
+					PBellFocus.Value = fillPath.BellFocus
+					PBellScale.Value = fillPath.BellScale
+					CB_PColorBlend.Checked = fillPath.Interpolate
+					P_CBEditor.LoadColorBlendItems(fillPath.InterColors, fillPath.InterPositions)
+					CB_PBlend.Checked = fillPath.Blend
+					P_BEditor.Loadblenditems(fillPath.BlendFactors, fillPath.BlendPositions)
+					P_BEditor.Color1 = If(fillPath.Surround.Length > 0, fillPath.Surround(0), fillPath.Center)
+					P_BEditor.Color2 = fillPath.Center
+				End If
 				'Pen
 				Select Case shp.DPen.PBrush.BType
 					Case BrushType.Solid
@@ -118,13 +130,13 @@ Public Class MainForm
 						rbpHatch.Checked = True
 				End Select
 				PWidth.Value = shp.DPen.PWidth
-				CE_PSolid.SelectedColor = shp.DPen.PBrush.SolidColor
-				LP_CBEditor.LoadColorBlendItems(shp.DPen.PBrush.LInterColors, shp.DPen.PBrush.LInterPositions)
-				CE_PFore.SelectedColor = shp.DPen.PBrush.HFore
-				CE_PBack.SelectedColor = shp.DPen.PBrush.HBack
-				cb_PHatchStyle.SelectedItem = shp.DPen.PBrush.HStyle.ToString
-				CB_PGamma.Checked = shp.DPen.PBrush.LGamma
-				TB_PAngle.Value = shp.DPen.PBrush.LinearAngle
+				If Not IsNothing(penSolid) Then CE_PSolid.SelectedColor = penSolid.Color
+				If Not IsNothing(penLinear) Then LP_CBEditor.LoadColorBlendItems(penLinear.InterColors, penLinear.InterPositions)
+				If Not IsNothing(penHatch) Then CE_PFore.SelectedColor = penHatch.Fore
+				If Not IsNothing(penHatch) Then CE_PBack.SelectedColor = penHatch.Back
+				If Not IsNothing(penHatch) Then cb_PHatchStyle.SelectedItem = penHatch.Style
+				If Not IsNothing(penLinear) Then CB_PGamma.Checked = penLinear.Gamma
+				If Not IsNothing(penLinear) Then TB_PAngle.Value = penLinear.Angle
 				CB_DStyle.SelectedItem = shp.DPen.PDashstyle.ToString
 				CB_DCap.SelectedItem = shp.DPen.PDashCap.ToString
 				CB_SCap.SelectedItem = shp.DPen.PStartCap.ToString
@@ -304,8 +316,8 @@ Public Class MainForm
 		shp.SetAllRect(rect)
 		Dim shapeType = [Enum].Parse(GetType(ShapeStyle), itemString)
 		shp.MShape = MyShapeFactory.ChangeType(shp.MShape, shapeType)
-		shp.DPen.PBrush.SolidColor = Color.Black
-		shp.FBrush.SolidColor = Color.Black
+		DirectCast(shp.DPen.PBrush, MySolidBrush).Color = Color.Black
+		DirectCast(shp.FBrush, MySolidBrush).Color = Color.Black
 		Dim shapeText = TryCast(shp.MShape, MyText)
 		If Not IsNothing(shapeText) Then
 			shapeText.Text = "AZ"
@@ -350,10 +362,35 @@ Public Class MainForm
 		Dim rect As New Rectangle(e.Bounds.X + 3, e.Bounds.Y + 1, 20, e.Bounds.Height - 3)
 		Dim shp As New Shape
 		shp.SetAllRect(rect)
-		shp.FBrush.BType = [Enum].Parse(GetType(BrushType), itemString)
-		shp.DPen.PBrush.SolidColor = Color.Black
-		shp.FBrush.SolidColor = Color.White
-		shp.FBrush.HStyle = HatchStyle.DiagonalCross
+		shp.FBrush = MyBrushFactory.ChangeType(shp.FBrush, [Enum].Parse(GetType(BrushType), itemString))
+		DirectCast(shp.DPen.PBrush, MySolidBrush).Color = Color.Black
+		Select Case shp.FBrush.BType
+			Case BrushType.Solid
+				Dim fillSolid = TryCast(shp.FBrush, MySolidBrush)
+				If Not IsNothing(fillSolid) Then fillSolid.Color = Color.White
+			Case BrushType.LinearGradient
+				Dim fillLinear = TryCast(shp.FBrush, MyLinearGradientBrush)
+				If Not IsNothing(fillLinear) Then
+					fillLinear.Color1 = Color.White
+					fillLinear.Color2 = Color.Black
+					fillLinear.Angle = 45
+				End If
+			Case BrushType.PathGradient
+				Dim fillPath = TryCast(shp.FBrush, MyPathGradientBrush)
+				If Not IsNothing(fillPath) Then
+					fillPath.Center = Color.White
+					fillPath.Surround = New Color() {Color.Black}
+					fillPath.CenterPoint = New PointF(50, 50)
+				End If
+			Case BrushType.Hatch
+				Dim fillHatch = TryCast(shp.FBrush, MyHatchBrush)
+				If Not IsNothing(fillHatch) Then
+					fillHatch.Fore = Color.Black
+					fillHatch.Back = Color.White
+					fillHatch.Style = HatchStyle.DiagonalCross.ToString()
+				End If
+		End Select
+		shp.ReloadCachedObjects()
 
 		Select Case shp.FBrush.BType
 			Case BrushType.Texture
@@ -377,11 +414,15 @@ Public Class MainForm
 				e.Graphics.DrawPath(shp.CreatePen, shp.TotalPath)
 			Case Else
 				e.Graphics.RenderingOrigin = rect.Location
-				shp.UpdateBrush()
-				e.Graphics.FillPath(shp.FillBrush, shp.TotalPath)
-				shp.UpdateSelectionPen()
-				shp.UpdatePenBrush()
-				e.Graphics.DrawPath(shp.CreatePen, shp.TotalPath)
+				Dim previewPath = shp.TotalPath
+				If Not IsNothing(previewPath) Then
+					shp.UpdateBrush()
+					If Not IsNothing(shp.FillBrush) Then e.Graphics.FillPath(shp.FillBrush, previewPath)
+					shp.UpdateSelectionPen()
+					shp.UpdatePenBrush()
+					Dim previewPen = shp.CreatePen
+					If Not IsNothing(previewPen) Then e.Graphics.DrawPath(previewPen, previewPath)
+				End If
 		End Select
 
 		e.Graphics.DrawString(itemString, sender.Font, New SolidBrush(col_t), e.Bounds.X + 25, e.Bounds.Y + 1)
@@ -571,8 +612,9 @@ Public Class MainForm
 		End If
 		If rDraw.Checked Then Return
 		If Not IsNothing(MainShape) Then
-			MainShape.FBrush.BType = [Enum].Parse(GetType(BrushType), cb_Brush.SelectedItem)
+			MainShape.FBrush = MyBrushFactory.ChangeType(MainShape.FBrush, [Enum].Parse(GetType(BrushType), cb_Brush.SelectedItem))
 			MainCanvas.Invalidate()
+			UpdateControls()
 		End If
 	End Sub
 #End Region
@@ -581,7 +623,9 @@ Public Class MainForm
 	Private Sub CE_Solid_ColorChanged(sender As Object, e As EventArgs) Handles CE_Solid.ColorChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.SolidColor = CE_Solid.SelectedColor
+			Dim solid = TryCast(shp.FBrush, MySolidBrush)
+			If IsNothing(solid) Then Return
+			solid.Color = CE_Solid.SelectedColor
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -599,8 +643,10 @@ Public Class MainForm
 				Using bmpTemp = New Bitmap(openDialog.FileName)
 					img = New Bitmap(bmpTemp)
 				End Using
-				shp.FBrush.TImage = img
-				PB_Texture.Image = shp.FBrush.TImage
+				Dim texture = TryCast(shp.FBrush, MyTextureBrush)
+				If IsNothing(texture) Then Return
+				texture.ImageBytes = ImageToBytes(img)
+				PB_Texture.Image = BytesToImage(texture.ImageBytes)
 			End If
 			MainCanvas.Invalidate()
 		End If
@@ -610,8 +656,10 @@ Public Class MainForm
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
 			If My.Computer.Clipboard.ContainsImage() Then
-				shp.FBrush.TImage = My.Computer.Clipboard.GetImage()
-				PB_Texture.Image = shp.FBrush.TImage
+				Dim texture = TryCast(shp.FBrush, MyTextureBrush)
+				If IsNothing(texture) Then Return
+				texture.ImageBytes = ImageToBytes(My.Computer.Clipboard.GetImage())
+				PB_Texture.Image = BytesToImage(texture.ImageBytes)
 			End If
 			MainCanvas.Invalidate()
 		End If
@@ -620,7 +668,9 @@ Public Class MainForm
 	Private Sub CB_Trans_CheckedChanged(sender As Object, e As EventArgs) Handles CB_Trans.CheckedChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.TTransparency = CB_Trans.Checked
+			Dim texture = TryCast(shp.FBrush, MyTextureBrush)
+			If IsNothing(texture) Then Return
+			texture.Transparency = CB_Trans.Checked
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -628,7 +678,9 @@ Public Class MainForm
 	Private Sub CE_Trans_ColorChanged(sender As Object, e As EventArgs) Handles CE_Trans.ColorChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.TColor = Color.FromArgb(255, CE_Trans.SelectedColor)
+			Dim texture = TryCast(shp.FBrush, MyTextureBrush)
+			If IsNothing(texture) Then Return
+			texture.TransparentColor = Color.FromArgb(255, CE_Trans.SelectedColor)
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -636,7 +688,9 @@ Public Class MainForm
 	Private Sub cb_RotateFlip_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cb_RotateFlip.SelectedIndexChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.TRotateFlip = [Enum].Parse(GetType(RotateFlipType), cb_RotateFlip.SelectedItem)
+			Dim texture = TryCast(shp.FBrush, MyTextureBrush)
+			If IsNothing(texture) Then Return
+			texture.RotateFlip = cb_RotateFlip.SelectedItem.ToString()
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -646,7 +700,9 @@ Public Class MainForm
 	Private Sub CE_H1_ColorChanged(sender As Object, e As EventArgs) Handles CE_H1.ColorChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.HFore = CE_H1.SelectedColor
+			Dim hatch = TryCast(shp.FBrush, MyHatchBrush)
+			If IsNothing(hatch) Then Return
+			hatch.Fore = CE_H1.SelectedColor
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -654,7 +710,9 @@ Public Class MainForm
 	Private Sub CE_H2_ColorChanged(sender As Object, e As EventArgs) Handles CE_H2.ColorChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.HBack = CE_H2.SelectedColor
+			Dim hatch = TryCast(shp.FBrush, MyHatchBrush)
+			If IsNothing(hatch) Then Return
+			hatch.Back = CE_H2.SelectedColor
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -662,7 +720,9 @@ Public Class MainForm
 	Private Sub cb_HatchStyle_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cb_HatchStyle.SelectedIndexChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.HStyle = [Enum].Parse(GetType(HatchStyle), cb_HatchStyle.SelectedItem)
+			Dim hatch = TryCast(shp.FBrush, MyHatchBrush)
+			If IsNothing(hatch) Then Return
+			hatch.Style = cb_HatchStyle.SelectedItem.ToString()
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -672,7 +732,9 @@ Public Class MainForm
 	Private Sub CE_L1_ColorChanged(sender As Object, e As EventArgs) Handles CE_L1.ColorChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.LColor1 = CE_L1.SelectedColor
+			Dim linear = TryCast(shp.FBrush, MyLinearGradientBrush)
+			If IsNothing(linear) Then Return
+			linear.Color1 = CE_L1.SelectedColor
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -680,7 +742,9 @@ Public Class MainForm
 	Private Sub CE_L2_ColorChanged(sender As Object, e As EventArgs) Handles CE_L2.ColorChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.LColor2 = CE_L2.SelectedColor
+			Dim linear = TryCast(shp.FBrush, MyLinearGradientBrush)
+			If IsNothing(linear) Then Return
+			linear.Color2 = CE_L2.SelectedColor
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -688,7 +752,9 @@ Public Class MainForm
 	Private Sub CB_Gamma_CheckedChanged(sender As Object, e As EventArgs) Handles CB_Gamma.CheckedChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.LGamma = CB_Gamma.Checked
+			Dim linear = TryCast(shp.FBrush, MyLinearGradientBrush)
+			If IsNothing(linear) Then Return
+			linear.Gamma = CB_Gamma.Checked
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -696,7 +762,9 @@ Public Class MainForm
 	Private Sub TB_LAngle_ValueChanged(sender As Object, e As EventArgs) Handles TB_LAngle.ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.LinearAngle = TB_LAngle.Value
+			Dim linear = TryCast(shp.FBrush, MyLinearGradientBrush)
+			If IsNothing(linear) Then Return
+			linear.Angle = TB_LAngle.Value
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -705,7 +773,9 @@ Public Class MainForm
 		If CB_LTri.Checked Then CB_LBell.Checked = False
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.LTriangular = CB_LTri.Checked
+			Dim linear = TryCast(shp.FBrush, MyLinearGradientBrush)
+			If IsNothing(linear) Then Return
+			linear.Triangular = CB_LTri.Checked
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -713,7 +783,9 @@ Public Class MainForm
 	Private Sub LTriFocus_ValueChanged(sender As Object, e As EventArgs) Handles LTriFocus.ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.LTriFocus = LTriFocus.Value
+			Dim linear = TryCast(shp.FBrush, MyLinearGradientBrush)
+			If IsNothing(linear) Then Return
+			linear.TriFocus = LTriFocus.Value
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -721,7 +793,9 @@ Public Class MainForm
 	Private Sub LTriScale_ValueChanged(sender As Object, e As EventArgs) Handles LTriScale.ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.LTriScale = LTriScale.Value
+			Dim linear = TryCast(shp.FBrush, MyLinearGradientBrush)
+			If IsNothing(linear) Then Return
+			linear.TriScale = LTriScale.Value
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -730,7 +804,9 @@ Public Class MainForm
 		If CB_LBell.Checked Then CB_LTri.Checked = False
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.LBell = CB_LBell.Checked
+			Dim linear = TryCast(shp.FBrush, MyLinearGradientBrush)
+			If IsNothing(linear) Then Return
+			linear.Bell = CB_LBell.Checked
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -738,7 +814,9 @@ Public Class MainForm
 	Private Sub LBellFocus_ValueChanged(sender As Object, e As EventArgs) Handles LBellFocus.ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.LBellFocus = LBellFocus.Value
+			Dim linear = TryCast(shp.FBrush, MyLinearGradientBrush)
+			If IsNothing(linear) Then Return
+			linear.BellFocus = LBellFocus.Value
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -746,7 +824,9 @@ Public Class MainForm
 	Private Sub LBellScale_ValueChanged(sender As Object, e As EventArgs) Handles LBellScale.ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.LBellScale = LBellScale.Value
+			Dim linear = TryCast(shp.FBrush, MyLinearGradientBrush)
+			If IsNothing(linear) Then Return
+			linear.BellScale = LBellScale.Value
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -755,7 +835,9 @@ Public Class MainForm
 		If CB_LColorBlend.Checked Then CB_LBlend.Checked = False
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.LInterpolate = CB_LColorBlend.Checked
+			Dim linear = TryCast(shp.FBrush, MyLinearGradientBrush)
+			If IsNothing(linear) Then Return
+			linear.Interpolate = CB_LColorBlend.Checked
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -763,8 +845,10 @@ Public Class MainForm
 	Private Sub L_CBEditor_BlendChanged(sender As Object, e As EventArgs) Handles L_CBEditor.BlendChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.LInterColors = L_CBEditor.Colors
-			shp.FBrush.LInterPositions = L_CBEditor.Positions
+			Dim linear = TryCast(shp.FBrush, MyLinearGradientBrush)
+			If IsNothing(linear) Then Return
+			linear.InterColors = L_CBEditor.Colors
+			linear.InterPositions = L_CBEditor.Positions
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -773,7 +857,9 @@ Public Class MainForm
 		If CB_LBlend.Checked Then CB_LColorBlend.Checked = False
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.LBlend = CB_LBlend.Checked
+			Dim linear = TryCast(shp.FBrush, MyLinearGradientBrush)
+			If IsNothing(linear) Then Return
+			linear.Blend = CB_LBlend.Checked
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -781,8 +867,10 @@ Public Class MainForm
 	Private Sub L_BEditor_BlendChanged(sender As Object, e As EventArgs) Handles L_BEditor.BlendChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.LBlendFactors = L_BEditor.Factors
-			shp.FBrush.LBlendPositions = L_BEditor.Positions
+			Dim linear = TryCast(shp.FBrush, MyLinearGradientBrush)
+			If IsNothing(linear) Then Return
+			linear.BlendFactors = L_BEditor.Factors
+			linear.BlendPositions = L_BEditor.Positions
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -792,7 +880,9 @@ Public Class MainForm
 	Private Sub CE_P1_ColorChanged(sender As Object, e As EventArgs) Handles CE_P1.ColorChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.PCenter = CE_P1.SelectedColor
+			Dim pathBrush = TryCast(shp.FBrush, MyPathGradientBrush)
+			If IsNothing(pathBrush) Then Return
+			pathBrush.Center = CE_P1.SelectedColor
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -800,10 +890,12 @@ Public Class MainForm
 	Private Sub B_Surround_Click(sender As Object, e As EventArgs) Handles B_Surround.Click
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
+			Dim pathBrush = TryCast(shp.FBrush, MyPathGradientBrush)
+			If IsNothing(pathBrush) Then Return
 			Dim dlg As New ColorListDialog
-			dlg.LoadColors(shp.FBrush.PSurround)
+			dlg.LoadColors(pathBrush.Surround)
 			If dlg.ShowDialog = DialogResult.OK Then
-				shp.FBrush.PSurround = dlg.GetColors
+				pathBrush.Surround = dlg.GetColors
 				MainCanvas.Invalidate()
 			End If
 		End If
@@ -812,7 +904,9 @@ Public Class MainForm
 	Private Sub PFocusX_ValueChanged(sender As Object, e As EventArgs) Handles PFocusX.ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.PFocusX = PFocusX.Value
+			Dim pathBrush = TryCast(shp.FBrush, MyPathGradientBrush)
+			If IsNothing(pathBrush) Then Return
+			pathBrush.FocusX = PFocusX.Value
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -820,7 +914,9 @@ Public Class MainForm
 	Private Sub PFocusY_ValueChanged(sender As Object, e As EventArgs) Handles PFocusY.ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.PFocusY = PFocusY.Value
+			Dim pathBrush = TryCast(shp.FBrush, MyPathGradientBrush)
+			If IsNothing(pathBrush) Then Return
+			pathBrush.FocusY = PFocusY.Value
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -829,7 +925,9 @@ Public Class MainForm
 		If CB_PTri.Checked Then CB_PBell.Checked = False
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.PTriangular = CB_PTri.Checked
+			Dim pathBrush = TryCast(shp.FBrush, MyPathGradientBrush)
+			If IsNothing(pathBrush) Then Return
+			pathBrush.Triangular = CB_PTri.Checked
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -837,7 +935,9 @@ Public Class MainForm
 	Private Sub PTriFocus_ValueChanged(sender As Object, e As EventArgs) Handles PTriFocus.ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.PTriFocus = PTriFocus.Value
+			Dim pathBrush = TryCast(shp.FBrush, MyPathGradientBrush)
+			If IsNothing(pathBrush) Then Return
+			pathBrush.TriFocus = PTriFocus.Value
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -845,7 +945,9 @@ Public Class MainForm
 	Private Sub PTriScale_ValueChanged(sender As Object, e As EventArgs) Handles PTriScale.ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.PTriScale = PTriScale.Value
+			Dim pathBrush = TryCast(shp.FBrush, MyPathGradientBrush)
+			If IsNothing(pathBrush) Then Return
+			pathBrush.TriScale = PTriScale.Value
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -854,7 +956,9 @@ Public Class MainForm
 		If CB_PBell.Checked Then CB_PTri.Checked = False
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.PBell = CB_PBell.Checked
+			Dim pathBrush = TryCast(shp.FBrush, MyPathGradientBrush)
+			If IsNothing(pathBrush) Then Return
+			pathBrush.Bell = CB_PBell.Checked
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -862,7 +966,9 @@ Public Class MainForm
 	Private Sub PBellFocus_ValueChanged(sender As Object, e As EventArgs) Handles PBellFocus.ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.PBellFocus = PBellFocus.Value
+			Dim pathBrush = TryCast(shp.FBrush, MyPathGradientBrush)
+			If IsNothing(pathBrush) Then Return
+			pathBrush.BellFocus = PBellFocus.Value
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -870,7 +976,9 @@ Public Class MainForm
 	Private Sub PBellScale_ValueChanged(sender As Object, e As EventArgs) Handles PBellScale.ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.PBellScale = PBellScale.Value
+			Dim pathBrush = TryCast(shp.FBrush, MyPathGradientBrush)
+			If IsNothing(pathBrush) Then Return
+			pathBrush.BellScale = PBellScale.Value
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -879,7 +987,9 @@ Public Class MainForm
 		If CB_PColorBlend.Checked Then CB_PBlend.Checked = False
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.PInterpolate = CB_PColorBlend.Checked
+			Dim pathBrush = TryCast(shp.FBrush, MyPathGradientBrush)
+			If IsNothing(pathBrush) Then Return
+			pathBrush.Interpolate = CB_PColorBlend.Checked
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -887,8 +997,10 @@ Public Class MainForm
 	Private Sub P_CBEditor_BlendChanged(sender As Object, e As EventArgs) Handles P_CBEditor.BlendChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.PInterColors = P_CBEditor.Colors
-			shp.FBrush.PInterPositions = P_CBEditor.Positions
+			Dim pathBrush = TryCast(shp.FBrush, MyPathGradientBrush)
+			If IsNothing(pathBrush) Then Return
+			pathBrush.InterColors = P_CBEditor.Colors
+			pathBrush.InterPositions = P_CBEditor.Positions
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -897,7 +1009,9 @@ Public Class MainForm
 		If CB_PBlend.Checked Then CB_PColorBlend.Checked = False
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.PBlend = CB_PBlend.Checked
+			Dim pathBrush = TryCast(shp.FBrush, MyPathGradientBrush)
+			If IsNothing(pathBrush) Then Return
+			pathBrush.Blend = CB_PBlend.Checked
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -905,8 +1019,10 @@ Public Class MainForm
 	Private Sub P_BEditor_BlendChanged(sender As Object, e As EventArgs) Handles P_BEditor.BlendChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.FBrush.PBlendFactors = P_BEditor.Factors
-			shp.FBrush.PBlendPositions = P_BEditor.Positions
+			Dim pathBrush = TryCast(shp.FBrush, MyPathGradientBrush)
+			If IsNothing(pathBrush) Then Return
+			pathBrush.BlendFactors = P_BEditor.Factors
+			pathBrush.BlendPositions = P_BEditor.Positions
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -927,11 +1043,11 @@ Public Class MainForm
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
 			If rbpSolid.Checked Then
-				shp.DPen.PBrush.BType = BrushType.Solid
+				shp.DPen.PBrush = MyBrushFactory.ChangeType(shp.DPen.PBrush, BrushType.Solid)
 			ElseIf rbpLinear.Checked Then
-				shp.DPen.PBrush.BType = BrushType.LinearGradient
+				shp.DPen.PBrush = MyBrushFactory.ChangeType(shp.DPen.PBrush, BrushType.LinearGradient)
 			ElseIf rbpHatch.Checked Then
-				shp.DPen.PBrush.BType = BrushType.Hatch
+				shp.DPen.PBrush = MyBrushFactory.ChangeType(shp.DPen.PBrush, BrushType.Hatch)
 			End If
 			MainCanvas.Invalidate()
 		End If
@@ -948,7 +1064,9 @@ Public Class MainForm
 	Private Sub CE_PSolid_ColorChanged(sender As Object, e As EventArgs) Handles CE_PSolid.ColorChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.DPen.PBrush.SolidColor = CE_PSolid.SelectedColor
+			Dim solid = TryCast(shp.DPen.PBrush, MySolidBrush)
+			If IsNothing(solid) Then Return
+			solid.Color = CE_PSolid.SelectedColor
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -956,8 +1074,10 @@ Public Class MainForm
 	Private Sub LP_CBEditor_BlendChanged(sender As Object, e As EventArgs) Handles LP_CBEditor.BlendChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.DPen.PBrush.LInterColors = LP_CBEditor.Colors
-			shp.DPen.PBrush.LInterPositions = LP_CBEditor.Positions
+			Dim linear = TryCast(shp.DPen.PBrush, MyLinearGradientBrush)
+			If IsNothing(linear) Then Return
+			linear.InterColors = LP_CBEditor.Colors
+			linear.InterPositions = LP_CBEditor.Positions
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -965,7 +1085,9 @@ Public Class MainForm
 	Private Sub CE_PFore_ColorChanged(sender As Object, e As EventArgs) Handles CE_PFore.ColorChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.DPen.PBrush.HFore = CE_PFore.SelectedColor
+			Dim hatch = TryCast(shp.DPen.PBrush, MyHatchBrush)
+			If IsNothing(hatch) Then Return
+			hatch.Fore = CE_PFore.SelectedColor
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -973,7 +1095,9 @@ Public Class MainForm
 	Private Sub CE_PBack_ColorChanged(sender As Object, e As EventArgs) Handles CE_PBack.ColorChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.DPen.PBrush.HBack = CE_PBack.SelectedColor
+			Dim hatch = TryCast(shp.DPen.PBrush, MyHatchBrush)
+			If IsNothing(hatch) Then Return
+			hatch.Back = CE_PBack.SelectedColor
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -981,7 +1105,9 @@ Public Class MainForm
 	Private Sub cb_PHatchStyle_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cb_PHatchStyle.SelectedIndexChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.DPen.PBrush.HStyle = [Enum].Parse(GetType(HatchStyle), cb_PHatchStyle.SelectedItem)
+			Dim hatch = TryCast(shp.DPen.PBrush, MyHatchBrush)
+			If IsNothing(hatch) Then Return
+			hatch.Style = cb_PHatchStyle.SelectedItem.ToString()
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -989,7 +1115,9 @@ Public Class MainForm
 	Private Sub CB_PGamma_CheckedChanged(sender As Object, e As EventArgs) Handles CB_PGamma.CheckedChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.DPen.PBrush.LGamma = CB_PGamma.Checked
+			Dim linear = TryCast(shp.DPen.PBrush, MyLinearGradientBrush)
+			If IsNothing(linear) Then Return
+			linear.Gamma = CB_PGamma.Checked
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -997,7 +1125,9 @@ Public Class MainForm
 	Private Sub TB_PAngle_ValueChanged(sender As Object, e As EventArgs) Handles TB_PAngle.ValueChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.DPen.PBrush.LinearAngle = TB_PAngle.Value
+			Dim linear = TryCast(shp.DPen.PBrush, MyLinearGradientBrush)
+			If IsNothing(linear) Then Return
+			linear.Angle = TB_PAngle.Value
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -1005,7 +1135,7 @@ Public Class MainForm
 	Private Sub CB_DStyle_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CB_DStyle.SelectedIndexChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.DPen.PDashstyle = [Enum].Parse(GetType(DashStyle), CB_DStyle.SelectedItem)
+			shp.DPen.PDashstyle = CB_DStyle.SelectedItem.ToString()
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -1013,7 +1143,7 @@ Public Class MainForm
 	Private Sub CB_DCap_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CB_DCap.SelectedIndexChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.DPen.PDashCap = [Enum].Parse(GetType(DashCap), CB_DCap.SelectedItem)
+			shp.DPen.PDashCap = CB_DCap.SelectedItem.ToString()
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -1021,7 +1151,7 @@ Public Class MainForm
 	Private Sub CB_SCap_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CB_SCap.SelectedIndexChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.DPen.PStartCap = [Enum].Parse(GetType(LineCap), CB_SCap.SelectedItem)
+			shp.DPen.PStartCap = CB_SCap.SelectedItem.ToString()
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -1029,7 +1159,7 @@ Public Class MainForm
 	Private Sub CB_ECap_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CB_ECap.SelectedIndexChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.DPen.PEndCap = [Enum].Parse(GetType(LineCap), CB_ECap.SelectedItem)
+			shp.DPen.PEndCap = CB_ECap.SelectedItem.ToString()
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -1037,7 +1167,7 @@ Public Class MainForm
 	Private Sub CB_LJoin_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CB_LJoin.SelectedIndexChanged
 		If Not IsNothing(MainShape) Then
 			Dim shp As Shape = MainShape
-			shp.DPen.PLineJoin = [Enum].Parse(GetType(LineJoin), CB_LJoin.SelectedItem)
+			shp.DPen.PLineJoin = CB_LJoin.SelectedItem.ToString()
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -1156,9 +1286,9 @@ Public Class MainForm
 						If Not IsNothing(textData) Then
 							textData.FontName = dlg.TBox.Font.Name
 							textData.FontSize = dlg.TBox.Font.Size
-							textData.FontStyle = dlg.TBox.Font.Style
+							textData.FontStyle = ToMyFontStyle(dlg.TBox.Font.Style)
 							textData.Text = dlg.TBox.Text
-							textData.TextAlignment = [Enum].Parse(GetType(ContentAlignment), dlg.cb_Align.SelectedItem)
+							textData.TextAlignment = ToMyTextAlignment([Enum].Parse(GetType(ContentAlignment), dlg.cb_Align.SelectedItem))
 						End If
 					End If
 			End Select

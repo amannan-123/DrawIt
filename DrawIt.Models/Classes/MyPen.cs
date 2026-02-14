@@ -1,21 +1,21 @@
-﻿using System.ComponentModel;
-using System.Drawing.Drawing2D;
+using System.ComponentModel;
+using System.Drawing;
 using System.Runtime.CompilerServices;
 
 namespace DrawIt.Models
 {
 
 	[Serializable]
-	public class MyPen : INotifyPropertyChanged, ICloneable, IDisposable
+	public class MyPen : INotifyPropertyChanged, ICloneable
 	{
+		private readonly PropertyChangedEventHandler _brushChangedHandler;
+
 		public MyPen()
 		{
-			PBrush.SolidColor = Color.Black;
-			PBrush.LInterpolate = true;
-			PBrush.PropertyChanged += (sender, e) =>
-			{
-				PropertyChanged?.Invoke(this, e!);
-			};
+			_brushChangedHandler = (sender, e) => PropertyChanged?.Invoke(this, e);
+			var solid = (MySolidBrush)PBrush;
+			solid.Color = Color.Black;
+			PBrush.PropertyChanged += _brushChangedHandler;
 		}
 
 		#region INotifyPropertyChanged
@@ -41,15 +41,9 @@ namespace DrawIt.Models
 		}
 		#endregion
 
-		#region IDisposable
-		public void Dispose()
-		{
-			_br?.Dispose();
-		}
-		#endregion
-
+		
 		#region Properties
-		private MyBrush _br = new();
+		private MyBrush _br = new MySolidBrush();
 		public MyBrush PBrush
 		{
 			get
@@ -58,11 +52,11 @@ namespace DrawIt.Models
 			}
 			set
 			{
-				if (!value.Equals(_br))
-				{
-					_br = value;
-					NotifyPropertyChanged();
-				}
+				if (value is null || ReferenceEquals(value, _br)) return;
+				_br.PropertyChanged -= _brushChangedHandler;
+				_br = value;
+				_br.PropertyChanged += _brushChangedHandler;
+				NotifyPropertyChanged();
 			}
 		}
 
@@ -83,8 +77,8 @@ namespace DrawIt.Models
 			}
 		}
 
-		private DashCap d_cap = DashCap.Flat;
-		public DashCap PDashCap
+		private string d_cap = "Flat";
+		public string PDashCap
 		{
 			get
 			{
@@ -92,7 +86,7 @@ namespace DrawIt.Models
 			}
 			set
 			{
-				if (!value.Equals(d_cap))
+				if (!string.Equals(value, d_cap, StringComparison.Ordinal))
 				{
 					d_cap = value;
 					NotifyPropertyChanged();
@@ -100,8 +94,8 @@ namespace DrawIt.Models
 			}
 		}
 
-		private DashStyle d_style = DashStyle.Solid;
-		public DashStyle PDashstyle
+		private string d_style = "Solid";
+		public string PDashstyle
 		{
 			get
 			{
@@ -109,7 +103,7 @@ namespace DrawIt.Models
 			}
 			set
 			{
-				if (!value.Equals(d_style))
+				if (!string.Equals(value, d_style, StringComparison.Ordinal))
 				{
 					d_style = value;
 					NotifyPropertyChanged();
@@ -117,8 +111,8 @@ namespace DrawIt.Models
 			}
 		}
 
-		private LineCap st_cap = LineCap.Flat;
-		public LineCap PStartCap
+		private string st_cap = "Flat";
+		public string PStartCap
 		{
 			get
 			{
@@ -126,7 +120,7 @@ namespace DrawIt.Models
 			}
 			set
 			{
-				if (!value.Equals(st_cap))
+				if (!string.Equals(value, st_cap, StringComparison.Ordinal))
 				{
 					st_cap = value;
 					NotifyPropertyChanged();
@@ -134,8 +128,8 @@ namespace DrawIt.Models
 			}
 		}
 
-		private LineCap end_cap = LineCap.Flat;
-		public LineCap PEndCap
+		private string end_cap = "Flat";
+		public string PEndCap
 		{
 			get
 			{
@@ -143,7 +137,7 @@ namespace DrawIt.Models
 			}
 			set
 			{
-				if (!value.Equals(end_cap))
+				if (!string.Equals(value, end_cap, StringComparison.Ordinal))
 				{
 					end_cap = value;
 					NotifyPropertyChanged();
@@ -151,8 +145,8 @@ namespace DrawIt.Models
 			}
 		}
 
-		private LineJoin l_join = LineJoin.Miter;
-		public LineJoin PLineJoin
+		private string l_join = "Miter";
+		public string PLineJoin
 		{
 			get
 			{
@@ -160,7 +154,7 @@ namespace DrawIt.Models
 			}
 			set
 			{
-				if (!value.Equals(l_join))
+				if (!string.Equals(value, l_join, StringComparison.Ordinal))
 				{
 					l_join = value;
 					NotifyPropertyChanged();

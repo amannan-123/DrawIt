@@ -44,4 +44,27 @@
 		Text
 	}
 
+	[Flags]
+	public enum MyFontStyle
+	{
+		Regular = 0,
+		Bold = 1,
+		Italic = 2,
+		Underline = 4,
+		Strikeout = 8
+	}
+
+	public enum MyTextAlignment
+	{
+		TopLeft,
+		TopCenter,
+		TopRight,
+		MiddleLeft,
+		MiddleCenter,
+		MiddleRight,
+		BottomLeft,
+		BottomCenter,
+		BottomRight
+	}
+
 }

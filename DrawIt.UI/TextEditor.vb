@@ -12,7 +12,7 @@ Public Class TextEditor
 		InsertItems()
 		Dim textData = TryCast(shp.MShape, MyText)
 		If IsNothing(textData) Then Exit Sub
-		Dim fnt As New Font(textData.FontName, textData.FontSize, textData.FontStyle)
+		Dim fnt As New Font(textData.FontName, textData.FontSize, ToFontStyle(textData.FontStyle))
 		TBox.Font = fnt
 		TBox.Text = textData.Text
 		If fnt.Bold Then bBold.Checked = True
@@ -21,7 +21,7 @@ Public Class TextEditor
 		If fnt.Strikeout Then bStrike.Checked = True
 		TB_Size.Value = textData.FontSize
 		cb_Font.SelectedItem = textData.FontName
-		cb_Align.SelectedItem = textData.TextAlignment.ToString
+		cb_Align.SelectedItem = ToContentAlignment(textData.TextAlignment).ToString
 	End Sub
 
 	Private Sub InsertItems()
@@ -111,4 +111,3 @@ Public Class TextEditor
 	End Sub
 
 End Class
-

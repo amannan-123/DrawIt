@@ -1,4 +1,5 @@
-﻿Imports System.Drawing.Drawing2D
+Imports System.IO
+Imports System.Drawing.Drawing2D
 Imports DrawIt.Helpers
 Imports DrawIt.Models
 
@@ -43,7 +44,24 @@ Module Helpers
 		Return frect
 	End Function
 
-	Public Function GetRoundedRectPath(rect As RectangleF, crn As MyCorners) As GraphicsPath
+	Public Function ImageToBytes(img As Image) As Byte()
+        If IsNothing(img) Then Return Nothing
+        Using ms As New MemoryStream()
+            img.Save(ms, Imaging.ImageFormat.Png)
+            Return ms.ToArray()
+        End Using
+    End Function
+
+    Public Function BytesToImage(bytes As Byte()) As Image
+        If IsNothing(bytes) OrElse bytes.Length = 0 Then Return Nothing
+        Using ms As New MemoryStream(bytes)
+            Using tmp As Image = Image.FromStream(ms)
+                Return New Bitmap(tmp)
+            End Using
+        End Using
+    End Function
+
+    Public Function GetRoundedRectPath(rect As RectangleF, crn As MyCorners) As GraphicsPath
 		Dim ArcRect As RectangleF
 		Dim _t1 = MathUtils.FromPercentage(rect.X, rect.Width, crn.T1)
 		Dim _t2 = MathUtils.FromPercentage(rect.X, rect.Width, crn.T2)
@@ -151,6 +169,80 @@ Module Helpers
 		Dim gp As New GraphicsPath
 		gp.AddCurve(aptf)
 		Return gp
+	End Function
+
+	Public Function ToDashCap(value As String) As DashCap
+		Try
+			Return [Enum].Parse(GetType(DashCap), value, True)
+		Catch
+			Return DashCap.Flat
+		End Try
+	End Function
+
+	Public Function ToDashStyle(value As String) As DashStyle
+		Try
+			Return [Enum].Parse(GetType(DashStyle), value, True)
+		Catch
+			Return DashStyle.Solid
+		End Try
+	End Function
+
+	Public Function ToLineCap(value As String) As LineCap
+		Try
+			Return [Enum].Parse(GetType(LineCap), value, True)
+		Catch
+			Return LineCap.Flat
+		End Try
+	End Function
+
+	Public Function ToLineJoin(value As String) As LineJoin
+		Try
+			Return [Enum].Parse(GetType(LineJoin), value, True)
+		Catch
+			Return LineJoin.Miter
+		End Try
+	End Function
+
+	Public Function ToHatchStyle(value As String) As HatchStyle
+		Try
+			Return [Enum].Parse(GetType(HatchStyle), value, True)
+		Catch
+			Return HatchStyle.Horizontal
+		End Try
+	End Function
+
+	Public Function ToRotateFlipType(value As String) As RotateFlipType
+		Try
+			Return [Enum].Parse(GetType(RotateFlipType), value, True)
+		Catch
+			Return RotateFlipType.RotateNoneFlipNone
+		End Try
+	End Function
+
+	Public Function ToMyFontStyle(value As FontStyle) As MyFontStyle
+		Dim style As MyFontStyle = MyFontStyle.Regular
+		If value.HasFlag(FontStyle.Bold) Then style = style Or MyFontStyle.Bold
+		If value.HasFlag(FontStyle.Italic) Then style = style Or MyFontStyle.Italic
+		If value.HasFlag(FontStyle.Underline) Then style = style Or MyFontStyle.Underline
+		If value.HasFlag(FontStyle.Strikeout) Then style = style Or MyFontStyle.Strikeout
+		Return style
+	End Function
+
+	Public Function ToFontStyle(value As MyFontStyle) As FontStyle
+		Dim style As FontStyle = FontStyle.Regular
+		If (value And MyFontStyle.Bold) <> 0 Then style = style Or FontStyle.Bold
+		If (value And MyFontStyle.Italic) <> 0 Then style = style Or FontStyle.Italic
+		If (value And MyFontStyle.Underline) <> 0 Then style = style Or FontStyle.Underline
+		If (value And MyFontStyle.Strikeout) <> 0 Then style = style Or FontStyle.Strikeout
+		Return style
+	End Function
+
+	Public Function ToMyTextAlignment(value As ContentAlignment) As MyTextAlignment
+		Return [Enum].Parse(GetType(MyTextAlignment), value.ToString())
+	End Function
+
+	Public Function ToContentAlignment(value As MyTextAlignment) As ContentAlignment
+		Return [Enum].Parse(GetType(ContentAlignment), value.ToString())
 	End Function
 
 	Public Function AnchorToCursor(eAnchor As MOperations, _angle As Single) As Cursor

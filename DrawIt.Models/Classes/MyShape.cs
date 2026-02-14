@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 
@@ -64,49 +65,7 @@ namespace DrawIt.Models
 				return current;
 			}
 
-			var next = Create(targetStyle);
-			if (current is null)
-			{
-				return next;
-			}
-
-			switch (next)
-			{
-				case MyRoundedRectangle rr when current is MyRoundedRectangle curRr:
-					rr.Corners = (MyCorners)curRr.Corners.Clone();
-					break;
-				case MyPolygon poly when current is MyPolygon curPoly:
-					poly.PolygonPoints = (PointF[])curPoly.PolygonPoints.Clone();
-					break;
-				case MyLines lines when current is MyLines curLines:
-					lines.PolygonPoints = (PointF[])curLines.PolygonPoints.Clone();
-					break;
-				case MyCurves curv when current is MyCurves curCurv:
-					curv.CurvePoints = (PointF[])curCurv.CurvePoints.Clone();
-					curv.Tension = curCurv.Tension;
-					break;
-				case MyClosedCurve ccurv when current is MyClosedCurve curCcurv:
-					ccurv.CurvePoints = (PointF[])curCcurv.CurvePoints.Clone();
-					ccurv.Tension = curCcurv.Tension;
-					break;
-				case MyArc arc when current is MyArc curArc:
-					arc.StartAngle = curArc.StartAngle;
-					arc.SweepAngle = curArc.SweepAngle;
-					break;
-				case MyPie pie when current is MyPie curPie:
-					pie.StartAngle = curPie.StartAngle;
-					pie.SweepAngle = curPie.SweepAngle;
-					break;
-				case MyText text when current is MyText curText:
-					text.FontName = curText.FontName;
-					text.FontSize = curText.FontSize;
-					text.FontStyle = curText.FontStyle;
-					text.Text = curText.Text;
-					text.TextAlignment = curText.TextAlignment;
-					break;
-			}
-
-			return next;
+			return Create(targetStyle);
 		}
 	}
 
@@ -395,9 +354,9 @@ namespace DrawIt.Models
 	{
 		private string _fontName = "Segoe UI";
 		private float _fontSize = 30;
-		private FontStyle _fontStyle = FontStyle.Regular;
+		private MyFontStyle _fontStyle = MyFontStyle.Regular;
 		private string _text = "Text";
-		private ContentAlignment _textAlignment = ContentAlignment.MiddleCenter;
+		private MyTextAlignment _textAlignment = MyTextAlignment.MiddleCenter;
 
 		public MyText() : base(ShapeStyle.Text) { }
 
@@ -431,7 +390,7 @@ namespace DrawIt.Models
 			}
 		}
 
-		public FontStyle FontStyle
+		public MyFontStyle FontStyle
 		{
 			get => _fontStyle;
 			set
@@ -461,7 +420,7 @@ namespace DrawIt.Models
 			}
 		}
 
-		public ContentAlignment TextAlignment
+		public MyTextAlignment TextAlignment
 		{
 			get => _textAlignment;
 			set

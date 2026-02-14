@@ -1018,7 +1018,8 @@ Public Class Canvas
 					If e.Button = MouseButtons.Left Then
 						op = MOperations.Centering
 					ElseIf e.Button = MouseButtons.Right Then
-						shp.FBrush.PCenterPoint = New PointF(50, 50)
+						Dim pathBrush = TryCast(shp.FBrush, MyPathGradientBrush)
+						If Not IsNothing(pathBrush) Then pathBrush.CenterPoint = New PointF(50, 50)
 					End If
 				ElseIf anct = AnchorType.TopLeft Then
 					op = MOperations.TopLeft
@@ -1172,7 +1173,8 @@ Public Class Canvas
 			Select Case op
 				Case MOperations.Centering
 					Dim npt As PointF = RotatePoint(worldPt, shp.RotationPoint, -shp.Angle)
-					shp.FBrush.PCenterPoint = MathUtils.ToPercentage(shp.GetRect, npt)
+					Dim pathBrush = TryCast(shp.FBrush, MyPathGradientBrush)
+					If Not IsNothing(pathBrush) Then pathBrush.CenterPoint = MathUtils.ToPercentage(shp.GetRect, npt)
 				Case MOperations.TopLeft
 					tRc.X += tPt.X
 					tRc.Width -= tPt.X
@@ -1494,7 +1496,7 @@ Public Class Canvas
 		For i As Integer = 1 To shp.Glow.Radius Step 2
 			Dim aGlow As Integer = shp.Glow.Strength - (shp.Glow.Strength / shp.Glow.Radius * i)
 			Using pen As New Pen(Color.FromArgb(aGlow, shp.Glow.GlowColor), i) With
-				{.LineJoin = LineJoin.Round, .StartCap = shp.DPen.PStartCap, .EndCap = shp.DPen.PEndCap}
+				{.LineJoin = LineJoin.Round, .StartCap = ToLineCap(shp.DPen.PStartCap), .EndCap = ToLineCap(shp.DPen.PEndCap)}
 				g.DrawPath(pen, pth)
 			End Using
 		Next i
@@ -1523,7 +1525,7 @@ Public Class Canvas
 		For i As Integer = 1 To shp.Shadow.Radius
 			Dim aGlow As Integer = shp.Shadow.Strength - (shp.Shadow.Strength / shp.Shadow.Radius * i)
 			Using pen As New Pen(Color.FromArgb(aGlow, shp.Shadow.ShadowColor), i) With
-				{.LineJoin = LineJoin.Round, .StartCap = shp.DPen.PStartCap, .EndCap = shp.DPen.PEndCap}
+				{.LineJoin = LineJoin.Round, .StartCap = ToLineCap(shp.DPen.PStartCap), .EndCap = ToLineCap(shp.DPen.PEndCap)}
 				g.DrawPath(pen, pth)
 			End Using
 		Next i
