@@ -6,6 +6,7 @@ Imports DrawIt.Models
 #End Region
 
 Public Class MainForm
+	Private _syncZoomUI As Boolean = False
 
 #Region "Properties"
 	Enum Operations
@@ -188,7 +189,11 @@ Public Class MainForm
 			set_BC.SelectedColor = cn.BackColor
 			set_PB.Image = cn.BackgroundImage
 			set_cname.Text = cn.Text
-			TBZoom.Value = cn.Zoom * 100
+			_syncZoomUI = True
+			Dim zoomValue = CInt(Math.Round(cn.Zoom * 100))
+			zoomValue = Math.Max(TBZoom.Minimum, Math.Min(TBZoom.Maximum, zoomValue))
+			If TBZoom.Value <> zoomValue Then TBZoom.Value = zoomValue
+			_syncZoomUI = False
 			set_W.Value = cn.AbsSize.Width
 			set_H.Value = cn.AbsSize.Height
 			set_ord.SelectedItem = cn.SelectionOrder.ToString
@@ -1482,11 +1487,11 @@ Public Class MainForm
 #Region "Zoom"
 
 	Private Sub TBZoom_ValueChanged(sender As Object, e As EventArgs) Handles TBZoom.ValueChanged
+		If _syncZoomUI Then Return
 		Dim cn = MainCanvas()
 		If Not IsNothing(cn) Then
 			cn.Zoom = TBZoom.Value / 100
 			cn.MainCanvasControl.SetSize()
-			cn.MainCanvasControl.basePnl.Invalidate()
 		End If
 	End Sub
 

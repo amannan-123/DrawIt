@@ -32,6 +32,7 @@ Public Class BlendEditor
 	End Property
 
 	Private _clr1 As Color = Color.White
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property Color1() As Color
 		Get
 			Return _clr1
@@ -45,6 +46,7 @@ Public Class BlendEditor
 	End Property
 
 	Private _clr2 As Color = Color.Black
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property Color2() As Color
 		Get
 			Return _clr2
@@ -58,6 +60,7 @@ Public Class BlendEditor
 	End Property
 
 	Private _Factors As Single() = New Single() {0, 1}
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property Factors() As Single()
 		Get
 			Return _Factors
@@ -70,6 +73,7 @@ Public Class BlendEditor
 	End Property
 
 	Private _positions As Single() = New Single() {0, 1}
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property Positions() As Single()
 		Get
 			Return _positions

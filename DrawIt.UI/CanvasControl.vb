@@ -1,14 +1,24 @@
-﻿Imports System.ComponentModel
+Imports System.ComponentModel
 Imports DrawIt.Helpers
 
 Public Class CanvasControl
+	Private Const WheelZoomStep As Double = 1.1R
 
 	Private m_down As Boolean = False
 	Private m_pt As Point
+	Private _syncScroll As Boolean = False
+
+	<Browsable(False)>
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)>
+	Public ReadOnly Property IsPanningNow() As Boolean
+		Get
+			Return m_down
+		End Get
+	End Property
 
 	Public Sub ResetZoom()
-		baseCanvas.Zoom = 1
-		basePnl.Invalidate()
+		baseCanvas.Zoom = 1.0F
+		SetPanOffset(PointF.Empty)
 	End Sub
 
 	Private _pan As Boolean = False
@@ -19,64 +29,114 @@ Public Class CanvasControl
 			Return _pan
 		End Get
 		Set(ByVal value As Boolean)
-			If value <> _pan Then
-				_pan = value
-			End If
+			_pan = value
 		End Set
 	End Property
 
-	Public Sub ApplyScrollChange(hscr As Integer, vscr As Integer)
-		If hscr Then HScrollBar.Value -= hscr
-		If vscr Then VScrollBar.Value -= vscr
+	Private Sub SetPanMode(active As Boolean)
+		Panning = active
+		Dim cur = If(active, Cursors.Hand, Cursors.Arrow)
+		Cursor = cur
+		baseCanvas.Cursor = cur
+	End Sub
+
+	Private Sub StopPanDrag()
+		If m_down Then
+			m_down = False
+			UpdateScrollbars()
+		End If
+	End Sub
+
+
+	Private Sub GetPanLimits(ByRef minX As Single, ByRef maxX As Single,
+						 ByRef minY As Single, ByRef maxY As Single)
+		Dim bounds = baseCanvas.ViewportContentBounds()
+		Dim zoom = baseCanvas.Zoom
+		Dim centerOffset = baseCanvas.GetViewportCenterOffset()
+		Dim margin As Single = Math.Max(Math.Max(Width, Height) * 2.0F, 2000.0F)
+		ZoomPanMath.GetSymmetricPanLimits(bounds, zoom, centerOffset, baseCanvas.ClientSize, margin, minX, maxX, minY, maxY)
+	End Sub
+
+	Private Function ClampPan(target As PointF) As PointF
+		Dim minX, maxX, minY, maxY As Single
+		GetPanLimits(minX, maxX, minY, maxY)
+		Dim x = Math.Max(minX, Math.Min(maxX, target.X))
+		Dim y = Math.Max(minY, Math.Min(maxY, target.Y))
+		Return New PointF(x, y)
+	End Function
+
+	Private Sub SetPanOffset(target As PointF, Optional syncBars As Boolean = True)
+		Dim clamped = ClampPan(target)
+		If Math.Abs(clamped.X - baseCanvas.PanOffset.X) < 0.001F AndAlso
+		   Math.Abs(clamped.Y - baseCanvas.PanOffset.Y) < 0.001F Then
+			Return
+		End If
+		baseCanvas.PanOffset = clamped
+		If syncBars Then UpdateScrollbars()
+	End Sub
+
+	Private Sub ZoomAroundClientPoint(targetZoom As Single, anchorClient As Point)
+		Dim oldZoom As Double = baseCanvas.Zoom
+		If oldZoom <= 0 Then oldZoom = 1
+
+		Dim clampedTargetZoom As Double = ZoomPanMath.ClampZoom(targetZoom)
+		If Math.Abs(clampedTargetZoom - oldZoom) < 0.0000001R Then Return
+
+		Dim centerBefore = baseCanvas.GetViewportCenterOffset()
+
+		baseCanvas.Zoom = CSng(clampedTargetZoom)
+
+		Dim centerAfter = baseCanvas.GetViewportCenterOffset()
+		Dim newPan = ZoomPanMath.ComputePanForZoomAnchor(anchorClient, baseCanvas.PanOffset, centerBefore, oldZoom, centerAfter, clampedTargetZoom)
+		SetPanOffset(newPan)
 	End Sub
 
 	Public Sub SetSize()
 		basePnl.SuspendLayout()
-
-		basePnl.Width = Math.Max(Width - 20, baseCanvas.Width * 2)
-		basePnl.Height = Math.Max(Height - 20, baseCanvas.Height * 2)
-		Dim centX = basePnl.Width / 2
-		Dim centY = basePnl.Height / 2
-		baseCanvas.Location = New Point(centX - (baseCanvas.Width / 2),
-										centY - (baseCanvas.Height / 2))
-		HScrollBar.Maximum = basePnl.Width - Width
-		VScrollBar.Maximum = basePnl.Height - Height
-
-		HScrollBar.Value = MathUtils.FromPercentage(HScrollBar.Minimum, HScrollBar.Maximum, 50)
-		VScrollBar.Value = MathUtils.FromPercentage(VScrollBar.Minimum, VScrollBar.Maximum, 50)
-
+		Dim viewRect As New Rectangle(0, 0, Math.Max(0, ClientSize.Width - VScrollBar.Width), Math.Max(0, ClientSize.Height - HScrollBar.Height))
+		basePnl.Bounds = viewRect
 		basePnl.ResumeLayout()
+		SetPanOffset(baseCanvas.PanOffset)
+		UpdateScrollbars()
+	End Sub
+
+	Private Sub UpdateScrollbars()
+		If _syncScroll Then Return
+		_syncScroll = True
+		Try
+			Dim viewW = Math.Max(1, baseCanvas.ClientSize.Width)
+			Dim viewH = Math.Max(1, baseCanvas.ClientSize.Height)
+			Dim minX, maxX, minY, maxY As Single
+			GetPanLimits(minX, maxX, minY, maxY)
+
+			HScrollBar.Minimum = CInt(Math.Floor(minX))
+			HScrollBar.Maximum = CInt(Math.Ceiling(maxX))
+			HScrollBar.LargeChange = Math.Max(1, viewW)
+			HScrollBar.SmallChange = Math.Max(5, CInt(viewW / 20.0F))
+
+			VScrollBar.Minimum = CInt(Math.Floor(minY))
+			VScrollBar.Maximum = CInt(Math.Ceiling(maxY))
+			VScrollBar.LargeChange = Math.Max(1, viewH)
+			VScrollBar.SmallChange = Math.Max(5, CInt(viewH / 20.0F))
+
+			Dim pan = baseCanvas.PanOffset
+			HScrollBar.Value = Math.Max(HScrollBar.Minimum, Math.Min(HScrollBar.Maximum, CInt(pan.X)))
+			VScrollBar.Value = Math.Max(VScrollBar.Minimum, Math.Min(VScrollBar.Maximum, CInt(pan.Y)))
+		Finally
+			_syncScroll = False
+		End Try
 	End Sub
 
 	Protected Overrides Sub OnMouseWheel(e As MouseEventArgs)
 		If Not My.Computer.Keyboard.CtrlKeyDown Then Return
-		If e.Delta < 0 Then
-			baseCanvas.Zoom -= 0.5
-		Else
-			baseCanvas.Zoom += 0.5
-		End If
-		If baseCanvas.Zoom = 10 Then Return
 
-		basePnl.SuspendLayout()
+		Dim anchor = baseCanvas.PointToClient(Control.MousePosition)
+		If e.Delta = 0 Then Return
 
-		basePnl.Width = Math.Max(Width - 20, baseCanvas.Width * 2)
-		basePnl.Height = Math.Max(Height - 20, baseCanvas.Height * 2)
-		Dim centX = basePnl.Width / 2
-		Dim centY = basePnl.Height / 2
-		baseCanvas.Location = New Point(centX - (baseCanvas.Width / 2),
-								centY - (baseCanvas.Height / 2))
-		HScrollBar.Maximum = basePnl.Width - Width
-		VScrollBar.Maximum = basePnl.Height - Height
-
-		Dim mouseLoc = baseCanvas.PointToClient(MousePosition)
-
-		Dim pX = MathUtils.ToPercentage(0, baseCanvas.Width, mouseLoc.X)
-		Dim pY = MathUtils.ToPercentage(0, baseCanvas.Height, mouseLoc.Y)
-
-		HScrollBar.Value = MathUtils.FromPercentage(0, HScrollBar.Maximum, pX)
-		VScrollBar.Value = MathUtils.FromPercentage(0, VScrollBar.Maximum, pY)
-
-		basePnl.ResumeLayout()
+		Dim steps As Double = e.Delta / 120.0R
+		Dim factor As Double = Math.Pow(WheelZoomStep, steps)
+		Dim targetZoom As Single = CSng(baseCanvas.Zoom * factor)
+		ZoomAroundClientPoint(targetZoom, anchor)
 	End Sub
 
 	Private Sub CanvasControl_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -91,72 +151,62 @@ Public Class CanvasControl
 		Return DisplayRectangle.Location
 	End Function
 
-	Private Sub basePnl_Paint(sender As Object, e As PaintEventArgs) Handles basePnl.Paint
-		Dim g As Graphics = e.Graphics
-		Dim rect = New Rectangle(baseCanvas.Location, baseCanvas.Size)
-		rect.Inflate(10, 10)
-		g.DrawRectangle(Pens.RoyalBlue, rect)
-	End Sub
-
 	Private Sub VScrollBar_Scroll(sender As Object, e As EventArgs) Handles VScrollBar.Scroll
-		basePnl.Top = -VScrollBar.Value
+		If _syncScroll Then Return
+		SetPanOffset(New PointF(baseCanvas.PanOffset.X, VScrollBar.Value))
 	End Sub
 
 	Private Sub HScrollBar_Scroll(sender As Object, e As EventArgs) Handles HScrollBar.Scroll
-		basePnl.Left = -HScrollBar.Value
+		If _syncScroll Then Return
+		SetPanOffset(New PointF(HScrollBar.Value, baseCanvas.PanOffset.Y))
 	End Sub
 
-	Private Sub basePnl_LocationChanged(sender As Object, e As EventArgs) Handles basePnl.LocationChanged
-		HScrollBar.Value = -basePnl.Left
-		VScrollBar.Value = -basePnl.Top
-	End Sub
-
-#Region "Panning"
 	Private Sub CanvasPan_MouseDown(sender As Object, e As MouseEventArgs) Handles basePnl.MouseDown, baseCanvas.MouseDown
-		If Panning Then
+		If Panning AndAlso e.Button = MouseButtons.Left Then
 			m_down = True
-			m_pt = e.Location
+			m_pt = PointToClient(Control.MousePosition)
 		End If
 	End Sub
 
 	Private Sub CanvasPan_MouseMove(sender As Object, e As MouseEventArgs) Handles basePnl.MouseMove, baseCanvas.MouseMove
-		If Panning Then
-			If m_down Then
-				ApplyScrollChange(e.X - m_pt.X, e.Y - m_pt.Y)
+		If m_down Then
+			If Not Panning Then
+				StopPanDrag()
+				Return
 			End If
+			Dim nowPt = PointToClient(Control.MousePosition)
+			Dim dx = nowPt.X - m_pt.X
+			Dim dy = nowPt.Y - m_pt.Y
+			SetPanOffset(New PointF(baseCanvas.PanOffset.X - dx, baseCanvas.PanOffset.Y - dy), False)
+			m_pt = nowPt
 		End If
 	End Sub
 
 	Private Sub CanvasPan_MouseUp(sender As Object, e As MouseEventArgs) Handles basePnl.MouseUp, baseCanvas.MouseUp
-		If Panning Then
-			m_down = False
-			basePnl.Invalidate()
-		End If
+		StopPanDrag()
 	End Sub
 
 	Private Sub CanvasControl_KeyDown(sender As Object, e As KeyEventArgs) Handles basePnl.KeyDown, baseCanvas.KeyDown
-		Select Case e.KeyData
-			Case Keys.Space
-				Panning = True
-				Cursor = Cursors.NoMove2D
-				baseCanvas.Cursor = Cursors.NoMove2D
-		End Select
+		If e.KeyCode = Keys.Space Then
+			SetPanMode(True)
+		End If
 	End Sub
 
 	Private Sub CanvasControl_KeyUp(sender As Object, e As KeyEventArgs) Handles basePnl.KeyUp, baseCanvas.KeyUp
-		Select Case e.KeyData
-			Case Keys.Space
-				Panning = False
-				Cursor = Cursors.Arrow
-				baseCanvas.Cursor = Cursors.Arrow
-				basePnl.Invalidate()
-		End Select
+		If e.KeyCode = Keys.Space Then
+			SetPanMode(False)
+			StopPanDrag()
+		End If
+	End Sub
+
+	Private Sub CanvasControl_Leave(sender As Object, e As EventArgs) Handles MyBase.Leave, basePnl.Leave, baseCanvas.Leave
+		SetPanMode(False)
+		StopPanDrag()
 	End Sub
 
 	Private Sub basePnl_Click(sender As Object, e As EventArgs) Handles basePnl.Click
 		basePnl.Focus()
 	End Sub
 
-#End Region
-
 End Class
+

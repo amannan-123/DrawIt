@@ -213,16 +213,30 @@ Public Class MyVScrollBar
 	End Sub
 
 	Private Sub UpdateSlider(xPos As Single)
-		sngSliderPos = xPos
-		Dim t_size As Integer = Math.Max(rectScroll.Height - (Maximum - Minimum), 15)
+		Dim trackLen As Integer = Math.Max(1, rectScroll.Height)
+		Dim totalRange As Integer = Math.Max(1, Maximum - Minimum + 1)
+		Dim page As Integer = Math.Max(1, LargeChange)
+		Dim t_size As Integer = CInt(Math.Round(trackLen * (page / CSng(totalRange + page))))
+		t_size = Math.Max(15, Math.Min(trackLen, t_size))
+
 		rectSlider = rectScroll
-		rectSlider.Height -= t_size
-		If sngSliderPos < rectSlider.Y Then sngSliderPos = rectSlider.Y
-		If sngSliderPos > rectSlider.Bottom Then sngSliderPos = rectSlider.Bottom
-		rectThumb = New Rectangle(0, sngSliderPos, Width - 1, t_size)
+		rectSlider.Height = Math.Max(0, rectScroll.Height - t_size)
+
+		If rectSlider.Height <= 0 Then
+			sngSliderPos = rectScroll.Y
+		Else
+			sngSliderPos = Math.Max(rectSlider.Y, Math.Min(rectSlider.Bottom, xPos))
+		End If
+
+		rectThumb = New Rectangle(0, CInt(sngSliderPos), Width - 1, t_size)
 	End Sub
 
 	Private Sub SetSliderValue(_y As Single)
+		If rectSlider.Height <= 0 OrElse Maximum = Minimum Then
+			Value = Minimum
+			UpdateSlider(rectSlider.Y)
+			Return
+		End If
 		Dim perc As Single = MathUtils.ToPercentage(rectSlider.Y, rectSlider.Bottom, _y)
 		Dim _val As Single = MathUtils.FromPercentage(Minimum, Maximum, perc)
 		Value = _val
@@ -230,6 +244,10 @@ Public Class MyVScrollBar
 	End Sub
 
 	Private Sub SetSliderFromValues()
+		If Maximum = Minimum Then
+			UpdateSlider(rectScroll.Y)
+			Return
+		End If
 		Dim perc As Single = MathUtils.ToPercentage(Minimum, Maximum, Value)
 		Dim pos As Single = MathUtils.FromPercentage(rectSlider.Y, rectSlider.Bottom, perc)
 		UpdateSlider(pos)

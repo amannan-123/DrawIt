@@ -55,6 +55,7 @@ Public Class ColorEditorButton
 	End Sub
 
 	Private _text As String = "ChooseColor"
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property MyText() As String
 		Get
 			Return _text
@@ -64,6 +65,7 @@ Public Class ColorEditorButton
 		End Set
 	End Property
 
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property SelectedColor() As Color
 		Get
 			Return _selector.SelectedColor

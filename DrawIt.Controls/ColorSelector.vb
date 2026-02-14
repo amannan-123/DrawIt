@@ -30,6 +30,7 @@ Public Class ColorSelector
 		Button2.Visible = True
 	End Sub
 
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property SelectedColor() As Color
 		Get
 			Return MyPanel1.BackColor

@@ -33,6 +33,7 @@ Partial Class CanvasControl
 		'
 		Me.baseCanvas.AbsSize = New System.Drawing.Size(500, 500)
 		Me.baseCanvas.BackColor = System.Drawing.Color.White
+		Me.baseCanvas.Dock = System.Windows.Forms.DockStyle.Fill
 		Me.baseCanvas.Location = New System.Drawing.Point(0, 0)
 		Me.baseCanvas.Margin = New System.Windows.Forms.Padding(0)
 		Me.baseCanvas.Name = "baseCanvas"
@@ -42,6 +43,9 @@ Partial Class CanvasControl
 		'
 		'basePnl
 		'
+		Me.basePnl.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+			Or System.Windows.Forms.AnchorStyles.Left) _
+			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.basePnl.Controls.Add(Me.baseCanvas)
 		Me.basePnl.Location = New System.Drawing.Point(0, 0)
 		Me.basePnl.Name = "basePnl"

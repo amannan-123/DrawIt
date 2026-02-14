@@ -174,6 +174,7 @@ Public Class MyTrackBar
 	Private _colors As Color() = New Color() {Color.White, Color.Black}
 	<Category("TrackBar")>
 	<Description("Colors of linear gradient brush.")>
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property Colors() As Color()
 		Get
 			Return _colors
@@ -187,6 +188,7 @@ Public Class MyTrackBar
 	Private _positions As Single() = New Single() {0, 1}
 	<Category("TrackBar")>
 	<Description("Positions of linear gradient brush.")>
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property Positions() As Single()
 		Get
 			Return _positions
@@ -200,6 +202,7 @@ Public Class MyTrackBar
 	Private _factors As Single() = New Single() {0, 1}
 	<Category("TrackBar")>
 	<Description("Factors of linear gradient brush.")>
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property Factors() As Single()
 		Get
 			Return _factors

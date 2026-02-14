@@ -46,6 +46,7 @@ Public Class CornersEditor
 
 #Region "Properties"
 	Private _lst(8) As Single
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property Corners() As Single()
 		Get
 			Return _lst
@@ -57,6 +58,7 @@ Public Class CornersEditor
 	End Property
 
 	Private ul_tp As Boolean = False
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property ULReversed() As Boolean
 		Get
 			Return ul_tp
@@ -69,6 +71,7 @@ Public Class CornersEditor
 	End Property
 
 	Private ur_tp As Boolean = False
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property URReversed() As Boolean
 		Get
 			Return ur_tp
@@ -81,6 +84,7 @@ Public Class CornersEditor
 	End Property
 
 	Private bl_tp As Boolean = False
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property BLReversed() As Boolean
 		Get
 			Return bl_tp
@@ -93,6 +97,7 @@ Public Class CornersEditor
 	End Property
 
 	Private br_tp As Boolean = False
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property BRReversed() As Boolean
 		Get
 			Return br_tp

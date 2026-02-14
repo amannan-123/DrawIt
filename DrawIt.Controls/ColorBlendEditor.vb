@@ -33,6 +33,7 @@ Public Class ColorBlendEditor
 
 
 	Private _colors As Color() = New Color() {Color.White, Color.Black}
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property Colors() As Color()
 		Get
 			Return _colors
@@ -45,6 +46,7 @@ Public Class ColorBlendEditor
 	End Property
 
 	Private _positions As Single() = New Single() {0, 1}
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property Positions() As Single()
 		Get
 			Return _positions

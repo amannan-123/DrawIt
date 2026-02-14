@@ -64,6 +64,7 @@ Public Class ShapePointsEditor
 		End Set
 	End Property
 
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property Points() As PointF()
 		Get
 			Dim _p As New List(Of PointF)

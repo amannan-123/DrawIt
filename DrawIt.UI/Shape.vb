@@ -34,17 +34,15 @@ Public Class Shape : Implements IDisposable
 
 	Sub New()
 		ReloadCachedObjects()
-		Zoom = 1
 	End Sub
 
-	Sub New(_loc As PointF, _shp As ShapeStyle, _br As BrushType, Optional _zm As Single = 1)
+	Sub New(_loc As PointF, _shp As ShapeStyle, _br As BrushType)
 		FBrush.BType = _br
 		MShape.SType = _shp
-		_baseX = _loc.X / _zm
-		_baseY = _loc.Y / _zm
+		_baseX = _loc.X
+		_baseY = _loc.Y
 		_baseWidth = 10
 		_baseHeight = 10
-		_zoom = _zm
 		BindEvents()
 		ReloadCachedObjects()
 	End Sub
@@ -52,6 +50,20 @@ Public Class Shape : Implements IDisposable
 
 #Region "Globals"
 	Private AnchorSize As New SizeF(7, 7)
+	Private _anchorScale As Single = 1.0F
+	<JsonIgnore>
+	Public Property AnchorScale As Single
+		Get
+			Return _anchorScale
+		End Get
+		Set(value As Single)
+			_anchorScale = Math.Max(0.0001F, value)
+		End Set
+	End Property
+
+	Private Function EffectiveAnchorSize() As SizeF
+		Return New SizeF(AnchorSize.Width * AnchorScale, AnchorSize.Height * AnchorScale)
+	End Function
 #End Region
 
 #Region "Properties"
@@ -115,37 +127,18 @@ Public Class Shape : Implements IDisposable
 	End Sub
 
 	Public Function GetRect() As RectangleF
-		If Zoom <= 0 Then Zoom = 1
-		Return New RectangleF(
-				_baseX * Zoom,
-				_baseY * Zoom,
-				_baseWidth * Zoom,
-				_baseHeight * Zoom)
+		Return New RectangleF(_baseX, _baseY, _baseWidth, _baseHeight)
 	End Function
 
 	Public Sub SetAllRect(rect As RectangleF)
-		_baseX = rect.X / Zoom
-		_baseY = rect.Y / Zoom
-		_baseWidth = rect.Width / Zoom
-		_baseHeight = rect.Height / Zoom
+		_baseX = rect.X
+		_baseY = rect.Y
+		_baseWidth = rect.Width
+		_baseHeight = rect.Height
 		FinalizeCoordsChange()
 	End Sub
 
 #End Region
-
-	Private _zoom As Single = 1.0F
-	<JsonIgnore>
-	Public Property Zoom() As Single
-		Get
-			Return _zoom
-		End Get
-		Set(ByVal value As Single)
-			_zoom = value
-			FinalizeCoordsChange()
-			Dim rc = GetRect()
-			RotationPoint = New PointF(rc.X + rc.Width / 2, rc.Y + rc.Height / 2)
-		End Set
-	End Property
 
 	Private _ang As Single = 0.0
 	Public Property Angle() As Single
@@ -754,7 +747,7 @@ Public Class Shape : Implements IDisposable
 				End Select
 				Dim fl As New FontFamily(MShape.FontName)
 				gp.AddString(MShape.Text, fl, MShape.FontStyle,
-						 MShape.FontSize * 1.34 * Zoom, rt, sf)
+						 MShape.FontSize * 1.34, rt, sf)
 		End Select
 
 		'flip
@@ -795,10 +788,11 @@ Public Class Shape : Implements IDisposable
 	End Sub
 
 	Public Function TopLeft(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(GetRect.X - AnchorSize.Width, GetRect.Y - AnchorSize.Height, AnchorSize.Width, AnchorSize.Height)
+		Dim anc = EffectiveAnchorSize()
+		Dim rect As New RectangleF(GetRect.X - anc.Width, GetRect.Y - anc.Height, anc.Width, anc.Height)
 		If Math.Abs(GetRect.Width) > 20 AndAlso Math.Abs(GetRect.Height) > 20 Then
-			rect.X += (AnchorSize.Width / 2)
-			rect.Y += (AnchorSize.Height / 2)
+			rect.X += (anc.Width / 2)
+			rect.Y += (anc.Height / 2)
 		End If
 		Dim gp As New GraphicsPath()
 		gp.AddRectangle(rect)
@@ -807,9 +801,10 @@ Public Class Shape : Implements IDisposable
 	End Function
 
 	Public Function Top(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(GetRect.X + (GetRect.Width / 2) - (AnchorSize.Width / 2), GetRect.Y - AnchorSize.Height, AnchorSize.Width, AnchorSize.Height)
+		Dim anc = EffectiveAnchorSize()
+		Dim rect As New RectangleF(GetRect.X + (GetRect.Width / 2) - (anc.Width / 2), GetRect.Y - anc.Height, anc.Width, anc.Height)
 		If Math.Abs(GetRect.Width) > 20 AndAlso Math.Abs(GetRect.Height) > 20 Then
-			rect.Y += (AnchorSize.Height / 2)
+			rect.Y += (anc.Height / 2)
 		End If
 		Dim gp As New GraphicsPath()
 		gp.AddRectangle(rect)
@@ -818,10 +813,11 @@ Public Class Shape : Implements IDisposable
 	End Function
 
 	Public Function TopRight(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(GetRect.Right, GetRect.Y - AnchorSize.Height, AnchorSize.Width, AnchorSize.Height)
+		Dim anc = EffectiveAnchorSize()
+		Dim rect As New RectangleF(GetRect.Right, GetRect.Y - anc.Height, anc.Width, anc.Height)
 		If Math.Abs(GetRect.Width) > 20 AndAlso Math.Abs(GetRect.Height) > 20 Then
-			rect.X -= (AnchorSize.Width / 2)
-			rect.Y += (AnchorSize.Height / 2)
+			rect.X -= (anc.Width / 2)
+			rect.Y += (anc.Height / 2)
 		End If
 		Dim gp As New GraphicsPath()
 		gp.AddRectangle(rect)
@@ -830,9 +826,10 @@ Public Class Shape : Implements IDisposable
 	End Function
 
 	Public Function Left(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(GetRect.X - AnchorSize.Width, GetRect.Y + (GetRect.Height / 2) - (AnchorSize.Height / 2), AnchorSize.Width, AnchorSize.Height)
+		Dim anc = EffectiveAnchorSize()
+		Dim rect As New RectangleF(GetRect.X - anc.Width, GetRect.Y + (GetRect.Height / 2) - (anc.Height / 2), anc.Width, anc.Height)
 		If Math.Abs(GetRect.Width) > 20 AndAlso Math.Abs(GetRect.Height) > 20 Then
-			rect.X += (AnchorSize.Width / 2)
+			rect.X += (anc.Width / 2)
 		End If
 		Dim gp As New GraphicsPath()
 		gp.AddRectangle(rect)
@@ -841,9 +838,10 @@ Public Class Shape : Implements IDisposable
 	End Function
 
 	Public Function Right(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(GetRect.Right, GetRect.Y + (GetRect.Height / 2) - (AnchorSize.Height / 2), AnchorSize.Width, AnchorSize.Height)
+		Dim anc = EffectiveAnchorSize()
+		Dim rect As New RectangleF(GetRect.Right, GetRect.Y + (GetRect.Height / 2) - (anc.Height / 2), anc.Width, anc.Height)
 		If Math.Abs(GetRect.Width) > 20 AndAlso Math.Abs(GetRect.Height) > 20 Then
-			rect.X -= (AnchorSize.Width / 2)
+			rect.X -= (anc.Width / 2)
 		End If
 		Dim gp As New GraphicsPath()
 		gp.AddRectangle(rect)
@@ -852,10 +850,11 @@ Public Class Shape : Implements IDisposable
 	End Function
 
 	Public Function BottomLeft(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(GetRect.X - AnchorSize.Width, GetRect.Bottom, AnchorSize.Width, AnchorSize.Height)
+		Dim anc = EffectiveAnchorSize()
+		Dim rect As New RectangleF(GetRect.X - anc.Width, GetRect.Bottom, anc.Width, anc.Height)
 		If Math.Abs(GetRect.Width) > 20 AndAlso Math.Abs(GetRect.Height) > 20 Then
-			rect.X += (AnchorSize.Width / 2)
-			rect.Y -= (AnchorSize.Height / 2)
+			rect.X += (anc.Width / 2)
+			rect.Y -= (anc.Height / 2)
 		End If
 		Dim gp As New GraphicsPath()
 		gp.AddRectangle(rect)
@@ -864,9 +863,10 @@ Public Class Shape : Implements IDisposable
 	End Function
 
 	Public Function Bottom(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(GetRect.X + (GetRect.Width / 2) - (AnchorSize.Width / 2), GetRect.Bottom, AnchorSize.Width, AnchorSize.Height)
+		Dim anc = EffectiveAnchorSize()
+		Dim rect As New RectangleF(GetRect.X + (GetRect.Width / 2) - (anc.Width / 2), GetRect.Bottom, anc.Width, anc.Height)
 		If Math.Abs(GetRect.Width) > 20 AndAlso Math.Abs(GetRect.Height) > 20 Then
-			rect.Y -= (AnchorSize.Height / 2)
+			rect.Y -= (anc.Height / 2)
 		End If
 		Dim gp As New GraphicsPath()
 		gp.AddRectangle(rect)
@@ -875,10 +875,11 @@ Public Class Shape : Implements IDisposable
 	End Function
 
 	Public Function BottomRight(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(GetRect.Right, GetRect.Bottom, AnchorSize.Width, AnchorSize.Height)
+		Dim anc = EffectiveAnchorSize()
+		Dim rect As New RectangleF(GetRect.Right, GetRect.Bottom, anc.Width, anc.Height)
 		If Math.Abs(GetRect.Width) > 20 AndAlso Math.Abs(GetRect.Height) > 20 Then
-			rect.X -= (AnchorSize.Width / 2)
-			rect.Y -= (AnchorSize.Height / 2)
+			rect.X -= (anc.Width / 2)
+			rect.Y -= (anc.Height / 2)
 		End If
 		Dim gp As New GraphicsPath()
 		gp.AddRectangle(rect)
@@ -887,8 +888,9 @@ Public Class Shape : Implements IDisposable
 	End Function
 
 	Public Function Rotate(Optional rotated As Boolean = True) As GraphicsPath
-		Dim rect As New RectangleF(GetRect.X + (GetRect.Width / 2) - (AnchorSize.Width / 2), GetRect.Y - 30, AnchorSize.Width, AnchorSize.Height)
-		rect.Inflate(1, 1)
+		Dim anc = EffectiveAnchorSize()
+		Dim rect As New RectangleF(GetRect.X + (GetRect.Width / 2) - (anc.Width / 2), GetRect.Y - (30 * AnchorScale), anc.Width, anc.Height)
+		rect.Inflate(1 * AnchorScale, 1 * AnchorScale)
 		Dim gp As New GraphicsPath()
 		gp.AddEllipse(rect)
 		If rotated Then AdjustRotation(gp)
@@ -897,7 +899,7 @@ Public Class Shape : Implements IDisposable
 
 	Public Function Centering(Optional rotated As Boolean = True) As GraphicsPath
 		Dim rect As New RectangleF(MathUtils.FromPercentage(GetRect, FBrush.PCenterPoint), New SizeF(0, 0))
-		rect.Inflate(3, 3)
+		rect.Inflate(3 * AnchorScale, 3 * AnchorScale)
 		Dim pt As PointF = rect.Location
 		Dim gp As New GraphicsPath()
 		gp.AddEllipse(rect)

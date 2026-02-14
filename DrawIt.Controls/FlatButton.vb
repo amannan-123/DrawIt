@@ -30,6 +30,7 @@ Public Class FlatButton
 	''' Icon to be drawn on control.
 	''' </summary>
 	<Description("Icon to be drawn on control.")>
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property Icon() As Image
 		Get
 			Return _icon
@@ -108,6 +109,7 @@ Public Class FlatButton
 	''' Text to display on control.
 	''' </summary>
 	<Description("Text to display on control.")>
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property MyText As String
 		Get
 			Return Text
