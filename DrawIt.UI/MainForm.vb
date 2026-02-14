@@ -302,11 +302,15 @@ Public Class MainForm
 		Dim rect As New Rectangle(e.Bounds.X + 3, e.Bounds.Y + 1, 20, e.Bounds.Height - 3)
 		Dim shp As New Shape
 		shp.SetAllRect(rect)
-		shp.MShape.SType = [Enum].Parse(GetType(ShapeStyle), itemString)
+		Dim shapeType = [Enum].Parse(GetType(ShapeStyle), itemString)
+		shp.MShape = MyShapeFactory.ChangeType(shp.MShape, shapeType)
 		shp.DPen.PBrush.SolidColor = Color.Black
 		shp.FBrush.SolidColor = Color.Black
-		shp.MShape.Text = "AZ"
-		shp.MShape.FontSize = 9
+		Dim shapeText = TryCast(shp.MShape, MyText)
+		If Not IsNothing(shapeText) Then
+			shapeText.Text = "AZ"
+			shapeText.FontSize = 9
+		End If
 
 		shp.UpdatePath()
 
@@ -357,7 +361,7 @@ Public Class MainForm
 				Dim r1 As New Rectangle(rect.X, rect.Y + 4, rect.Width / 2, rect.Height - 4)
 				Dim s1 As New Shape
 				s1.SetAllRect(r1)
-				s1.MShape.SType = ShapeStyle.Triangle
+				s1.MShape = MyShapeFactory.ChangeType(s1.MShape, ShapeStyle.Triangle)
 				s1.UpdatePath()
 				e.Graphics.FillPath(Brushes.Brown, s1.TotalPath)
 				Dim r2 As Rectangle = r1
@@ -367,7 +371,7 @@ Public Class MainForm
 				e.Graphics.FillPath(Brushes.Brown, s1.TotalPath)
 				Dim r3 As New Rectangle(rect.Right - 7, rect.Y + 2, 5, 5)
 				s1.SetAllRect(r3)
-				s1.MShape.SType = ShapeStyle.Ellipse
+				s1.MShape = MyShapeFactory.ChangeType(s1.MShape, ShapeStyle.Ellipse)
 				s1.UpdatePath()
 				e.Graphics.FillPath(Brushes.DarkOrange, s1.TotalPath)
 				e.Graphics.DrawPath(shp.CreatePen, shp.TotalPath)
@@ -543,7 +547,8 @@ Public Class MainForm
 	Private Sub cb_Shape_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cb_Shape.SelectedIndexChanged
 		If rDraw.Checked Then Return
 		If Not IsNothing(MainShape) Then
-			MainShape.MShape.SType = [Enum].Parse(GetType(ShapeStyle), cb_Shape.SelectedItem)
+			Dim shapeType = [Enum].Parse(GetType(ShapeStyle), cb_Shape.SelectedItem)
+			MainShape.MShape = MyShapeFactory.ChangeType(MainShape.MShape, shapeType)
 			MainCanvas.Invalidate()
 		End If
 	End Sub
@@ -1115,10 +1120,25 @@ Public Class MainForm
 					If dlg.ShowDialog = DialogResult.OK Then
 						Select Case shp.MShape.SType
 							Case ShapeStyle.Polygon, ShapeStyle.Lines
-								shp.MShape.PolygonPoints = dlg.PEditor.Points
+								Dim linesData = TryCast(shp.MShape, MyLines)
+								If Not IsNothing(linesData) Then
+									linesData.PolygonPoints = dlg.PEditor.Points
+								Else
+									Dim polygonData = TryCast(shp.MShape, MyPolygon)
+									If Not IsNothing(polygonData) Then polygonData.PolygonPoints = dlg.PEditor.Points
+								End If
 							Case ShapeStyle.Curves, ShapeStyle.ClosedCurve
-								shp.MShape.CurvePoints = dlg.PEditor.Points
-								shp.MShape.Tension = dlg.TB_Tension.Value
+								Dim curvesData = TryCast(shp.MShape, MyCurves)
+								If Not IsNothing(curvesData) Then
+									curvesData.CurvePoints = dlg.PEditor.Points
+									curvesData.Tension = dlg.TB_Tension.Value
+								Else
+									Dim closedCurveData = TryCast(shp.MShape, MyClosedCurve)
+									If Not IsNothing(closedCurveData) Then
+										closedCurveData.CurvePoints = dlg.PEditor.Points
+										closedCurveData.Tension = dlg.TB_Tension.Value
+									End If
+								End If
 						End Select
 					Else
 						dlg.RestoreOld()
@@ -1132,11 +1152,14 @@ Public Class MainForm
 				Case ShapeStyle.Text
 					Dim dlg As New TextEditor(shp)
 					If dlg.ShowDialog = DialogResult.OK Then
-						shp.MShape.FontName = dlg.TBox.Font.Name
-						shp.MShape.FontSize = dlg.TBox.Font.Size
-						shp.MShape.FontStyle = dlg.TBox.Font.Style
-						shp.MShape.Text = dlg.TBox.Text
-						shp.MShape.TextAlignment = [Enum].Parse(GetType(ContentAlignment), dlg.cb_Align.SelectedItem)
+						Dim textData = TryCast(shp.MShape, MyText)
+						If Not IsNothing(textData) Then
+							textData.FontName = dlg.TBox.Font.Name
+							textData.FontSize = dlg.TBox.Font.Size
+							textData.FontStyle = dlg.TBox.Font.Style
+							textData.Text = dlg.TBox.Text
+							textData.TextAlignment = [Enum].Parse(GetType(ContentAlignment), dlg.cb_Align.SelectedItem)
+						End If
 					End If
 			End Select
 			MainCanvas.Invalidate()

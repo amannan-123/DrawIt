@@ -16,21 +16,31 @@ Public Class PointsEditor
 		InitializeComponent()
 		shp = _shp
 		canvas = _canvas
-		old_t = shp.MShape.Tension
+		Dim curvesData = TryCast(shp.MShape, MyCurves)
+		If IsNothing(curvesData) Then
+			Dim closedCurveData = TryCast(shp.MShape, MyClosedCurve)
+			old_t = If(IsNothing(closedCurveData), 0.5F, closedCurveData.Tension)
+		Else
+			old_t = curvesData.Tension
+		End If
 		Select Case shp.MShape.SType
 			Case ShapeStyle.Polygon
-				old_p = shp.MShape.PolygonPoints
+				Dim polyData = TryCast(shp.MShape, MyPolygon)
+				old_p = If(IsNothing(polyData), Array.Empty(Of PointF)(), polyData.PolygonPoints)
 				PEditor.ShapeType = ShapePointsEditor.DrawType.Polygon
 				TB_Tension.Enabled = False
 			Case ShapeStyle.Lines
-				old_p = shp.MShape.PolygonPoints
+				Dim polyData = TryCast(shp.MShape, MyLines)
+				old_p = If(IsNothing(polyData), Array.Empty(Of PointF)(), polyData.PolygonPoints)
 				PEditor.ShapeType = ShapePointsEditor.DrawType.Lines
 				TB_Tension.Enabled = False
 			Case ShapeStyle.Curves
-				old_p = shp.MShape.CurvePoints
+				Dim curveData = TryCast(shp.MShape, MyCurves)
+				old_p = If(IsNothing(curveData), Array.Empty(Of PointF)(), curveData.CurvePoints)
 				PEditor.ShapeType = ShapePointsEditor.DrawType.Curves
 			Case ShapeStyle.ClosedCurve
-				old_p = shp.MShape.CurvePoints
+				Dim curveData = TryCast(shp.MShape, MyClosedCurve)
+				old_p = If(IsNothing(curveData), Array.Empty(Of PointF)(), curveData.CurvePoints)
 				PEditor.ShapeType = ShapePointsEditor.DrawType.ClosedCurve
 		End Select
 		PEditor.Points = old_p
@@ -42,10 +52,25 @@ Public Class PointsEditor
 		If IsNothing(shp) Then Return
 		Select Case shp.MShape.SType
 			Case ShapeStyle.Polygon, ShapeStyle.Lines
-				shp.MShape.PolygonPoints = old_p
+				Dim linesData = TryCast(shp.MShape, MyLines)
+				If Not IsNothing(linesData) Then
+					linesData.PolygonPoints = old_p
+				Else
+					Dim polygonData = TryCast(shp.MShape, MyPolygon)
+					If Not IsNothing(polygonData) Then polygonData.PolygonPoints = old_p
+				End If
 			Case ShapeStyle.Curves, ShapeStyle.ClosedCurve
-				shp.MShape.Tension = old_t
-				shp.MShape.CurvePoints = old_p
+				Dim curvesData = TryCast(shp.MShape, MyCurves)
+				If Not IsNothing(curvesData) Then
+					curvesData.Tension = old_t
+					curvesData.CurvePoints = old_p
+				Else
+					Dim closedCurveData = TryCast(shp.MShape, MyClosedCurve)
+					If Not IsNothing(closedCurveData) Then
+						closedCurveData.Tension = old_t
+						closedCurveData.CurvePoints = old_p
+					End If
+				End If
 		End Select
 	End Sub
 
@@ -64,10 +89,25 @@ Public Class PointsEditor
 		If cbPreview.Checked Then
 			Select Case shp.MShape.SType
 				Case ShapeStyle.Polygon, ShapeStyle.Lines
-					shp.MShape.PolygonPoints = PEditor.Points
+					Dim linesData = TryCast(shp.MShape, MyLines)
+					If Not IsNothing(linesData) Then
+						linesData.PolygonPoints = PEditor.Points
+					Else
+						Dim polygonData = TryCast(shp.MShape, MyPolygon)
+						If Not IsNothing(polygonData) Then polygonData.PolygonPoints = PEditor.Points
+					End If
 				Case ShapeStyle.Curves, ShapeStyle.ClosedCurve
-					shp.MShape.Tension = TB_Tension.Value
-					shp.MShape.CurvePoints = PEditor.Points
+					Dim curvesData = TryCast(shp.MShape, MyCurves)
+					If Not IsNothing(curvesData) Then
+						curvesData.Tension = TB_Tension.Value
+						curvesData.CurvePoints = PEditor.Points
+					Else
+						Dim closedCurveData = TryCast(shp.MShape, MyClosedCurve)
+						If Not IsNothing(closedCurveData) Then
+							closedCurveData.Tension = TB_Tension.Value
+							closedCurveData.CurvePoints = PEditor.Points
+						End If
+					End If
 			End Select
 		Else
 			RestoreOld()
@@ -80,9 +120,21 @@ Public Class PointsEditor
 		If cbPreview.Checked Then
 			Select Case shp.MShape.SType
 				Case ShapeStyle.Polygon, ShapeStyle.Lines
-					shp.MShape.PolygonPoints = PEditor.Points
+					Dim linesData = TryCast(shp.MShape, MyLines)
+					If Not IsNothing(linesData) Then
+						linesData.PolygonPoints = PEditor.Points
+					Else
+						Dim polygonData = TryCast(shp.MShape, MyPolygon)
+						If Not IsNothing(polygonData) Then polygonData.PolygonPoints = PEditor.Points
+					End If
 				Case ShapeStyle.Curves, ShapeStyle.ClosedCurve
-					shp.MShape.CurvePoints = PEditor.Points
+					Dim curvesData = TryCast(shp.MShape, MyCurves)
+					If Not IsNothing(curvesData) Then
+						curvesData.CurvePoints = PEditor.Points
+					Else
+						Dim closedCurveData = TryCast(shp.MShape, MyClosedCurve)
+						If Not IsNothing(closedCurveData) Then closedCurveData.CurvePoints = PEditor.Points
+					End If
 			End Select
 		Else
 			RestoreOld()
@@ -96,7 +148,13 @@ Public Class PointsEditor
 		If cbPreview.Checked Then
 			Select Case shp.MShape.SType
 				Case ShapeStyle.Curves, ShapeStyle.ClosedCurve
-					shp.MShape.Tension = TB_Tension.Value
+					Dim curvesData = TryCast(shp.MShape, MyCurves)
+					If Not IsNothing(curvesData) Then
+						curvesData.Tension = TB_Tension.Value
+					Else
+						Dim closedCurveData = TryCast(shp.MShape, MyClosedCurve)
+						If Not IsNothing(closedCurveData) Then closedCurveData.Tension = TB_Tension.Value
+					End If
 			End Select
 		Else
 			RestoreOld()

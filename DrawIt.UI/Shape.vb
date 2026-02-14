@@ -8,11 +8,24 @@ Imports DrawIt.Models
 Public Class Shape : Implements IDisposable
 
 #Region "Constructor"
+	Private _eventsBound As Boolean = False
+
 	Public Sub BindEvents()
+		If _eventsBound Then UnbindEvents()
 		AddHandler FBrush.PropertyChanged, AddressOf BrushChanged
 		AddHandler DPen.PropertyChanged, AddressOf PenChanged
 		AddHandler DPen.PBrush.PropertyChanged, AddressOf PenChanged
 		AddHandler MShape.PropertyChanged, AddressOf ShapeChanged
+		_eventsBound = True
+	End Sub
+
+	Private Sub UnbindEvents()
+		If Not _eventsBound Then Return
+		RemoveHandler FBrush.PropertyChanged, AddressOf BrushChanged
+		RemoveHandler DPen.PropertyChanged, AddressOf PenChanged
+		RemoveHandler DPen.PBrush.PropertyChanged, AddressOf PenChanged
+		RemoveHandler MShape.PropertyChanged, AddressOf ShapeChanged
+		_eventsBound = False
 	End Sub
 
 	Private Sub ShapeChanged(sender As Object, e As PropertyChangedEventArgs)
@@ -38,7 +51,7 @@ Public Class Shape : Implements IDisposable
 
 	Sub New(_loc As PointF, _shp As ShapeStyle, _br As BrushType)
 		FBrush.BType = _br
-		MShape.SType = _shp
+		MShape = MyShapeFactory.Create(_shp)
 		_baseX = _loc.X
 		_baseY = _loc.Y
 		_baseWidth = 10
@@ -266,13 +279,31 @@ Public Class Shape : Implements IDisposable
 		End Set
 	End Property
 
-	Private _shape As New MyShape()
+	Private _shape As MyShape = MyShapeFactory.Create(ShapeStyle.Rectangle)
 	Public Property MShape() As MyShape
 		Get
 			Return _shape
 		End Get
 		Set(value As MyShape)
+			If IsNothing(value) Then value = MyShapeFactory.Create(ShapeStyle.Rectangle)
+			If ReferenceEquals(_shape, value) Then Return
+
+			If _eventsBound AndAlso Not IsNothing(_shape) Then
+				RemoveHandler _shape.PropertyChanged, AddressOf ShapeChanged
+			End If
+
 			_shape = value
+
+			If _eventsBound Then
+				AddHandler _shape.PropertyChanged, AddressOf ShapeChanged
+			End If
+
+			'Replacing the whole shape model must refresh cached geometry/brushes immediately.
+			UpdatePath()
+			UpdateImage()
+			UpdateBrush()
+			UpdateSelectionPen()
+			UpdatePenBrush()
 		End Set
 	End Property
 
@@ -650,7 +681,12 @@ Public Class Shape : Implements IDisposable
 			Case ShapeStyle.Rectangle
 				gp.AddRectangle(rt)
 			Case ShapeStyle.RoundedRectangle
-				gp = GetRoundedRectPath(rt, MShape.Corners)
+				Dim data = TryCast(MShape, MyRoundedRectangle)
+				If IsNothing(data) Then
+					_pth = Nothing
+					Return
+				End If
+				gp = GetRoundedRectPath(rt, data.Corners)
 			Case ShapeStyle.Ellipse
 				gp.AddEllipse(rt)
 			Case ShapeStyle.Triangle
@@ -661,53 +697,72 @@ Public Class Shape : Implements IDisposable
 				}
 				gp.AddPolygon(_lst.ToArray)
 			Case ShapeStyle.Lines
-				If MShape.PolygonPoints.Length < 2 Then
+				Dim data = TryCast(MShape, MyLines)
+				If IsNothing(data) OrElse data.PolygonPoints.Length < 2 Then
 					_pth = Nothing
 					Return
 				End If
 				Dim _lst As New List(Of PointF)
-				For Each pt As PointF In MShape.PolygonPoints
+				For Each pt As PointF In data.PolygonPoints
 					_lst.Add(MathUtils.FromPercentage(rt, pt))
 				Next
 				gp.AddLines(_lst.ToArray)
 			Case ShapeStyle.Polygon
-				If MShape.PolygonPoints.Length < 3 Then
+				Dim data = TryCast(MShape, MyPolygon)
+				If IsNothing(data) OrElse data.PolygonPoints.Length < 3 Then
 					_pth = Nothing
 					Return
 				End If
 				Dim _lst As New List(Of PointF)
-				For Each pt As PointF In MShape.PolygonPoints
+				For Each pt As PointF In data.PolygonPoints
 					_lst.Add(MathUtils.FromPercentage(rt, pt))
 				Next
 				gp.AddPolygon(_lst.ToArray)
 			Case ShapeStyle.Curves
-				If MShape.CurvePoints.Length < 2 Then
+				Dim data = TryCast(MShape, MyCurves)
+				If IsNothing(data) OrElse data.CurvePoints.Length < 2 Then
 					_pth = Nothing
 					Return
 				End If
 				Dim _lst As New List(Of PointF)
-				For Each pt As PointF In MShape.CurvePoints
+				For Each pt As PointF In data.CurvePoints
 					_lst.Add(MathUtils.FromPercentage(rt, pt))
 				Next
-				gp.AddCurve(_lst.ToArray, MShape.Tension)
+				gp.AddCurve(_lst.ToArray, data.Tension)
 			Case ShapeStyle.ClosedCurve
-				If MShape.CurvePoints.Length < 3 Then
+				Dim data = TryCast(MShape, MyClosedCurve)
+				If IsNothing(data) OrElse data.CurvePoints.Length < 3 Then
 					_pth = Nothing
 					Return
 				End If
 				Dim _lst As New List(Of PointF)
-				For Each pt As PointF In MShape.CurvePoints
+				For Each pt As PointF In data.CurvePoints
 					_lst.Add(MathUtils.FromPercentage(rt, pt))
 				Next
-				gp.AddClosedCurve(_lst.ToArray, MShape.Tension)
+				gp.AddClosedCurve(_lst.ToArray, data.Tension)
 			'Case ShapeStyle.Spiral
 			'	gp = SpiralPath(GetRect, MShape.Spirals)
 			Case ShapeStyle.Arc
-				gp.AddArc(rt, MShape.StartAngle, MShape.SweepAngle)
+				Dim data = TryCast(MShape, MyArc)
+				If IsNothing(data) Then
+					_pth = Nothing
+					Return
+				End If
+				gp.AddArc(rt, data.StartAngle, data.SweepAngle)
 			Case ShapeStyle.Pie
-				gp.AddPie(0, 0, rt.Width, rt.Height, MShape.StartAngle, MShape.SweepAngle)
+				Dim data = TryCast(MShape, MyPie)
+				If IsNothing(data) Then
+					_pth = Nothing
+					Return
+				End If
+				gp.AddPie(0, 0, rt.Width, rt.Height, data.StartAngle, data.SweepAngle)
 			Case ShapeStyle.Text
-				Dim stxt = MShape.Text.Trim()
+				Dim data = TryCast(MShape, MyText)
+				If IsNothing(data) Then
+					_pth = Nothing
+					Return
+				End If
+				Dim stxt = data.Text.Trim()
 				If stxt.Length = 0 Then
 					_pth = Nothing
 					Return
@@ -716,7 +771,7 @@ Public Class Shape : Implements IDisposable
 				Dim sf As New StringFormat With {
 					.Trimming = StringTrimming.EllipsisCharacter
 				}
-				Select Case MShape.TextAlignment
+				Select Case data.TextAlignment
 					Case ContentAlignment.TopLeft
 						sf.LineAlignment = StringAlignment.Near
 						sf.Alignment = StringAlignment.Near
@@ -745,9 +800,9 @@ Public Class Shape : Implements IDisposable
 						sf.LineAlignment = StringAlignment.Far
 						sf.Alignment = StringAlignment.Far
 				End Select
-				Dim fl As New FontFamily(MShape.FontName)
-				gp.AddString(MShape.Text, fl, MShape.FontStyle,
-						 MShape.FontSize * 1.34, rt, sf)
+				Dim fl As New FontFamily(data.FontName)
+				gp.AddString(data.Text, fl, data.FontStyle,
+						 data.FontSize * 1.34, rt, sf)
 		End Select
 
 		'flip

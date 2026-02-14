@@ -1,5 +1,5 @@
-﻿Imports System.Drawing.Drawing2D
-
+Imports System.Drawing.Drawing2D
+Imports DrawIt.Models
 Public Class TextEditor
 
 	Sub New()
@@ -10,16 +10,18 @@ Public Class TextEditor
 	Sub New(shp As Shape)
 		InitializeComponent()
 		InsertItems()
-		Dim fnt As New Font(shp.MShape.FontName, shp.MShape.FontSize, shp.MShape.FontStyle)
+		Dim textData = TryCast(shp.MShape, MyText)
+		If IsNothing(textData) Then Exit Sub
+		Dim fnt As New Font(textData.FontName, textData.FontSize, textData.FontStyle)
 		TBox.Font = fnt
-		TBox.Text = shp.MShape.Text
+		TBox.Text = textData.Text
 		If fnt.Bold Then bBold.Checked = True
 		If fnt.Italic Then bItalic.Checked = True
 		If fnt.Underline Then bUnder.Checked = True
 		If fnt.Strikeout Then bStrike.Checked = True
-		TB_Size.Value = shp.MShape.FontSize
-		cb_Font.SelectedItem = shp.MShape.FontName
-		cb_Align.SelectedItem = shp.MShape.TextAlignment.ToString
+		TB_Size.Value = textData.FontSize
+		cb_Font.SelectedItem = textData.FontName
+		cb_Align.SelectedItem = textData.TextAlignment.ToString
 	End Sub
 
 	Private Sub InsertItems()
@@ -109,3 +111,4 @@ Public Class TextEditor
 	End Sub
 
 End Class
+

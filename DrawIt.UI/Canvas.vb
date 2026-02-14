@@ -848,9 +848,21 @@ Public Class Canvas
 							Dim l_perc = New List(Of PointF)
 							d_info.Points.ForEach(Sub(x) l_perc.Add(MathUtils.ToPercentage(rectf, x)))
 							If d_info.ShapeType = 4 Or d_info.ShapeType = 5 Then
-								sshp.MShape.PolygonPoints = l_perc.ToArray()
+								Dim linesData = TryCast(sshp.MShape, MyLines)
+								If Not IsNothing(linesData) Then
+									linesData.PolygonPoints = l_perc.ToArray()
+								Else
+									Dim polygonData = TryCast(sshp.MShape, MyPolygon)
+									If Not IsNothing(polygonData) Then polygonData.PolygonPoints = l_perc.ToArray()
+								End If
 							Else
-								sshp.MShape.CurvePoints = l_perc.ToArray()
+								Dim curvesData = TryCast(sshp.MShape, MyCurves)
+								If Not IsNothing(curvesData) Then
+									curvesData.CurvePoints = l_perc.ToArray()
+								Else
+									Dim closedCurveData = TryCast(sshp.MShape, MyClosedCurve)
+									If Not IsNothing(closedCurveData) Then closedCurveData.CurvePoints = l_perc.ToArray()
+								End If
 							End If
 							sshp.Selected = True
 							shps.Add(sshp)

@@ -14,13 +14,15 @@ Public Class CornersDialog
 		InitializeComponent()
 		shp = _shp
 		canvas = _canvas
-		old_v = shp.MShape.Corners.ToArray
+		Dim cornersData = TryCast(shp.MShape, MyRoundedRectangle)
+		old_v = If(IsNothing(cornersData), New Single() {25.0F, 75.0F, 25.0F, 75.0F, 25.0F, 75.0F, 25.0F, 75.0F}, cornersData.Corners.ToArray)
 		CEditor.Corners = old_v.Clone
 	End Sub
 
 	Public Sub RestoreOld()
 		If IsNothing(shp) Then Return
-		shp.MShape.Corners = MyCorners.FromArray(old_v)
+		Dim cornersData = TryCast(shp.MShape, MyRoundedRectangle)
+		If Not IsNothing(cornersData) Then cornersData.Corners = MyCorners.FromArray(old_v)
 	End Sub
 
 	Private Sub OK_Button_Click(sender As System.Object, e As System.EventArgs) Handles OK_Button.Click
@@ -29,6 +31,8 @@ Public Class CornersDialog
 	End Sub
 
 	Private Sub Cancel_Button_Click(sender As System.Object, e As System.EventArgs) Handles Cancel_Button.Click
+		RestoreOld()
+		If Not IsNothing(canvas) Then canvas.Invalidate()
 		DialogResult = System.Windows.Forms.DialogResult.Cancel
 		Close()
 	End Sub
@@ -36,7 +40,8 @@ Public Class CornersDialog
 	Private Sub cbPreview_CheckedChanged(sender As Object, e As EventArgs) Handles cbPreview.CheckedChanged
 		If IsNothing(shp) Then Return
 		If cbPreview.Checked Then
-			shp.MShape.Corners = MyCorners.FromArray(CEditor.Corners)
+			Dim cornersData = TryCast(shp.MShape, MyRoundedRectangle)
+			If Not IsNothing(cornersData) Then cornersData.Corners = MyCorners.FromArray(CEditor.Corners)
 		Else
 			RestoreOld()
 		End If
@@ -46,7 +51,8 @@ Public Class CornersDialog
 	Private Sub CEditor_CornersChanged(sender As Object, e As EventArgs) Handles CEditor.CornersChanged
 		If IsNothing(shp) Then Return
 		If cbPreview.Checked Then
-			shp.MShape.Corners = MyCorners.FromArray(CEditor.Corners)
+			Dim cornersData = TryCast(shp.MShape, MyRoundedRectangle)
+			If Not IsNothing(cornersData) Then cornersData.Corners = MyCorners.FromArray(CEditor.Corners)
 		Else
 			RestoreOld()
 		End If
