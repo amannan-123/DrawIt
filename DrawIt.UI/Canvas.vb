@@ -7,8 +7,11 @@ Imports DrawIt.Helpers
 Imports DrawIt.Models
 #End Region
 
-Public Class Canvas
+Public Class Canvas : Implements ICanvasInteractionContext
 	Private Const ShapesClipboardFormat As String = "DrawIt.Shapes.v1"
+	Private ReadOnly _interactionController As New CanvasInteractionController(
+		New CanvasSelectMouseHandler(),
+		New CanvasDrawMouseHandler())
 
 #Region "New"
 	Sub New()
@@ -32,7 +35,7 @@ Public Class Canvas
 #End Region
 
 #Region "Structs & Enums"
-	Private Structure HoverInfo
+	Public Class HoverInfo
 
 		Public Sub New(ind As Integer, type As Integer)
 			shp_index = ind
@@ -59,9 +62,9 @@ Public Class Canvas
 			End Set
 		End Property
 
-	End Structure
+	End Class
 
-	Private Structure DrawModeInfo
+	Public Class DrawModeInfo
 
 		Public Sub New(mode As Boolean)
 			d_mode = mode
@@ -98,7 +101,7 @@ Public Class Canvas
 			End Set
 		End Property
 
-	End Structure
+	End Class
 
 	Enum SelectOrder
 		AboveFirst
@@ -115,27 +118,7 @@ Public Class Canvas
 
 #Region "Globals"
 	Private AnchorSize As New SizeF(7, 7)
-	Private shps As New List(Of Shape)
-	Private op As MOperations = MOperations.None
-	Private focus_clr As Color = Color.Silver
-	'selection
-	Private cloned As Boolean = False
-	Private cloning As Boolean = False
-	Private up_fix As Boolean = True
-	Private md_pt As PointF
-	Private m_cnt As PointF
-	Private m_ang As Single
-	Private ReadOnly old_sl As New List(Of Integer)
-	Private ReadOnly mv_rect As New List(Of RectangleF)
-	Private ReadOnly res_rect As New List(Of RectangleF)
-	Private res_bounds As RectangleF
-	Private s_rect As New RectangleF
-	Private h_info As New HoverInfo(-1, 0)
-	Private _negX As Boolean = False
-	Private _negY As Boolean = False
-	'drawing
-	Private d_info As New DrawModeInfo(False)
-	Private curr_loc As PointF = PointF.Empty
+	Private ReadOnly _state As New CanvasStateManager()
 #End Region
 
 #Region "Properties"
@@ -151,6 +134,7 @@ Public Class Canvas
 				value = ZoomPanMath.ClampZoom(value)
 				_zoom = value
 				MainForm.UpdateSettings()
+				Invalidate()
 			End If
 		End Set
 	End Property
@@ -167,90 +151,6 @@ Public Class Canvas
 			Invalidate()
 		End Set
 	End Property
-
-	Public Function GetViewportCenterOffset() As PointF
-		Return ZoomPanMath.GetViewportCenterOffset(ClientSize, AbsSize, Zoom)
-	End Function
-
-	Public Function ToWorldPoint(pt As Point) As PointF
-		Dim centerOffset = GetViewportCenterOffset()
-		Return ZoomPanMath.ToWorldPoint(pt, PanOffset, centerOffset, Zoom)
-	End Function
-
-	Public Function GetArtboardRect() As RectangleF
-		Return New RectangleF(0, 0, AbsSize.Width, AbsSize.Height)
-	End Function
-
-	Public Function GetArtboardScreenRect() As RectangleF
-		Dim rc = GetArtboardRect()
-		Return ToScreenRect(rc)
-	End Function
-
-	Private Function ToScreenRect(worldRect As RectangleF) As RectangleF
-		Dim centerOffset = GetViewportCenterOffset()
-		Return ZoomPanMath.ToScreenRect(worldRect, PanOffset, centerOffset, Zoom)
-	End Function
-
-	Private Function GetWorldToScreenMatrix() As Matrix
-		Dim centerOffset = GetViewportCenterOffset()
-		Return ZoomPanMath.CreateWorldToScreenMatrix(PanOffset, centerOffset, Zoom)
-	End Function
-
-	Private Function IsRegionHit(region As Region, screenPt As PointF) As Boolean
-		Using transformed = region.Clone()
-			Using wm As Matrix = GetWorldToScreenMatrix()
-				transformed.Transform(wm)
-			End Using
-			Return transformed.IsVisible(screenPt)
-		End Using
-	End Function
-
-	Private Function IsPathHit(path As GraphicsPath, screenPt As PointF) As Boolean
-		Using transformed = DirectCast(path.Clone(), GraphicsPath)
-			Using wm As Matrix = GetWorldToScreenMatrix()
-				transformed.Transform(wm)
-			End Using
-			Return transformed.IsVisible(screenPt)
-		End Using
-	End Function
-
-	Public Function ViewportContentBounds() As RectangleF
-		Dim bounds As RectangleF = GetArtboardRect()
-		For Each shp In shps
-			Using p = shp.TotalPath
-				If Not IsNothing(p) Then bounds = RectangleF.Union(bounds, p.GetBounds())
-			End Using
-		Next
-		Return bounds
-	End Function
-
-	Private Function AnnotationScaleCompensation() As Single
-		Return ZoomPanMath.AnnotationScaleCompensation(Zoom)
-	End Function
-
-	Private Function AnnotationPenWidth() As Single
-		Return AnnotationScaleCompensation()
-	End Function
-
-	Private Sub GetAnchorMetrics(ByRef anc As SizeF, ByRef minHandleDistance As Single)
-		Dim scale = AnnotationScaleCompensation()
-		anc = New SizeF(AnchorSize.Width * scale, AnchorSize.Height * scale)
-		minHandleDistance = 20 * scale
-	End Sub
-
-	Private Sub SyncSelectedAnnotationScale()
-		Dim scale = AnnotationScaleCompensation()
-		For Each ind In SelectedIndices()
-			If ind >= 0 AndAlso ind < shps.Count Then
-				shps(ind).AnchorScale = scale
-			End If
-		Next
-	End Sub
-
-	Private Function IsPanInputActive() As Boolean
-		Dim canvasControl = MainCanvasControl
-		Return Not IsNothing(canvasControl) AndAlso (canvasControl.Panning OrElse canvasControl.IsPanningNow)
-	End Function
 
 	Private _absSize As New Size(500, 500)
 	<DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)>
@@ -343,7 +243,7 @@ Public Class Canvas
 #Region "File Operations"
 	Public Function SaveProject(_loc As String) As Exception
 		Try
-			DrawItJson.SerializeToFile(_loc, New ProjectData(shps, AbsSize, BackColor, BackgroundImage))
+			DrawItJson.SerializeToFile(_loc, New ProjectData(_state.Shapes, AbsSize, BackColor, BackgroundImage))
 		Catch ex As Exception
 			Return ex
 		End Try
@@ -356,11 +256,12 @@ Public Class Canvas
 			If IsNothing(des_data) Then
 				Return New Exception("Project file could not be parsed.")
 			End If
-			shps = des_data.Shapes
+			_state.Shapes.Clear()
+			If Not IsNothing(des_data.Shapes) Then _state.Shapes.AddRange(des_data.Shapes)
 			BackColor = des_data.BackgroundColor
 			BackgroundImage = des_data.BackgroundImage
 			AbsSize = des_data.Size
-			shps.ForEach(Sub(x)
+			_state.Shapes.ForEach(Sub(x)
 							 x.BindEvents()
 							 x.ReloadCachedObjects()
 						 End Sub)
@@ -388,23 +289,108 @@ Public Class Canvas
 #End Region
 
 #Region "Functions"
-	Private Function MultipleSelectionBounds() As RectangleF
+
+	Public Function GetViewportCenterOffset() As PointF
+		Return ZoomPanMath.GetViewportCenterOffset(ClientSize, AbsSize, Zoom)
+	End Function
+
+	Public Function ToWorldPoint(pt As Point) As PointF Implements ICanvasInteractionContext.ToWorldPoint
+		Dim centerOffset = GetViewportCenterOffset()
+		Return ZoomPanMath.ToWorldPoint(pt, PanOffset, centerOffset, Zoom)
+	End Function
+
+	Public Function GetArtboardRect() As RectangleF
+		Return New RectangleF(0, 0, AbsSize.Width, AbsSize.Height)
+	End Function
+
+	Public Function GetArtboardScreenRect() As RectangleF
+		Dim rc = GetArtboardRect()
+		Return ToScreenRect(rc)
+	End Function
+
+	Private Function ToScreenRect(worldRect As RectangleF) As RectangleF
+		Dim centerOffset = GetViewportCenterOffset()
+		Return ZoomPanMath.ToScreenRect(worldRect, PanOffset, centerOffset, Zoom)
+	End Function
+
+	Public Function GetWorldToScreenMatrix() As Matrix Implements ICanvasInteractionContext.GetWorldToScreenMatrix
+		Dim centerOffset = GetViewportCenterOffset()
+		Return ZoomPanMath.CreateWorldToScreenMatrix(PanOffset, centerOffset, Zoom)
+	End Function
+
+	Private Function IsRegionHit(region As Region, screenPt As PointF) As Boolean
+		Using transformed = region.Clone()
+			Using wm As Matrix = GetWorldToScreenMatrix()
+				transformed.Transform(wm)
+			End Using
+			Return transformed.IsVisible(screenPt)
+		End Using
+	End Function
+
+	Public Function IsPathHit(path As GraphicsPath, screenPt As PointF) As Boolean Implements ICanvasInteractionContext.IsPathHit
+		Using transformed = DirectCast(path.Clone(), GraphicsPath)
+			Using wm As Matrix = GetWorldToScreenMatrix()
+				transformed.Transform(wm)
+			End Using
+			Return transformed.IsVisible(screenPt)
+		End Using
+	End Function
+
+	Public Function ViewportContentBounds() As RectangleF
+		Dim bounds As RectangleF = GetArtboardRect()
+		For Each shp In _state.Shapes
+			Using p = shp.TotalPath
+				If Not IsNothing(p) Then bounds = RectangleF.Union(bounds, p.GetBounds())
+			End Using
+		Next
+		Return bounds
+	End Function
+
+	Private Function AnnotationScaleCompensation() As Single
+		Return ZoomPanMath.AnnotationScaleCompensation(Zoom)
+	End Function
+
+	Private Function AnnotationPenWidth() As Single
+		Return AnnotationScaleCompensation()
+	End Function
+
+	Private Sub GetAnchorMetrics(ByRef anc As SizeF, ByRef minHandleDistance As Single)
+		Dim scale = AnnotationScaleCompensation()
+		anc = New SizeF(AnchorSize.Width * scale, AnchorSize.Height * scale)
+		minHandleDistance = 20 * scale
+	End Sub
+
+	Private Sub SyncSelectedAnnotationScale()
+		Dim scale = AnnotationScaleCompensation()
+		For Each ind In SelectedIndices()
+			If ind >= 0 AndAlso ind < _state.Shapes.Count Then
+				_state.Shapes(ind).AnchorScale = scale
+			End If
+		Next
+	End Sub
+
+	Public Function IsPanInputActive() As Boolean Implements ICanvasInteractionContext.IsPanInputActive
+		Dim canvasControl = MainCanvasControl
+		Return Not IsNothing(canvasControl) AndAlso (canvasControl.Panning OrElse canvasControl.IsPanningNow)
+	End Function
+
+	Public Function MultipleSelectionBounds() As RectangleF Implements ICanvasInteractionContext.MultipleSelectionBounds
 		Dim rg As New Region(RectangleF.Empty)
 		SelectedIndices.ForEach(Sub(shp)
-									Dim pth = shps(shp).TotalPath
+									Dim pth = _state.Shapes(shp).TotalPath
 									If Not IsNothing(pth) Then rg.Union(pth)
 								End Sub)
 		Return rg.GetBounds(CreateGraphics)
 	End Function
 
-	Public Sub ClearDrawingData()
-		d_info.DrawMode = False
-		d_info.Points.Clear()
-		curr_loc = PointF.Empty
+	Public Sub ClearDrawingData() Implements ICanvasInteractionContext.ClearDrawingData
+		_state.DrawInfo.DrawMode = False
+		_state.DrawInfo.Points.Clear()
+		_state.CurrentLocation = PointF.Empty
 	End Sub
 
-	Private Function DModeMin() As Integer
-		Select Case d_info.ShapeType
+	Public Function DModeMin() As Integer Implements ICanvasInteractionContext.DModeMin
+		Select Case _state.DrawInfo.ShapeType
 			Case DShape.Polygon, DShape.Curves, DShape.ClosedCurve
 				Return 3
 			Case DShape.Lines
@@ -416,15 +402,15 @@ Public Class Canvas
 
 	Private Function DPPath(ind As Integer) As GraphicsPath
 		If ind < 0 Then Return Nothing
-		Dim rt As New RectangleF(d_info.Points(ind), SizeF.Empty)
+		Dim rt As New RectangleF(_state.DrawInfo.Points(ind), SizeF.Empty)
 		rt.Inflate(5, 5)
 		Dim pth As New GraphicsPath()
 		pth.AddEllipse(rt)
 		Return pth
 	End Function
 
-	Private Function DPInCursor(screenPt As PointF) As Integer
-		For i As Integer = d_info.Points.Count - 1 To 0 Step -1
+	Public Function DPInCursor(screenPt As PointF) As Integer Implements ICanvasInteractionContext.DPInCursor
+		For i As Integer = _state.DrawInfo.Points.Count - 1 To 0 Step -1
 			Using pth = DPPath(i)
 				If IsPathHit(pth, screenPt) Then Return i
 			End Using
@@ -432,18 +418,18 @@ Public Class Canvas
 		Return -1
 	End Function
 
-	Public Function ShapeInCursor(screenPt As PointF) As Integer
+	Public Function ShapeInCursor(screenPt As PointF) As Integer Implements ICanvasInteractionContext.ShapeInCursor
 		Dim ind As Integer = -1
-		If shps.Count = 0 Then Return ind
-		For Each shp As Shape In shps
+		If _state.Shapes.Count = 0 Then Return ind
+		For Each shp As Shape In _state.Shapes
 			Dim shp_rg = shp.Region()
 			If Not IsNothing(shp_rg) Then
 				Using shp_rg
 					If IsRegionHit(shp_rg, screenPt) Then
 						If _ord = SelectOrder.AboveFirst Then
-							ind = shps.IndexOf(shp)
+							ind = _state.Shapes.IndexOf(shp)
 						Else
-							Return shps.IndexOf(shp)
+							Return _state.Shapes.IndexOf(shp)
 						End If
 					End If
 				End Using
@@ -452,93 +438,141 @@ Public Class Canvas
 		Return ind
 	End Function
 
-	Public Function MainSelected() As Shape
+	Public Function MainSelected() As Shape Implements ICanvasInteractionContext.MainSelected
 		Dim inds = SelectedIndices()
 		Dim shp As Shape = Nothing
 		If inds.Count > 0 Then
-			If _ord = SelectOrder.AboveFirst Then
-				shp = shps(inds.Last)
+			Dim primaryIndex = inds.Find(Function(i) _state.Shapes(i).Primary)
+			If primaryIndex > -1 Then
+				shp = _state.Shapes(primaryIndex)
+			ElseIf _ord = SelectOrder.AboveFirst Then
+				shp = _state.Shapes(inds.Last)
 			Else
-				shp = shps(inds.First)
+				shp = _state.Shapes(inds.First)
 			End If
 		End If
 		Return shp
 	End Function
 
-	Public Function SelectedIndices() As List(Of Integer)
+	Public Function SelectedIndices() As List(Of Integer) Implements ICanvasInteractionContext.SelectedIndices
 		Dim inds As New List(Of Integer)
-		For i As Integer = 0 To shps.Count - 1
-			If shps(i).Selected Then inds.Add(i)
+		For i As Integer = 0 To _state.Shapes.Count - 1
+			If _state.Shapes(i).Selected Then inds.Add(i)
 		Next
 		Return inds
 	End Function
 
-	Public Sub SetPrimary()
-		shps.ForEach(Sub(x) x.Primary = False)
+	Public Sub SetPrimary() Implements ICanvasInteractionContext.SetPrimary
+		_state.Shapes.ForEach(Sub(x) x.Primary = False)
 		Dim inds = SelectedIndices()
 
 		If inds.Count > 0 Then
 			If _ord = SelectOrder.AboveFirst Then
-				shps(inds.Last).Primary = True
+				_state.Shapes(inds.Last).Primary = True
 			Else
-				shps(inds.First).Primary = True
+				_state.Shapes(inds.First).Primary = True
 			End If
 		End If
 	End Sub
 
-	Public Sub DeselectAll()
-		shps.ForEach(Sub(x) x.Selected = False)
+	Public Sub SetPrimaryByIndex(index As Integer) Implements ICanvasInteractionContext.SetPrimaryByIndex
+		If index < 0 OrElse index >= _state.Shapes.Count Then Return
+		If Not _state.Shapes(index).Selected Then Return
+		_state.Shapes.ForEach(Sub(x) x.Primary = False)
+		_state.Shapes(index).Primary = True
 	End Sub
 
-	Public Sub CloneSelected()
+	Public Sub CaptureMoveSnapshot(indices As List(Of Integer)) Implements ICanvasInteractionContext.CaptureMoveSnapshot
+		_state.MoveSnapshot.Clear()
+		For Each i In indices
+			If i < 0 OrElse i >= _state.Shapes.Count Then Continue For
+			_state.MoveSnapshot.Add(New KeyValuePair(Of Shape, RectangleF)(_state.Shapes(i), _state.Shapes(i).GetRect()))
+		Next
+	End Sub
+
+	Public Sub EnsurePrimarySelected() Implements ICanvasInteractionContext.EnsurePrimarySelected
+		Dim inds = SelectedIndices()
+		If inds.Count = 0 Then
+			_state.Shapes.ForEach(Sub(x) x.Primary = False)
+			Return
+		End If
+
+		For Each i In inds
+			If _state.Shapes(i).Primary Then Return
+		Next
+
+		SetPrimary()
+	End Sub
+
+	Public Sub DeselectAll() Implements ICanvasInteractionContext.DeselectAll
+		_state.Shapes.ForEach(Sub(x) x.Selected = False)
+	End Sub
+
+	Public Sub CloneSelected() Implements ICanvasInteractionContext.CloneSelected
 		Dim lst_sl As New List(Of Shape)
 		For Each i As Integer In SelectedIndices()
-			lst_sl.Add(shps(i).Clone)
+			lst_sl.Add(_state.Shapes(i).Clone)
 		Next
 		DeselectAll()
 		For Each sh As Shape In lst_sl
 			sh.ReloadCachedObjects()
-			shps.Add(sh)
+			_state.Shapes.Add(sh)
 		Next
 		Invalidate()
 	End Sub
 
-	Public Sub DeleteSelected()
+	Public Sub DeleteSelected() Implements ICanvasInteractionContext.DeleteSelected
 		Dim inds = SelectedIndices()
 		For i = inds.Count - 1 To 0 Step -1
 			Dim ind = inds(i)
-			Dim shp = shps(ind)
+			Dim shp = _state.Shapes(ind)
 			shp.Dispose()
-			shps.RemoveAt(ind)
+			_state.Shapes.RemoveAt(ind)
 		Next
+		SetPrimary()
+		MainForm.UpdateControls()
 		Invalidate()
 	End Sub
 
 	Public Sub ToBack()
-		Dim lst_sl As New List(Of Shape)
-		For Each i As Integer In SelectedIndices()
-			Dim new_shp As Shape = shps(i).Clone
-			new_shp.ReloadCachedObjects()
-			lst_sl.Add(new_shp)
+		Dim inds = SelectedIndices()
+		If inds.Count = 0 Then Return
+
+		Dim selected As New List(Of Shape)
+		For Each i As Integer In inds
+			selected.Add(_state.Shapes(i))
 		Next
-		DeleteSelected()
-		If lst_sl.Count > 0 Then shps.InsertRange(0, lst_sl)
+
+		For i = inds.Count - 1 To 0 Step -1
+			_state.Shapes.RemoveAt(inds(i))
+		Next
+
+		_state.Shapes.InsertRange(0, selected)
+		SetPrimary()
+		MainForm.UpdateControls()
 		Invalidate()
 	End Sub
 
 	Public Sub ToFront()
-		Dim lst_sl As New List(Of Shape)
-		For Each i As Integer In SelectedIndices()
-			Dim new_shp As Shape = shps(i).Clone
-			new_shp.ReloadCachedObjects()
-			lst_sl.Add(new_shp)
+		Dim inds = SelectedIndices()
+		If inds.Count = 0 Then Return
+
+		Dim selected As New List(Of Shape)
+		For Each i As Integer In inds
+			selected.Add(_state.Shapes(i))
 		Next
-		DeleteSelected()
-		If lst_sl.Count > 0 Then shps.AddRange(lst_sl)
+
+		For i = inds.Count - 1 To 0 Step -1
+			_state.Shapes.RemoveAt(inds(i))
+		Next
+
+		_state.Shapes.AddRange(selected)
+		SetPrimary()
+		MainForm.UpdateControls()
 		Invalidate()
 	End Sub
 
-	Public Sub FinalizeResize(shp As Shape)
+	Public Sub FinalizeResize(shp As Shape) Implements ICanvasInteractionContext.FinalizeResize
 		Dim fRect = AbsRect(shp.GetRect)
 		shp.SetAllRect(fRect)
 		If shp.Angle <> 0.0 Then
@@ -559,7 +593,7 @@ Public Class Canvas
 	End Sub
 
 	Public Sub ClearData()
-		For Each shp As Shape In shps
+		For Each shp As Shape In _state.Shapes
 			shp.Dispose()
 		Next
 	End Sub
@@ -592,7 +626,7 @@ Public Class Canvas
 		BrushCenter
 	End Enum
 
-	Public Function GetAnchorsRegion() As Region
+	Public Function GetAnchorsRegion() As Region Implements ICanvasInteractionContext.GetAnchorsRegion
 		SyncSelectedAnnotationScale()
 		Dim s_inds = SelectedIndices()
 		Dim reg_anc As New Region(RectangleF.Empty)
@@ -619,7 +653,7 @@ Public Class Canvas
 		Return IsPathHit(path, pt)
 	End Function
 
-	Public Function GetAnchorType(pt As PointF) As AnchorType
+	Public Function GetAnchorType(pt As PointF) As AnchorType Implements ICanvasInteractionContext.GetAnchorType
 		SyncSelectedAnnotationScale()
 		Dim selc = SelectedIndices()
 		If selc.Count = 1 Then
@@ -796,622 +830,59 @@ Public Class Canvas
 
 #End Region
 
-#Region "Mouse Events"
+#Region "Interaction Controller"
+	Private ReadOnly Property InteractionState As CanvasStateManager Implements ICanvasInteractionContext.State
+		Get
+			Return _state
+		End Get
+	End Property
 
-#Region "Draw"
-	Private Sub CanvasDraw_MouseDown(sender As Object, e As MouseEventArgs) Handles MyBase.MouseDown
-		If IsPanInputActive() Then Return
-		If MainForm.Operation = MainForm.Operations.Draw Then
-			Dim screenPt = e.Location
-			Dim worldPt = ToWorldPoint(screenPt)
-			md_pt = worldPt
+	Private Property InteractionCanvasCursor As Cursor Implements ICanvasInteractionContext.CanvasCursor
+		Get
+			Return Cursor
+		End Get
+		Set(value As Cursor)
+			Cursor = value
+		End Set
+	End Property
 
-			DeselectAll()
-			Dim sty As ShapeStyle = [Enum].Parse(GetType(ShapeStyle), MainForm.cb_Shape.SelectedItem)
-			Dim bty As BrushType = [Enum].Parse(GetType(BrushType), MainForm.cb_Brush.SelectedItem)
-			Select Case sty
-				Case ShapeStyle.Lines,
-					 ShapeStyle.Polygon,
-					 ShapeStyle.Curves,
-					 ShapeStyle.ClosedCurve
-					d_info.ShapeType = sty
-					If e.Button = MouseButtons.Right Then
-						d_info.DrawMode = True
-						If My.Computer.Keyboard.AltKeyDown Then
-							If d_info.Points.Count > 0 Then
-								Dim ind = DPInCursor(screenPt)
-								If ind > -1 Then d_info.Points.RemoveAt(ind)
-							End If
-						Else
-							Dim n_pt As PointF = worldPt
-							If My.Computer.Keyboard.CtrlKeyDown Then
-								If d_info.Points.Count > 0 Then n_pt.X = d_info.Points.Last().X
-							ElseIf My.Computer.Keyboard.ShiftKeyDown Then
-								If d_info.Points.Count > 0 Then n_pt.Y = d_info.Points.Last().Y
-							End If
-							d_info.Points.Add(n_pt)
-							curr_loc = n_pt
-						End If
-					ElseIf e.Button = MouseButtons.Left Then
-						If d_info.Points.Count >= DModeMin() Then
-							Dim _min As PointF
-							Dim _max As PointF
-							_min.X = d_info.Points.Min(Function(pt As PointF) pt.X)
-							_min.Y = d_info.Points.Min(Function(pt As PointF) pt.Y)
-							_max.X = d_info.Points.Max(Function(pt As PointF) pt.X)
-							_max.Y = d_info.Points.Max(Function(pt As PointF) pt.Y)
-							If _min.X = _max.X Then _max.X += 1
-							If _min.Y = _max.Y Then _max.Y += 1
-							Dim sshp As New Shape(_min, sty, bty)
-							Dim rectf As New RectangleF(_min, New SizeF(_max.X - _min.X, _max.Y - _min.Y))
-							sshp.SetAllRect(rectf)
-							Dim l_perc = New List(Of PointF)
-							d_info.Points.ForEach(Sub(x) l_perc.Add(MathUtils.ToPercentage(rectf, x)))
-							If d_info.ShapeType = 4 Or d_info.ShapeType = 5 Then
-								Dim linesData = TryCast(sshp.MShape, MyLines)
-								If Not IsNothing(linesData) Then
-									linesData.PolygonPoints = l_perc.ToArray()
-								Else
-									Dim polygonData = TryCast(sshp.MShape, MyPolygon)
-									If Not IsNothing(polygonData) Then polygonData.PolygonPoints = l_perc.ToArray()
-								End If
-							Else
-								Dim curvesData = TryCast(sshp.MShape, MyCurves)
-								If Not IsNothing(curvesData) Then
-									curvesData.CurvePoints = l_perc.ToArray()
-								Else
-									Dim closedCurveData = TryCast(sshp.MShape, MyClosedCurve)
-									If Not IsNothing(closedCurveData) Then closedCurveData.CurvePoints = l_perc.ToArray()
-								End If
-							End If
-							sshp.Selected = True
-							shps.Add(sshp)
-							ClearDrawingData()
-							MainForm.UpdateControls()
-						Else
-							If Not d_info.DrawMode Then
-								Dim shp_n = New Shape(worldPt, sty, bty) With {
-									.Selected = True
-								}
-								shps.Add(shp_n)
-								op = MOperations.Draw
-								MainForm.UpdateControls()
-							End If
-						End If
-					End If
-					Invalidate()
-				Case Else
-					Dim shp_n = New Shape(md_pt, sty, bty) With {
-						.Selected = True
-					}
-					shps.Add(shp_n)
-					op = MOperations.Draw
-					MainForm.UpdateControls()
-			End Select
-		End If
+	Private ReadOnly Property InteractionHighlightShapesEnabled As Boolean Implements ICanvasInteractionContext.HighlightShapesEnabled
+		Get
+			Return HighlightShapes
+		End Get
+	End Property
+
+	Private Sub InvalidateCanvas() Implements ICanvasInteractionContext.InvalidateCanvas
+		Invalidate()
 	End Sub
 
-	Private Sub CanvasDraw_MouseMove(sender As Object, e As MouseEventArgs) Handles MyBase.MouseMove
-		If IsPanInputActive() Then Return
-		If MainForm.Operation = MainForm.Operations.Draw Then
-			Dim worldPt = ToWorldPoint(e.Location)
-			Cursor = Cursors.Cross
-			If op = MOperations.Draw Then
-				Dim shp_d As Shape = MainSelected()
-				Dim rtd As New RectangleF(Math.Min(worldPt.X, md_pt.X),
-								   Math.Min(worldPt.Y, md_pt.Y),
-								   Math.Abs(worldPt.X - md_pt.X),
-								   Math.Abs(worldPt.Y - md_pt.Y))
-				shp_d.FlipX = worldPt.X - md_pt.X < 0
-				shp_d.FlipY = worldPt.Y - md_pt.Y < 0
-				If My.Computer.Keyboard.ShiftKeyDown Then 'make width and height equal
-					Dim mxx As Integer = Math.Max(rtd.Width, rtd.Height)
-					rtd.Width = mxx
-					rtd.Height = mxx
-					If worldPt.Y <= md_pt.Y Then rtd.Y = md_pt.Y - rtd.Height
-					If worldPt.X <= md_pt.X Then rtd.X = md_pt.X - rtd.Width
-				End If
-				If My.Computer.Keyboard.CtrlKeyDown Then 'use mouse down point as center
-					If worldPt.X > md_pt.X Then rtd.X -= rtd.Width
-					If worldPt.Y > md_pt.Y Then rtd.Y -= rtd.Height
-					rtd.Width *= 2
-					rtd.Height *= 2
-				End If
-				shp_d.SetAllRect(rtd)
-				Invalidate()
-				MainForm.UpdateBoundControls()
-			End If
-			If d_info.DrawMode And d_info.Points.Count > 0 Then
-				Dim n_pt As PointF = worldPt
-				If My.Computer.Keyboard.CtrlKeyDown Then
-					n_pt.X = d_info.Points.Last().X
-				ElseIf My.Computer.Keyboard.ShiftKeyDown Then
-					n_pt.Y = d_info.Points.Last().Y
-				End If
-				curr_loc = n_pt
-				Invalidate()
-			End If
-		End If
+	Private Sub UpdateControls() Implements ICanvasInteractionContext.UpdateControls
+		MainForm.UpdateControls()
 	End Sub
 
-	Private Sub CanvasDraw_MouseUp(sender As Object, e As MouseEventArgs) Handles MyBase.MouseUp
-		If IsPanInputActive() Then Return
-		If MainForm.Operation = MainForm.Operations.Draw Then
-			If Not d_info.DrawMode Then MainForm.rSelect.Checked = True
-			op = MOperations.None
-		End If
+	Private Sub UpdateBoundControls() Implements ICanvasInteractionContext.UpdateBoundControls
+		MainForm.UpdateBoundControls()
 	End Sub
 
-	Private Sub CanvasDraw_MouseLeave(sender As Object, e As EventArgs) Handles MyBase.MouseLeave
-		If MainForm.Operation = MainForm.Operations.Draw Then
-			curr_loc = PointF.Empty
-			Invalidate()
-		Else
-			h_info.ShapeIndex = -1
-			Invalidate()
-		End If
+	Private Sub SwitchToSelectMode() Implements ICanvasInteractionContext.SwitchToSelectMode
+		MainForm.rSelect.Checked = True
 	End Sub
 
-#End Region
-
-#Region "Select & Resize"
-
-	Private Sub CanvasSelect_MouseDown(sender As Object, e As MouseEventArgs) Handles MyBase.MouseDown
-		If IsPanInputActive() Then Return
-		If MainForm.Operation = MainForm.Operations.Select Then
-
-			Dim screenPt = e.Location
-			Dim worldPt = ToWorldPoint(screenPt)
-			md_pt = worldPt
-			h_info.ShapeIndex = -1
-
-			'don't change selection if cursor is on anchors
-			If Not GetAnchorsRegion.IsVisible(screenPt) Then
-				Dim curr As Integer = ShapeInCursor(screenPt)
-				If curr > -1 Then
-					If Not shps(curr).Selected Then
-						If My.Computer.Keyboard.CtrlKeyDown Then
-							up_fix = False
-						Else
-							DeselectAll()
-						End If
-						shps(curr).Selected = True
-					End If
-				Else
-					If Not My.Computer.Keyboard.CtrlKeyDown Then DeselectAll()
-					op = MOperations.Selection
-					s_rect.Location = worldPt
-					Return
-				End If
-			End If
-
-			Dim shp = MainSelected()
-
-			Dim selc = SelectedIndices()
-
-			'set operations
-			If selc.Count Then
-
-				shp.RotationPoint = MathUtils.FromPercentage(shp.GetRect, New PointF(50, 50))
-				m_cnt = shp.RotationPoint
-				m_ang = shp.Angle
-
-				_negX = shp.FlipX
-				_negY = shp.FlipY
-
-				Dim anct As AnchorType = GetAnchorType(screenPt)
-
-				If selc.Count = 1 Then
-					res_rect.Add(shp.GetRect)
-					mv_rect.Add(shp.GetRect)
-				Else
-					Dim boundsAll = MultipleSelectionBounds()
-					For Each ind As Integer In selc
-						Dim ss As Shape = shps(ind)
-						mv_rect.Add(ss.GetRect)
-						res_rect.Add(MathUtils.ToPercentage(boundsAll, ss.GetRect))
-					Next
-					res_bounds = boundsAll
-				End If
-
-				If anct = AnchorType.BrushCenter Then
-					If e.Button = MouseButtons.Left Then
-						op = MOperations.Centering
-					ElseIf e.Button = MouseButtons.Right Then
-						Dim pathBrush = TryCast(shp.FBrush, MyPathGradientBrush)
-						If Not IsNothing(pathBrush) Then pathBrush.CenterPoint = New PointF(50, 50)
-					End If
-				ElseIf anct = AnchorType.TopLeft Then
-					op = MOperations.TopLeft
-				ElseIf anct = AnchorType.Top Then
-					op = MOperations.Top
-				ElseIf anct = AnchorType.TopRight Then
-					op = MOperations.TopRight
-				ElseIf anct = AnchorType.Left Then
-					op = MOperations.Left
-				ElseIf anct = AnchorType.Right Then
-					op = MOperations.Right
-				ElseIf anct = AnchorType.BottomLeft Then
-					op = MOperations.BottomLeft
-				ElseIf anct = AnchorType.Bottom Then
-					op = MOperations.Bottom
-				ElseIf anct = AnchorType.BottomRight Then
-					op = MOperations.BottomRight
-				ElseIf anct = AnchorType.Rotate Then
-					op = MOperations.Rotate
-				Else
-
-					Dim m_path As New Region(Rectangle.Empty)
-
-					For Each ind As Integer In selc
-						Dim ss As Shape = shps(ind)
-						m_path.Union(ss.Region())
-					Next
-
-					Using wm As Matrix = GetWorldToScreenMatrix()
-						m_path.Transform(wm)
-					End Using
-					If m_path.IsVisible(screenPt) Then
-						op = MOperations.Move
-						Cursor = Cursors.SizeAll
-						selc.ForEach(Sub(i) shps(i).Moving = True)
-					End If
-
-					m_path.Dispose()
-
-				End If
-
-			End If
-
-			SetPrimary()
-			MainForm.UpdateControls()
-			Invalidate()
-		End If
+	Private Sub Canvas_MouseDown_Dispatch(sender As Object, e As MouseEventArgs) Handles MyBase.MouseDown
+		_interactionController.HandleMouseDown(Me, e)
 	End Sub
 
-	Private Sub CanvasSelect_MouseMove(sender As Object, e As MouseEventArgs) Handles MyBase.MouseMove
-		If IsPanInputActive() Then Return
-		If MainForm.Operation = MainForm.Operations.Select Then
-			Dim screenPt = e.Location
-			Dim worldPt = ToWorldPoint(screenPt)
-
-			If op = MOperations.Selection Then
-				s_rect = New RectangleF(Math.Min(worldPt.X, md_pt.X),
-										Math.Min(worldPt.Y, md_pt.Y),
-										Math.Abs(worldPt.X - md_pt.X),
-										Math.Abs(worldPt.Y - md_pt.Y))
-				If Not My.Computer.Keyboard.CtrlKeyDown Then DeselectAll()
-				For Each ss As Shape In shps
-					Dim ss_rg = ss.Region
-					If Not ss.Selected AndAlso Not IsNothing(ss_rg) Then
-						If ss_rg.IsVisible(s_rect) Then
-							ss.Selected = True
-						End If
-					End If
-				Next
-				SetPrimary()
-			End If
-
-			Dim selc = SelectedIndices()
-
-			'highlight shape
-			If HighlightShapes AndAlso op = MOperations.None AndAlso
-			   shps.Count > selc.Count Then
-				Dim curr As Integer = ShapeInCursor(screenPt)
-				If curr > -1 AndAlso Not GetAnchorsRegion.IsVisible(screenPt, CreateGraphics) Then
-					If shps(curr).Selected = False Then
-						If Not IsNothing(shps(curr).BorderPath) AndAlso
-						Not IsNothing(shps(curr).TotalPath) Then
-							h_info.ShapeIndex = curr
-							If IsPathHit(shps(curr).BorderPath, screenPt) Then
-								h_info.HoverType = 1
-							ElseIf IsPathHit(shps(curr).TotalPath, screenPt) Then
-								h_info.HoverType = 0
-							End If
-						End If
-					Else
-						h_info.ShapeIndex = -1
-					End If
-				Else
-					h_info.ShapeIndex = -1
-				End If
-				Invalidate()
-			End If
-
-			Dim shp As Shape = MainSelected()
-			Dim boundsAll = MultipleSelectionBounds()
-
-			'set cursors
-			If op = MOperations.None Then
-				Dim anct As AnchorType = GetAnchorType(screenPt)
-
-				Dim cur_ang = 0
-				If selc.Count = 1 Then cur_ang = shp.Angle
-
-				If anct = AnchorType.BrushCenter Then
-					Cursor = Cursors.Hand
-				ElseIf anct = AnchorType.TopLeft Then
-					Cursor = AnchorToCursor(MOperations.TopLeft, cur_ang)
-				ElseIf anct = AnchorType.Top Then
-					Cursor = AnchorToCursor(MOperations.Top, cur_ang)
-				ElseIf anct = AnchorType.TopRight Then
-					Cursor = AnchorToCursor(MOperations.TopRight, cur_ang)
-				ElseIf anct = AnchorType.Left Then
-					Cursor = AnchorToCursor(MOperations.Left, cur_ang)
-				ElseIf anct = AnchorType.Right Then
-					Cursor = AnchorToCursor(MOperations.Right, cur_ang)
-				ElseIf anct = AnchorType.BottomLeft Then
-					Cursor = AnchorToCursor(MOperations.BottomLeft, cur_ang)
-				ElseIf anct = AnchorType.Bottom Then
-					Cursor = AnchorToCursor(MOperations.Bottom, cur_ang)
-				ElseIf anct = AnchorType.BottomRight Then
-					Cursor = AnchorToCursor(MOperations.BottomRight, cur_ang)
-				ElseIf anct = AnchorType.Rotate Then
-					Cursor = AnchorToCursor(MOperations.Rotate, cur_ang)
-				Else
-					Cursor = Cursors.Arrow
-				End If
-			End If
-
-			'create and initialize variables
-			Dim tDest As PointF = worldPt
-			Dim tPt As PointF
-			Dim tRc, oRc As RectangleF
-
-			If selc.Count Then
-				If res_rect.Count = 1 Then
-					If shp.Angle Then tDest = RotatePoint(tDest, md_pt, -shp.Angle)
-					tRc = res_rect.First
-				Else
-					tRc = res_bounds
-				End If
-				tPt = New PointF(tDest.X - md_pt.X, tDest.Y - md_pt.Y)
-				oRc = tRc
-			End If
-
-			'operations
-			Select Case op
-				Case MOperations.Centering
-					Dim npt As PointF = RotatePoint(worldPt, shp.RotationPoint, -shp.Angle)
-					Dim pathBrush = TryCast(shp.FBrush, MyPathGradientBrush)
-					If Not IsNothing(pathBrush) Then pathBrush.CenterPoint = MathUtils.ToPercentage(shp.GetRect, npt)
-				Case MOperations.TopLeft
-					tRc.X += tPt.X
-					tRc.Width -= tPt.X
-					tRc.Y += tPt.Y
-					tRc.Height -= tPt.Y
-					If My.Computer.Keyboard.CtrlKeyDown Then
-						tRc.Height -= tPt.Y
-						tRc.Width -= tPt.X
-					End If
-				Case MOperations.Top
-					tRc.Y += tPt.Y
-					tRc.Height -= tPt.Y
-					If My.Computer.Keyboard.CtrlKeyDown Then
-						tRc.Height -= tPt.Y
-					End If
-				Case MOperations.TopRight
-					tRc.Width += tPt.X
-					tRc.Y += tPt.Y
-					tRc.Height -= tPt.Y
-					If My.Computer.Keyboard.CtrlKeyDown Then
-						tRc.Height -= tPt.Y
-						tRc.X -= tPt.X
-						tRc.Width += tPt.X
-					End If
-				Case MOperations.Left
-					tRc.X += tPt.X
-					tRc.Width -= tPt.X
-					If My.Computer.Keyboard.CtrlKeyDown Then
-						tRc.Width -= tPt.X
-					End If
-				Case MOperations.Right
-					tRc.Width += tPt.X
-					If My.Computer.Keyboard.CtrlKeyDown Then
-						tRc.X -= tPt.X
-						tRc.Width += tPt.X
-					End If
-				Case MOperations.BottomLeft
-					tRc.X += tPt.X
-					tRc.Width -= tPt.X
-					tRc.Height += tPt.Y
-					If My.Computer.Keyboard.CtrlKeyDown Then
-						tRc.Width -= tPt.X
-						tRc.Y -= tPt.Y
-						tRc.Height += tPt.Y
-					End If
-				Case MOperations.Bottom
-					tRc.Height += tPt.Y
-					If My.Computer.Keyboard.CtrlKeyDown Then
-						tRc.Y -= tPt.Y
-						tRc.Height += tPt.Y
-					End If
-				Case MOperations.BottomRight
-					tRc.Width += tPt.X
-					tRc.Height += tPt.Y
-					If My.Computer.Keyboard.CtrlKeyDown Then
-						tRc.X -= tPt.X
-						tRc.Width += tPt.X
-						tRc.Y -= tPt.Y
-						tRc.Height += tPt.Y
-					End If
-				Case MOperations.Rotate
-					Dim snAngle As Single = GetAngleBetweenTwoPointsWithFixedPoint(md_pt, worldPt, m_cnt)
-					snAngle = -snAngle * 180 / Math.PI
-					Dim qt As Boolean = False
-					If e.Button = MouseButtons.Left Then qt = True
-					shp.Angle = EditRotateAngle(m_ang, snAngle, qt)
-				Case MOperations.Move
-					If My.Computer.Keyboard.CtrlKeyDown AndAlso cloned = False Then
-						old_sl.Clear()
-						selc.ForEach(Sub(i) old_sl.Add(i))
-						CloneSelected()
-						cloned = True
-						cloning = True
-					End If
-					If cloning Then
-						If Not My.Computer.Keyboard.CtrlKeyDown Then
-							Dim _lst = selc
-							For i As Integer = 0 To old_sl.Count - 1
-								If i >= _lst.Count Then Exit For
-								If old_sl(i) < 0 OrElse old_sl(i) >= shps.Count Then Continue For
-								If _lst(i) < 0 OrElse _lst(i) >= shps.Count Then Continue For
-								Dim ss As Shape = shps(_lst(i))
-								shps(old_sl(i)).SetAllRect(ss.GetRect)
-								shps(old_sl(i)).Selected = False
-								shps(old_sl(i)).Moving = False
-							Next
-							DeleteSelected()
-							For i As Integer = 0 To old_sl.Count - 1
-								If old_sl(i) < 0 OrElse old_sl(i) >= shps.Count Then Continue For
-								shps(old_sl(i)).Selected = True
-								shps(old_sl(i)).Moving = True
-							Next
-							cloned = False
-						End If
-					End If
-					selc = SelectedIndices()
-					Dim iXMove, iYMove As Single
-					iXMove = worldPt.X - md_pt.X
-					iYMove = worldPt.Y - md_pt.Y
-					For i As Integer = 0 To mv_rect.Count - 1
-						If i >= selc.Count Then Exit For
-						Dim dRc As RectangleF = mv_rect(i)
-						If My.Computer.Keyboard.ShiftKeyDown Then
-							Dim dX = Math.Abs(iXMove)
-							Dim dY = Math.Abs(iYMove)
-							If dX > dY Then
-								'Only horizontal
-								dRc.Offset(iXMove, 0)
-							ElseIf dY > dX Then
-								'Only vertical
-								dRc.Offset(0, iYMove)
-							Else
-								'Diagonal (to be fixed)
-								Dim iinc = Math.Max(iXMove, iYMove)
-								dRc.Offset(iinc, iinc)
-							End If
-						Else
-							dRc.Offset(iXMove, iYMove)
-						End If
-						Dim selectedIndex As Integer = selc(i)
-						If selectedIndex < 0 OrElse selectedIndex >= shps.Count Then Continue For
-						Dim ss As Shape = shps(selectedIndex)
-						ss.SetAllRect(dRc)
-						ss.RotationPoint = MathUtils.FromPercentage(ss.GetRect, New PointF(50, 50))
-					Next
-			End Select
-
-			'finalize resize operation
-			If op >= MOperations.TopLeft AndAlso op <= MOperations.BottomRight Then
-				If My.Computer.Keyboard.ShiftKeyDown Then
-					'maintain aspect ratio
-					Dim rtd As RectangleF = tRc
-					Dim asp As Single = oRc.Width / oRc.Height
-					Select Case op
-						Case MOperations.TopLeft, MOperations.TopRight,
-						 MOperations.BottomLeft, MOperations.BottomRight
-							If oRc.Width > oRc.Height Then
-								rtd.Height = Math.Abs(rtd.Width) / asp
-							ElseIf oRc.Width < oRc.Height Then
-								rtd.Width = Math.Abs(rtd.Height) * asp
-							Else
-								Dim mxx As Integer = Math.Max(rtd.Width, rtd.Height)
-								rtd.Width = mxx
-								rtd.Height = mxx
-							End If
-						Case MOperations.Top, MOperations.Bottom
-							rtd.Width = Math.Abs(rtd.Height) * asp
-						Case MOperations.Left, MOperations.Right
-							rtd.Height = Math.Abs(rtd.Width) / asp
-					End Select
-					If op = MOperations.TopLeft Or op = MOperations.TopRight Then
-						rtd.Y = oRc.Bottom - rtd.Height
-					End If
-					If op = MOperations.TopLeft Or op = MOperations.BottomLeft Then
-						rtd.X = oRc.Right - rtd.Width
-					End If
-					tRc = rtd
-				End If
-
-				If tRc.Width = 0 Then Return
-				If tRc.Height = 0 Then Return
-
-				If _negX Then oRc.Width *= -1
-				If _negY Then oRc.Height *= -1
-
-				If tRc.Width * oRc.Width < 0 Then
-					shp.FlipX = True
-				Else
-					shp.FlipX = False
-				End If
-
-				If tRc.Height * oRc.Height < 0 Then
-					shp.FlipY = True
-				Else
-					shp.FlipY = False
-				End If
-
-				If selc.Count = 1 Then
-					shp.SetAllRect(tRc)
-				Else
-					For ind As Integer = 0 To selc.Count - 1
-						Dim ss As Shape = shps(selc(ind))
-						ss.SetAllRect(MathUtils.FromPercentage(tRc, res_rect(ind)))
-						ss.RotationPoint = MathUtils.FromPercentage(ss.GetRect, New PointF(50, 50))
-					Next
-				End If
-			End If
-
-			If op <> MOperations.None Then
-				Invalidate()
-				MainForm.UpdateBoundControls()
-			End If
-
-		End If
+	Private Sub Canvas_MouseMove_Dispatch(sender As Object, e As MouseEventArgs) Handles MyBase.MouseMove
+		_interactionController.HandleMouseMove(Me, e)
 	End Sub
 
-	Private Sub CanvasSelect_MouseUp(sender As Object, e As MouseEventArgs) Handles MyBase.MouseUp
-		If IsPanInputActive() Then Return
-		If MainForm.Operation = MainForm.Operations.Select Then
-			Dim screenPt = e.Location
-			Dim worldPt = ToWorldPoint(screenPt)
-
-			Dim isSameClick As Boolean = Math.Abs(worldPt.X - md_pt.X) < 0.001F AndAlso Math.Abs(worldPt.Y - md_pt.Y) < 0.001F
-			If My.Computer.Keyboard.CtrlKeyDown AndAlso isSameClick AndAlso up_fix Then
-				Dim curr As Integer = ShapeInCursor(screenPt)
-				If curr > -1 Then
-					Dim ss = shps(curr)
-					ss.Selected = Not ss.Selected
-				End If
-			End If
-
-			'if rotated shape is resized then adjust its coordinates
-			If op >= MOperations.TopLeft AndAlso op <= MOperations.BottomRight Then
-				Dim shp As Shape = MainSelected()
-				If Not IsNothing(shp) Then FinalizeResize(shp)
-			End If
-
-			mv_rect.Clear()
-			res_rect.Clear()
-			up_fix = True
-			shps.ForEach(Sub(x) x.Moving = False)
-			SetPrimary()
-			cloned = False
-			cloning = False
-			If op <> MOperations.None Then
-				MainForm.UpdateControls()
-				op = MOperations.None
-			Else
-				MainForm.UpdateBoundControls()
-			End If
-			s_rect = Rectangle.Empty
-			Invalidate()
-		End If
+	Private Sub Canvas_MouseUp_Dispatch(sender As Object, e As MouseEventArgs) Handles MyBase.MouseUp
+		_interactionController.HandleMouseUp(Me, e)
 	End Sub
 
-#End Region
-
+	Private Sub Canvas_MouseLeave_Dispatch(sender As Object, e As EventArgs) Handles MyBase.MouseLeave
+		_interactionController.HandleMouseLeave(Me)
+	End Sub
 #End Region
 
 #Region "Paint Event"
@@ -1632,7 +1103,7 @@ Public Class Canvas
 				End Using
 			End Using
 
-			If op = MOperations.Draw Or op = MOperations.Selection Or op = MOperations.None Or (op >= MOperations.TopLeft And op <= MOperations.BottomRight) Then
+			If _state.CurrentOperation = MOperations.Draw Or _state.CurrentOperation = MOperations.Selection Or _state.CurrentOperation = MOperations.None Or (_state.CurrentOperation >= MOperations.TopLeft And _state.CurrentOperation <= MOperations.BottomRight) Then
 				Using pth_brd As New GraphicsPath
 					pth_brd.AddRectangle(AbsRect(shp.GetRect))
 					Dim pn_brd As New Pen(Brushes.Black, AnnotationPenWidth()) With {
@@ -1645,7 +1116,7 @@ Public Class Canvas
 
 			g.PixelOffsetMode = PixelOffsetMode.HighQuality
 
-			Select Case op
+			Select Case _state.CurrentOperation
 				Case MOperations.None, MOperations.Draw, MOperations.Selection
 					Dim br As New SolidBrush(Color.White)
 					Dim pn As New Pen(Color.Black, AnnotationPenWidth())
@@ -1750,7 +1221,7 @@ Public Class Canvas
 	Private Sub DrawMultipleSelectionAnchors(g As Graphics)
 		Dim boundsAll = MultipleSelectionBounds()
 
-		If op = MOperations.Draw Or op = MOperations.Selection Or op = MOperations.None Or (op >= MOperations.TopLeft And op <= MOperations.BottomRight) Then
+		If _state.CurrentOperation = MOperations.Draw Or _state.CurrentOperation = MOperations.Selection Or _state.CurrentOperation = MOperations.None Or (_state.CurrentOperation >= MOperations.TopLeft And _state.CurrentOperation <= MOperations.BottomRight) Then
 			Using pth_brd As New GraphicsPath
 				pth_brd.AddRectangle(boundsAll)
 				Dim pn_brd As New Pen(Brushes.Black, AnnotationPenWidth()) With {
@@ -1763,7 +1234,7 @@ Public Class Canvas
 
 		g.PixelOffsetMode = PixelOffsetMode.HighQuality
 
-		Select Case op
+		Select Case _state.CurrentOperation
 			Case MOperations.None, MOperations.Draw, MOperations.Selection
 				Dim bounds_br As New SolidBrush(Color.White)
 				Dim bounds_pn As New Pen(Color.Black, AnnotationPenWidth())
@@ -1794,6 +1265,28 @@ Public Class Canvas
 		g.PixelOffsetMode = PixelOffsetMode.HighSpeed
 	End Sub
 
+	Private Sub DrawPrimarySelectionMarker(g As Graphics, shp As Shape)
+		Dim scale = AnnotationScaleCompensation()
+		Dim rect = AbsRect(shp.GetRect)
+		Dim margin = 6.0F * scale
+		Dim badgeSize = 16.0F * scale
+		Dim badgeRect As New RectangleF(rect.X + margin, rect.Y + margin, badgeSize, badgeSize)
+
+		Using fill As New SolidBrush(Color.FromArgb(210, Color.Gold))
+			g.FillEllipse(fill, badgeRect)
+		End Using
+		Using border As New Pen(Color.Black, AnnotationPenWidth())
+			g.DrawEllipse(border, badgeRect)
+		End Using
+		Using sf As New StringFormat()
+			sf.Alignment = StringAlignment.Center
+			sf.LineAlignment = StringAlignment.Center
+			Using fnt As New Font("Consolas", 8.0F * scale, FontStyle.Bold)
+				g.DrawString("P", fnt, Brushes.Black, badgeRect, sf)
+			End Using
+		End Using
+	End Sub
+
 	Private Function CreateImage() As Bitmap
 		Dim img As Bitmap
 
@@ -1813,7 +1306,7 @@ Public Class Canvas
 
 			Dim temp_shp As New List(Of Shape)
 			'Draw all shapes on image
-			shps.ForEach(Sub(shp) temp_shp.Add(shp.Clone))
+			_state.Shapes.ForEach(Sub(shp) temp_shp.Add(shp.Clone))
 			temp_shp.ForEach(Sub(shp)
 									 shp.ReloadCachedObjects()
 								 DrawShape(ig, shp)
@@ -1825,17 +1318,17 @@ Public Class Canvas
 	End Function
 
 	Private Sub DrawHighlightedShape(g As Graphics)
-		If h_info.ShapeIndex > -1 And h_info.ShapeIndex < shps.Count Then
+		If _state.Hover.ShapeIndex > -1 And _state.Hover.ShapeIndex < _state.Shapes.Count Then
 			Using pn As New Pen(hg_pth)
-				If h_info.HoverType = 1 Then pn.Color = hg_brd
-				g.DrawPath(pn, shps(h_info.ShapeIndex).TotalPath())
+				If _state.Hover.HoverType = 1 Then pn.Color = hg_brd
+				g.DrawPath(pn, _state.Shapes(_state.Hover.ShapeIndex).TotalPath())
 			End Using
 		End If
 	End Sub
 
 	Private Sub DrawSelectorRectangle(g As Graphics)
-		If s_rect.Width > 0 AndAlso s_rect.Height > 0 Then
-			Dim screenRect = ToScreenRect(s_rect)
+		If _state.SelectionRect.Width > 0 AndAlso _state.SelectionRect.Height > 0 Then
+			Dim screenRect = ToScreenRect(_state.SelectionRect)
 			Using pth As New GraphicsPath()
 				pth.AddRectangle(screenRect)
 				Using pn As New Pen(clr_sel)
@@ -1849,24 +1342,24 @@ Public Class Canvas
 	End Sub
 
 	Private Sub RenderDrawingModeData(g As Graphics)
-		If d_info.DrawMode Then
-			For i As Integer = 0 To d_info.Points.Count - 1
+		If _state.DrawInfo.DrawMode Then
+			For i As Integer = 0 To _state.DrawInfo.Points.Count - 1
 				g.FillPath(New SolidBrush(Color.FromArgb(180, Color.Black)),
 						   DPPath(i))
 			Next
 
 			Dim d_lim As Integer = DModeMin()
-			If Not curr_loc = PointF.Empty Then d_lim -= 1
+			If Not _state.CurrentLocation = PointF.Empty Then d_lim -= 1
 
-			If d_info.Points.Count >= d_lim Then
+			If _state.DrawInfo.Points.Count >= d_lim Then
 				Dim d_pts As New List(Of PointF)
-				d_info.Points.ForEach(Sub(pt)
+				_state.DrawInfo.Points.ForEach(Sub(pt)
 										  d_pts.Add(pt)
 									  End Sub)
-				If Not curr_loc = PointF.Empty Then d_pts.Add(curr_loc)
+				If Not _state.CurrentLocation = PointF.Empty Then d_pts.Add(_state.CurrentLocation)
 				Using d_pen As New Pen(Color.Black)
-					If d_info.Points.Count < DModeMin() Then d_pen.DashPattern = New Single() {8, 4}
-					Select Case d_info.ShapeType
+					If _state.DrawInfo.Points.Count < DModeMin() Then d_pen.DashPattern = New Single() {8, 4}
+					Select Case _state.DrawInfo.ShapeType
 						Case DShape.Lines
 							g.DrawLines(d_pen, d_pts.ToArray)
 						Case DShape.Polygon
@@ -1905,17 +1398,18 @@ Public Class Canvas
 		End If
 
 		Dim selc = SelectedIndices()
-		Dim prm As Shape = Nothing
+		Dim prm As Shape = MainSelected()
 
 		'Draw all shapes on image
-		shps.ForEach(Sub(shp)
+		_state.Shapes.ForEach(Sub(shp)
 						 DrawShape(g, shp)
-						 If shp.Selected AndAlso selc.Count = 1 Then prm = shp
 					 End Sub)
 
-		If Not IsNothing(prm) Then DrawShapeAnchors(g, prm)
-
-		If selc.Count > 1 Then DrawMultipleSelectionAnchors(g)
+		If selc.Count = 1 AndAlso Not IsNothing(prm) Then DrawShapeAnchors(g, prm)
+		If selc.Count > 1 Then
+			DrawMultipleSelectionAnchors(g)
+			If Not IsNothing(prm) Then DrawPrimarySelectionMarker(g, prm)
+		End If
 
 		RenderDrawingModeData(g)
 
@@ -1962,76 +1456,76 @@ Public Class Canvas
 			Case Keys.Tab
 				Dim shp As Shape = MainSelected()
 				If Not IsNothing(shp) Then
-					Dim ind As Integer = shps.IndexOf(shp)
-					If ind < shps.Count - 1 Then
+					Dim ind As Integer = _state.Shapes.IndexOf(shp)
+					If ind < _state.Shapes.Count - 1 Then
 						DeselectAll()
-						shps(ind + 1).Selected = True
+						_state.Shapes(ind + 1).Selected = True
 						SetPrimary()
 					End If
 				End If
 			Case Keys.Shift Or Keys.Tab
 				Dim shp As Shape = MainSelected()
 				If Not IsNothing(shp) Then
-					Dim ind As Integer = shps.IndexOf(shp)
+					Dim ind As Integer = _state.Shapes.IndexOf(shp)
 					If ind > 0 Then
 						DeselectAll()
-						shps(ind - 1).Selected = True
+						_state.Shapes(ind - 1).Selected = True
 						SetPrimary()
 					End If
 				End If
 			Case Keys.Left
 				For Each i As Integer In SelectedIndices()
-					Dim shp As Shape = shps(i)
+					Dim shp As Shape = _state.Shapes(i)
 					shp.BaseX -= 1
 				Next
 			Case Keys.Right
 				For Each i As Integer In SelectedIndices()
-					Dim shp As Shape = shps(i)
+					Dim shp As Shape = _state.Shapes(i)
 					shp.BaseX += 1
 				Next
 			Case Keys.Up
 				For Each i As Integer In SelectedIndices()
-					Dim shp As Shape = shps(i)
+					Dim shp As Shape = _state.Shapes(i)
 					shp.BaseY -= 1
 				Next
 			Case Keys.Down
 				For Each i As Integer In SelectedIndices()
-					Dim shp As Shape = shps(i)
+					Dim shp As Shape = _state.Shapes(i)
 					shp.BaseY += 1
 				Next
 			Case Keys.Control Or Keys.Left
 				For Each i As Integer In SelectedIndices()
-					Dim shp As Shape = shps(i)
+					Dim shp As Shape = _state.Shapes(i)
 					If shp.BaseWidth > 1 Then
 						shp.BaseWidth -= 1
 					End If
 				Next
 			Case Keys.Control Or Keys.Right
 				For Each i As Integer In SelectedIndices()
-					Dim shp As Shape = shps(i)
+					Dim shp As Shape = _state.Shapes(i)
 					shp.BaseWidth += 1
 				Next
 			Case Keys.Control Or Keys.Up
 				For Each i As Integer In SelectedIndices()
-					Dim shp As Shape = shps(i)
+					Dim shp As Shape = _state.Shapes(i)
 					If shp.BaseHeight > 1 Then
 						shp.BaseHeight -= 1
 					End If
 				Next
 			Case Keys.Control Or Keys.Down
 				For Each i As Integer In SelectedIndices()
-					Dim shp As Shape = shps(i)
+					Dim shp As Shape = _state.Shapes(i)
 					shp.BaseHeight += 1
 				Next
 			Case Keys.Shift Or Keys.Left
 				For Each i As Integer In SelectedIndices()
-					Dim shp As Shape = shps(i)
+					Dim shp As Shape = _state.Shapes(i)
 					shp.BaseX -= 1
 					shp.BaseWidth += 1
 				Next
 			Case Keys.Shift Or Keys.Right
 				For Each i As Integer In SelectedIndices()
-					Dim shp As Shape = shps(i)
+					Dim shp As Shape = _state.Shapes(i)
 					If shp.BaseWidth > 1 Then
 						shp.BaseX += 1
 						shp.BaseWidth -= 1
@@ -2039,13 +1533,13 @@ Public Class Canvas
 				Next
 			Case Keys.Shift Or Keys.Up
 				For Each i As Integer In SelectedIndices()
-					Dim shp As Shape = shps(i)
+					Dim shp As Shape = _state.Shapes(i)
 					shp.BaseY -= 1
 					shp.BaseHeight += 1
 				Next
 			Case Keys.Shift Or Keys.Down
 				For Each i As Integer In SelectedIndices()
-					Dim shp As Shape = shps(i)
+					Dim shp As Shape = _state.Shapes(i)
 					If shp.BaseHeight > 1 Then
 						shp.BaseY += 1
 						shp.BaseHeight -= 1
@@ -2053,7 +1547,7 @@ Public Class Canvas
 				Next
 			Case Keys.Shift Or Keys.Control Or Keys.Left
 				For Each i As Integer In SelectedIndices()
-					Dim shp As Shape = shps(i)
+					Dim shp As Shape = _state.Shapes(i)
 					Dim rect As RectangleF = shp.GetRect
 					If rect.Width > 2 Then
 						rect.Inflate(-1, 0)
@@ -2062,14 +1556,14 @@ Public Class Canvas
 				Next
 			Case Keys.Shift Or Keys.Control Or Keys.Right
 				For Each i As Integer In SelectedIndices()
-					Dim shp As Shape = shps(i)
+					Dim shp As Shape = _state.Shapes(i)
 					Dim rect As RectangleF = shp.GetRect
 					rect.Inflate(1, 0)
 					shp.SetAllRect(rect)
 				Next
 			Case Keys.Shift Or Keys.Control Or Keys.Up
 				For Each i As Integer In SelectedIndices()
-					Dim shp As Shape = shps(i)
+					Dim shp As Shape = _state.Shapes(i)
 					Dim rect As RectangleF = shp.GetRect
 					If rect.Width > 2 Then
 						rect.Inflate(0, -1)
@@ -2078,26 +1572,26 @@ Public Class Canvas
 				Next
 			Case Keys.Shift Or Keys.Control Or Keys.Down
 				For Each i As Integer In SelectedIndices()
-					Dim shp As Shape = shps(i)
+					Dim shp As Shape = _state.Shapes(i)
 					Dim rect As RectangleF = shp.GetRect
 					rect.Inflate(0, 1)
 					shp.SetAllRect(rect)
 				Next
 			Case Keys.Control Or Keys.A
-				For Each shp As Shape In shps
+				For Each shp As Shape In _state.Shapes
 					shp.Selected = True
 				Next
 				SetPrimary()
 			Case Keys.Control Or Keys.C
 				Dim _lst As New List(Of Shape)
 				For Each i As Integer In SelectedIndices()
-					_lst.Add(shps(i).Clone)
+					_lst.Add(_state.Shapes(i).Clone)
 				Next
 				SetShapesClipboardData(_lst)
 			Case Keys.Control Or Keys.X
 				Dim _lst As New List(Of Shape)
 				For Each i As Integer In SelectedIndices()
-					_lst.Add(shps(i).Clone)
+					_lst.Add(_state.Shapes(i).Clone)
 				Next
 				DeleteSelected()
 				SetShapesClipboardData(_lst)
@@ -2108,7 +1602,7 @@ Public Class Canvas
 				For Each shp As Shape In _lst
 					shp.BindEvents()
 					shp.ReloadCachedObjects()
-					shps.Add(shp)
+					_state.Shapes.Add(shp)
 				Next
 				SetPrimary()
 		End Select
@@ -2127,7 +1621,7 @@ Public Class Canvas
 				 Keys.Shift Or Keys.Control Or Keys.Up,
 				 Keys.Shift Or Keys.Control Or Keys.Down,
 				 Keys.Left, Keys.Right, Keys.Up, Keys.Down
-				SelectedIndices.ForEach(Sub(i) FinalizeResize(shps(i)))
+				SelectedIndices.ForEach(Sub(i) FinalizeResize(_state.Shapes(i)))
 				MainForm.UpdateControls()
 				Invalidate()
 		End Select
@@ -2137,12 +1631,12 @@ Public Class Canvas
 
 #Region "Focus"
 	Private Sub Canvas_Enter(sender As Object, e As EventArgs) Handles MyBase.Enter
-		focus_clr = Color.Silver
+		_state.FocusColor = Color.Silver
 		Invalidate()
 	End Sub
 
 	Private Sub Canvas_Leave(sender As Object, e As EventArgs) Handles MyBase.Leave
-		focus_clr = Color.LightGray
+		_state.FocusColor = Color.LightGray
 		Invalidate()
 	End Sub
 
@@ -2209,3 +1703,4 @@ Public Class ProjectData
 End Class
 
 #End Region
+

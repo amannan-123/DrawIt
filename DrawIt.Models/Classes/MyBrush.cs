@@ -14,6 +14,9 @@ namespace DrawIt.Models
     [JsonDerivedType(typeof(MyTextureBrush), "texture")]
     public abstract class MyBrush : INotifyPropertyChanged, ICloneable
     {
+        [JsonIgnore]
+        private Dictionary<BrushType, MyBrush>? _stateCache;
+
         protected MyBrush(BrushType type)
         {
             BType = type;
@@ -26,6 +29,16 @@ namespace DrawIt.Models
         protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        internal Dictionary<BrushType, MyBrush> GetOrCreateStateCache()
+        {
+            return _stateCache ??= new Dictionary<BrushType, MyBrush>();
+        }
+
+        internal void SetStateCache(Dictionary<BrushType, MyBrush> cache)
+        {
+            _stateCache = cache;
         }
 
         public abstract object Clone();
@@ -500,7 +513,28 @@ namespace DrawIt.Models
                 return current;
             }
 
-            return Create(targetType);
+            Dictionary<BrushType, MyBrush>? cache = null;
+
+            if (current is not null)
+            {
+                cache = current.GetOrCreateStateCache();
+                cache[current.BType] = (MyBrush)current.Clone();
+
+                if (cache.TryGetValue(targetType, out MyBrush? cachedBrush))
+                {
+                    MyBrush restoredBrush = (MyBrush)cachedBrush.Clone();
+                    restoredBrush.SetStateCache(cache);
+                    return restoredBrush;
+                }
+            }
+
+            MyBrush createdBrush = Create(targetType);
+            if (cache is not null)
+            {
+                createdBrush.SetStateCache(cache);
+            }
+
+            return createdBrush;
         }
     }
 }

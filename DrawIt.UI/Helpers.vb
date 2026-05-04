@@ -3,11 +3,11 @@ Imports System.Drawing.Drawing2D
 Imports DrawIt.Helpers
 Imports DrawIt.Models
 
-Module Helpers
+Public Module Helpers
 
 #Region "Enum"
 
-	Enum MOperations
+	Public Enum MOperations
 		TopLeft
 		Top
 		TopRight
@@ -346,8 +346,8 @@ Module Helpers
 		Dim angleInRadians As Double = angleInDegrees * (Math.PI / 180)
 		Dim cosTheta As Double = Math.Cos(angleInRadians)
 		Dim sinTheta As Double = Math.Sin(angleInRadians)
-		Return New PointF() With {.X = CInt(cosTheta * (pointToRotate.X - centerPoint.X) - sinTheta * (pointToRotate.Y - centerPoint.Y) + centerPoint.X),
-								  .Y = CInt(sinTheta * (pointToRotate.X - centerPoint.X) + cosTheta * (pointToRotate.Y - centerPoint.Y) + centerPoint.Y)}
+		Return New PointF() With {.X = CSng(cosTheta * (pointToRotate.X - centerPoint.X) - sinTheta * (pointToRotate.Y - centerPoint.Y) + centerPoint.X),
+								  .Y = CSng(sinTheta * (pointToRotate.X - centerPoint.X) + cosTheta * (pointToRotate.Y - centerPoint.Y) + centerPoint.Y)}
 	End Function
 
 	Public Function GetAngleBetweenTwoPointsWithFixedPoint(tPt1 As PointF, tPt2 As PointF,

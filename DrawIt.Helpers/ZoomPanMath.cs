@@ -5,7 +5,23 @@ namespace DrawIt.Helpers
 {
     public static class ZoomPanMath
     {
-        public static float ClampZoom(float zoom, float min = 0.2f, float max = 10.0f)
+        public const float ZoomPercentScaleFactor = 100.0f;
+        public const float ZoomMinPercent = 10.0f;
+        public const float ZoomMaxPercent = 10000.0f;
+        public const float ZoomMinScale = ZoomMinPercent / ZoomPercentScaleFactor;
+        public const float ZoomMaxScale = ZoomMaxPercent / ZoomPercentScaleFactor;
+
+        public static float PercentToScale(float percent)
+        {
+            return percent / ZoomPercentScaleFactor;
+        }
+
+        public static float ScaleToPercent(float scale)
+        {
+            return scale * ZoomPercentScaleFactor;
+        }
+
+        public static float ClampZoom(float zoom, float min = ZoomMinScale, float max = ZoomMaxScale)
         {
             return Math.Max(min, Math.Min(max, zoom));
         }

@@ -2,6 +2,7 @@
 Imports System.Drawing.Drawing2D
 Imports System.IO
 Imports DrawIt.Controls
+Imports DrawIt.Helpers
 Imports DrawIt.Models
 #End Region
 
@@ -202,7 +203,7 @@ Public Class MainForm
 			set_PB.Image = cn.BackgroundImage
 			set_cname.Text = cn.Text
 			_syncZoomUI = True
-			Dim zoomValue = CInt(Math.Round(cn.Zoom * 100))
+			Dim zoomValue = CInt(Math.Round(ZoomPanMath.ScaleToPercent(cn.Zoom)))
 			zoomValue = Math.Max(TBZoom.Minimum, Math.Min(TBZoom.Maximum, zoomValue))
 			If TBZoom.Value <> zoomValue Then TBZoom.Value = zoomValue
 			_syncZoomUI = False
@@ -219,6 +220,8 @@ Public Class MainForm
 #Region "Form"
 	Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 		MainCanvas = CanvasControl1.baseCanvas
+		TBZoom.Minimum = ZoomPanMath.ZoomMinPercent
+		TBZoom.Maximum = ZoomPanMath.ZoomMaxPercent
 		UpdateSettings()
 
 		For Each str As String In [Enum].GetNames(GetType(ShapeStyle))
@@ -1643,7 +1646,7 @@ Public Class MainForm
 		If _syncZoomUI Then Return
 		Dim cn = MainCanvas()
 		If Not IsNothing(cn) Then
-			cn.Zoom = TBZoom.Value / 100
+			cn.Zoom = ZoomPanMath.PercentToScale(TBZoom.Value)
 			cn.MainCanvasControl.SetSize()
 		End If
 	End Sub

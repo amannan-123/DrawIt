@@ -495,16 +495,14 @@ Public Class Shape : Implements IDisposable
 				If linear.Bell Then
 					lgb.SetSigmaBellShape(linear.BellFocus, linear.BellScale)
 				End If
-				If linear.Interpolate Then
-					Dim ip As New ColorBlend
-					If linear.InterColors.Length = linear.InterPositions.Length Then
-						ip.Colors = linear.InterColors
-						ip.Positions = linear.InterPositions
-						lgb.InterpolationColors = ip
-					Else
-						_pb = Nothing
-					End If
-				End If
+                Dim ip As New ColorBlend
+                If linear.InterColors.Length = linear.InterPositions.Length Then
+                    ip.Colors = linear.InterColors
+                    ip.Positions = linear.InterPositions
+                    lgb.InterpolationColors = ip
+                Else
+                    _pb = Nothing
+                End If
 				_pb = lgb
 			Case BrushType.PathGradient
 				_pb = Nothing
@@ -724,6 +722,7 @@ Public Class Shape : Implements IDisposable
 		Get
 			If IsNothing(_pth) Then Return Nothing
 			Dim gp As GraphicsPath = _pth.Clone
+            If IsNothing(gp) Then Return Nothing
 			Dim mm As New Matrix
 			mm.Translate(GetRect.X, GetRect.Y)
 			mm.Shear(ShearX, ShearY)

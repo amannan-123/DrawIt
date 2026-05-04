@@ -838,8 +838,8 @@ Partial Class MainForm
         TBZoom.Increment = 10F
         TBZoom.Location = New Point(800, 12)
         TBZoom.Margin = New Padding(4, 5, 4, 5)
-        TBZoom.Maximum = 1000F
-        TBZoom.Minimum = 20F
+        TBZoom.Maximum = 10000F
+        TBZoom.Minimum = 10F
         TBZoom.Name = "TBZoom"
         TBZoom.Positions = New Single() {0F, 0.5F, 1F}
         TBZoom.Size = New Size(177, 20)

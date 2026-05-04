@@ -33,11 +33,23 @@ Public Class CanvasControl
 		End Set
 	End Property
 
-	Private Sub SetPanMode(active As Boolean)
-		Panning = active
-		Dim cur = If(active, Cursors.Hand, Cursors.Arrow)
+	Private Sub UpdatePanCursor()
+		Dim cur As Cursor
+		If Not Panning Then
+			cur = Cursors.Arrow
+		ElseIf m_down Then
+			cur = Cursors.NoMove2D
+		Else
+			cur = Cursors.SizeAll
+		End If
+
 		Cursor = cur
 		baseCanvas.Cursor = cur
+	End Sub
+
+	Private Sub SetPanMode(active As Boolean)
+		Panning = active
+		UpdatePanCursor()
 	End Sub
 
 	Private Sub StopPanDrag()
@@ -45,6 +57,7 @@ Public Class CanvasControl
 			m_down = False
 			UpdateScrollbars()
 		End If
+		UpdatePanCursor()
 	End Sub
 
 
@@ -165,6 +178,7 @@ Public Class CanvasControl
 		If Panning AndAlso e.Button = MouseButtons.Left Then
 			m_down = True
 			m_pt = PointToClient(Control.MousePosition)
+			UpdatePanCursor()
 		End If
 	End Sub
 
@@ -174,6 +188,7 @@ Public Class CanvasControl
 				StopPanDrag()
 				Return
 			End If
+			UpdatePanCursor()
 			Dim nowPt = PointToClient(Control.MousePosition)
 			Dim dx = nowPt.X - m_pt.X
 			Dim dy = nowPt.Y - m_pt.Y

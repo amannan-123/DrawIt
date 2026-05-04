@@ -20,6 +20,9 @@ namespace DrawIt.Models
 	[JsonDerivedType(typeof(MyText), "text")]
 	public abstract class MyShape : INotifyPropertyChanged, ICloneable
 	{
+		[JsonIgnore]
+		private Dictionary<ShapeStyle, MyShape>? _stateCache;
+
 		protected MyShape(ShapeStyle style)
 		{
 			SType = style;
@@ -32,6 +35,16 @@ namespace DrawIt.Models
 		protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		internal Dictionary<ShapeStyle, MyShape> GetOrCreateStateCache()
+		{
+			return _stateCache ??= new Dictionary<ShapeStyle, MyShape>();
+		}
+
+		internal void SetStateCache(Dictionary<ShapeStyle, MyShape> cache)
+		{
+			_stateCache = cache;
 		}
 
 		public abstract object Clone();
@@ -65,7 +78,28 @@ namespace DrawIt.Models
 				return current;
 			}
 
-			return Create(targetStyle);
+			Dictionary<ShapeStyle, MyShape>? cache = null;
+
+			if (current is not null)
+			{
+				cache = current.GetOrCreateStateCache();
+				cache[current.SType] = (MyShape)current.Clone();
+
+				if (cache.TryGetValue(targetStyle, out MyShape? cachedShape))
+				{
+					MyShape restoredShape = (MyShape)cachedShape.Clone();
+					restoredShape.SetStateCache(cache);
+					return restoredShape;
+				}
+			}
+
+			MyShape createdShape = Create(targetStyle);
+			if (cache is not null)
+			{
+				createdShape.SetStateCache(cache);
+			}
+
+			return createdShape;
 		}
 	}
 
